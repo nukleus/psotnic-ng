@@ -69,10 +69,7 @@ class ent
 	bool operator<(const ent &e) const;
 	bool operator==(const ent &e) const;
 
-	/*virtual ~ent()
-	{
-		//FIXME: we should free name
-	};*/
+	//virtual ~ent();
 };
 
 
@@ -92,7 +89,7 @@ class entBool : public ent
 	virtual void reset();
 	virtual bool isDefault() const;
 	int operator=(int n)	{ value = (n == 1); return value; };
-	//virtual ~entBool() { };
+	virtual ~entBool() { };
 };
 
 class entInt : public entBool
@@ -110,7 +107,7 @@ class entInt : public entBool
 	virtual const char *getMax() const;
 	operator int() const;
 	int operator==(int n) const;
-	//virtual ~entInt() { };
+	virtual ~entInt() { };
 };
 
 class entTime : public entInt
@@ -124,7 +121,7 @@ class entTime : public entInt
 	virtual const char *getValue() const;
 	virtual const char *getMin() const;
 	virtual const char *getMax() const;
-	//virtual ~entTime() { };
+	virtual ~entTime() { };
 };
 
 class entPerc : public entInt
@@ -138,7 +135,7 @@ class entPerc : public entInt
 	virtual const char *getValue() const;
 	virtual const char *getMin() const;
 	virtual const char *getMax() const;
-	//virtual ~entPerc() { };
+	virtual ~entPerc() { };
 };
 
 class entIp : public ent
