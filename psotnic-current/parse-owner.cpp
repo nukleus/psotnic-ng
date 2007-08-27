@@ -95,7 +95,7 @@ int parse_owner_join(inetconn *c, char *name, char *key, int delay, char *flags,
 			{
 				if(net.conn[i].isRegBot())
 				{
-					if(userlist.isRjoined(n, net.conn[i].handle))
+					if(net.conn[i].name && *net.conn[i].name && userlist.isRjoined(n, net.conn[i].handle))
 					{
 						net.conn[i].send(S_ADDCHAN, " ", flags, " ", name, " ", key, " ", itoa(j), NULL);
 						j += delay;
