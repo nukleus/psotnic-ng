@@ -126,7 +126,7 @@ int listcmd(char what, const char *from, const char *arg1, const char *arg2, ine
 		//remote
 		case 'v':
 		{
-			net.sendOwner(from, "[v] version: ", S_VERSION, NULL);
+			net.sendOwner(from, "[v] version: ", S_VERSION, "; SVN rev: ", SVN_REVISION, NULL);
 			return 1;
 		}
 

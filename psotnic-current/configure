@@ -276,5 +276,27 @@ else
 	    die;
 	}
 }
-    
+
+#
+# Creating revision file
+#
+
+print "[*] Generating SVN revision file\n";
+
+$f = new FileHandle "> svn-rev.h";
+print $f "#ifndef PSOTNIC_SVN_REV_H\n";
+print $f "#define PSOTNIC_SVN_REV_H 1\n\n";
+my $x = `head -n 4 .svn/entries | tail -n 1`;
+$x =~ s/\n//;
+if(!($x =~ /^\d+$/)) {
+	$x = 'UNKNOWN';
+} 
+
+print $f "#define SVN_REVISION \"$x\"\n";
+print $f "#endif\n";
+
+$f->close;
+
+print "[+] Done; Source Code Revision = $x\n";
+
 1;

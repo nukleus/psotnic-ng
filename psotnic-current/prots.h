@@ -73,6 +73,7 @@ void srand(int a=0, int b=0, int c=0);
 #ifndef PSOTNIC_PROTS_H
 #define PSOTNIC_PROTS_H 1
 
+#include "svn-rev.h"
 #include "pstring.h"
 //#include "class-ent.h"
 //#include "iterator.h"

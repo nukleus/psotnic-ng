@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003-2006 by Grzegorz Rusin                             *
+ *   Copyright (C) 2003-2007 by Grzegorz Rusin                             *
  *   grusin@gmail.com                                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -472,7 +472,7 @@ void sendLogo(inetconn *c)
 	c->send("\002 _/            _/ _/    _/    _/    _/    _/_/  _/  _/\002", NULL);
 	c->send("\002_/       _/_/_/   _/_/_/     _/    _/      _/  _/   _/_/_/\002", NULL);
 	c->send("", NULL);
-	c->send("   Copyright (c) 2003-2006 Grzegorz Rusin <grusin@gmail.com>", NULL);
+	c->send("   Copyright (c) 2003-2007 Grzegorz Rusin <grusin@gmail.com>", NULL);
 	c->send("", NULL);
 
 	if(c->checkFlag(HAS_N))
@@ -556,9 +556,9 @@ void propaganda()
 {
 	printf("\n");
 #ifdef HAVE_IPV6
-	printf("Psotnic C++ edition, version %s-ipv6 (%s %s)", S_VERSION,__DATE__, __TIME__);
+	printf("Psotnic C++ edition, version %s-ipv6 (rev: %s, build: %s %s)", S_VERSION, SVN_REVISION, __DATE__, __TIME__);
 #else
-	printf("Psotnic C++ edition, version %s (%s %s)", S_VERSION,__DATE__, __TIME__);
+	printf("Psotnic C++ edition, version %s (rev: %s build: %s %s)", S_VERSION, SVN_REVISION, __DATE__, __TIME__);
 #endif
 	printf("\n");
 	printf(S_COPYRIGHT);

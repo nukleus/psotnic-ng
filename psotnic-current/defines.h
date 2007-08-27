@@ -255,7 +255,7 @@
 #define S_CWHO					"79"
 
 #define S_NOPERM				strerror(EACCES)
-#define S_VERSION				"0.2.13rc"
+#define S_VERSION				"0.2.13rc1" 
 
 #define S_BOTNAME				"psotnic"
 #define S_COPYRIGHT				"Copyright (C) 2003-2007 Grzegorz Rusin <grusin@gmail.com>"
