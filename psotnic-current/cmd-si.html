@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/~grusin/psotnic.css">
+<title>The Psotnic Project :: Komande</title>
+<meta name="description" content="Irc bot for linux">
+<meta name="keywords" content="bot bots ircnet ipv6 irc psotnic botnet linux freebsd openbsd #psotnic c++ cpp c modules grzegorz rusin">
+<meta name="Author" content="Grzegorz Rusin pks@irc.pl">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+</head>
+<body bgcolor="#ffffff" background="#ffffff"><table border="0" width="100%" cellspacing="0" cellpadding="0"><tr><td valign="top" align="center"><table width="90%"><tr><td valign="top"><h2 align="center">Komande</h2><table cellspacing="0">
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.abuse</strong></font></td><td><em></em></td><td>Radovednost je prvi korak h K:line-u</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.bc</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;text&gt;</em></td><td>Poslje <em>text</em> botu <em>bot</em> (reakcija na poslan <em>text</em> more bit nasteta v modulu, po defaultu so vsi texti ignorirani)</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.+bot</strong></font></td><td><em>&lt;handle&nbsp&lt;ip&gt;</em></td><td>Doda nov bot z imenom <em>handle</em> in ipjom <em>ip</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.-bot</strong></font></td><td><em>&lt;handle&gt;</em></td><td>Odstrani bota z imenom <em>handle</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.bots</strong></font></td><td><em>[expr]&nbsp[flags]</em></td><td>Prikaze bote z ekspesijo <em>expr</em> z imenom <em>expr</em> ali s flagi <em>flags</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.bottree</strong></font></td><td><em></em></td><td>Bottree - drevo linkanih botov</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.bye</strong></font></td><td><em>[reason]</em></td><td>Izhod iz partyline-a z razlohom <em>reason</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.chaddr</strong></font></td><td><em>&lt;handle&gt;&nbsp&lt;ip&gt;</em></td><td>Spremeni <em>ip</em> naslov bota z imenom <em>handle</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.+chan</strong></font></td><td><em>&lt;chan&gt;&nbsp[key]</em></td><td>Doda nov kanal <em>chan</em> z geslom <em>key</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.channels</strong></font></td><td><em></em></td><td>Prikaze kanale na katerih so boti</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.chattr</strong></font></td><td><em>&lt;handle&gt;&nbsp&lt;flags&gt;&nbsp[chan]</em></td><td>Nastavi global ali channel <em>chan</em> flage <em>flags</em> za uporabnika ali bota z imenom <em>handle</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.chnick</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;nick&gt;</em></td><td>Spremeni nick bota <em>bot</em> z drugim nickom <em>nick</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.chpass</strong></font></td><td><em>&lt;handle&gt;&nbsp&lt;pass&gt;</em></td><td>Nastavi geslo <em>password</em> za uporabnika ali bota z imenom <em>handle</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.downbots</strong></font></td><td><em></em></td><td>Prikaze ne-linkane bote</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.export</strong></font></td><td><em>&lt;file&gt;&nbsp[pass]</em></td><td>Exportira userfile v <em>file</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.+host</strong></font></td><td><em>&lt;handle&gt;&nbsp&lt;host&gt;</em></td><td>Doda novega uporabnika z imenom <em>handle</em> in hostmaskom <em>host</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.-host</strong></font></td><td><em>&lt;handle&gt;&nbsp&lt;host&gt;</em></td><td>Odstrani host <em>host</em> iz nicka <em>handle</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.import</strong></font></td><td><em>&lt;file&gt;&nbsp[pass]</em></td><td>Importa userfile iz <em>file</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.-info</strong></font></td><td><em>&lt;handle&gt;&nbsp&lt;key&gt;</em></td><td>Odstrani info <em>key</em> od <em>handle</em>.</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.+info</strong></font></td><td><em>&lt;handle&gt;&nbsp&lt;key&gt;&nbsp&lt;value&gt;</em></td><td>Doda novo informacijo o <em>handle</em>.</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.info</strong></font></td><td><em>&lt;handle&gt;</em></td><td>Prikaze info uporabnika al bota z imenom <em>handle</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.list</strong></font></td><td><em>&lt;apcdsvuiU&gt;&nbsp[bot]</em></td><td>Prikaze informacije o botih:<br>a - prikaze botovo away stanje<br>p - prikaze ping med boti<br>c - prikaze kanale<br>d - prikaze bote kateri niso povezani na irc server<br>s - prikaze vse serverje v botovi config datoteki in izpise server na katerega je bot trenutno povezan<br>v - prikaze verzijo bota<br>u - prikaze informacije o serverju (uname)<br>i - prikaze host in server bota<br>U - prikaze uptime bota.</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.match</strong></font></td><td><em>&lt;expr&gt;&nbsp[flags]&nbsp[chan]</em></td><td>Prikaze uporabnika glede na <em>expression</em>, <em>flag</em> ali <em>channel</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.mcycle</strong></font></td><td><em>&lt;chan&gt;</em></td><td>Vsi boti partajo in joinajo kanal <em>chan</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.mjoin</strong></font></td><td><em>&lt;chan&gt;&nbsp[key]&nbsp[delay]</em></td><td>Vsi boti joinajo kanal <em>chan</em> z geslom <em>key</em> in razliko v casu <em>delay</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.mk</strong></font></td><td><em>&lt;o|n|a&gt;&nbsp&lt;chan&gt;&nbsp[lock]</em></td><td> Boti kickajo ljudi z opom <em>o</em>, brez opa <em>n</em>, vse <em>a</em> - ljudje z +f flagom ne bojo kickani</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.mpart</strong></font></td><td><em>&lt;chan&gt;</em></td><td>Vsi boti partajo kanal <em>chan</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.names</strong></font></td><td><em>&lt;bot&gt;&nbsp[chan]</em></td><td>Prikaze spisek nickov na kanalu <em>chan</em> katere vidi bot <em>bot</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.owners</strong></font></td><td><em></em></td><td>Prikaze vpisane ownerje</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.rcycle</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;chan&gt;</em></td><td>Bot <em>bot</em> parta in joina kanal <em>chan</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.rdie</strong></font></td><td><em>&lt;bot&gt;</em></td><td>Ubije bota z imenom <em>bot</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.reset</strong></font></td><td><em>idle</em></td><td>Resetira idle iz vseh botov</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.restart</strong></font></td><td><em>&lt;bot&gt;</em></td><td>Ponovno zazene bota <em>bot</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.rjoin</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;chan&gt;&nbsp[key]</em></td><td>Bot z imenom <em>bot</em> joina kanal <em>chan</em> z geslom <em>key</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.rjump6</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;host&gt;&nbsp[port]</em></td><td>Poveze bota z imenom <em>bot</em> na dolocen ipv6 server <em>host</em> na port <em>port</em>, default port je 6667</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.rjump</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;host&gt;&nbsp[port]</em></td><td>Poveze bot z imeom <em>bot</em> na dolocen ipv4 server <em>host</em> na port <em>port</em>, default je 6667</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.rjumps5</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;proxy&gt;&nbsp&lt;port&gt;&nbsp&lt;server&gt;&nbsp&lt;port&gt;</em></td><td>Poveze bot na irc z uporabo proxija: Vpisite IP od proxija <em>proxy</em> potem proxijev port <em>port</em> in ircserver <em>server</em> ter port ircserverja <em>port</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.rpart</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;chan&gt;</em></td><td>Bot z imenom <em>bot</em> parta kanal <em>chan</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.save</strong></font></td><td><em></em></td><td>Jesus Saves</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.+shit</strong></font></td><td><em>[#chan]&nbsp[%time]&nbsp&lt;mask&gt;&nbsp[reason]</em></td><td>Doda nov shit na kanal <em>chan</em> s casom poteka <em></em>%time, shitmaskom <em>mask</em> in razlago <em>reason</em> <br>Ko ni dolocen noben kanal, bo shit avtomaticno dodan za vse kanale. Ko ni dolocen cas, bo shit trajal neomejeno.</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.-shit</strong></font></td><td><em>&lt;mask&gt;&nbsp[chan]</em></td><td>Odstrani shit z masko <em>mask</em> iz kanala <em>chan</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.shits</strong></font></td><td><em>[chan]</em></td><td>Prokaze shite</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.sjoin</strong></font></td><td><em>&lt;slave&gt;&nbsp&lt;chan&gt;&nbsp[key]</em></td><td>Vsi boti linkani na <em>slave</em> joinajo kanal <em>chan</em> z geslom <em>key</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.spart</strong></font></td><td><em>&lt;slave&gt;&nbsp&lt;chan&gt;</em></td><td>Vsi boti linkani na <em>slave</em> partajo kanal <em>chan</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.+stick</strong></font></td><td><em>[#chan]&nbsp[%time]&nbsp&lt;mask&gt;&nbsp[reason]</em></td><td>Doda permanent ban kanalu <em>chan</em> kateri bo potekel v casu <em></em>%time in glede hostmaska <em>mask</em> z razlago kicka <em>reason</em> <br>Ko ni dolocen noben kanal bo avtomaticno dodan na vseh kanalih. Ko ni dolocen cas bo trajal neomejeno.</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.tkmjoin</strong></font></td><td><em>&lt;chan&gt;&nbsp[key]&nbsp[delay]</em></td><td>Boti joinajo kanal <em>chan</em> z geslom <em>key</em> razliko v casu <em>delay</em> in takeover = 1</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.tkrjoin</strong></font></td><td><em>&lt;bot&gt;&nbsp&lt;chan&gt;</em></td><td>Bot z imenom <em>bot</em> joina kanal <em>chan</em> z takeover =1</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.tksjoin</strong></font></td><td><em>&lt;slave&gt;&nbsp&lt;chan&gt;</em></td><td>Vsi boti linkani na slave <em>slave</em> joinajo kanal <em>chan</em> z takeover = 1</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.upbot</strong></font></td><td><em></em></td><td>Prikaze vse linkane bote</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.update</strong></font></td><td><em>&lt;bot&gt;&nbsp[URL]</em></td><td>Namesti najnovejso verzijo bota na accountu na katerem je bot <em>bot</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.+user</strong></font></td><td><em>&lt;handle&gt;</em></td><td>Doda uporabnika z imenom <em>handle</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.-user</strong></font></td><td><em>&lt;handle&gt;</em></td><td>Odstrani uporabnika z imenom <em>handle</em></td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.users</strong></font></td><td><em></em></td><td>Prikaze vse uporabnike dodane v botu in jih razporedi po skupinah</td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.whob</strong></font></td><td><em></em></td><td>Prikaze samo slave bote povezane na hub</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.whois</strong></font></td><td><em>&lt;handle&gt;</em></td><td>Prikaze vse znane informacije o uporabniku ali botu z imenom <em>handle</em></td></tr>
+<tr bgcolor="#F0F0F0" valign=top><td><font style="font-family:monospace"><strong>.whom</strong></font></td><td><em></em></td><td>Prikaze samo uporabnike povezane na hub</td></tr>
+<tr bgcolor="#E5E5E5" valign=top><td><font style="font-family:monospace"><strong>.who</strong></font></td><td><em></em></td><td>Prikaze uporabnike in slave povezane na hub</td></tr>
+</table><br>--<br>
+nasal (nasalchy@gmail.com)<br>
+</td></tr></table></td>
+<tr><td colspan="3" align="center"><br>Copyright (c) 2003-2005 <a href="mailto:grusin{at}gmail.com">Grzegorz Rusin</a>. All rights reserved.
+</td></tr></table></body></html>

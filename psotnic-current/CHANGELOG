@@ -1,0 +1,1139 @@
+/************************************************************
+* Changes in psotnic 0.2.x (beta)
+*
+* Copyright (c) 2003-2007 Grzegorz Rusin <grusin@gmail.com>
+* Thanks to: - Esio, esio (at) hoth.amu.edu.pl:
+*              ctcp reply msgs, away msgs, tons of ideas, bug
+*              reports and core dumps ;-P
+*            - Pawe³ (Googie) Salawa, boogie@myslenice.one.pl:
+*              tcl hints, .bottree command
+*            - patrick, patrick@hiddenbox.de:
+*              many patches, modules
+*            - ppl from #psotnic @ IRCnet:
+*              ideas, bug reports, feature requests
+*
+* Here is a full list of changes since the first public release, please
+* read out through this file to get full info about all available
+* commands and features. Please also read HOWTO (polish, english, italian
+* slovenian version are available) from http://polibuda.info/~grusin.
+*
+* Have fun -- pks
+*
+
+Psotnic current (2007/08/24) changes:
+- fixed: #1745405: added SSL_pending (patch by zerg2012)
+- change: #1761109: enhanced .verify [-a|-p|-h|-c] (Esio)
+- fixed: #1742466: snag in chattr code (Esio)
+- added: .rflags <handle> <chan> (this restore flags changed by idiots system) (Esio)
+- added: #1745311: .cwho <bot> <chan> [flags] (Esio)
+- added: noautorejoin module: kicks people that rejoin automatically after being kicked (patrick)
+- fixed: #1722124: .mjoin changes channel status from private to massjoinable (patrick)
+- fixed: #1722117: .list p <bot> (patrick)
+- fixed: #1695096: segfault in addIdiot() function (patrick)
+- fixed: don't save empty passwords of ircservers (patrick)
+- fixed: now will build on FreeBSD 4.11 (made a va_copy wrapper) (uukgoblin)
+- fixed: now should build and work on x86_64 (uukgoblin)
+- fixed: segfaults occuring on x86_64 and possibly i386 too (uukgoblin)
+- fixed: .whois command now show offences correctly (Esio)
+- change: improved offences reporting and managing system (Esio)
+- added: .me command :) (Esio)
+- fixed: update problems on some bots (small ommision in code;>)
+- change: now u can give host as second parameter in +user command (Esio)
+- fixed: bot update himself properly when its compiled with ssl (Esio)
+- added: anti repeat module coded by patrick
+
+Psotnic 0.2.12 (2007/01/12) changes:
+- added: partyline management of invite, exempt and reop modes. Patch by
+  patrick (http://friends.polibuda.info/~grusin/stuff/patches/patrick/
+  partyline_invite_exempt_reop.diff);
+- fixed: compilation problem for static target - patch by patrick.
+- added: seperate passwords for each irc server - patch by patrick.
+- fixed: mode bounce time for IeR modes managed from party line - fix by patrick
+- added: channel protect modes, now it is possible to set which channel modes
+  should be protected - patch by Esio and patrick.
+- fixed: problem with entBool class (no more sigsegv when parameter is NULL) (Esio)
+- added: offences list (Esio)
+- added: idiots code (Esio, patrick)
+- fixed: chattr code: (no more existing negative flags with positive ones) (Esio)
+- fixed: chattr code: (-flag+flag was the reason of desync in userlist)
+    [info: if pre-0.2.11-final-compat is set to ON (default) they will be compatibile 
+    with all versions. in other case the will be compatibile with versions >= 0.2.11] (Esio)
+- fixed: protect-chmodes: invalid chan modes protection (Esio)
+- added: check for adding '*!*@*' to shit- invite- reop- and exempt-list (patrick)
+- added: aliases: wii=whois, idiots=wi idiots, -/+idiot=-/+host idiots (Esio)
+- fixed: modeq beIR flooding problems (patrick)
+- fixed: var missmatch in getIpVersion() which cause compiling error on freebsd (Esio)
+- added: '*' parametr to updates cmd. '*' == all bots without main hub (Esio)
+- change: keepout code works better now (patrick)
+- change: turned off auto restart of bot after succesufull update 
+	[ it can be easy turned on by uncommenting #define UPDATE_AFTER_RESTART 1
+	  in defines.h :) ] (Esio)
+- fixed: .stopudate cmd. now it kill child proccess instead of waiting to the end (Esio)
+- change: now users with 'p' are allowed to read messages from partyline ;) (Esio)
+- change: now bots which are kicking report idiots behaviour instead of one random bot (Esio)
+- added: last 3 offences are now showed in whois reply :)
+	[ it can be changed to more/less by changing the value of MAX_WHOIS_OFFENCES
+	  in defines.h :) ] (Esio)
+
+Psotnic 0.2.11 (2006/10/26) changes:
+- fixed: bot thought that he was already up, when pid file was empty.
+- fixed: .import didn't clear shitlist before importing new data.
+- change: new limit code, instead of one variable for setting limit update
+  time (.chset limit-time), now there are two variables, one is for setting
+  the time when limit is increased (.chset limit-time-up), the other when
+  it is decreased (.chset limit-time-down). Limit-time-up behaves like 'old'
+  limit-time, that is it check the limit periodicaly. Limit-time-down sets
+  the time after which channel limit should be set if the number of users
+  has just fallen down beneeth allowed treshold (that is number of people on
+  the chan - current limit + tolerance).
+- added: pre-0.2.11-final-comaptybility toggle, then toggle is disabled bot will
+  use new limit code.
+- change: removed 'y' and 't' flag, that means that everyone with 'p' flag is
+  allowd to join partyline and that each bot is allowed to connect with.
+  modules loaded (it had sense when psotnic was closed source project).
+- added: suppot for +- flags in chattr.
+- fixed: bot flag import bug resulting from new .chattr code.
+- fixed: .users crash
+- fixed: partyline conn flood bug
+- added: bots rechecks bans on the chan every 1 seconds, if some sticks are
+  not set, it sets them (patch by patrick)
+- fixed: .bots * <flag here> displays correct bots
+- fixed: shits did not expire.
+- added: .bc bot cfg +/-(debug)load module" works, patch by patrick
+  (http://hiddenbox.de/patrick/psotnic/module.diff)
+- added: vcntl.cpp module by patrick
+- fixed: bot keepnick works after colission, bot takes nick when it sees his
+  nick quiting - patch by patrick
+- fixed: bot removes bans upon shits expiration or .-shit - patch by patrick
+- fixed: dl handle leak when unloading modules - patch by patrick
+
+Psotnic 0.2.10 (2006/01/30) changes:
+- fixed: default channel settings wont be applied to channel everytime
+  .mjoin command is used, but only when channel is being created.
+- fixed: bots didnt restart after sccussful update (patch by Bryan).
+- fixed: oidentd spoofing bug.
+- fixed: .update should work again (i broke the code in 0.2.9 ;/), if you
+  happen to be ussing bugged version you can update your bots by issuing
+  .update bot http://polibuda.info/~grusin/update2.php ;)
+- fixed: potential crash when asynchronous resolver was enabled.
+- fixed: http://linux.avt.pl/~dani/psotnic/viewtopic.php?p=1078 bug.
+- added: privmsg voice command.
+- fixed: problems with connecting to ssl enabled irc server.
+- fixed: md5 should work on big-endian machines too.
+- added: few hooks (patch by oroblram:
+  http://friends.polibuda.info/~grusin/stuff/patches/oroblram/pre-post-part.patch)
+- added: keepout .chset option, when this option is enabled, the channel will be
+  instantly locked (+i) and all ppl without flags will be kicked out on sight.
+  Newly joining ppl will also be kicked (patch by patrick:
+  http://friends.polibuda.info/~grusin/stuff/patches/patrick/keepout.diff)
+- fixed: bots were joining channels even when their host was not added.
+
+Psotnic 0.2.9 (2005/09/24) changes:
+- fixed: +e ppl wont be kicked if they match a shit that was applied
+  some time after they have joined a channel.
+- fixed: support of 50 character long channels.
+- changed: rewrote ban, shit and exemption code, this time they should work
+  as expected.
+- fixed: exempted users dont get kicked if they match a ban placed by *any* user.
+- fixed: bot remembers wasop list when it gets disconnected from irc during
+  netplist, additionaly it adds all -f ops left on the channel to it, so that
+  it wont kick 'this side of the split', if he connects to the 'other side
+  of the split'.
+- fixed: get op code should be a little bit faster.
+- fixed: channel settings (chset) were not initialized with default settings (dset)
+  when .rjoin or .sjoin was issued.
+- fixed: modules should compile on g++ 3.4.
+- fixed: bots wont bounce sitcky bans placed by irc server.
+- change: removed 'bug bug >> join to nonexisting channel...' partyline msg, it
+  seemed to be causing to much confusion.
+- fixed: bot joins channel even when his host was not added to userlist.
+- added: ssl support for irc servers, to use it first compile bot with --with-ssl
+  ./configure parameter, second add "ssl_server some.server some_port" to config
+  file, note that this option might not work when mixed with bnc or router option.
+- added: ssl supprort for partyline!!! To enabled it first you have to add
+  ssl_listen <port> line to the config file, then you have to create certs and keys
+  (all needed stuf + README is located in easy-rsa dir). To connect to main you can
+  use either some ssl enabled telnet client (putty does not have this option :/) or
+  and openssl utility (openssl s_client -connect ip:port should work on most boxes).
+  Have fun.
+- fixed: limbo bots are not taken in consideration when doing .mjoin with delay
+
+Psotnic 0.2.8 (2005/09/06) changes:
+- fixed: privmsg commands work also on public chat.
+- fixed: compilation problems on sun os (*again*)
+- fixed: .+shit accepts !,+ and & channels.
+- fixed: user were able to add hosts/shits/users/etc... with nonprintable characters.
+- change: when compiled for debug psotnic will attempt to drop core when recieving
+  segmentation fault signal, additionaly it will dump current backtrace to 
+  .gdb-backtrace-$pid file (located in current working directory).
+- added: when bot crashes it dumps last 30 lines recieved from irc to
+  .irc-backtrace-$pid file (this feature can be disabled by passing
+   --no-irc-backtrace as an argument to ./configure script).
+- added: oidentd-config config option, it value should point to the .oidentd.conf
+  file which is used by oidentd.
+- fixed: increased maximum lenght of userlist file (16 chars was not enough)
+- fixed: +e & shit bug on some systems *g*
+- fixed: global +pt-n (channel) owners are shown in .whom list
+- added: chset bot-op-mode variable, it controls the way the bots op each other:
+  0 - they op only via botnet get op
+  1 - they op via botnet get op and via host mask basing op code, but only when 
+      then  number of ppl to kick is larger then 4
+  2 - they op via botnet get op and via host maks basing op code independently on the
+      number of ppl in kick queue on the channel.
+
+  When takeover is turned on, bots will ignore this variable and op as fast as
+  possible (that is like in mode 2).
+
+Psotnic 0.2.7 (2005/08/14) changes:
+- fixed: compilation problems on various platforms, bot should compile (with warnings)
+  on linux, freebsd, openbsd, sunos and on the latest cygwin.
+- added: ptrace protection, by default it is not enabled, to enable it you have to
+  run ./configure with --with-antiptrace argument, note that this protection can easily
+  be broken by an experienced programmer, but it should be resistant to scriptkidies, also
+  note that each ptrace protected psotnic requires additional system process.
+- change: changed maximum handle len do 15 bytes (it was limited to 12).
+- fixed: bnc support.
+- fixed: grsec crash bug.
+- change: .update command updates bot from source, encryption keys are preserver across
+  updates.
+- fixed: few +p flag bugs.
+- fixed: setting pre-0.2.3-final-compat ON caused bots running on the same machine to
+  generate the same 'random' bounce time of a ban/invite/exempt.
+
+Psotnic 0.2.6 (2005/07/24) changes:
+- fixed: bots wont remove stick bans on botnet unban reqest, they will
+  invite banned bot instead.
+- added: .chset invite-on-unban-request, when enabled bots will invite banned
+  bot instead of removing ban.
+- change: psotnic goes GPL :)
+
+Psotnic 0.2.5 (2005/07/17) changes:
+- fixed: bots do not shit +f ppl on nick change (for sure)
+- fixed: cron issue on linux-grsec boxes (at least i think so)
+- fixed: if .chset #channel lockdown is enabled bots will try to lock channel for
+  .chset #channel lockdown-time when clone activity is observed.
+- change: bots no longer set +snt mode when joining empty channel.
+- added: simple regain op.
+
+Psotnic 0.2.4 (2005/07/03) changes:
+- fixed: ppl that are matching any mask in EXEMPT list are not shited on join.
+- fixed: bots do not shit +f ppl on nick change.
+- fixed: ctcptype has been marked are readonly, it can no longer be changed via partyline.
+- removed: .reset idle command.
+- fixed: race condition that caused user not get kicked if he changes nick.
+
+Psotnic 0.2.3 (2005/04/29) changes:
+- fixed: rare bot crash when asynchronous resolver was enabled.
+
+Psotnic 0.2.3rc12 (2005/04/28) changes:
+- fixed: .set clone-life-time crashed bots.
+- fixed: bots with _crazy_ flags are reported by .bt command.
+- fixed: .update does not leave zombies :)
+- fixed: hub and slave memory leaks.
+
+Psotnic 0.2.3rc11 (2005/04/17) changes:
+- change: xorshift will soon become the default random number generator, since
+  it gives different random numbers then the one from previous releases it
+  is not enabled by default, switching .set pre-0.2.3-final-compat to 0 will
+  disable compatibilty with previous versions of bots (= it will enable use
+  of the new algorithm for gererating random numbers).
+
+Psotnic 0.2.3rc10 (2005/04/13) changes:
+- fixed: sudden time changes do not make bots leave irc (reported by ufoonline)
+- fixed: .update errors on some systems
+- added: freebsd 4.11 support :)
+
+Psotnic 0.2.3rc9 (2005/04/10) changes:
+- fixed: pthread bug -- resolver did not start at all :)
+
+Psotnic 0.2.3rc8 (2005/04/09) changes:
+- fixed: when rejoin delay is set to 0 bots rejoin instantly, not after
+  1 sec delay.
+- fixed: .wi hub does not tell that hub is not linked.
+- fixed: .bt shows correct number of bots.
+- added: .chanset check-shit-on-nick-change, use this option with caution
+  beacuse it can slow down your botnet dramaticaly when a huge amount of
+  shits is present.
+- added: .chanset check-shit-on-nick-change can also be enabled per bot via
+  a config option of the same name.
+- fixed: minor memory leaks.
+- fixed: .dset was not applied when channel was created by .rjoin cmd.
+- fixed: async resolver multiple resolve bug.
+- added: .stats displays detailed info about hashtables.
+- added: .list U also displays cpu usage.
+- added: by default bot flushes unused dns cache entires every 2 hours, flush
+  time can be controlled by `domain-ttl' config file option.
+
+Psotnic 0.2.3rc7 (2005/04/06) changes:
+- fixed: flaws in dset caused hub to crash.
+- fixed: in case of bot handle collisions (hacked/invalid packet errors)
+  bot gets disconnected.
+
+Psotnic 0.2.3rc6 (2005/04/04) changes:
+- fixed: all known bugs introduced in 0.2.3 tree.
+- change: added hasing algorithms to lists, this should give major
+  speedup in user lookups (up to 512 times more effitient), this speedup
+  cost you 10KB of ram per channel, but i think that it is worth it.
+- added: .dset partyline command -- default chansets for new channels.
+
+Psotnic 0.2.3rc5 (2005/03/23) changes:
+- change: set maximum allowed bot nick len to 15 chars.
+- change: set maximum allowed handle laen to 15 chars.
+- fixed: rjump bug.
+- fixed: hub crash on userlist reload.
+
+Psotnic 0.2.3rc4 (2005/3/21) changes:
+- fixed: few 0.2.3rc1 bugs.
+- added: new .chset option 'strict-bans', this option toggles between
+  strict ban checking and easy to fool one (strict ban checking was
+  introduced in one of 0.2.2rcs).
+- fixed: .bc works also for hub's handle.
+
+Psotnic 0.2.3rc3 (2005/3/20) changes:
+- fixed: more 0.2.3rc1 bugs.
+
+Psotnic 0.2.3rc2 (2005/3/20) changes:
+- fixed: bunch of bugs introduced in 0.2.3rc1 :)
+
+Psotnic 0.2.3rc1 (2005/3/20) changes:
+- change: rewrote .set and .chset code.
+- change: .wi bot_handle shows if bot is linked or not.
+- change: fixed mask conflict bugs.
+- fixed: channel join bugs.
+- fixed: str2words bugs (specialy crafted string could allow attacker
+  to get last used password ;-)
+- change: new module framework (not completed yet, so dont dare to use modules :-).
+- change: config file can be edited via partyline, to get available
+  options type .bc <bot> cfg,to change an option type .bc <bot>
+  cfg <option-name> <new value>, to save config file please type
+  .bc <bot> cfg-save.
+- added: on join asynchronous host resolver, by default number of resolving
+  threads is set to 0 (resolving is disabled), this value can be controlled
+  by a config option 'resolve-threads' (all changed made to this option will
+  be visible after bot's restart).
+- change: all logging capabilites of bot have been disabled.
+
+Psotnic 0.2.2 (2004/12/20) changes:
+- change: +f ppl will never be banned.
+- change: mode queue no longer requieres user to have +v flag
+  in order to get voiced.
+- added: ipv6 cidr ban support.
+
+Psotnic 0.2.2rc19 (2004/12/10) changes:
+- fixed: hub crashes on .stopupdate hub.
+- fixed: bot update
+- fixed: .gset bot crash.
+- fixed: .mjoin changes channel status from private to massjoinable.
+
+Psotnic 0.2.2rc18 (2004/12/7) changes:
+- added: cisco router support (it only works for irc conns). To enable
+  it add `router ip port pass' to the config file.
+- fixed: wrong bot pass error.
+- added: `.bc <bot> pset' command.
+
+Psotnic 0.2.2rc17 (2004/11/29) changes:
+- fixed: -keI handling (reported by neo`de)
+
+Psotnic 0.2.2rc16 (2004/11/??) changes:
+- fixed: channel names were not chacked for validity upon addition.
+- fixed: reconnect timers.
+- fixed: unregistrated connections to hub are killed after .set auth-time
+  (previously they were killed after .set conn-timeout)
+
+Psotnic 0.2.2rc15 (2004/11/21) changes:
+- fixed: sth-here!*@* ban should never match *!sth-here@sth-here
+  entry i nthe userlist, otherwise ppl could have problems with
+  placing `nick' bans ;)
+- fixed: few modeq issues.
+- change: .update command should work fine for all new bots, in case
+  when default update site is down, owner can supply custom URL as
+  a second parameter (URL must be `slash' terminated).
+- change: since second parameter to the .update command is an URL
+  stop and force feature is no logner supported by .update command.
+- added: .stopupdate command :)
+- added: .list U reports botnet uptime.
+
+Psotnic 0.2.2rc14 (2004/11/20) changes:
+- fixed: dont-trust-ops was working in the improper way (=other then
+  described in rc13 changelist).
+- change: when dont-trust-ops is set to 2, only ppl with +f are
+  allowed to op bots, otherwise bots can be oped by anyone.
+- fixed: hub crashes when it recives botnet join command from bots
+  that were not present in the userlist.
+- change: ban matching function understands cdir and uid bans (uid
+  matching is only used for bots).
+- change: after connecting to hub slave always fetches userlist.
+- change: -n ppl are not allowed to remove +e/+I modes from the channel.
+- fixed: all instances of backed up mode are removed from mode queue when
+  the mode that was backed up was placed on chan.
+- fixed: .list p bug.
+
+Psotnic 0.2.2rc13 (2004/11/08) changes:
+*********************************************************************
+*           BEFORE UPGRADING PLEASE .EXPORT YOUR USERLIST           *
+*********************************************************************
+- added: if .set dont-trust-ops is set ppl having +o and not having
+  +s or +b flag can only get @ from ppl having +f flag, otherwrise
+  oper and oped person are kicked (requested by CiuBe)
+- fixed: dynamic bans are a little bit more inteligent, they try to
+  group modes (the way they are doing that still pathetic but...
+  thats better than nothing, requested by Gunman)
+- fixed: sticky bans are _really_ placed on channels after addition.
+- fixed: psotnic binary can be used for decrypting any encrypted file
+  (reported by KrzychuG)
+- change: channel name may consist of any ASCII characters, to remove
+  channel containig non printable characters use .-chan <channel num>
+  command.
+*********************************************************************
+*           BEFORE UPGRADING PLEASE .EXPORT YOUR USERLIST           *
+*********************************************************************
+
+Psotnic 0.2.2rc12 (2004/11/04) changes:
+- fixed: channel joining issiues introduced in rc11 :)
+- fixed: .sjoin notiffication bug
+
+Psotnic 0.2.2rc11 (2004/11/01) changes:
+- fixed: bots enforce shits on user that has +c flag.
+- fixed: userlist is saved upon shit expiration.
+- fixed: sticky ban handling.
+- fixed: sticky bans are placed on channels after addition.
+- fixed: bot didnt join channel if he got disconnected between
+  sending JOIN #chan and actualy joining the channel.
+
+Psotnic 0.2.2rc10 (2004/10/19) changes:
+- fixed: stability issues.
+
+FREEBSD,OPENBSD ONLY:
+- fixed: if bot crashes at startup try running it with `-l'
+  option this will disable changing ulimit -c to unlimited.
+
+Psotnic 0.2.2rc9 (2004/10/18) changes:
+- fixed: bot should work fine on openbsd.
+- fixed: ctcp flood protection was not working at all ;-)
+- fixed: .-shit permission bug.
+
+Psotnic 0.2.2rc8 (2004/10/16) changes:
+- fixed: bot crashed on userlist update if not all channels
+  were synced.
+
+Psotnic 0.2.2rc7 (2004/10/16) changes:
+- fixed: double partyline messages.
+- change: bot changes ulimit -c to unlimited on startup.
+- fixed: +p bot flag should work fine.
+- fixed: .+shit adds sticky shit ;-).
+- change: due to the fact that source code of 0.2.1 has gone public
+  (some ppl claim that they have the source) I have changed encryption
+  keys, all newly created files will be encrypted using new keys, so make
+  sure that you make an export backup of your userfile before upgrading.
+  I strongly recomend you to reencode all your config files (userfile will
+  reencode itself after first save).
+
+Psotnic 0.2.2rc6 (2004/10/10) changes:
+- fixed: bugs in ip ignores.
+- added: sticky bans, to add one simply type .+stick instead of .+shit.
+- change: when enforce-bans is set to 2, -o user bans are enforced.
+- change: when protect-chmodes is set to 1 only `klIeRisp' modes are
+  protected, setting this var to 2 enables protection for rest of modes.
+
+Psotnic 0.2.2rc5 (2004/10/2) changes:
+- fixed: hub bot crashed when shit expires.
+- change: by default {host,ident,proxy}-clones do not expire.
+- fixed: bIe-mode-bounce-time integer overflow.
+
+Psotnic 0.2.2rc4 (2004/09/27) changes:
+- change: NEW BOTNET PROTOCOL (_NOT_ compatible with the previous one)
+- fixed: hub crashes on unlink of down bot.
+- change: only bots with 'y' flag can access botnet with
+  loaded modules.
+- fixed: mcycle sets proper rejoin delay.
+- fixed: value of invite-bots (instead of getop-bots) is used
+  for determining how much bots should invite kicked person
+  with +i flag on locked channel.
+- fixed: +i user kicking himself crashes bot (system dependent)
+- fixed: shitlist updating issues.
+- change: each leaf's `list p' reply is relative to the hub not
+  the slave leaf is connected to.
+- added: `list u', it prints system information.
+- added: `p' flag for users, user with such flag is allowed
+  to enter partyline (since now global +s, enforces +p), user
+  with +p but not having +n will have limited access to the
+  partyline, he will be allowed to do following things:
+  * add/remove/list shits on channels where he has +n.
+  * add/remove/list hosts in handles having flags only set
+    on those channels where he has +n
+  * add/remove/list hosts in his handle
+  * send messages to the party line, but not receiv them
+  * use .users .match .bye .quit .abuse and .help command ;-)
+- change: `t' flag no longer enforces 'n' flag.
+- change: list command accepts third argument - name of a bot.
+- change: bot that joins channel as a first sets +snt mode if
+  channel does not have any of +n, +s or +t modes set.
+- fixed: channel unlocking due to lockdown.
+- change: status accepts second argument - name of a bot.
+- added: `list i' - it gives information about irc server, host
+  and wheather host is added to userlist.
+- change: bots with ip set to 0.0.0.0 can connect to the botnet
+  from any ip, due to this fact whole authentication is only based
+  upon password, so make sure that it is long enough :)
+- fix: ipv6 botnet unban bug (ipv4 address was reqested to be
+  unbaned instead of ipv6 one).
+- added: .chset protect-chmodes, setting this to 0 will
+  stop bots from protecting channel modes.
+- change: info about bots host/connection problems is
+  send to each owner after joining the partyline, the same
+  info is also send by each bot joining the botnet.
+- fix: removed false `unknown option: debugLoad and load' errors.
+- added: `dontfork' config option, setting that to 1 will force
+  bot not to fork upon startup.
+- fix: list c only shows channels that bot is mjoin or rjoined to.
+
+Psotnic 0.2.2rc3 (2004/09/17) changes:
+- fixed: use of .shits and .-shit is properly announced
+  on the partyline.
+- added: loadable module support (see framework/README for
+  info about writing modules). To load a module one has to
+  add `load module_path/module.so' line to the config file,
+  Upon encryption of config file module md5 sums are calculated
+  to make sure that nobody subtracts your module with one
+  of his own. Developers should load modules with `debugLoad'
+  command (md5 sum wont be calculated, so you wont have to
+  make new confiog file each time you change sth in your module :)
+
+Psotnic 0.2.2rc2 (2004/09/14) changes:
+- added: http client supports HTTP/1.0 vhosts.
+- fixed: use of .rjoin is properly announced on the partyline.
+- added: bots remove ip bans placed upon other bots.
+- fixed: mode queue `-i', `-k' and `-l' mode support.
+- added: shitlist (channel and global), only -f users can
+  trigger a shit, channel shits are have bigger priority
+  then global ones.
+- added: kick queue remembers kick reasons, when doing
+  multkick the reason will be set to the reason of the last
+  kick.
+- added: kick reasons for kicks resulting from enforcing bans
+  and limit overrides.
+- added: .+shit enforces newly added shit.
+- change: shit expiration is controled by hub, this may look
+  odd, but when you think it over you come to the conclusion
+  that this is the only way of avoiding desyncs in shitlist
+  because its highly probable that each bot has clock set
+  to different time (shit would expire at random moments on
+  random bots).
+- added: alternative slave support (leaf only), in order
+  to use this feature leaf's config file must be modiffied
+  in the following way:
+  * `hub' line must contain hub handle as a 4th argument
+    (eg. hub 192.168.0.1 9000 password123 slave1).
+  * at least one (max 32) `alt' line must appear.
+    (eg. alt 192.168.1.1 8000). This line informs leaf about
+	other slaves to connect to in case when main slave (the
+	one defined in `hub' line) is down.
+
+  `The Where To Connect' algorithm:
+  * each hub (alt or slave) has its own failure counter.
+  * each failed connection attempt to alt or slave increases
+    failure count by 1.
+  * slave is considered down when number of failed connections
+    reaches 3 and there is at least one alt.
+  * when slave is down leaf jumps to the alt having lowest
+    number of failures, in case where 2 or more alts have
+	the same number of failures leaf jumps to the random one.
+  * whenever connection attempt to alt ends in failure slave's
+    failure counter is decreased by 1.
+  * leaf stays on alt until he sees that his slave (thats why
+    we need slave's handle name) has joined the party line.
+  * each successful connection to slave or alt zeros failure
+    counter.
+
+  Thats all, if you think that you can think of better algorithm
+  please let me know.
+- change: .set hub-conn-delay default value has been changed
+  from 60 to 20 seconds.
+
+Psotnic 0.2.2rc1 (2004/9/2) changes:
+- added: mode queue capable of grouping single modes
+  into multi mode (3 modes with argument + 5 modes
+  without it) and delaying them by given time.
+- added: mode sanity checks, eg. bots wont op
+  person who doesnt have +o flag or allready is oped, etc.
+- added: +v and +q flags support.
+- change: privmsg op command does not require third
+  argument (= channel).
+- change: there are two quques, one for handling ilIbeRk
+  modes and for reoping bots (flushed as soon as
+  bots penalty drops below 10) and second one for
+  rest of modes (flushed only when penalty drops to 0)
+- added: +r (reop on deop) flag support.
+- change: tuned penalty for kicking ppl, this should give
+  30-60% increase of kick speed when kicking huge amount
+  of ppl.
+
+Psotnic 0.2.1 (2004/06/25) changes:
+- fixed: semi endless loop on second userlist update.
+
+Psotnic 0.2.0 (2004/06/25) changes:
+- added: ./psotnic -a <config files> adds psotnic
+  to cron.
+- change: when clonecheck is set to 1 +c users arent
+  kicked when they host matches ban placed by bot, setting
+  that option to 2 disables this feature.
+- added: +R (reop) mode support, +R modes can only be
+  added or removed by +n user, if -n user attempts to
+  change reop mode he will be kicked and mode will
+  be bounced.
+- change: by default bot sets its nick to uid (only
+  on 2.11 servers, ofc) if its nick is taken (if you
+  dont like this set altuidnick to 0 in the config file)
+
+Psotnic 0.2.0rc11 (2004/6/20) changes:
+- fixed: sending of null WHO string.
+- fixed: sending of null JOIN string.
+- fixed: bot joins all channels in one go after
+  fetching userlist.
+- added: punish -f invited users and users who invited
+  them, masters are not punished for inviting (invited
+  person is still kicked out), channel owners are allowed
+  to invite whoever they wish.
+- change: bot after conecting to irc checks if its host
+  is added to its handle, if it is not bot will refuse
+  to join channels, as soon as smb adds valid host bot
+  will join channels with .set quarantine-time delay
+  (delay was added in order to make sure that new host
+  has already propagated).
+- fixed: setting variable value beyond allowed range
+  crashes hub.
+- fixed: hub memory leak.
+- fixed: .chpass <bot> <pass> command was desyncing
+  userlist serial number on leafes.
+- added: bot with restricted connection will try to
+  reconnect every 15 seconds, every -r regain failure
+  increases reconnect time 3 times.
+- added: bot that lost his ident (true when current host
+  is not added and current host with striped ~ or ^ is
+  added) will try to regain ident every 15 secs, every
+  failure increases reconnect time 3 times.
+- added: class C clone check (ipv4) and prefix 64 clone
+  check (ipv6), checks are variants of host based check
+  so the limit of those clones will be equal to the value
+  of host-clones variable.
+- change: match function used for matching host accepts
+  new wildcard '%' (it matches '+', '-' and '='), this
+  wildcard can be used ie. to remove +r ppl with plain
+  ips from clone check (*!%*@#*.#*.#*.#* mask)
+- added: bnc support, to connect to irc via bnc add
+  bnc <ip> <port> <pass> line to the config file.
+- added: bnc vhost support, value of config file vhost
+  option will be passed as argument to VIP (vitual ip)
+  command, so make sure that correct vhost is set.
+- fixed: laggy bots were asking for WHO too many times
+  that could cause either a mass kick on a channel
+  (because there were more users then the value of limit)
+  or bot crash.
+- change: bot is now compiled for i586, Phear 486 users ;)
+
+Psotnic 0.2.0rc10 (2004/6/10) changes:
+- fixed: settings that had values having more then
+  4 digits were not parsed (lame int overflow check)
+
+Psotnic 0.2.0rc9 (2004/6/10) changes:
+- fixed: mass kick on bot join bug (at least i think so)
+
+Psotnic 0.2.0rc8 (2004/5/29) changes:
+- fixed: bot burst joined even those channels which were
+  not assigned to him.
+- fixed: update bugs :)
+
+Psotnic 0.2.0rc7 (2004/5/29) changes:
+- fixed: .update bug.
+
+Psotnic 0.2.0rc6 (2004/5/29) changes:
+- change: hosts, channels and handles may contain any of
+  those letters: "±¶³óñê¹è¾¿¼æ"
+- fixed: .whob and .sjoin segfault.
+- change: bots ip addresses are also taken in consideration
+  when .bots *sthhere* is used.
+- fixed: many bugs introduced in 0.2.0 tree.
+- change: "bot" gets kicked if he deops smb.
+- change: bot groups JOINs.
+- change: bot groups WHO queries in groups of 10.
+- change: bot groups MODE queries in groups of 4.
+- added: psotnic has built in http clinet so no third
+  party bash scripts are needed.
+- added: .-host #number command.
+- added: passive dcc, just type /m hub chat and hub will open
+  telnet like dcc chat connection ;-)
+
+Psotnic 0.2.0rc5 (2004/5/20) changes:
+- change: when telnet-owners is set to 2 owners will be let
+  into the partyline only when their _IP_ is added to their
+  hostlist (eg. [# 5] *!pks@127.0.0.1, ident does not count
+  but it is much safer this way).
+- change: new .whob, .whom and .who look.
+- change: handle name is limited to 9 characters.
+- change: new .wi look.
+- added: .echo on|off command.
+
+Psotnic 0.2.0rc4 (2004/5/19) changes:
+- fixed: !channels support
+- added: channel, host and handle names may only contain
+  printable ascii characters.
+- added: .+info <handle> <key> <string> command.
+- added: .-info <handle> <key> command.
+- added: .info <handle> command.
+- added: .spart <slave> command.
+
+Psotnic 0.2.0rc3 (2004/5/15) changes:
+- fixed: .restart command removes pid.$nick
+- fixed: temporary hosts (those from +p bots) are properly
+  propagated.
+
+Psotnic 0.2.0rc2 (2004/5/14) changes:
+- fixed: bug that could cause mass pacification of -o+@ users
+  on channel if bot got disconnected.
+- added: new bot flag 'p', bots with this flag will anounce
+  their new host (or lack of it if they get disconnected).
+- added: +p bots anounce new host when their nick changes.
+- added: .chhandle <handle> <name>.
+
+Psotnic 0.2.0rc1 (2004/5/10) changes:
+- fixed: mcycle gets propagated when salves are not on irc.
+- fixed: bot crash when bot gets disconnected in midle of
+  downlading userfile.
+- fixed: channels are now rechecked on each userlist save.
+- fixed: if i am up check.
+- fixed: channel key handling.
+- added: .chset lockdown variable. If set bots will lock
+  channel if any kind of clone activity is detected.
+- added: .set critical-bots. If number of bots on a channel
+  drops below value of this variable, bots will try to lock
+  channel, setting only applies to channels with lockdown
+  set to 1.
+- change: Bot token authorisation is encrypted, encryption key
+  is based on botnetword.
+- change: config and userlist encryption keys has changed.
+- change: no more "(bot) Entering AWAY|CHAT ..."
+- change: channels are divided into two groups: private (only
+  given bots join channels of this type) and mass channels
+  (all bots join channels of this type).
+- change: .+chan <channel> [key] creates private channel.
+- added: .rjoin <bot> <channel> [key] command.
+- added: .tkrjoin <bot> <channel> [key] command.
+- added: .sjoin <slave> <channel> [key] command.
+- added: .tksjoin <slave> <channel> [key] command.
+- added: SOCKS5 support.
+
+Psotnic 0.1.7 (2004/3/26) changes:
+- fixed: crash on channel rejoin.
+- fixed: +t flag no longer enforces +s flag.
+- added: .update <bot> command. This command starts psot-get script
+  and attempts to update bot, script's output is redirected
+  to the partyline.
+- added: .restart <bot> command.
+- change: global +xnts flags can only be only given by +x ppl.
+  channel +n flag can be given by any +n user.
+- change: new match command, sytanx: .match <expr> [flags] [chan].
+  It only matches user handles, if flags are empty (ie. '-', '*')
+  then only users having non zero flags will be displayed.
+- change: new bot command, syntax: .bot [expr] [flags], if no expr
+  is given then it shows a list of bots, otherwise it works like
+  .match command for user handles.
+- change: {ident,host,proxy}-clones moved from chset to set.
+- added: chset cloncheck option.
+- change: -f ppl get kicked for oping ppl without flags (so whats the diff
+  between -f and +f? one would ask, +f dont get kicked when irc server
+  ops them and they are not on wasop list.
+- change: +m gets kicked if he ops more than two person in a single mode.
+
+
+Psotnic 0.1.6 (2004/3/22) changes:
+- fixed: function resposible fo checking if bot is already
+  up, name of binary file is now not important, only
+  arguments to binary file are taken in consideration.
+- fixed: .users command.
+- fixed: autoop.
+- fixed: unban bug.
+- added: .names <bot> [chan] command.
+- added: clone check against ident, host and proxy clones
+  ({-,+,=,~,^}*@*.domain.tld clones). Clones are checked
+  _only_ during normal channel join, never during netjoins.
+- added: bots bounce bans after .set bIe-mode-bouce-time
+  + <random value from 0 to 600> seconds.
+- fixed: bans placed by bots are never imediatly bounced back
+  (even when they match +xs|b masks)
+- added: setting .chset {ident,host,proxy}-clones to 0 disables
+  given clone check method, setting bIe-mode-bouce-time to 0
+  disables mode bouncing, setting .set clone-life-time to 0
+  disables clone checking on all channels.
+- added: .rjump6 command.
+- fixed: ipv6 connect() is done in asynchronious way.
+
+Psotnic 0.1.5 (2004/3/16) changes:
+- bug hunting season hunting has begun.
+- bot properly returns from away.
+- fixed bug in propagation of '%' variables
+  from .set and .chset.
+- no more crashes while channging away status
+  (only for ctcptype = bitchx).
+- fixed race condition that caused slaves to send
+  userfile to bots that are not connected to them ;-)
+- after takeover one of bots setups nice topic.
+- in takover mode netjoining ppl will be kicked
+  if channel limit is exceeded
+- Successful lookups are not shown during bootup.
+- +d flag does not override flags over and including +n.
+- fixed "-ooo bots" crash.
+- user will be punished if he takes an offensive action
+  over user with _higher_ level, levels go as follows:
+  k,d,-,q,v,o,f,m,n,s|b,x.
+- +o-f ppl will be kicked if they recive op from irc
+  server if they are not on wasop list. (+o-f still can
+  recive op via MODE from _any_ oped user --pending).
+- allowed op list (introduced in 0.1.2) lasts for
+  60 seconds (not togable).
+- +i (auto invite if +i is set on channel or limit is low),
+  +k (kick on join) flags introduced.
+- +r, +c, +e flags were also introduced but they are unused.
+- fixed ipv6 resolver.
+- fixed crash on parsing kick queue (usualy happended
+  on netsplit, thx to esio for delivering 179 clones for
+  testing ;p)
+- increased default was-op-cache-time to 30 minutes.
+
+Psotnic 0.1.4 (2004/3/10) changes:
+- wrong version msg fixed.
+- .list c does not crash bots that are not connected to irc
+
+Psotnic 0.1.3 (2004/3/10) changes:
+- you wont be able to start the same instance of bot twice
+  so feel free to add bot to cron witch out any third
+  party botchks scripts.
+- changed random numer generator from "good" old system
+  dependent rand() to Isaac random number genrator
+  <http://burtleburtle.net/bob/rand/isaacafa.html>.
+- fixed bitch problems.
+- bots will rise channel limit if bot demands a join
+  (if limit is set to -1 bots will invite the bot)
+- newly joined and oped bots wont change channel limit
+  if it is set to -1
+- .-host command propagates through botnet (*woops*)
+- added .list a|s|c|p|d command.
+- added getunban.
+- version of epic, irssi or bitch that is used in ctcp reply
+  is now fetched from the system, if app is not installed
+  default version is used.
+- .rjump accepts hostnames (use with caution, coz synchroniuos
+  lookup is performed).
+- lots of ctcp fixes.
+- if no ctcptype is specified in the config file bot will
+  use random one.
+- unit conversion functions ;-)
+- .set public-away added.
+
+Psotnic 0.1.2 (2004/3/3) changes:
+- fixed "i am 2 lame 2 fetch ops from WHO rpl" bug
+  that was introduced in 0.1.1 :D
+- added .rcycle .boot .rjump commands.
+- fixed .bottree command.
+- changed oping style a little bit, now bots joining
+  a channel where there is not too much to do (eg. nobody
+  to kick) will not do +ooo after recieving an op.
+- after beeing kicked from channel bot makes so called
+  good ops list (all ops not beeing in the kick list and
+  not having +f flag are placed there), if upon joining
+  to the channel smb having @ and not having +f and not beeing
+  in that list will be automaticaly added to kick list ;)
+- wasopstest data wont be lost after leaving the channel due
+  to kick or cycle.
+- notices concerning (dis)connects from/to irc are now shown
+  in the partyline.
+- fixed reaction on MODE +l from the irc server, nobody will
+  be kicked due to limit change.
+
+Psotnic 0.1.1 (2004/3/1) changes:
+- stability fixes to 0.1.0
+
+Psotnic 0.1.0 (2004/2/28) changes:
+- Bots are divied into 3 groups, main (+h flag), slaves(+s flag)
+  and leafes (+l flag | no flags).
+- .chanset takeover togles whenever bot should kick -of oped ppl
+  upon recieving an op.
+- Fixed many buffer overflows.
+- added tcl support.
+- removed tcl support ;)
+- userlist, config file and links between bots are encrypted
+- added wasoptest (togable), bitch mode toggle
+- fixed +l handling suuport.
+- MODE +l -1 makes bots to keep channel locked (all non +f ppl will
+  be kicked upon join), when +l -1 is set bots wont ajust channel
+  limit unles +n changes limit to sth else.
+- wrote new getkey and getinvite code.
+- leafs do not save userfile.
+- rewrote ctcp system, ctcptype config var takes following vaules:
+  0 = none, 1 = psotnic, 2 = irssi (default), 3 = epic, 4 = lice,
+  5 = bitchx, 6 = dzony loker, 7 = luzik, 8 = mirc 6.12
+- bots invite themselves opon kick when channel is locked and
+  there is not much kickng to do.
+- added protection against conn flooding, by default bot will ignore
+  ceratin ip if it tryies to connect to him more then 30 times in a
+  half of minute, furthermore bot will block connections from all
+  ips if there would be more than 100 conenctions in 30 seconds
+  and finaly bot will *not* show conenction attempts, errors etc if
+  number of connection from cetrain ip is higher then 6 per 30 secodns.
+  (all numbers are togable via .set commands)
+- invite queue and ctcp queue are flushed every 3 seconds.
+- lots of minor changes ;)
+- disabled features from previous versions:
+  - shitlist
+
+Psotnic 0.0.23 (2003/10/11) changes:
+- .owners shows all owners insted of last owner in the list.
+- Turned off `sophisticated' config error checking which was
+  was source of false errors on FreeBSD.
+- Changed order of arguments to bot's binary (run binary
+  to see the list of arguments).
+- Config file option `ownerpass' accepts MD5 `hex' hash of
+  owner password. To get the hash of your password run bot
+  with `-p' argument and supply password, now copy-pase
+  generated hash into the config file and you are done.
+  (For dumbies: to set owner pass to `foobar' add to config
+  `ownerpass 24e70511c32ad46bf53302a9717c651b' ;=)~
+- Both userlist and log files have default chmod of 600
+  (allready existing files will have their attributes
+  changed to 600 uppon execution of bot).
+- Added `.passwd <handle> [password]' command.
+- Users having `nt' flags set can connect to hub via telnet,
+  to do that, connect to listen port (the one you have
+  secified in the config file) and type `ownerpass' from
+  the config, next enter your handle name and password,
+  users with empty password are automaticly rejected.
+- Colons (`:') are visible on partyline.
+- By default telnet connections are disabled, to turn them
+  on .set telnet-owners to 1.
+- Owner handle can only be modyfied (.-user, .+host, .-host
+  .chattr, .passwd) by `sn' users, this should prevent
+  "password change wars" between owners ;)
+- Only `sn' owners can manage (read/write) bots and settings.
+- `ownerpass' is now mandatory option.
+- Setting up the hub is now done in eggdrop style, that is:
+  after hub has been started and no handles have been found
+  in the userlist hub will wait for `mainowner <handle>
+  <password>' privmsg, if he recieves it he will create new
+  immortal owner (channot be deleted) and fork() into the
+  background. Main onwner is an owner whose handle cannot be
+  modyfied by other owners (even +s owners).
+- Removed `owner' option from the config file.
+- .chattr restriction were applied, -s owners cannot give
+  themselfes +s and/or +t flag.
+- Hub will automaticly add himself to bot handle with
+  `nick*!ident@host.com' host after recieving valid mainowner
+  privmsg.
+- Bot does not crash on netsplits ;)
+- Added ctcp emulation, tweak ctcptype config option to satisfy
+  our needs	(0 = none, 1 = psotnic,	2 = irssi (default),
+  3 = epic, 4 = lice, 5 = bitchx [not complete])
+- Changed partyline display to be more eggdrop like.
+- Added .mk <ops|nonops|all> <#channel> [lock|close] command
+- Added .status command, it gives short info about hub and botnet
+- .users is now more h3ck3rish :D
+- Added op|key|invite <password> <#channel> privmsg command.
+  (to get oped you need to have +o on channel, to get invited
+  or be given key you need to be +f)
+- Only +n (global or channel) ppl can cast more than one +o per
+  mode, all other users trying to do +ooo (or +oo/+ooo) will be
+  punished ;-)
+
+Psotnic 0.0.22 (2003/09/07) changes:
+- Maximum value of bot-auth-time is set to 30 seconds.
+- Changed bot-auth-time to auth-time coz it also applies to
+  owners.
+- Added ping timeout to connection between bot and hub, if
+  within .set ping-timeout seconds no data arives from
+  the other end of socket, bot will treat this socket as dead
+  one. Furthermore bot/hub will send dummy messages to all
+  botnet sockets every ping-timeout/3 seconds. "Dead" owners
+  are seen after 2 hours (or whatever /proc/sys/net/ipv4/
+  tcp_keepalive_time is set to).
+- Bot no longer kicks -f users for deoping themselfes.
+- If in config file keepnick is set to 1 bot will try to regain
+  nick every .set keep-nick-check-delay.
+- Bot will try to join channels witch are locked due to
+  network split every .set rejoin-fail-delay.
+- Added .nick command, it allows changing nick of hub or
+  nick of any bot in the botnet.
+- By default bot saves changed nick to userlist, if you
+  dont like this behaviour .set save-nick to 0.
+- Added 4th parameter to .+chan (.join) command, it sets
+  join delay, if it is < 0 it delays whole botnet join by
+  given value, if it is > 0 it sets delay between each bot
+  join, eg. .join #foo * -7 (if channel is not key protected
+  just enter bogus key) will delay whole join by 7 seconds,
+  .join #bar * 2 will tell hub to join imediatly, first bot
+  to join in 2 seconds, third bot join in 4 seconds, and so on.
+- Code compiles on FreeBSD ;-)
+- When .chset limit-chan-users is set, bots (either one or two)
+  will try to maintain number of users on channel by setting
+  limit every .chset limit-update-time to <number of ppl on
+  channel> + .chset limit-update-by. Current limit code is lame
+  so give bots some time to catch synchronization (aprox 4
+  limit changes). Ahhh, nearly forgot, if new bot appears on the
+  channel there is a big chance that limit will be updated even
+  when it was set few sec ago :)
+- .cycle accepts bot name as second parameter.
+- Chansets are properly saved in userlist file :)
+- Old channel keys are removed from userlist if there is no key
+  on the channel (togable via .set remember-old-keys).
+- Removed bug that prevented some keys to be saved into userlist.
+- Changed maximum values of variables from 65535 to 2147483647.
+- Since now .chset protect-mode-bots will try to protect channel
+  modes when they are changed by -m user, setting var to 0 will
+  turn off mode protection.
+- Added timeout to IRC connection.
+- Bot now logs events to file, current event set is *VERY* limited
+  and not configurable, I will expand it in near future :)
+- After execution bot's process goes into background.
+
+Psotnic 0.0.21 (2003/09/01) changes:
+- *********************************************************
+-  OLD USERLIST IS NOT COMPATIBLE WITH THIS VERSION OF BOT
+- *********************************************************
+- .chset variables now have right value ranges.
+- info about change of variable is sent to all owners.
+- .gset introduced, this command changes value of given
+  variable in all chansets.
+- .gset without suffitient number of arguments acts like .set
+  but displays variables and values from chansets.
+- added aliases for .match: .whois & .wi
+- added alias for .chset: .chanset
+- if ownerpass is set in hub config file then all owners will
+  have to enter it after dcc chat connection had been established.
+- signs on the sky say that bot understands channel flags, just
+  put channel name as last argument to chattr to change them.
+- flag 'd' (kick when oped) overrides all flags.
+- stop-nethack is .chset togable.
+- added 'idiots' user, by default it has +d global flag, all
+  commands except .[+|-]user are understood, allowed flags for
+  this user are restriced to 'd' and '-' (no flags).
+- removed potential segmentation fault which could be caused by
+  seeing 'not!on@channel KICK #channel nick :BitchX Baby!'.
+- User handle names, channel names and host masks are now case
+  InSeNsItIvE.
+- GetOp added (configurable by .set ask-for-op-delay and .chset
+  getop-bots).
+- Removed after-op-delay.
+- Added new .chset varibale bot-autoop-bots, it sets how many
+  bots should send op to bot on join, note that since now
+  autop-bots only applies to non-bot users, also note that
+  *autoop-bots has nothing to do with GetOp variables !!!
+- .channels should not cause SegFault when first channel entry
+  is empty.
+- Ctcp TIME reply does not cause 432 error reply from ircd.
+- Removed channel entry from config file (it only caused desyncs
+  in botnet)
+
+Psotnic 0.0.20 (2003/08/17) changes:
+- .chset introduced, now you can set chan specific options.
+- Only values witch differ from default values are saved to
+  userlist (the same rule aplies to sending userlist).
+- Since now 'enforce-bans' is togable, by default it is
+  .chset to 1. Note that bots will still take punish action
+  agains lame who baned protected user when enforce-bans
+  is turned off.
+- I am proud to present new .chset option, its name is
+  'enforce-limits'. What does it do? Whenever number of users
+  on channel is higher than channel limit bots will kick last
+  joined -f users. Note that when you set +l -1 bot will kick
+  all lames, this is useful when dealing with desync/split
+  when 'on the other side' there is botnet waiting for t/o.
+  Currently kicking is only trigered when bot sees +m user
+  doing MODE #chan +l limit.
+- Banning protected user no longer puts bot into infinit loop.
+  Now you see why this bot has 'alpha' in it's version :F
+- Rewrote queueing system one more time, now bots _realy_
+  don't flo0O0o0O0od themselfs.
+
+Psotnic 0.0.19 (2003/08/17) changes:
+- Binary is now protected with my own binary protector.
+  I wonder how much time it will take to crack it, hyhy.
+- Rewrote queuing system, it should be more effitient.
+- Shitlist and ban handling is now in alpha stage ;)
+- Happy Fri.. ekhm ... Wednesday the 13th.
+- Bot does not SegFault when some config options
+  are missing (but it still tends to do that when...
+  cat BUGS for more info ;)
+- Botnet invite code is now ISO 9001 compilant :P
+- Found bug in g++ compiler ;-)
+- Bot is now not losing <number of users on channel>
+  * 16 bytes due to memory leak which occured while
+  removing the channel from list.
+- Pluged other minor leaks.
+- In pointer lists (ToOp, ToKick, ...) in witch elements
+  point to nick from channel list we compare data by
+  pointer not by nickname. In human language: operations
+  on those lists take less CPU time ;)
+- I have started working on asynchronius resolver.
+  Bot is able to send DNS query and recieve result,
+  check if result comes from queried server (sp00fing
+  protection), but bot is still not able to process
+  recieved data ;P
+- Bot does not recieve SIGSEGV on disconnecting from
+  irc.
+- Bots now use cycle delay from .set variable instead
+  of predefined 1 second.
+- Bot can accept chats from ips above 127.255.255.255
+  (forgot to put unsigned before one integer :P)
+- Rewrote limit handling and removed buffer overflow
+  which ocured while removing limit from channel.
+- When join is observed and number of users on channel
+  is higher then channel limit and 'limit-chan-users'
+  is set to 1 user will be kicked out.
+- Added 2 ctcp flood protection options, now you can
+  togle if bot should reply to global and private
+  ctcps.
+- Iha, strace crashes while 'debuging' my bot :)
+
+Psotnic 0.0.18 (2003/08/09) changes:
+- Asynchronius HUB connections, no more locking while
+  calling ConnectToHUB()
+- Ident of HUB is not important any more, now we use
+  RSA Data Security, Inc., MD5 message-digest algorithm
+  for authentication.
+- By default hub/bot will drop unregistered connections
+  from bot/hub after 10 seconds.
+- Bot won't crash anymore if data line consists of more
+  then 4096 bytes (one line bug).
+- Reoping should work as expected (next on line bug ;p)
+- New config option: botnetword, after seeing this word
+  hub will begin md5 registration.
+- First compilation with -Wall option, removed tons of
+  potential bugs and unused variables ;)
+- New way of changing string into words, no more sscanf().
+- Hub side shit management pre-alpha 0.0.1 ;-)
+- CTCP TIME reply returns local time.
+- .invite command introduced.
+- Bot sends JOIN <chan> <key> instead of JOIN <chan> on
+  INVITE.
+- Bot joins channel (must be in userlist) when he(she?it?)
+  recieves INVITE message from anyone (previously bot only
+  joined if message originated from owner or bot).
+- Added INVITE and CTCP flood protection, see bellow.
+- Download buffer is now free()'ed after finished download.
+- New .set variables:
+  * bot-auth-time - maximum authentication time.
+  * unban-bots - number of bots assigned to unbaning person.
+  * shit-bots - number of bots assigned to kickbanning.
+  * action-penality - delay between sending INVITE and
+    CTCP replyies to ppl.
+  * friend-action-penality - same as above but it applies
+    to bots and owners.
+
+Psotnic 0.0.17 (2003/08/02) changes:
+- First public release.
+- Some options can be tweakable via .set command.
+- Channel reoping introduced.
+- Irssi ctcp emulation.
+- Hydra like quit, part reason.
+- Psotnic logo.
+- New config parser.
+
+Psotnic 0.0.1 (2003/07/05) changes:
+- Wrote first line of the code.

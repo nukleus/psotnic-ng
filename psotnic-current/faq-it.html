@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+<title>The Psotnic Project :: Frequently Asked Questions</title>
+
+<meta name="description" content="Irc bot for linux">
+<meta name="keywords" content="bot bots ircnet ipv6 irc psotnic botnet linux freebsd openbsd #psotnic c++ cpp c modules grzegorz rusin">
+<meta name="Author" content="Grzegorz Rusin pks@irc.pl">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+</head><body background="faq-it.php-Dateien/faq-it.htm" bgcolor="#ffffff"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr>
+  <td align="center" valign="top"><table width="90%"><tbody><tr><td valign="top"><h2 align="center">Frequently Asked Questions</h2><b>Q</b>: "[-] Screw you guys, this file is hacked", che succede?<br>
+<b>A</b>: Questo errore significa che psotnic non ha superato il
+controllo di consistenza quindi non si avvierà, questo di solito
+succede quando il binario viene modificato in qualche modon o quando il
+sistema è danneggiato (potrebbe essere causato da cpu surriscaldata,
+moduli di memoria danneggiata, ecc.), un altra possibilità è che il
+sistema ha un kernel instabile installato o che una libreria di sistema
+è danneggiata.<br>
+<br>
+<b>Q</b>: C'è modo di eseguire una versione non statica di psotnic in una shell che non ha una versione adeguata di libstdc++.so? <br>
+<b>A</b>: Si, tutto quello che devi fare è scaricare la corretta
+libreria libstdc++.so.5 (la si può trovare nel pacchetto linux della
+patch di doom3) e copiarla in una directory nella tua home,
+successivamente esegui export
+LD_PRELOAD='/path/alla/dir/di/libstdc++.so.5', e avvia il bot.<br>
+<br>
+<b>Q</b>: Devo per forza connettere i bot slave e/o l'hub su irc?<br>
+<b>A</b>: No.<br>
+<br>
+<b>Q</b>: I miei bot non vogliono connettersi al server irc, però io
+riesco a connettermi attraverso altri client irc, cosa faccio di
+sbagliato?<br>
+<b>A</b>: Prima di tutto controlla se il vhost è esatto, quindi
+controlla che l'ip esiste nel tuo sistema (potresti essere nattato), se
+non hai ip metti 0.0.0.0 come tuo ip :).<br>
+<br>
+<b>Q</b>: Perchè l'hub non entra nei canali?<br>
+<b>A</b>: Prova ad aggiungere l'host all'handle dell'hub (i bot psotnic
+bots non entrano nei canali se il loro host non è aggiunto nel loro
+handle).<br>
+<br>
+<b>Q</b>: Perchè i bot settano un ban su *!*@*.siol.net(o simili) ?<br>
+<b>A</b>: Questo ban è causato dalla protezione dei cloni su proxy, i
+bot bannano il provider quando rilevano che il numero di utenti con una
+connessione senza ident supera il valore del settaggio proxy-clones, se
+non vuoi che si bannino i provider, aggiungi semplicemente un nuovo
+user, dagli la flag di canale +c e aggiungigli gli host che vuoi
+escludere dalla protezione cloni, se vuoi disattivare completamente
+questo tipo di protezione setta semplicemente proxy-clones a 0.<br>
+<br>
+<b>Q</b>: Qual'è la differenza tra la versione statica e non statica?<br>
+<b>A</b>: La versione statica include tutte le librerie di sistema
+necessarie ad avviare il bot, contrariamente alla versione non statica
+che delle dipendenze di librerie. Inoltre la versione non statica
+(=dinamica) del binario fornisce l'interfaccia di caricamente di moduli
+dinamici che ti permette di caricare pezzi di codice personalizzati.<br>
+<br>
+<b>Q</b>: Ricevo il seguente errore: `[!] Invalid packet: 62 Barklays BanjaLuka 27 #celjani', cosa dovrei fare?<br>
+<b>A</b>: Slinka lo slave al quale `Barklays' è connesso.<br>
+<br>
+<b>Q</b>: Come aggiungo psotnic al cron?<br>
+<b>A</b>: Esegui semplicemente `./psotnic -a conf1 conf2 conf3' e cosi via.<br>
+<br>
+<b>Q</b>: Perchè ricevo l'errore `Lost 123.123.123.123 / 12345 (Leaf123: not a slave)' in partyline?<br>
+<b>A</b>: Perchè hai detto ad un bot leaf di conettersi a un bot hub invece che ad un bot slave.<br>
+<br>
+<b>Q</b>: L'userlist del bot hub è corrotta, cosa posso fare?<br>
+<b>A</b>: Loggati in un qualsiasi account di un bot slave, cambia la
+configurazione del bot slave in modo da renderlo un hub (la semplice
+rimossione della linea hub dovrebbe bastare), quindi riavvia il bot
+slave. Dovresti accorgerti che il tuo bot slave è appena diventato il
+bot hub :). Loggati nel nuovo hub ed esegui il comando .export
+userlist, dopo invia il file esportato nell'account del tuo vero hub e
+configura l'hub da zero, quindi loggati in esso ed esegui il comando
+.import userfile che hai appena inviato. Ricordati che tutti i .info e
+le scadenze dei .shit verranno persi !!!<br>
+<br>
+<b>Q</b>: Come faccio uscire i bot da un canale che contiene caratteri 'strani' nel nome?<br>
+<b>A</b>: Scrivi .channels, ottieni il numero del canale che ti
+interessa (inizia a contare da 1 :P), e scrivi .mpart &lt;numero del
+canale&gt;.<br>
+<br>
+<b>Q</b>: Come aggiungo un bot con ip dinamico?<br>
+<b>A</b>: Setta semplicemente myipv4, vhost e indirizzo del bot a
+0.0.0.0, in più puoi dare al bot la flag 'p' che gli permettera di
+aggiornare il suo host temporaneo ogni volta che si connette ad irc.<br>
+<br>
+<b>Q</b>: Perchè la versione x.y.z è solamente disponibile per linux?<br>
+<b>A</b>: Perchè sono troppo pigro per rilasciare ogni versione per
+ogni sistema operativo, quando una versione arriva ad un livello
+stabile lo rilascerò per un maggior numero di sistemi. Nel caso della
+serie 0.2.2, puoi considerare la 0.2.2rc19 come versione stabile
+(guarda i changelog:)<br>
+<br>
+<b>Q</b>: Ci sarà mai una versione per windows?<br>
+<b>A</b>: Si , ma non necessariamente in questo millennio :)<br>
+<br>
+<b>Q</b>: Come rimuovo gli user 'x'?<br>
+<b>A</b>: Esegui .export userfile, modificalo (rimuovi la flag 'x'), e poi .import l'userlist modificata e rimuovi l'user :)<br>
+<br>
+--<br>
+matrix (admin{at}areaunix.org)<br>
+</td></tr></tbody></table></td>
+</tr><tr><td colspan="3" align="center"><br>Copyright (c) 2003-2005 <a href="mailto:grusin%7Bat%7Dgmail.com">Grzegorz Rusin</a>. All rights reserved.
+</td></tr></tbody></table></body></html>

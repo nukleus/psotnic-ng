@@ -1,0 +1,20 @@
+In this directory you can find easy-rsa scripts. I borrowed them from openvpn
+package (http://openvpn.net), so credit goes to them :>
+
+Here is the list of instructions needed for generating necessary files:
+
+	. ./vars
+	./clean-all
+	./build-ca
+	./build-key-server server
+
+When asked for challenge password hit enter - empty pass.
+When asked whether to sign the certificate answer yes.
+When asked whether to commit certificate answer yes.
+
+If you dont get those questions it means that you made an error.
+
+After you finish generating files, copy server.key and server.crt
+to the directory where you have main's dir.
+
+That's all.

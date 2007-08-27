@@ -1,0 +1,385 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+<title>The Psotnic Project :: Partyline commands</title>
+
+<meta name="description" content="Irc bot for linux">
+<meta name="keywords" content="bot bots ircnet ipv6 irc psotnic botnet linux freebsd openbsd #psotnic c++ cpp c modules grzegorz rusin">
+<meta name="Author" content="Grzegorz Rusin pks@irc.pl">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+<script type="text/javascript" src="cmd-en.php-Dateien/DropDownMenu1.js"></script>
+<script type="text/javascript" src="cmd-en.php-Dateien/ie5.js"></script>
+<script type="text/javascript" src="cmd-en.php-Dateien/irc.js"></script>
+<script type="text/javascript" language="JavaScript">
+</head><body background="cmd-en.php-Dateien/cmd-en.htm" bgcolor="#ffffff">
+<table width="90%" cellpadding="2" cellspacing="1">
+  <tbody>
+    <tr>
+      <td valign="top"><h2 align="center">Partyline commands</h2>
+          <table border="0" cellpadding="2" cellspacing="1">
+            <tbody>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.abuse</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Couriosity is the first step to become K:lined</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.bc</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;text&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Sends <em>text</em> to <em>bot</em> (reaction to sent <em>text</em> must be implemented inside a module, by default bot ignores all sent text)</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+bot</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&nbsp;&lt;ip&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Adds new bot with name <em>handle</em> and with adress <em>ip</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-bot</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Removes bot with name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.bots</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[expr]&nbsp;[flags]</em></samp></td>
+                <td bgcolor="#dddddd">Shows bots matching expression <em>expr</em> with name <em>expr</em> or with flags <em>flags</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.bottree</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Bottree - tree of linked bots</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.bye</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[reason]</em></samp></td>
+                <td bgcolor="#dddddd">Leaving partyline with <em>reason</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.chaddr</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;&nbsp;&lt;ip&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Changes <em>ip</em> adress of bot <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+chan</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;chan&gt;&nbsp;[key]</em></samp></td>
+                <td bgcolor="#dddddd">Adds new channel <em>chan</em> with key <em>key</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.channels</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows channels that bots are on</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.chattr</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;&nbsp;&lt;flags&gt;&nbsp;[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Sets global or channel <em>chan</em> flags <em>flags</em> for user or bot with name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.chnick</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;nick&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Changes bots nickname with name <em>bot</em> to a different nickname <em>nick</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.chpass</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;&nbsp;&lt;pass&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Sets password <em>password</em> for user or bot with name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.clearoffences</strong></font></td>
+                <td bgcolor="#f0f0f0">&lt;handle&gt;</td>
+                <td bgcolor="#dddddd">deletes offences of <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.downbots</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows all unlinked bots</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+exempt</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[#chan]&nbsp;[%time]&nbsp;&lt;mask&gt;&nbsp;[reason]</em></samp></td>
+                <td bgcolor="#dddddd">Adds new exempt on channel <em>chan</em> with expiration time <em></em>%time, mask <em>mask</em> and reason <em>reason</em>.<br>
+When no channel is specified exempt will be added on all channels. When there is no time given exempt will never expire.</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-exempt</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;mask&gt;&nbsp;[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Removes exempt with mask <em>mask</em> from channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.exempts</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Shows exempts </td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.export</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;file&gt;&nbsp;[pass]</em></samp></td>
+                <td bgcolor="#dddddd">Exports userlist to <em>file</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+host</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;&nbsp;&lt;host&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Adds new user with name <em>handle</em> and hostmask <em>host</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-host</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;&nbsp;&lt;host&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Removes host <em>host</em> from name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+invite</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[#chan]&nbsp;[%time]&nbsp;&lt;mask&gt;&nbsp;[reason]</em></samp></td>
+                <td bgcolor="#dddddd">Adds new invite on channel <em>chan</em> with expiration time <em></em>%time, mask <em>mask</em> and reason <em>reason</em>.<br>
+When no channel is specified invite will be added on all channels. When there is no time given invite will never expire.</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-invite</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;mask&gt;&nbsp;[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Removes invite with mask <em>mask</em> from channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.invites</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Shows invites </td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.import</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;file&gt;&nbsp;[pass]</em></samp></td>
+                <td bgcolor="#dddddd">Imports userlist from <em>file</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-info</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;&nbsp;&lt;key&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Removes info <em>key</em> about a <em>handle</em>.</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+info</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;&nbsp;&lt;key&gt;&nbsp;&lt;value&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Adds new info about a <em>handle</em>.</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.info</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Shows info about user or bot with name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.list</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;apcdsvuiU&gt;&nbsp;[bot]</em></samp></td>
+                <td bgcolor="#dddddd">Shows information about bots:<br>
+                  a - shows bots away status<br>
+                  p - shows pings between bots<br>
+                  c - shows channels<br>
+                  d - shows bots disconnected from ircserver<br>
+                  s - shows all servers from bots config file and current server to wich is connected to<br>
+                  v - shows bot version<br>
+                  u - shows information about server (uname)<br>
+                  i - shows hostname and bots server<br>
+                U - shows bots uptime.</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.match</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;expr&gt;&nbsp;[flags]&nbsp;[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Shows users matching <em>expression</em>, <em>flag</em> or <em>channel</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.mcycle</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;chan&gt;</em></samp></td>
+                <td bgcolor="#dddddd">All bots part and then again join channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.mjoin</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;chan&gt;&nbsp;[key]&nbsp;[delay]</em></samp></td>
+                <td bgcolor="#dddddd">All bots join channel <em>chan</em> with key <em>key</em> and delay <em>delay</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.mk</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;o|n|a&gt;&nbsp;&lt;chan&gt;&nbsp;[lock]</em></samp></td>
+                <td bgcolor="#dddddd"> Bots are kicking people with op <em>o</em>, without op <em>n</em>, all people <em>a</em> - people with +f flag won't be kicked</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.mpart</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;chan&gt;</em></samp></td>
+                <td bgcolor="#dddddd">All bots leave channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.names</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Shows list of nicks on channel <em>chan</em> which are seen by bot <em>bot</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.offences</strong></font></td>
+                <td bgcolor="#f0f0f0">&lt;handle&gt;</td>
+                <td bgcolor="#dddddd">Shows offences of <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.owners</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows logged owners</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.rcycle</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;chan&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Bot <em>bot</em> leaves and joins channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.rdie</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Kills bot with name <em>bot</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+reop</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[#chan]&nbsp;[%time]&nbsp;&lt;mask&gt;&nbsp;[reason]</em></samp></td>
+                <td bgcolor="#dddddd">Adds new reop on channel <em>chan</em> with expiration time <em></em>%time, mask <em>mask</em> and reason <em>reason</em>.<br>
+When no channel is specified reop will be added on all channels. When there is no time given reop will never expire.</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-reop</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;mask&gt;&nbsp;[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Removes reop with mask <em>mask</em> from channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.reops</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Shows reops </td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.reset</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>idle</em></samp></td>
+                <td bgcolor="#dddddd">Resets idle of all bots</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.restart</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Restarts bot with name <em>bot</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.rjoin</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;chan&gt;&nbsp;[key]</em></samp></td>
+                <td bgcolor="#dddddd">Bot with name <em>bot</em> joins channel <em>chan</em> with key <em>key</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.rjump6</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;host&gt;&nbsp;[port]</em></samp></td>
+                <td bgcolor="#dddddd">Connect bot with name <em>bot</em> to a given ipv6 server <em>host</em> on port <em>port</em>, default port is 6667</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.rjump</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;host&gt;&nbsp;[port]</em></samp></td>
+                <td bgcolor="#dddddd">Connect bot with name <em>bot</em> to a given ipv4 server <em>host</em> on port <em>port</em>, default is 6667</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.rjumps5</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;proxy&gt;&nbsp;&lt;port&gt;&nbsp;&lt;server&gt;&nbsp;&lt;port&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Connect bot to irc using a proxy: Give adress of proxy <em>proxy</em> than proxy port <em>port</em> and ircserver <em>server</em> and port of an ircserver <em>port</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.rpart</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;chan&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Bot with name <em>bot</em> leaves channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.save</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Jesus Saves</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+shit</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[#chan]&nbsp;[%time]&nbsp;&lt;mask&gt;&nbsp;[reason]</em></samp></td>
+                <td bgcolor="#dddddd">Adds new shit on channel <em>chan</em> with expiration time <em></em>%time, shitmask <em>mask</em> and reason <em>reason</em> <br>
+                When no channel is specified shit will be added on all channels. When there is no time given shit will never expire.</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-shit</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;mask&gt;&nbsp;[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Removes shit with mask <em>mask</em> from channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.shits</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[chan]</em></samp></td>
+                <td bgcolor="#dddddd">Shows shits</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.sjoin</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;slave&gt;&nbsp;&lt;chan&gt;&nbsp;[key]</em></samp></td>
+                <td bgcolor="#dddddd">All bots linked to slave <em>slave</em> join channel <em>chan</em> with key <em>key</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.spart</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;slave&gt;&nbsp;&lt;chan&gt;</em></samp></td>
+                <td bgcolor="#dddddd">All bots linked to slave <em>slave</em> leave channel <em>chan</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+stick</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>[#chan]&nbsp;[%time]&nbsp;&lt;mask&gt;&nbsp;[reason]</em></samp></td>
+                <td bgcolor="#dddddd">Gives permanent ban on channel <em>chan</em> which will expire in time <em></em>%time and matching a hostmask <em>mask</em> with kickreason <em>reason</em> <br>
+                When no channel is specified stick will be added on all channels. When there is no time given stick will never expire.</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.tkmjoin</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;chan&gt;&nbsp;[key]&nbsp;[delay]</em></samp></td>
+                <td bgcolor="#dddddd">Bots join channel <em>chan</em> with key <em>key</em> and with delay <em>delay</em> and takeover = 1</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.tkrjoin</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;&lt;chan&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Bot with name <em>bot</em> joins channel <em>chan</em> with takeover =1</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.tksjoin</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;slave&gt;&nbsp;&lt;chan&gt;</em></samp></td>
+                <td bgcolor="#dddddd">All bots linked to slave <em>slave</em> join channel <em>chan</em> with takeover = 1</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.upbot</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows all linked bots</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.update</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;bot&gt;&nbsp;[URL]</em></samp></td>
+                <td bgcolor="#dddddd">Installs newest bot vesrion on account on wich there is bot <em>bot</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.+user</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Adds user with name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.-user</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Removes user with name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.users</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows all users added to bots and groups them</td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.whob</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows only slaves connected to hub</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.whois</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em>&lt;handle&gt;</em></samp></td>
+                <td bgcolor="#dddddd">Shows all information known about user or bot with name <em>handle</em></td>
+              </tr>
+              <tr bgcolor="#f0f0f0" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.whom</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows only users connected to hub</td>
+              </tr>
+              <tr bgcolor="#e5e5e5" valign="top">
+                <td bgcolor="#f0f0f0"><font style="font-family: monospace;"><strong>.who</strong></font></td>
+                <td bgcolor="#f0f0f0"><samp><em></em></samp></td>
+                <td bgcolor="#dddddd">Shows users and slaves connected to hub</td>
+              </tr>
+            </tbody>
+        </table>
+        <br>
+        --<br>
+        Gunman (gunman@irc.pl)<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body></html>

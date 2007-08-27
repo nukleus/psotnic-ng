@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='ISO-8859-2'?>
+
+<document>
+	<bug>
+		<desc>changing of ctcptype on runtime (.bc bot cfg ctcptype 7) crashesh bot.</desc>
+		<hint>moddify class-idle.cpp so that it can handle changing of ctcptype on the fly
+			and remove ctcptype.setReadOnly(true); from CONFIG::polish() (class-options.cpp)</hint>
+	</bug>
+
+	<bug>
+		<desc>antiidle does not work when ctcptype is set to 0 (disabled)</desc>
+		<hint>fix class-idle.cpp</hint>
+	</bug>
+</document>

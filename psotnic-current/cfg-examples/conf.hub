@@ -1,0 +1,13 @@
+nick		hub
+nickappend	_-^`|
+realname	Psotnic C++ Edition
+myipv4		0.0.0.0
+vhost		0.0.0.0
+listen		9000
+
+server		150.254.64.64 6667
+server		193.219.28.242 6667
+server		212.182.63.110 6667
+server		149.156.124.222 6667
+
+ownerpass	24e70511c32ad46bf53302a9717c651b

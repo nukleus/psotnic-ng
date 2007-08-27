@@ -1,0 +1,14 @@
+nick		recursion
+nickappend	_-^`|
+realname	n. see: recursion
+#myipv4		0.0.0.0
+#vhost		2001:6a0:101:0:211:43ff:fe59:62fb
+
+hub			10.1.100.101 9000 glupiehaslo
+
+ssl_server 2001:1bf0:2:0:202:b3ff:fe09:244c 6667
+#server warszawa.irc.pl 6667
+
+keepnick	1
+
+resolve-threads 4

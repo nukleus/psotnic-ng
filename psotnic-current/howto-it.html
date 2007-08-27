@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/~grusin/psotnic.css">
+<title>The Psotnic Project :: Psotnic 0.2.x HOWTO [IT]</title>
+<meta name="description" content="Irc bot for linux">
+<meta name="keywords" content="bot bots ircnet ipv6 irc psotnic botnet linux freebsd openbsd #psotnic c++ cpp c modules grzegorz rusin">
+<meta name="Author" content="Grzegorz Rusin pks@irc.pl">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
+</head>
+<body bgcolor="#ffffff" background="#ffffff"><table border="0" width="100%" cellspacing="0" cellpadding="0"><tr>
+  <td valign="top" align="center"><table width="90%"><tr><td valign="top"><h2 align="center">Psotnic 0.2.x HOWTO [IT]</h2><br>
+Questo file contiene le basi che sono necessarie per il setup (e l'uso) del bot irc psotnic.<br>
+Per favore leggete questo file prima di fare qualsiasi domanda.<br>
+<br>
+Buona lettura.<br>
+<br>
+<h4>***</h4>
+please note that all translated howtos are based upon english version and they might be outdated<br>
+if you cannot find something in this document please check english version. --pks<br>
+<h4>***</h4>
+<br>
+<h3>1. Opzioni del file di configurazione</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Opzioni obbligatorie per ogni bot</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">nick</td><td bgcolor="#DDDDDD"> nickname del bot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">realname</td><td bgcolor="#DDDDDD">realname del bot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">nickappend</td><td bgcolor="#DDDDDD">una serie di caratteri che verranno aggiunti al nick nel caso sia occupato (esempio: -|`^, questi settaggi saranno presi in considerazione solo se `altuidnick' è settato a 0)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">myipv4</td><td bgcolor="#DDDDDD">indirizzo ip del bot (esempio: 88.45.56.15, 0.0.0.0 vuol dire qualsiasi indirizzo ip)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Opzioni obbligatorie per il bot hub</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">listen</td><td bgcolor="#DDDDDD">la porta alla quale il bot hub è in ascolto per le connessioni dai bot slave e dagli owners (esempio: 12345)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ownerpass</td><td bgcolor="#DDDDDD">l'md5sum della password di owner (la password principale) per la partyline (per avere un hash md5 esegui ./psotnic -p)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Opzioni obbligatorie per i bot slave</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">listen</td><td bgcolor="#DDDDDD">la porta alla quale il bot slave è in ascolto per le connessioni dai bot leafe (esempio: 12345)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">hub</td><td bgcolor="#DDDDDD"> ip, porta, password del bot hub (esempio: 123.123.123.123 9000 una_password)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Opzioni obbligatorie per i bot leaf</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">hub</td><td bgcolor="#DDDDDD"> ip, porta, password e l'handle del bot slave (esempio: 111.111.111.111 8000 una_password slave1)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Opzioni aggiuntive per i bot leaf</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">alt</td><td bgcolor="#DDDDDD"> ip, porta del bot slave alternativo (esempio: 1111.111.222.222 9000, può essere settato più volte)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Opzioni aggiuntive per tutti i bot</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">
+ident</td><td bgcolor="#DDDDDD">username del bot (default: l'username dell'account)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">handle</td><td bgcolor="#DDDDDD">handle del bot che è visibile nella partyline (default: uguale al nick)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">vhost</td><td bgcolor="#DDDDDD"> indirizzo ipv4 o ipv6 (esempio: 217.2.3.54 o 3ffe:2f4:56:35:0:0:0:23), gli hostname non sono supportati (default: viene determinato dal sistema operativo)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">logfile</td><td bgcolor="#DDDDDD">file dove il bot loggerà alcune azioni (default: /dev/null :)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">userlist</td><td bgcolor="#DDDDDD">l'userlist (alias userfile) verrà salvata qui (default: $nick.ul)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">altuidnick</td><td bgcolor="#DDDDDD">attiva/disattiva il cambio del nick a 0 quando il nick è occupato</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ctcptype</td><td bgcolor="#DDDDDD">risposta al ctcp version (default: casuale). Opzioni disponibili: 0 = nessuna, 1 = psotnic, 2 = irssi, 3 = epic, 4 = lice, 5 = bitchx, 6 = dzony loker, 7 = luzik, 8 = mirc 6.14</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">keepnick</td><td bgcolor="#DDDDDD">keepnick (default: 0)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">kickreason</td><td bgcolor="#DDDDDD">messaggio del kick usato da kick vari</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limitreason</td><td bgcolor="#DDDDDD"> messaggio del kick usato quando qualcuno modifica il limite del canale</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">partreason</td><td bgcolor="#DDDDDD">messaggio dei part</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">quitreason</td><td bgcolor="#DDDDDD">messaggio dei quit</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">cyclereason</td><td bgcolor="#DDDDDD">messaggio dei cycle :)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Opzioni aggiuntive per tutti i bot, queste possono essere settate più volte</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">server</td><td bgcolor="#DDDDDD">indirizzo ipv4 (o anche ipv6 dalla versione 0.2.3) e porta del server irc (esempio: 218.234.456.123 6667)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">server6</td><td bgcolor="#DDDDDD">indirizzo ipv6 e porta del server irc (esempio: 3ffe:2f4:56:35:0:0:0:23 6667) (opzione non presente a partire dalla versione 0.2.3)</td></tr>
+</table></center>
+<br>
+Nota che a partire dalla versione 0.2.3 il file di configurazione può essere modificato dalla partyline, per favore leggi la sezione 7 per i dettagli.<br>
+<br>
+<h3>2. Settare la botnet</h3>
+<br>
+<h4>* Settare il bot hub</h4>
+Prima di tutto copia il file hub.conf dalla directory cfg-examples alla directory dove si trova il binario del psotnic. Quindi editalo :). La prossima cosa necessaria da fare è criptare il file di configurazione, per farlo esegui `psotnic -c config.file'. Questo dovrebbe o restituire una serie di errori o semplicemente dirti che è andato tutto bene. Ora che hai il file di configurazione criptato puoi avviare il bot, per farlo esegui `psotnic config.file`, è anche opportuno muovere il file di configurazone non criptato in qualche posto sicuro, per ovvie ragione.<br>
+Adesso che il bot è avviato telnettalo (telnet ip port) ed inserisci la tua password di owner (non l'hash md5), se la password è corretta il bot dovrebbe chiederti il login e la password. Dopo aver creato l'account il bot chiuderà la connessione, quindi telnetta di nuovo e fornisci la password di owner, il login e la password dell'account creato. Ora che sei entrato nella partyline per la prima volta scrivi `.help', questo dovrebbe darti una lista di tutti i comandi disponibili, fai pratica, male non fa ;p<br>
+<br>
+<h4>* Settare i bot slave</h4>
+Principalmente è come sopra, ma con tre differenze, la prima differenza è che devi usare il file conf.slave invece di conf.hub, la seconda è che non devi settare la password di owner, la terza è che non devi telnettare nel bot slave. Il resto è uguale.<br>
+Dopo aver avviato il bot slave dovresti vedere dei nuovi messaggi in partyline, se non vedi nessun tentativo di connessione vuol dire che l'ip nel file di configurazione del bot slave è sbagliato.<br>
+Adesso è il momento di informare il bot hub che abbiamo un nuovo bot slave, per farlo scrivi questi comandi in partyline:<br>
+.+bot handle IP<br>
+.+host handle nick*!ident@vhost		(solo quando lo slave è in irc)<br>
+.chattr handle s<br>
+.chpass handle una_password		(la password è la stessa di quella nel file di configurazione del bot slave al settaggio hub)<br>
+<br>
+<h4>* Settare i bot leaf</h4>
+E' uguale a settare un bot slave tranne che per due differenze, la prima è che devi usare il file conf.leaf invece di conf.slave, la seconda è che dovrai scrivere `.chattr bot l' invece di `.chattr bot s'.<br>
+<br>
+<h3>3. Settaggi</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Settaggi che possono essere controllati dal comando .set</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">cycle-delay</td><td bgcolor="#DDDDDD">  ritardo dei cycle</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">rejoin-delay</td><td bgcolor="#DDDDDD">  tempo dopo il quale il bot joina il canale se è stato kickato</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">rejoin-fail-delay</td><td bgcolor="#DDDDDD"> tempo dopo il quale il bot joina il canale se l'ultimo join non ha avuto successo</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">hub-conn-delay</td><td bgcolor="#DDDDDD"> tempo dopo il quale il bot prova a riconnettersi all'hub</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">irc-conn-delay</td><td bgcolor="#DDDDDD"> tempo dopo il quale il bot prova a riconnettersi a irc</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">auth-time</td><td bgcolor="#DDDDDD">  tempo dopo il quale tutte le connessioni non autorizzate vengono chiuse</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">private-ctcp</td><td bgcolor="#DDDDDD">  attiva/disattiva le risposte ai ctcp privati per tutti i bot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ops-per-mode</td><td bgcolor="#DDDDDD">  numero di op in una linea quando ci sono nemici nel canale</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ask-for-op-delay</td><td bgcolor="#DDDDDD"> tempo dopo il quale il bot chiede l'op se non è stato ancora oppato</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">getop-op-check</td><td bgcolor="#DDDDDD"> attiva/disattiva il controllo che verifica che un bot che sta richiedendo l'op sia gia oppato</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">conn-timeout</td><td bgcolor="#DDDDDD">  tempo dopo il quale tutte le connessioni autorizzate inattive vengono chiuse</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">keep-nick-check-delay</td><td bgcolor="#DDDDDD"> questo settaggio imposta ogni quanto tempo il bot deve controllare se il suo nick è disponibile</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">remember-old-keys</td><td bgcolor="#DDDDDD"> attiva/disattiva il salvataggio delle vecchie key dei canali</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">telnet-owners</td><td bgcolor="#DDDDDD">  se è settato a 0 gli owners non possono connettersi via telnet, se è settato a 1 tutti gli owners che hanno le flag +pt possono connettersi all'hub via telnet, se è settato a 2 solo gli owners che hanno le flag +pt e il loro ip aggiunto nella lista host possono connettersi.</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">max-matches</td><td bgcolor="#DDDDDD">  numero massimo di corrispondenze da mostrare con .match</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">perip-max-shown-cons</td><td bgcolor="#DDDDDD"> numero massimo di tentativi di connessione da un IP da mostrare</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">perip-burst-size</td><td bgcolor="#DDDDDD"> numero massimo di connessioni non autorizzate da un IP</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">perip-burst-time</td><td bgcolor="#DDDDDD"> tempo dopo il quale viene resettato il contatore delle connessioni</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">perip-ignore-time</td><td bgcolor="#DDDDDD"> per quanto tempo ignorare l'ip che ha raggiunto il limite massimo di connessioni non autorizzate</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">synflood-max-conns</td><td bgcolor="#DDDDDD"> numero massimo di tutte le connessioni non registrate</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">synflood-ignore-time</td><td bgcolor="#DDDDDD"> per quanto tempo ignorare tutti gli ip</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">bIe-mode-bounce-time</td><td bgcolor="#DDDDDD"> tempo dopo il quale il bot rimuoverà i modi di canale b/e/I</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">wasop-cache-time   </td><td bgcolor="#DDDDDD"> questo settaggio imposta quanto tempo il bot deve mantenere le informazioni sullo stato degli op durante un netsplit</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">away-time</td><td bgcolor="#DDDDDD">  il bot sarà away per questo tempo</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">chat-time</td><td bgcolor="#DDDDDD">  il bot non sarà away per questo tempo</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">between-msg-delay</td><td bgcolor="#DDDDDD"> ogni quanto tempo il bot invierà messaggi quando non è away (antiidle)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">randomness</td><td bgcolor="#DDDDDD">  casualità dell'antidile/away</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">public-away</td><td bgcolor="#DDDDDD">  attiva/disattiva messaggi di away pubblici</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ident-clones</td><td bgcolor="#DDDDDD">  numero massimo di utenti con lo stesso ident in un canale</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">host-clones</td><td bgcolor="#DDDDDD">  numero massimo di utenti con lo stesso hostname/classe C in un canale</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">proxy-clones</td><td bgcolor="#DDDDDD">  numero massimo di utenti con dominio simile e senza ident in un canale</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">clone-life-time</td><td bgcolor="#DDDDDD"> tempo dopo il quale i cloni vengono cancellati dalla lista cloni</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">critical-bots</td><td bgcolor="#DDDDDD">  se i bot in un canale sono inferiori a questo numero, i bot chiuderanno il canale (+i)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">quarantine-time</td><td bgcolor="#DDDDDD"> tempo dopo il quale vengono aggiunti gli host a un bot (i bot senza host non entreranno nei canali)</td></tr>
+</table></center>
+<br>
+<h3>4. Settaggi locali/di canale</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Settaggi che possono essere controllati dal comando .chset #canale</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">aop-bots</td><td bgcolor="#DDDDDD">  numero di bot a cui verrà assegnata la funzione di oppare gli user +ao quando joinano</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">bot-aop-bots</td><td bgcolor="#DDDDDD">  numero di bot a cui verrà assegnata la funzione di oppare i bot quando joinano</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">punish-bots</td><td bgcolor="#DDDDDD">  numero di bot a cui verrà assegnata la funzione di kickare gli user che fanno qualcosa di male</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">getop-bots</td><td bgcolor="#DDDDDD">  numero di bot a cui verrà richiesto l'op da parte di un altro bot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">invite-bots</td><td bgcolor="#DDDDDD">  numero di bot a cui verrà richiesto l'invito da parte di un altro bot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">guardian-bots</td><td bgcolor="#DDDDDD">  numero di bot che controllano i modi di canale</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">channel-ctcp</td><td bgcolor="#DDDDDD">  attiva/disattiva la risposta alle richieste ctcp di canale</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">enforce-bans</td><td bgcolor="#DDDDDD">  attiva/disattiva il ban enforcing (=kicka gli user che coincidono con un ban appena messo)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">enforce-limits</td><td bgcolor="#DDDDDD"> attiva/disattiva il limit enforcing, se qualcuno con la flag +n setta un limite minore del numero degli utenti i bot elimineranno gli utenti in eccesso</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">stop-nethack</td><td bgcolor="#DDDDDD">  attiva/disattiva il kick degli user -f quando ricevono l'op dal server irc</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit</td><td bgcolor="#DDDDDD">   attiva/disattiva il settaggio automatico del limite da parte dei bot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-time</td><td bgcolor="#DDDDDD">  ogni quanto ricontrollare il limite</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-offset</td><td bgcolor="#DDDDDD">  di quanto aumentare il limite rispetto agli utenti presenti</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-bots</td><td bgcolor="#DDDDDD">  numero di bot a cui verrà assegnata la funzione di settare il limite</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-tolerance</td><td bgcolor="#DDDDDD"> tolleranza del limite, questo settaggio previene cambiamenti frequenti del limite</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">owner-limit-time</td><td bgcolor="#DDDDDD"> l'owner è autorizzato a cambiare il limite entro questo lasso di tempo</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">takeover</td><td bgcolor="#DDDDDD">  attiva/disattiva modalità takeover</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">bitch</td><td bgcolor="#DDDDDD">   attiva/disattiva modalità bitch</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">wasoptest</td><td bgcolor="#DDDDDD">  attiva/disattiva il salvataggio dello stato degli op che splittano</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">clonecheck</td><td bgcolor="#DDDDDD">  attiva/disattiva il controllo dei cloni</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">dynamic-bans</td><td bgcolor="#DDDDDD">  attiva/disattiva la rimossione di ban vecchi dalla lista dei ban</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">dynamic-invites</td><td bgcolor="#DDDDDD"> attiva/disattiva la rimossione di inviti vecchi dalla lista degli inviti</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">dynamic-exempts</td><td bgcolor="#DDDDDD"> attiva/disattiva la rimossione di except vecchi dalla lista except</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">lockdown</td><td bgcolor="#DDDDDD">  attiva/disattiva la chiusura del canale se il numero dei bot è arrivato a un livello critico</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">lockdown-time</td><td bgcolor="#DDDDDD">  inutilizzato ;-)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">backup-mode-delay</td><td bgcolor="#DDDDDD"> ...</td></tr>
+</table></center>
+<br>
+<h3>5. Flag</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">flag globali</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">x</td><td bgcolor="#DDDDDD"> owner principale (controllo completo)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">s</td><td bgcolor="#DDDDDD"> super owner (accesso alla partyline, modifiche ai bot, modifiche della flag -s negli handle)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">n</td><td bgcolor="#DDDDDD"> owner normale (accesso alla partyline, modifiche della flag -n negli handle)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">t</td><td bgcolor="#DDDDDD"> accesso telnet (è necessario anche il +p per potersi connettere)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">p</td><td bgcolor="#DDDDDD"> accesso alla partyline</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">m</td><td bgcolor="#DDDDDD"> master (non ha accesso alla partyline, può oppare una persona alla volta, non può modificare i modi del canale)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">f</td><td bgcolor="#DDDDDD"> friend (non può oppare, ma può ricevere l'op dal server irc, non viene considerato come shit)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">o</td><td bgcolor="#DDDDDD"> op (semplice @)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">v</td><td bgcolor="#DDDDDD"> voice</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">a</td><td bgcolor="#DDDDDD"> modalità automatica (combinata con +o o +v, dà l'op/voice automaticamente)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">d</td><td bgcolor="#DDDDDD"> deop (l'user viene kickato quando riceve l'op)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">q</td><td bgcolor="#DDDDDD"> quiet (all'user viene tolto il voice quando lo riceve)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">k</td><td bgcolor="#DDDDDD"> kick (l'user viene kickato quando joina)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">c</td><td bgcolor="#DDDDDD"> clone (l'user è esonerato dall'algoritmo di controllo cloni)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">i</td><td bgcolor="#DDDDDD"> invite (l'user viene automaticamente invitato se viene kickato e il canale è pieno o chiuso (+i))</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">r</td><td bgcolor="#DDDDDD"> reop (l'user viene rioppato automaticamente se deoppato)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">flag locali</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">n</td><td bgcolor="#DDDDDD"> owner di canale (controllo completo sul canale, l'user non può deoppare/kickare/bannare i bot e connettersi in partyline - a meno che non abbia le flag globali +pt, allora potrà modificare tutti gli handle del canale)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">x|s|t|p</td><td bgcolor="#DDDDDD">those flags are not allowed, other flags behave like the global flags ;)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">flag dei bot</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">h</td><td bgcolor="#DDDDDD"> il bot è hub</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">s</td><td bgcolor="#DDDDDD"> il bot è slave</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">l</td><td bgcolor="#DDDDDD"> il bot è leaf</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">y</td><td bgcolor="#DDDDDD"> può caricare moduli</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">p</td><td bgcolor="#DDDDDD"> può informare la botnet se cambia host</td></tr>
+</table></center>
+<br>
+<br>
+<h3>6. Moduli</h3>
+Molte persone hanno problemi, quindi eccovi alcune informazioni su come caricare i moduli.<br>
+<br>
+Prima di tutto devi avere una versione non statica di psotnic (si, significa che non si possono caricare moduli sulla versione statica). Dopo aver estratto il pacchetto di psotnic, entra nella directory framework, a seconda della versione del bot dovresti vedere molti file (nel caso del 0.2.2) o alcuni files e due directory (nel caso del 0.2.3). Se stai usando 0.2.2 esegui semplicemente make clean && make all, questo dovrebbe compilare tutti i moduli, se ricevi errori vuol dire che qualcosa è andato storto ed è un problema tuo. Se usi 0.2.3 esegui make op && make spam (solo questi due moduli hanno un port, se vuoi puoi fare il port degli altri). Dopo aver compilato i moduli (nome_modulo.so <- questo è il modulo, non nome_modulo.cpp) devi editare il file di configurazione. In ogni caso (0.2.2 e 0.2.3) devi aggiungere la seguente linea alla configurazione per caricare un modulo:<br>
+<br>
+load /path/alla/home/psotnic/framework/nome_modulo.so<br>
+<br>
+quindi cripta il file di configurazione e avvia il bot. Questo è tutto.<br>
+<br>
+<h3>7. Editare il file di configurazione dalla partyline (dalla 0.2.3rc1)</h3>
+Tutti i bot 0.2.3 hanno un comando per editare le opzioni di configurazione dalla partyline, per avere la configurazione corrente scrivere:<br>
+.bc nomebot cfg<br>
+<br>
+Questo dovrebbe mostrare qualcosa tipo questo:<br>
+(nomebot) cfg: nick                         nomebot<br>
+(nomebot) cfg: realname                     Psotnic C++ Edition<br>
+e cosi via...<br>
+<br>
+Puoi cambiare un'opzione scrivendo:<br>
+.bc nomebot cfg <nome opzione> <nuovo valore><br>
+<br>
+Ad esempio:<br>
+.bc nomebot cfg kickreason blah blah<br>
+[15:08] #tu# bc nomebot cfg kickreason blah blah<br>
+(nomebot) cfg: kickreason has been set to blah blah<br>
+<br>
+Per salvare i cambiamenti devi scrivere:<br>
+.bc nomebot cfg-save<br>
+<br>
+Alcune opzioni di configurazione possono essere settati più volte, ad esempio l'opzione server o alt.<br>
+<br>
+Per aggiungere 3 server scrivi semplicemente:<br>
+.bc nomebot cfg server 1.1.1.1 1111<br>
+.bc nomebot cfg server 2.2.2.2 2222<br>
+.bc nomebot cfg server 3.3.3.3 3333<br>
+<br>
+Per rimuovere il secondo scrivi:<br>
+.bc nomebot cfg -server 2.2.2.2 2222<br>
+<br>
+Questo è tutto, non dimenticarti di salvare la configurazione :)<br>
+<br>
+<h3>8. Risoluzione degli host al join (solo su linux)</h3>
+Tutti i psotnic 0.2.3 sono equipaggiati con un resolver asincrono, sfortunatamente solo dalla rc9 funziona bene, quindi se hai una versione vecchia dovresti aggiornarla.<br>
+Per abilitare il resolver setta l'opzione di configurazione resolve-threads ad un valore accettabile (per esempio 4), più alto è il valore più saranno le risoluzioni effettuate simultaneamente, ricorda solo che su linux ogni thread crea un nuovo processo. Dopo aver settato questa opzione riavvia il bot.<br>
+<br>
+Per vedere le statistiche del resolver scrivi:<br>
+.status nomebot<br>
+<br>
+<h3>9. Fine</h3>
+Queste sono le descrizioni generali delle cose che di solito vi creano problemi, se trovi qualche errore fammi sapere, lo sistemerò appena possibile.<br>
+<br>
+--<br>
+matrix (admin{at}areaunix.org)<br>
+</td></tr></table></td>
+<tr><td colspan="3" align="center"><br>Copyright (c) 2003-2005 <a href="mailto:grusin{at}gmail.com">Grzegorz Rusin</a>. All rights reserved.
+</td></tr></table></body></html>

@@ -1,0 +1,11 @@
+nick		ssl-test
+myipv4	    0.0.0.0	
+
+ssl_listen		12346
+listen 12347
+
+
+#ssl_server 217.197.85.144 6670
+#ssl_server 127.0.0.1 443
+
+ownerpass  24e70511c32ad46bf53302a9717c651b

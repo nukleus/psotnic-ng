@@ -1,0 +1,37 @@
+Patch by:
+Esio and patrick
+
+additional thanks to:
+    - Pirat for testing new code
+
+last changes: 18-01-2007
+version: 0.2.12-current (-13th-)
+
+changes in CHANGELOG.txt.
+
+Automagicly punish users for offences, description below:
+
+chset idiots:
+0. off; 
+1. remove +a only (if exists); 
+2. remove +a and the highest level flag. if user will have no flag we'll give
+him +d;  
+3. remove all flags for 1st offence. 2nd time +d 
+4. +d locally
+5. +d globally and clear flags for all other channels {for really paranoidal people ;) }
+
+--info: all flags are changed only for local chans (exception: [5]).
+
+above settings works only for handle which match mask of idiot.
+
+when we dont found this entry, we add mask to idiots handle without adding
+entry in offences history, but we inform about this on partyline.
+
+too see list of offences:
+.offences <handle>
+
+to clear it type;
+.clearoffences <handle>
+
+in case of fill up the list (limit of entries will be reached) on adding new entry
+bot will remove the oldest one and add new one. Limit of entries = 16.

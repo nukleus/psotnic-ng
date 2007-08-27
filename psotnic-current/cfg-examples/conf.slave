@@ -1,0 +1,12 @@
+nick		slave1
+nickappend	_-^`|
+realname	Psotnic C++ Edition
+myipv4		0.0.0.0
+vhost		0.0.0.0
+
+hub			212.76.54.135 9000 slave1password
+listen		8000
+
+server		212.76.54.135 6667
+
+keepnick	1

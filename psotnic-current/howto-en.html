@@ -1,0 +1,740 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/~grusin/psotnic.css">
+<title>The Psotnic Project :: Psotnic 0.2.x HOWTO [EN]</title>
+<meta name="description" content="Irc bot for linux">
+<meta name="keywords" content="bot bots ircnet ipv6 irc psotnic botnet linux freebsd openbsd #psotnic c++ cpp c modules grzegorz rusin">
+<meta name="Author" content="Grzegorz Rusin pks@irc.pl">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+<script type="text/javascript" src="js/DropDownMenu1.js"></script>
+<script type="text/javascript" src="js/ie5.js"></script>
+<script type="text/javascript" src="js/irc.js"></script>
+<script type="text/javascript" language="JavaScript">
+</script>
+</head>
+<body bgcolor="#ffffff">
+<table width="90%">
+  <tbody>
+    <tr>
+      <td valign="top"><h2 align="center">Psotnic 0.2.x HOWTO [EN]</h2>
+          <br>
+        This file contains basics that are needed to setup (and use) psotnic irc bot.<br>
+        Please read this file before asking any dumb questions.<br>
+        <br>
+        Have a nice time reading it.<br>
+        <br>
+        <h3>1. Config file options</h3>
+        <br>
+        <center>
+          <table border="0" cellpadding="2" cellspacing="1">
+            <tbody>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Mandatory options for all bots</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">nick</td>
+                <td bgcolor="#dddddd"> bot's nickname</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">realname</td>
+                <td bgcolor="#dddddd">bot's real name</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">nickappend</td>
+                <td bgcolor="#dddddd">bunch
+                  of characters that will be appended to nick if it is taken (eg. -|`^,
+                  this setting is taken in consideration if `altuidnick' is set to 0)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">myipv4</td>
+                <td bgcolor="#dddddd">ip address of the bot (eg. 88.45.56.15, 0.0.0.0 means any address)</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Mandatory options for main bot</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">listen</td>
+                <td bgcolor="#dddddd">port on which main is listening for connections from slaves and owners (eg. 12345)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ownerpass</td>
+                <td bgcolor="#dddddd">md5sum of owner password (main pass) for partyline (to make a md5hash run ./psotnic -p)</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Additional options for main bot</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ssl_listen</td>
+                <td bgcolor="#dddddd">SSL secured port for partyline access, to connect use openssl s_client command (man s_client).</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Mandatory options for main slave</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">listen</td>
+                <td bgcolor="#dddddd">port on which slave is listening for connections from leafes (eg. 12345)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">hub</td>
+                <td bgcolor="#dddddd"> ip, port, pass of the main bot (eg. 123.123.123.123 9000 some_password)</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Mandatory options for leafs</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">hub</td>
+                <td bgcolor="#dddddd"> ip, port, pass and slave handle name (eg. 111.111.111.111 8000 some_password slave1)</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Additional oprtion for leafs</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">alt</td>
+                <td bgcolor="#dddddd"> ip, port of alternative slave (eg. 1111.111.222.222 9000, it can be set more than once)</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Additional options for all
+                  bots</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ident</td>
+                <td bgcolor="#dddddd"> bot's username (default: same as account name)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">handle</td>
+                <td bgcolor="#dddddd">bot's handle that is visible in the partyline (default: same as nick)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">vhost</td>
+                <td bgcolor="#dddddd"> ipv4 or ipv6 address (e.g: 217.2.3.54 or 3ffe:2f4:56:35:0:0:0:23),
+                  domain names are not supported (default: determined by the operating
+                  system)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">logfile</td>
+                <td bgcolor="#dddddd">file where bot logs some actions (default: /dev/null :)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">userlist</td>
+                <td bgcolor="#dddddd">userlist (aka. userfile) will be stored there (default: $nick.ul)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">altuidnick</td>
+                <td bgcolor="#dddddd">turns on/off changing of nick to 0 when nick is taken (by default it is turned ON)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ctcptype</td>
+                <td bgcolor="#dddddd">ctcp
+                  version (default: random). Available options: 0 = none, 1 = psotnic, 2
+                  = irssi, 3 = epic, 4 = lice, 5 = bitchx, 6 = dzony loker, 7 = luzik, 8
+                  = mirc 6.14</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">keepnick</td>
+                <td bgcolor="#dddddd">keepnick (default: 0)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">kickreason</td>
+                <td bgcolor="#dddddd">kick reason
+                  used for most kicks</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">limitreason</td>
+                <td bgcolor="#dddddd"> kick reason used when somebody overrides channel limit</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">keepoutreason</td>
+                <td bgcolor="#dddddd">kick reason for keepout setting </td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">partreason</td>
+                <td bgcolor="#dddddd">part reason</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">quitreason</td>
+                <td bgcolor="#dddddd">quit reason</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">cyclereason</td>
+                <td bgcolor="#dddddd">cycle reason</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">bnc</td>
+                <td bgcolor="#dddddd"> ip, port, pass of the bnc (only BNC from www.gotbnc.com is supported)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">router</td>
+                <td bgcolor="#dddddd">ip, port, pass of the router (only cisco routers are supported)</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Addition options for all bots, those options can be set more then once</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">server</td>
+                <td bgcolor="#dddddd">ipv4 (or ipv6 in case of 0.2.3 or newer) address and port of irc server. Additionally you can add a password, if this is necessary to connect. (eg. 218.234.456.123 6667 password)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">server6</td>
+                <td bgcolor="#dddddd">ipv6 address and port of the irc server (e.g: 3ffe:2f4:56:35:0:0:0:23 6667) (this option has been removed in 0.2.3 version)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ssl_server</td>
+                <td bgcolor="#dddddd">specifies SSL server, syntax is the same as in server option</td>
+              </tr>
+            </tbody>
+          </table>
+        </center>
+        <br>
+        Note that since 0.2.3 config file can be edited via partyline, please read section 7 for details.<br>
+        <br>
+        <h3>2. Setting up botnet</h3>
+        <br>
+        <h4>* Setting up main bot</h4>
+        <br>
+        First of all copy hub.conf from cfg-examples dir to the dir where
+        psotinic binary is located in. Then edit it :). Next thing that is
+        needed to be done is ecnryption of the config file, to do that run
+        `psotnic -c config.file'. This should either output bunch of errors or
+        simply tell you that everything went ok. Now having your config file
+        encrypted you can run the bot, to do that run `psotnic config.file`, it
+        is also adviceable to move config file to some safe place, for obvious
+        reasons.<br>
+        Now when bots is up and running telnet to him (telnet ip port) and
+        enter your owner password (not the md5 hash), if pass is ok bot should
+        ask for the login and pass. After creating account bot will drop your
+        connection, so telnet back to him and provide ownerpass, login and
+        password. Now when you have joined into the partyline for the first
+        time type `.help', this should output you list of available commands,
+        play with them, it wont hurt ;p<br>
+        <br>
+        <h4>* Setting up slave</h4>
+        <br>
+        Basicaly the same as above, but with three differences, first
+        differnece is that you use conf.salve instead of conf.hub, second one
+        is that you do not set the ownerpass, third on is that you do not
+        telnet into to slave. Rest is the same.<br>
+        After starting slave you should notice new messages on the partyline,
+        if you cant see any connection attempts that means that ips in slave's
+        config file are wrong.<br>
+        Now it is high time to inform main that we will be having new slave, to do that type those commands on the partyline:<br>
+        .+bot handle IP<br>
+        .+host handle nick*!ident@vhost		(only when slave is on irc)<br>
+        .chattr handle s<br>
+        .chpass handle some_password		(password is the same as in the slave's config - hub line)<br>
+        <br>
+        <h4>* Setting up leaf</h4>
+        <br>
+        The same as setting up slave but with two differences, first you use
+        conf.leaf instead of conf.slave, second one if that you do `.chattr bot
+        l' instead of `.chattr bot s'.<br>
+        <br>
+        <h4>* Few remarks:</h4>
+        - leaf can _only_ be linked to slave, not main bot.<br>
+        - if bots kick eachother or they do not give op make sure that they
+        have their hosts added (you can check that with .list i command) and
+        that non of the bots is sharing host with something that is not a bot,
+        eg. with you.<br>
+        <br>
+        <h3>3. Settings</h3>
+        <br>
+        <center>
+          <table border="0" cellpadding="2" cellspacing="1">
+            <tbody>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Settings that can be controled via .set command</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">cycle-delay</td>
+                <td bgcolor="#dddddd"> cycle delay</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">rejoin-delay</td>
+                <td bgcolor="#dddddd"> delay after witch bot joins channel if he got kicked out of it</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">rejoin-fail-delay</td>
+                <td bgcolor="#dddddd"> delay after which bot joins channel if last join was unsucessful</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">hub-conn-delay</td>
+                <td bgcolor="#dddddd"> delay after witch bot tries to reconnect to hub</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">irc-conn-delay</td>
+                <td bgcolor="#dddddd"> delay after witch bot tries to reconnect to irc</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">auth-time</td>
+                <td bgcolor="#dddddd"> all unauthorised connections are closed after this time</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">private-ctcp</td>
+                <td bgcolor="#dddddd"> turns on/off private ctcp response for all bots</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ops-per-mode</td>
+                <td bgcolor="#dddddd"> number of ops in one line when there are enemies in the channel</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ask-for-op-delay</td>
+                <td bgcolor="#dddddd"> after this time bot asks for op if he wasn't opped before</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">getop-op-check</td>
+                <td bgcolor="#dddddd"> turns on/off checking if bot that is reqesting op is allready oped</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">conn-timeout</td>
+                <td bgcolor="#dddddd"> time after witch all authorsied inacive connection are being closed</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">keep-nick-check-delay</td>
+                <td bgcolor="#dddddd">this setting tells bots how often should they check if their nick is available</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">remember-old-keys</td>
+                <td bgcolor="#dddddd"> turns on/off remembering of old channel keys</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">telnet-owners</td>
+                <td bgcolor="#dddddd"> if set to 0 owners are not allowed to connect via telnet, if set to 1
+                  all owners having +pt flags can connect to main via telnet, if set to 2
+                  only owners having +pt flags set and having their ip added to host list
+                  are allowed to connect.</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">max-matches</td>
+                <td bgcolor="#dddddd"> maximum number of matches shown in .match</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">perip-max-shown-cons</td>
+                <td bgcolor="#dddddd">maximum number of shown connection attempts from one IP</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">perip-burst-size</td>
+                <td bgcolor="#dddddd"> maximum number of unauthorsied connections from one IP</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">perip-burst-time</td>
+                <td bgcolor="#dddddd"> time after witch connection counters are being reset</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">perip-ignore-time</td>
+                <td bgcolor="#dddddd"> how long to ignore ip that reached maximum number of unauthorised connectios</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">synflood-max-conns</td>
+                <td bgcolor="#dddddd">maximum number of all unregistrated connections</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">synflood-ignore-time</td>
+                <td bgcolor="#dddddd">how long to ignore all ips</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">bIe-mode-bounce-time</td>
+                <td bgcolor="#dddddd">after this time bots will remove b/e/I channel modes</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">wasop-cache-time&nbsp;</td>
+                <td bgcolor="#dddddd"> this setting controls how long bot should keep information about ops during netsplit</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">away-time</td>
+                <td bgcolor="#dddddd"> bots will stay away for this time</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">chat-time</td>
+                <td bgcolor="#dddddd"> bots will stay not away for this time</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">between-msg-delay</td>
+                <td bgcolor="#dddddd"> delay time between sending messages when bots are not away (antiidle)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">randomness</td>
+                <td bgcolor="#dddddd"> randomness of antidile/away</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">public-away</td>
+                <td bgcolor="#dddddd"> turns on/off public aways/backs</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">ident-clones</td>
+                <td bgcolor="#dddddd"> maximum number of ppl on given channel having the same ident</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">host-clones</td>
+                <td bgcolor="#dddddd"> maximum number of ppl on given channel having the same hostname / C subclass</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">proxy-clones</td>
+                <td bgcolor="#dddddd"> maximum number of ppl on given channel having simmilar domain and not having ident</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">clone-life-time</td>
+                <td bgcolor="#dddddd"> time after witch clones are deleted from clone list</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">critical-bots</td>
+                <td bgcolor="#dddddd"> if minimal number of bots on given channel reaches this number, bots will lock the channel (+i)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">quarantine-time</td>
+                <td bgcolor="#dddddd"> controls the delay between adding a host to a bot (bot without added host will not join channels) and joining channels</td>
+              </tr>
+            <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">dont-trust-ops</td>
+                <td bgcolor="#dddddd"><pre><strong>0</strong>  off
+<strong>1</strong>  ops (that dont have +f) can op only users that have +s or bots
+<strong>2</strong>  ops (that dont have +f) can op only users that have +s
+</pre></td>
+           </tr>
+            </tbody>
+          </table>
+        </center>
+        <br>
+        <h3>4. Local/channel settings</h3>
+        <br>
+        <center>
+          <table border="0" cellpadding="2" cellspacing="1">
+            <tbody>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">Channel settings controlled by .chset #channel command</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">aop-bots</td>
+                <td bgcolor="#dddddd"> number of bots assigned to oping joining +ao ppl</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">bot-aop-bots</td>
+                <td bgcolor="#dddddd"> number of bots assigned to oping joining bots</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">bot-aop-mode</td>
+                <td bgcolor="#dddddd"> it sets bot autop op mode, when it is set to 2, bots op like in &lt;
+                  0.2.7 versions (fast but insecurity - if someone pretends to be a bot,
+                  he migh get oped), when it is set to 1, bots use getop code to gain op
+                  only if the number of ppl to kick is not larger then 4, otherwise they
+                  use &lt; 0.2.7 op code, when this setting is set to 0, bots will only
+                  use get op code (it might be usefull when you really care that nobody
+                  would spoof bots hosts, but you also do not care whether bots op fast
+                  or slow). Additionaly when takeover is enabled, bots will always use
+                  the fastest op mode (that is 0).</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">punish-bots</td>
+                <td bgcolor="#dddddd"> number of bots assigned to kicking ppl that are doing sth nasty</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">getop-bots</td>
+                <td bgcolor="#dddddd"> number of bots which bot will ask for op</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">invite-bots</td>
+                <td bgcolor="#dddddd"> number of bots witch bot will ask for invitation</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">guardian-bots</td>
+                <td bgcolor="#dddddd"> number of bots which will guard channel modes</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">channel-ctcp</td>
+                <td bgcolor="#dddddd"> turns on/off response to channel ctcp queries</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">enforce-bans</td>
+                <td bgcolor="#dddddd"> turns on/off ban enforcing (=kicking ppl that are matching placed ban)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">enforce-limits</td>
+                <td bgcolor="#dddddd"> turns on/off limit enforcing, if somebody with +n flag places lower limit then the number of users bots will `remove' surplus</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">stop-nethack</td>
+                <td bgcolor="#dddddd"> turns on/off kicking of -f ppl upon recieving op from the irc server</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">limit</td>
+                <td bgcolor="#dddddd"> turns on/off autolimit feature</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">limit-time</td>
+                <td bgcolor="#dddddd"> autolimit recheck time</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">limit-offset</td>
+                <td bgcolor="#dddddd"> autolimit offset (new limit := number_of_users + this value)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">limit-bots</td>
+                <td bgcolor="#dddddd"> number of limit bots assigned to autolimiting</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">limit-tolerance</td>
+                <td bgcolor="#dddddd"> tolerance of the limit (:= limit offset * this value), this setting prevents too freqent changes of the limit</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">owner-limit-time</td>
+                <td bgcolor="#dddddd"> owner is allowed to change the limit for this value of time</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">takeover</td>
+                <td bgcolor="#dddddd"> turns on/off takeover mode</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">bitch</td>
+                <td bgcolor="#dddddd"> turns on/off bitch mode</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">wasoptest</td>
+                <td bgcolor="#dddddd"> turns on/off remembering of all ops that splited</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">clonecheck</td>
+                <td bgcolor="#dddddd"> turns on/off clone checking</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">dynamic-bans</td>
+                <td bgcolor="#dddddd"> turns on/off removal of old placed bans</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">dynamic-invites</td>
+                <td bgcolor="#dddddd"> turns on/off removal of old placed invites</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">dynamic-exempts</td>
+                <td bgcolor="#dddddd"> turns on/off removal of old placed exempts</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">lockdown</td>
+                <td bgcolor="#dddddd"> turnd on/off locking of the channel if the numver of bots on the channel reaches critical level</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">lockdown-time</td>
+                <td bgcolor="#dddddd"> not used ;-)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">backup-mode-delay</td>
+                <td bgcolor="#dddddd"> ...</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">keepout</td>
+                <td bgcolor="#dddddd"> when enabled, channel will be kept locked (+i), all not added (not having +v or +o) ppl will be forced to leave :P</td>
+              </tr>
+              
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">protect-chmodes</td>
+                <td bgcolor="#dddddd"><p>can protect/forbid channel modes. example:  &quot;+nt-ims&quot; will make sure that 'n' and 't' are always set, and that 'i' 'm'
+                and 's' are not set.</p>
+                </td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">idiots</td>
+                <td bgcolor="#dddddd"><pre><strong>0</strong>  off
+<strong>1</strong>  remove +a only (if exists)
+<strong>2</strong>  remove +a and the highest level flag. if user will have no flag
+   we'll give  him +d
+<strong>3</strong>  remove all flags for 1st offence. 2nd time +d
+<strong>4</strong>  +d locally
+<strong>5</strong>  +d globally and clear flags for all other channels
+</pre>                </td>
+              </tr>
+            </tbody>
+          </table>
+        </center>
+        <br>
+        <h3>5. Flags</h3>
+        <br>
+        <center>
+          <table border="0" cellpadding="2" cellspacing="1">
+            <tbody>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">global flags</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">x</td>
+                <td bgcolor="#dddddd"> main owner (full control)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">s</td>
+                <td bgcolor="#dddddd"> super owner (partyline access, bot modification, -s handle modification)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">n</td>
+                <td bgcolor="#dddddd"> normal owner (partyline access, -n handle modyfication)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">t</td>
+                <td bgcolor="#dddddd"> telnet privilege (not that +p is it still needed to connect)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">p</td>
+                <td bgcolor="#dddddd"> partyline access flag</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">m</td>
+                <td bgcolor="#dddddd"> master (lacks partyline access, can op one person per mode, cannot modify channel modes)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">f</td>
+                <td bgcolor="#dddddd"> friend (cannot op, but he may recieve op from irc servers, shits do not apply to him)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">o</td>
+                <td bgcolor="#dddddd"> op (just plain @)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">v</td>
+                <td bgcolor="#dddddd"> voice</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">a</td>
+                <td bgcolor="#dddddd"> auto-mode (combined with +o, +a gives auto-op or auto-voice respectively)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">d</td>
+                <td bgcolor="#dddddd"> deop (user gets kicked when he recieves op)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">q</td>
+                <td bgcolor="#dddddd"> quiet (user gets devoiced when he recieves voice)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">k</td>
+                <td bgcolor="#dddddd"> kick (user get kicked on join)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">c</td>
+                <td bgcolor="#dddddd"> clone (user is not taken in consideration by clonecheck algortyhm)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">i</td>
+                <td bgcolor="#dddddd"> invite (auto-invite after kick when channel is full or closed (+i))</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">r</td>
+                <td bgcolor="#dddddd"> reop (auto-reop on deop)</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">local flags</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">n</td>
+                <td bgcolor="#dddddd"> channel owner (full channel control, user cannot deop/kick/ban bots and
+                  connect to the partyline - unless he gets global +pt, then he will be
+                  able to modify all channel handles)</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">x|s|t|p</td>
+                <td bgcolor="#dddddd">those flags are not allowed, other flags behave like the global flags</td>
+              </tr>
+              <tr bgcolor="#525bb9">
+                <td colspan="2" align="center"><font color="#fcfcfc">bot flags</font></td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">h</td>
+                <td bgcolor="#dddddd"> main</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">s</td>
+                <td bgcolor="#dddddd"> slave</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">l</td>
+                <td bgcolor="#dddddd"> leaf</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">y</td>
+                <td bgcolor="#dddddd"> allowed to load modules</td>
+              </tr>
+              <tr valign="top">
+                <td style="font-family: monospace;" bgcolor="#f0f0f0">p</td>
+                <td bgcolor="#dddddd"> allowed to inform botnet about his host changes</td>
+              </tr>
+            </tbody>
+          </table>
+        </center>
+        <br>
+        <h3>6. Modules</h3>
+        A lot of ppl i having problem with them, so there is a short info how to load them.<br>
+        <br>
+        First of all you need to get a non static version of psotnic irc bot
+        (yes, that means that there is now way of loading modules to static
+        version). After unpacking psotnic package, enter framework directory,
+        depending on a version of bot you should see a lot of files (0.2.2
+        case) or a few files and two dirs (0.2.3 case). If you are using 0.2.2
+        simply run make clean &amp;&amp; make all, this should build all
+        modules, if you get an error that means that sth bad had happend and
+        now you are on your own. If you are 0.2.3 user then type make op
+        &amp;&amp; make spam (only those two modules are proted, if you wish
+        you can port rest of them). Having compiled modules (module_name.so
+        &lt;- thats the module, not module_name.cpp) you have to edit config
+        file. In both cases (0.2.2 and 0.2.3) you should add following line to
+        you config in order to load a module:<br>
+        <br>
+        load /path/to/home/psotnic/framework/module_name.so<br>
+        <br>
+        and simply encrypt config and start the bot. Thats all.<br>
+        <br>
+        <h3>7. Config file edition via partyline (since 0.2.3rc1)</h3>
+        All 0.2.3 bots have an option of config edition via partyline, to get current config we need to do:<br>
+        .bc botname cfg<br>
+        <br>
+        This should display sth like that:<br>
+        (botname) cfg: nick                         botname<br>
+        (botname) cfg: realname                     Psotnic C++ Edition<br>
+        and so on...<br>
+        <br>
+        You can change given option by doing:<br>
+        .bc botname cfg
+        <new value=""><br>
+            <br>
+          For instance:<br>
+          .bc botname cfg kickreason blah blah<br>
+          [15:08] #you# bc botname cfg kickreason blah blah<br>
+          (botname) cfg: kickreason has been set to blah blah<br>
+          <br>
+          In order to save changes, you have to do:<br>
+          .bc botname cfg-save<br>
+          <br>
+          Some config options can have more then one instance, for example server or alt option.<br>
+          <br>
+          To add 3 servers just do:<br>
+          .bc botname cfg server 1.1.1.1 1111<br>
+          .bc botname cfg server 2.2.2.2 2222<br>
+          .bc botname cfg server 3.3.3.3 3333<br>
+          <br>
+          To remove second one do:<br>
+          .bc botname cfg -server 2.2.2.2 2222<br>
+          <br>
+          Thats all, dont forget to save cfg :)<br>
+          <br>
+        </new>
+        <h3>8. On join host resolver (linux only)</h3>
+        All 0.2.3 version psotnics are equiped with asynchronous resolver,
+        unforunetely only rc9 works properly, so if you have an older bot you
+        should upgrade it.<br>
+        In order to enable resolver set resolve-threads config option to some
+        sane value (for instance 4), the bigger the value the more simultaneous
+        resolving will be performed, notice that on linux each thread creates
+        new process. After setting this option restart bot.<br>
+        <br>
+        To see resolver statistics do:<br>
+        .status botname<br>
+        <br>
+        <h3>9. The end</h3>
+        Thats general description of the stuff that confuses most ppl, if you
+        find any errors please let me know, i will try to fix them as soon as
+        it will be possible.<br>
+        <br>
+        --<br>
+        pks (grusin{at}gmail.com)<br>
+        mrcn (mrcn@op.pl)<br>
+        <br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

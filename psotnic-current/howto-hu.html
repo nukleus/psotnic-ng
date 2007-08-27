@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/~grusin/psotnic.css">
+<title>The Psotnic Project :: Psotnic 0.2.x HOWTO [HU]</title>
+<meta name="description" content="Irc bot for linux">
+<meta name="keywords" content="bot bots ircnet ipv6 irc psotnic botnet linux freebsd openbsd #psotnic c++ cpp c modules grzegorz rusin">
+<meta name="Author" content="Grzegorz Rusin pks@irc.pl">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+</head>
+<body bgcolor="#ffffff" background="#ffffff"><table border="0" width="100%" cellspacing="0" cellpadding="0"><tr>
+  <td valign="top" align="center"><table width="90%"><tr><td valign="top"><h2 align="center">Psotnic 0.2.x HOWTO [HU]</h2>Ez a fájl tartalmazza az alapjait annak, hogy hogyan állítsd be (és használd) a psotnic irc botot.<br>
+Légyszíves olvasd el ezt a fájlt mielőtt butaságokat kérdeznél.<br>
+<br>
+Kellemes olvasást.<br>
+<br>
+<h4>***</h4>
+please note that all translated howtos are based upon english version and they might be outdated<br>
+if you cannot find something in this document please check english version. --pks<br>
+<h4>***</h4>
+<br>
+<br>
+<h3>1. Config fájl opciók</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Kötelező választások az összes bothoz</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">nick</td><td bgcolor="#DDDDDD">          a bot nickje</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">realname</td><td bgcolor="#DDDDDD">   a bot valódi neve</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">nickappend</td><td bgcolor="#DDDDDD"> egy pár jellemző amivel majd kiegészíti a nicket, ha azt elveszik (pl. -|`^, ezt a beállítást veszi figyelembe ha az `altuidnick'  0)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">myipv4</td><td bgcolor="#DDDDDD">        a bot ip címe (pl. 88.45.56.15, 0.0.0.0, ez bármilyen címet jelent)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Kötelező választások a fő bothoz</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">listen</td><td bgcolor="#DDDDDD">         a port amelyiken a fő figyeli az alárendelt/slave-k és tulajdonosok kapcsolatait (pl. 12345)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">owenrpass</td><td bgcolor="#DDDDDD">  a tulajdonos jelszava md5sum (fő jelszó) az osztott vonalon (ahhoz hogy egy md5hash.t csinálj, futtasd .psotnic- p -t)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Kötelező választások a fő slave-hez/alárendelt</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">listen</td><td bgcolor="#DDDDDD">         a port, amelyiken a slave/alárendelt figyel a végcsúcsok kapcsolatait (pl. 12345)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">hub</td><td bgcolor="#DDDDDD">           a fő bot ipje, portja, jelszava (pl. 123.123.123.123 9000 some_password)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Kötelező választások a végcsúcsoknak</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">hub</td><td bgcolor="#DDDDDD">            ip, port, jelszó és alárendelt változó név (pl. 111.111.111.111 8000 some_password slave1 )</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">További lehetőségek a végcsúcsnak</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">alt</td><td bgcolor="#DDDDDD">              az alternatív slave ipje, portja  (pl.  1111.111.222.222 9000, többször is be lehet állítani)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">További opciók az összes bothoz</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace"></td><td bgcolor="#DDDDDD">ident           a bot felahsználóneve (alapból: ugyanaz mint a fiók név)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace"></td><td bgcolor="#DDDDDD">handle         a  bot változója, ami látható az osztott vonalon (alapból: ugyanaz mint a nick)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">vhost</td><td bgcolor="#DDDDDD">           ipv4 vagy ipv6 cím (pl: 217.2.3.54 vagy 3ffe:2f4:56:35:0:0:0:23), domain neveket nem támogatnak (alapból: az operációs rendszer határozza meg)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">logfile</td><td bgcolor="#DDDDDD">          fájl ahova bot loggolja az akciókat (alapból: dev/null :)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">userlist</td><td bgcolor="#DDDDDD">        felhasználólista (aka. felhasználói fájl) tárolja ott (alapból: $nick.ul)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">altuidnick</td><td bgcolor="#DDDDDD">    ki/bekapcsolja a nick 0 -ra változtatását ha a nicket elveszik (alapból ez be van kapcsolva)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ctcptype</td><td bgcolor="#DDDDDD">     ctcp változat (alapból: találomra). Lehetséges választások: 0 = egyik sem, 1 = psotnic, 2 = irssi, 3 = epic, 4 = lice, 5 = bitch, 6 = dzony loker, 7 = luzik, 8 = mirc 6.14</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">keepnick</td><td bgcolor="#DDDDDD">    nick tartás (alapból: 0)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">kickreason</td><td bgcolor="#DDDDDD"> kirúgás oka</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limitreason</td><td bgcolor="#DDDDDD">  akkor használt kirúgási ok amikor valaki átírja a csatorna limitjét</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">partreason</td><td bgcolor="#DDDDDD">   lelépés oka</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">quitreason</td><td bgcolor="#DDDDDD">   kilépés oka</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">cyclereason</td><td bgcolor="#DDDDDD"> ciklus oka:)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">További választások az összes botnak, azokat többször is be lehet állítani</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">server</td><td bgcolor="#DDDDDD">        az irc szerver ipv4 (vagy ipv6 a 0.2.3 esetében) címe és portja (pl. 218.234.456.123 6667)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">server6</td><td bgcolor="#DDDDDD">      az irc szerver  ipv6 címe és portja (pl: 3ffe:2f4:56:35:0:0:0:23 6667) (ez az opció nincs jelen a 0.2.3 változatban)</td></tr>
+</table></center>
+Jegyezd meg, mivel a 0.2.3 config fájlt szerkesztheted osztott vonalon/partyline-ban, légyszíves olvasd el a 7. részt a részletekért.<br>
+<br>
+<h3>2. A botnet beállítása</h3>
+<br>
+<h4>* A fő bot beállítása</h4>
+Mindenek előtt másold a hub.conf-ot a cfg-examples dir-ből abba a könyvtárba, ahol a psotinic bináris van. Aztán szerkeszd :). Azután a következő amit tenned kell, hogy titkosítod a config fájlt, s ahhoz hogy ezt megtedd, futtasd a `psotnic -c config.file'-t. Ez vagy egy halom hibát ír ki vagy egyszerűen megmondja, hogy minden rendben ment. Most, hogy titkosítottad a config fájl, futtathatod a botot, hogy így tégy, futtasd  a `psotnic config.file'-t, tanácsos azonban a config fájlt biztos helyre tenni, nyilvánvaló okokból.<br>
+Most hogy fut a bot és fut hozzá a telnet (telnet ip port) és beírod a tulajdonosodat jelszódat (nem az md5 hasht), ha jelszó jó, a bot kéri a logint és jelszót. Miután létrehozza a fiókot, a bot bontja a kapcsolatodat, így telnetelj vissza és add meg a tulajdonosi jelszódat, loginod és jelszódat. Most, mikor beléptél az osztott vonalra/ partyline-ra először írd be hogy `.help', ez az elérhető parancsok listáját hozza be, játssz ezekkel, nem fog fájni. ;p<br>
+<br>
+<h4>* A slave beállítása</h4>
+Alapvetően ugyanaz mint fentebb, de három különbséggel, első különbség, hogy conf.slave helyett conf.hub-ot használsz, második, hogy nem állítod be a tulajdonosi jelszót, harmadik, hogy nem telnetelsz a slave-be. A többi ugyanaz.<br>
+Miután elindítod a slave-t, új üzeneteket kell látnod partyline-ban az osztott kommunikációs vonalon, ha nem látsz kapcsolódási kísérletet, az azt jelenti, hogy az ip-k a slave config fájljában rosszak.<br>
+Most legfőbb ideje, hogy értesítsd a főt, hogy új slave-ünk lesz, hogy így tégy, írd be azokat parancsokat a partyline-ban:<br>
+.+bot handle IP<br>
+.+host handle nick*!ident@vhost  (csak mikor a slave az ircen van)<br>
+.chattr handle s<br>
+.chpass handle some_password  (a jelszó ugyanaz mint a slave/ alárendelt config - hub vonalban)<br>
+<br>
+<h4>* A leaf beállítása</h4>
+Ugyanaz mint a slave beállítása, de két különbséggel, először a conf.leaf helyett a conf.slave-t használod, második, ha te a `.chattr bot l' helyett `.chattr bot s' teszel.<br>
+Egy észrevétel: a leaf -et csak a slave-hez linkelheted, a fő bothoz nem.<br>
+<br>
+<h3>3. Beállítások</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Beállítások melyeket a .set parancs által irányíthatsz</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">cycle-delay</td><td bgcolor="#DDDDDD">          ciklus  késleltetés</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">rejoin-delay</td><td bgcolor="#DDDDDD">          késleltetés miután a bot belép a csatornára ha kirúgták onnan</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">rejoin-fail-delay</td><td bgcolor="#DDDDDD">     késleltetés miután a bot belép a csatornára ha az utolsó belépés sikertelen volt</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">hub-conn-delay</td><td bgcolor="#DDDDDD">     késleltetés miután a bot megpróbál kapcsolódni a hubra</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">irc-conn-delay</td><td bgcolor="#DDDDDD">        késleltetés miután a bot megpróbál újra kapcsolódni az ircre</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">auth-time</td><td bgcolor="#DDDDDD">              ezután az idő után minden jogosulatlan kapcsolatot lezár</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">private-ctcp</td><td bgcolor="#DDDDDD">           ki/bekapcsolja az egyéni ctcp választ az összes botnak</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ops-per-mode</td><td bgcolor="#DDDDDD">        ha ellenségek vannak a csatornán, az opok száma egy vonalban</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ask-for-op-mode</td><td bgcolor="#DDDDDD">     ez után az idő után ha még nem opolták, a bot opot kér</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">getop-op-check</td><td bgcolor="#DDDDDD">     ki/bekapcsolja az ellenőrzést, ha a bot,ami opot kér, már kapott opot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">conn-timeout</td><td bgcolor="#DDDDDD">         az idő, miután minden jogosult inaktiv kapcsolatot lezár</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">keep-nick-check-delay</td><td bgcolor="#DDDDDD">  ez a beállítás megmondja a botnak, hogymilyen gyakran ellenőrizzék, hogy szabad-e  egy nick</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">remember-old-keys</td><td bgcolor="#DDDDDD"> ki/bekapcsolja hogy emlékezzen a régi csatorna kulcsokra</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">telnet-owners</td><td bgcolor="#DDDDDD">         ha 0 a tulajdonosok nem kapcsolódhatnak telnettel, ha 1 akkor az össze tulajdonos, akinek +pt flagje van, kapcsolódhat telnettel; ha 2, akkor csak azok a tulajdonosok, akiknek +pt flaget állítottak be és ipjüket hozzáadták a hostlistához, azok kapcsolódhatnak.</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">max-matches</td><td bgcolor="#DDDDDD">        a .match -ben mutatott találatok max. száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">perip-max-shown-cons</td><td bgcolor="#DDDDDD">az egy IPről jövő kapcsolódási kísérletek max száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">perip-burst-size</td><td bgcolor="#DDDDDD">          az egy IPről jövő jogosulatlan kapcsolódások max. száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">perip-ignore-time</td><td bgcolor="#DDDDDD">        mennyi időre mellőzzön egy ipt, ami elérte a legnagyobb számú jogosulatlan kapcsolatot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">synflood-max-conns</td><td bgcolor="#DDDDDD">   az összes regisztrálatlan kapcsolat max. száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">synflood-ignore-time</td><td bgcolor="#DDDDDD">   mennyi ideig mellőzzön minden ipt</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">bIe-mode-bounce-time</td><td bgcolor="#DDDDDD"> ez után az idő után a botok eltávolítják a b/e/l csatorna módokat</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">wasop-cache-time</td><td bgcolor="#DDDDDD">       ez a beállítás irányítja, hogy meddig tartson meg a bot információt az opról netsplit alatt</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">away-time</td><td bgcolor="#DDDDDD">                  az az idő, míg a botok távol vannak</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">chat-time</td><td bgcolor="#DDDDDD">                   az az idő, amikor a botok jelen vannak</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">between-msg-delay</td><td bgcolor="#DDDDDD">     késleltetési idő az üzenetek elküldése között, amikor a botok jelen vannak (antiidle)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">randomness</td><td bgcolor="#DDDDDD">               az  antidile/away véletlenszerűsége</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">public-away</td><td bgcolor="#DDDDDD">                a nyilvános away-ek/back-ek ki/bekapcsolása</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">ident-clones</td><td bgcolor="#DDDDDD">                az azonos identű emberek max száma egy adott csatornán</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">host-clnoes</td><td bgcolor="#DDDDDD">                az azonos hostnevű/C alosztályú emberek max- száma egy adott csatornán</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">proxy-clones</td><td bgcolor="#DDDDDD">              a hasonló domain és nem identtel rendelkező emberek ma. száma egy adott csatornán</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">clone-life-time</td><td bgcolor="#DDDDDD">            idő, miután a klónokat törlik a klónlistáról</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">critical-bots</td><td bgcolor="#DDDDDD">               ha minimális számú bot egy adott csatornán eléri ezt a számot, a botok bezárják a csatornát (+i)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">quarantine-time</td><td bgcolor="#DDDDDD">         irányítja a késleltetést aközött hogy egy hostot egy bothoz ad és belép a csatornára (bot hozzáadott host nélkül nem lép be csatornákra)</td></tr>
+</table></center>
+<br>
+<h3>4. Helyi/csatorna beállítások</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">Csatorna beállítások, melyeket a .chset #csatorna parancs irányít</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">aop-bots</td><td bgcolor="#DDDDDD">                   bizonyos számú bot, melyet kijelöltek opolásra, mikor +ao emberek lépnek be</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">bot-aop-bots</td><td bgcolor="#DDDDDD">              belépő botok opolására kijelölt botok száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">punish-bots</td><td bgcolor="#DDDDDD">               vmi rosszat tevő emberek kirúgására kijelölt botok száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">getop-bots</td><td bgcolor="#DDDDDD">                 opot kérő botok száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">invite-bots</td><td bgcolor="#DDDDDD">                  meghívást kérső botok száma</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">guardian-bots</td><td bgcolor="#DDDDDD">             azon botok száma, amelyek védik a csatorna módokat</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">channel-ctcp</td><td bgcolor="#DDDDDD">              ki/bekapcsolja a channel ctcp kérésekre adott választ</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">enforce-bans</td><td bgcolor="#DDDDDD">             ki/bekapcsolja a kitiltást kierőszakolást (=kirúgja azokat az embereket, akiknél feltett bant talált)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">enforce-limits</td><td bgcolor="#DDDDDD">           ki/bekapcsolja a limit kierőszakolást, ha valaki +n flaggel alacsonyabb határt állít be, akkor számos felhasználói bot `remove'  /eltávolítja/ a felesleget</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">stop-nethack</td><td bgcolor="#DDDDDD">           ki/bekapcsolja a -f emberek kirúgását, akik az irc szervertől opot kapnak</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit</td><td bgcolor="#DDDDDD">                         ki/bekapcsolja az autolimit funkciót</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-time</td><td bgcolor="#DDDDDD">                 autolimit újraellenőrzési idő</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-offset</td><td bgcolor="#DDDDDD">                autolimit offset (új limit = number_of_users/a felhasználók száma +  ez az érték)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-bots</td><td bgcolor="#DDDDDD">                  bizonyos számú limit bot hogy autolimiteljen</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">limit-tolerance</td><td bgcolor="#DDDDDD">           a limit türelme  (= limit offset* ezaz érték), ez a beállítás megakadályozza, hogy túl gyakran váltsanak limitet</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">owner-limit-time</td><td bgcolor="#DDDDDD">        a tulajdonos erre az időre megváltoztathatja a limitet</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">takeover</td><td bgcolor="#DDDDDD">                   ki/bekapcsolja az átvételi módot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">bitch</td><td bgcolor="#DDDDDD">                        ki/bekapcsolja a bitch módot</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">wasoptest</td><td bgcolor="#DDDDDD">                ki/bekapcsolja azt, hogy emlékezzen az összes opra, amelyik splitelt/szakadt</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">clonecheck</td><td bgcolor="#DDDDDD">               ki/bekapcsolja a klón ellenőrzést</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">dynamic-bans</td><td bgcolor="#DDDDDD">           ki/bekapcsolja a régi feltett banok eltávolítását</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">dynamic-invites</td><td bgcolor="#DDDDDD">         ki/bekapcsolja a régi feltett meghívások eltávolítását</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">dynamic-exempt</td><td bgcolor="#DDDDDD">       ki/bekapcsolja a régi feltett kivételek eltávolítását</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">lockdown</td><td bgcolor="#DDDDDD">                  ki/bekapcsolja a csatorna lezárását, ha a botok száma eléri a csatornán a kritikus szintet</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">lockdown-time</td><td bgcolor="#DDDDDD">           nem használt  -)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">backup-mode-delay</td><td bgcolor="#DDDDDD">     ...</td></tr>
+</table></center>
+<br>
+<h3>5. Flagek/Jelzők</h3>
+<br>
+<center><table border="0" cellpadding="2" cellspacing="1">
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">globális flagek</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">x</td><td bgcolor="#DDDDDD">                       fő tulajdonos (teljes irányítás)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">s</td><td bgcolor="#DDDDDD">                       szuper tulajdonos (partyline belépés, bot módosítás, -s változó módosítás)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">n</td><td bgcolor="#DDDDDD">                       normál tulajdonos (partyline belépés, -n változó módosítás)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">t</td><td bgcolor="#DDDDDD">                        telnet kiváltság (még mindig szükséges +p a kapcsolódáshoz)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">p</td><td bgcolor="#DDDDDD">                       partyline belépés flag</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">m</td><td bgcolor="#DDDDDD">                      mester (hiányzik a partyline belépés, mód által tud opolni egy személyt, nem tud csatorna módokat módosítani)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">f</td><td bgcolor="#DDDDDD">                        barát (nem tud opolni, de kaphat opot az irc szerverektől, nem alkalmazhatóak shits/szarok ? rá)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">o</td><td bgcolor="#DDDDDD">                       op (csak simán @)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">v</td><td bgcolor="#DDDDDD">                       hang</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">a</td><td bgcolor="#DDDDDD">                       auto-mode  (kombinálva +o-val, +a autoop-ot ad vagy auto-voice-t illetőleg)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">d</td><td bgcolor="#DDDDDD">                       deop (a felhasználót kirúgja ha opot kap)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">q</td><td bgcolor="#DDDDDD">                       csend (a felhasználótól elveszi a v-t, mikor hangot kap)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">k</td><td bgcolor="#DDDDDD">                       kirúgás (a felhasználó kirúgja belépéskor)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">c</td><td bgcolor="#DDDDDD">                       klón (a felhasználót nem veszi figyelembe a klónellenőrző algoritmus)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">i</td><td bgcolor="#DDDDDD">                        meghívás (automeghívás kirúgás után mikor a csatorna tele van vagy zárt (+i))</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">r</td><td bgcolor="#DDDDDD">                        újraopolás(auto-reop deop esetén)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">helyi zászlók</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">n</td><td bgcolor="#DDDDDD">                      csatorna tulajdonos (teljes csatorna irányítás, felhasználó nem tud deopolni/kirúgni/bannolni botot és kapcsolódni partyline-ba- hacsak nem kap globális +pt-t, aztán tud majd módosítani az egész csatorna változóin)</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">x|s|t|p</td><td bgcolor="#DDDDDD">             flagek nem engedélyezetettek, más flagek úgy viselkednek, mint a globális zászlók ;)</td></tr>
+<tr bgcolor="#525BB9"><td colspan="2" align="center"><font color="#FCFCFC">bot flagek</font></td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">h</td><td bgcolor="#DDDDDD">                    fő</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">s</td><td bgcolor="#DDDDDD">                    slave/ alárendelt</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">l</td><td bgcolor="#DDDDDD">                     leaf</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">y</td><td bgcolor="#DDDDDD">                    tölthetnek be modulokat</td></tr>
+<tr valign="top"><td bgcolor="#F0F0F0" style="font-family:monospace">p</td><td bgcolor="#DDDDDD">                    értesíthetik a botnetet a hostja változásairól</td></tr>
+</table></center>
+<br>
+<br>
+<h3>6. Modulok/ elemek</h3>
+Sok embernek van problémája velük, tehát itt egy rövid info hogyan töltsük be őket.<br>
+<br>
+Mindenekelőtt szükséged van egy nem statikus változatú psotnic irc botra (igen, ez azt jelenti hogy nem tud betölteni modulokat a statikus változat).A psotnic csomag kicsomagolása után, lépj be a keret könyvtárba, a bot változatától függően sok fájlt kell látnod (0.2.2. esetében) vagy néhány fájl és két könyvtárat (0.2.3 esetében). Ha a 0.2.2 használod, egyszerűen futtasd a make clean && malke all -t, ennek az összes modult fel kell építenie, ha kapsz egy hibát az azt jelenti, hogy valami rossz történt és most egymagad vagy. Ha 0.2.3 felhasználó  vagy, akkor gépeld be a make op && make spam (csak ezt a két modult tartalmazza, ha akarod a többit is ).Ha leforgattad a modulokat  (module_name.so <- ez a module, nem module_name.cpp) szerkesztened kell a config fájlt. Mindkét esetben (0.2.2 és 0.2.3) hozzá kell adnod a következő sort a confighoz, hogy betölthesd a modult.<br>
+<br>
+ load /path/to/home/psotnic/framework/module_name.so<br>
+<br>
+és egyszerűen kódold a configot és indítsd el a botot. Ez minden.<br>
+<br>
+<h3>7. Config fájl szerkesztés partylineban (0.2.3rc1 óta)</h3>
+Minden 0.2.3 botnak van egy partyline-on keresztüli szerkesztési opciója, hogy eljussunk a jelenlegi configba, ezt kell tennünk:<br>
+.bc botname cfg<br>
+<br>
+Ez valami ilyesmit mutat hogy:<br>
+(botname) cfg: nick                    botname<br>
+(botname) cfg: realname              Psotnic C++ Edition<br>
+és így tovább..<br>
+<br>
+MEgváltoztathatod az adott opciót ezzel:<br>
+.bc botname cfg &lt;option name&gt; &lt;new value&gt;<br>
+<br>
+Például:<br>
+.bc botname cfg kickreason blah blah<br>
+(15:08) #you# bc botname cfg kickreason blah blah<br>
+(botname) cfg: kickreason blah blah ra állítottam<br>
+<br>
+Ahhoz, hogy mentsd a változásokat, ezt kell tenned:<br>
+.bc botname cfg-save<br>
+<br>
+Néhány config opciónak egynél több esete is lehet, például szerver vagy alt opció.<br>
+<br>
+Hogy addolj 3 szervert, csak írd ezt:<br>
+.bc botname cfg serverl 1.1.1.1 1111<br>
+.bc botname cfg server 2.2.2.2 2222<br>
+.bc botname cfg server 3.3.3.3 3333<br>
+<br>
+Hogy eltávolítsd a másodikat:<br>
+.bc botname cfg server 2.2.2.2 2222<br>
+<br>
+Ez minden, ne felejtsd el elmenteni cfg-t :)<br>
+<br>
+<h3>8. Belépéskor host feloldó (csak linux)</h3>
+Minden 0.2.3 változat psotnic hoz tartozik egy aszinkron feloldó, sajnos csak rc9 dolgozik megfelelően, tehát ha egy régebbi botod van, frissítsd azt.<br>
+Ahhoz, hogy engedélyezzük a feloldót be kell állítani a feloldó-szál config opcióját valami ésszerű értékre  (pl. 4), minél nagyobb az érték, annál egyidejűbb feloldást fog produkálni, jegyezd meg, hogy linux alatt minden szál új folyamatot alkot. Ennek az opciónak a beállítása után indítsd újra a botot.<br>
+<br>
+Ha látni akarod a feloldási statisztikát, csak írd be:<br>
+.status botname<br>
+<br>
+<h3>9.Vége</h3>
+Ezt az általános leírás annak, ami sok embert zavarba ejt, ha felfedezel benne valamilyen hibát, légyszíves tudasd velem, megpróbálom kijavítani őket minél hamarabb.<br>
+<br>
+--<br>
+clone (clon{at}netcore.hu)<br>
+</td></tr></table></td>
+<tr><td colspan="3" align="center"><br>Copyright (c) 2003-2005 <a href="mailto:grusin{at}gmail.com">Grzegorz Rusin</a>. All rights reserved.
+</td></tr></table></body></html>
