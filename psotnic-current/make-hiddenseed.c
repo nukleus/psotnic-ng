@@ -14,7 +14,6 @@ void gen_seed_function(unsigned char *seed, char *name)
 	printf("void gen_%s_seed(unsigned char *out)\n", name);
 	printf("{\n");
 	printf("    int i;\n");
-	printf("    unsigned char last;\n\n");
 
 	for(i=0; i<16; ++i)
 		printf("    out[%d] = %d;\n", i, seed[i] ^ crc);

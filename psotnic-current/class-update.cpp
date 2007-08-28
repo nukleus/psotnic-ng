@@ -20,7 +20,6 @@
 
 #include "prots.h"
 #include "global-var.h"
-#include "seed.h"
 
 update::update()
 {
@@ -143,6 +142,33 @@ bool update::doUpdate(const char *site)
 				if(system(buf))
 					goto dupa;
 					
+				printf("[+] Restoring seeds (creating seed.h)\n");
+				FILE *f = fopen("seed.h", "w+");
+				if(!f)
+					goto dupa;
+			
+				unsigned char seed[16];
+				
+				fprintf(f, "#ifndef PSOTNIC_SEED_H\n");
+				fprintf(f, "#define PSOTNIC_SEED_H 1\n");
+				
+				gen_cfg_seed(seed);
+				fprintf(f, "static unsigned char cfg_seed[] = \"");
+				for(int i=0; i<16; ++i)
+					fprintf(f, "\\x%02x", seed[i]);
+				fprintf(f, "\";\n");
+
+				gen_ul_seed(seed);
+				fprintf(f, "static unsigned char ul_seed[] = \"");
+				for(int i=0; i<16; ++i)
+					fprintf(f, "\\x%02x", seed[i]);
+				fprintf(f, "\";\n");
+				fprintf(f, "#endif\n");
+				
+				memset(seed, 0, 16);
+				if(fclose(f))
+					goto dupa;
+
 				strcpy(buf, "./configure");
 #ifdef HAVE_SSL
 				strcat(buf, " --with-ssl");
@@ -152,27 +178,7 @@ bool update::doUpdate(const char *site)
 #endif
 				if(system(buf))
 					goto dupa;
-				
-				printf("[+] Restoring seeds (creating seed.h)\n");
-				FILE *f = fopen("seed.h", "w+");
-				if(!f)
-					goto dupa;
-				
-				fprintf(f, "#ifndef PSOTNIC_SEED_H\n");
-				fprintf(f, "#define PSOTNIC_SEED_H 1\n");
-				fprintf(f, "static unsigned char cfg_seed[] = \"");
-				for(int i=0; i<16; ++i)
-					fprintf(f, "\\x%02x", cfg_seed[i]);
-				fprintf(f, "\";\n");
-				fprintf(f, "static unsigned char ul_seed[] = \"");
-				for(int i=0; i<16; ++i)
-					fprintf(f, "\\x%02x", ul_seed[i]);
-				fprintf(f, "\";\n");
-				fprintf(f, "#endif\n");
-				
-				if(fclose(f))
-					goto dupa;
-				
+			
 				printf("[*] Compiling (this may take a longer while)\n");
 
 #ifdef HAVE_DEBUG
