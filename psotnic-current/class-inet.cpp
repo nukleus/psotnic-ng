@@ -20,7 +20,6 @@
 
 #include "prots.h"
 #include "global-var.h"
-#include "seed.h"
 
 char __port[16];
 
@@ -946,13 +945,18 @@ int inetconn::enableLameCrypt()
 			}
 		}
 
+		unsigned char seed[16];
 		switch(version)
 		{
 			case 3 + STATUS_ULCRYPT:
-				blowfish->Initialize(ul_seed, 16);
+				gen_ul_seed(seed);
+				blowfish->Initialize(seed, 16);
+				memset(seed, 0, 16);
 				break;
 			case 3:
-				blowfish->Initialize(cfg_seed, 16);
+				gen_cfg_seed(seed);
+				blowfish->Initialize(seed, 16);
+				memset(seed, 0, 16);
 				break;
 			default:
 				printf("[!] Unsupported file format\n");

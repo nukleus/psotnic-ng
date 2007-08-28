@@ -212,4 +212,7 @@ int loadModule(const char *name);
 #endif
 
 int _isnumber(const char *str);
+
+void gen_ul_seed(unsigned char *);
+void gen_cfg_seed(unsigned char *);
 #endif
