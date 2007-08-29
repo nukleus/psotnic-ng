@@ -135,16 +135,19 @@ print $f "\t\@echo Available targets:\n";
 print $f "\t\@echo '* dynamic (prefered for most systems)'\n";
 print $f "\t\@echo '* static'\n";
 print $f "\t\@echo '* debug'\n\n";
-    
-print $f "debug:\n";
+
+print $f "create_hidden_seed:\n";
+print $f "\t\@gcc -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c\n\n";
+
+print $f "debug: create_hidden_seed\n";
 print $f "\t\@echo [*] Making debug\n";
 print $f "\t\@make -f Makefile.debug\n\n";
 
-print $f "dynamic:\n";
+print $f "dynamic: create_hidden_seed\n";
 print $f "\t\@echo [*] Making dynamic\n";
 print $f "\t\@make -f Makefile.dynamic\n\n";
 
-print $f "static:\n";
+print $f "static: create_hidden_seed\n";
 print $f "\t\@echo [*] Making static\n";
 print $f "\t\@make -f Makefile.static\n\n";
 
@@ -278,7 +281,8 @@ else
 	}
 }
 
-`gcc -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c`;
+#moved to makefiles, to keep compatybility
+#`gcc -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c`;
 
 #
 # Creating revision file
