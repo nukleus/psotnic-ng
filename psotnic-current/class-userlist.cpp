@@ -1738,11 +1738,23 @@ int ul::changeFlags(HANDLE *p, const char *flags, int channum, inetconn *c)
 
     unsigned int f = p->flags[channum];
 
-	if(!*flags == '+' && !*flags == '-')
+	if(*flags != '+' && *flags != '-')
+	{
+		printf("!!!!!\n");
 		f &= HAS_B;
+	}
 
+	printf("flags: %s\n", flags);
+
+	char strflags[32];
+
+	flags2str(f, strflags);
+	printf("before: %s\n", strflags);
     if(!mergeFlags(f, flags))
         return -5;
+	
+	flags2str(f, strflags);
+    printf("after: %s\n", strflags);
         
 	//changing user flags
 	if(!isBot(p))
