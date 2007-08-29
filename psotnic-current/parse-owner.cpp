@@ -2232,7 +2232,7 @@ void parse_owner(inetconn *c, char *data)
 		}
 		return;
 	}
-	if(!strcmp(arg[0], ".echo") && arg[1])
+	if(!strcmp(arg[0], ".echo") && *arg[1])
 	{
 		if(!strcmp(arg[1], "on"))
 		{
