@@ -729,11 +729,11 @@ void parse_owner(inetconn *c, char *data)
 
 		h = userlist.first;
 		i = 0;
-		int flags = userlist.str2botFlags(arg[2]) | HAS_B;
+		int flags = (userlist.str2botFlags(arg[2]) & (HAS_L | HAS_H)) | HAS_B;
 
 		while(h)
 		{
-			if(((h->flags[GLOBAL] & (HAS_L | HAS_S)) == flags) && (match(arg[1], h->name)
+			if(((h->flags[GLOBAL] & (HAS_L | HAS_H | HAS_B)) == flags || !*arg[2]) && (match(arg[1], h->name)
 				|| userlist.wildFindHostExt(h, arg[1]) != -1 || match(arg[1], inet2char(h->ip))))
 			{
 				if(i < set.MAX_MATCHES || !set.MAX_MATCHES)
