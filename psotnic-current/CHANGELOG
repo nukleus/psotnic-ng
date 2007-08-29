@@ -20,7 +20,7 @@
 * Have fun -- pks
 *
 
-Psotnic current (2007/08/27) changes:
+Psotnic current (2007/08/29) changes:
 - fixed: #1745405: added SSL_pending (patch by zerg2012)
 - change: #1761109: enhanced .verify [-a|-p|-h|-c] (Esio)
 - fixed: #1742466: snag in chattr code (Esio)
@@ -41,9 +41,10 @@ Psotnic current (2007/08/27) changes:
 - change: now u can give host as second parameter in +user command (Esio)
 - fixed: bot update himself properly when its compiled with ssl (Esio)
 - added: anti repeat module coded by patrick
-- fixed: SSL "double enter" bug in partyline
 - fixed: removed some compilation time warnings
 - added: SVN source code revision to bot version string
+- fixed: #1742466: .chattr fixed set functionality 
+- fixed: #1722119: .bots flag matching
 
 Psotnic 0.2.12 (2007/01/12) changes:
 - added: partyline management of invite, exempt and reop modes. Patch by
