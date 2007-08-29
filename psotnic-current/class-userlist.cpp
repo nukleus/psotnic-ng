@@ -1736,7 +1736,10 @@ int ul::changeFlags(HANDLE *p, const char *flags, int channum, inetconn *c)
 	if(c && (!userlist.hasWriteAccess(c, p) || !c->checkFlag(HAS_N)))
 		return -3;
 
-    unsigned int f = p->flags[channum];
+    unsigned int f= 0;
+
+	if(*flags == '+' || *flags == '-')
+		f = p->flags[channum];
 
     if(!mergeFlags(f, flags))
         return -5;
