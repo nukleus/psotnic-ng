@@ -469,12 +469,14 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'b':
+				protmodelist::entry *ban;
 				list[BAN].remove(arg[i]);
 
-				if(protmodelist::isSticky(arg[i], BAN, this))
+				if((ban=protmodelist::findSticky(arg[i], BAN, this)))
 				{
 					if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
 					{
+						nickHandle->setReason(ban->fullReason());
 						toKick.sortAdd(nickHandle);
 						number++;
 					}
@@ -488,6 +490,11 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				{
 					if(*nickHandle->nick)
 					{
+						protmodelist::entry *exempt;
+
+						if((exempt=protmodelist::findSticky(arg[i], EXEMPT, this)))
+							nickHandle->setReason(exempt->fullReason());
+
 						toKick.sortAdd(nickHandle);
 						number++;
 					}
@@ -501,6 +508,11 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				{
 					if(*nickHandle->nick)
 					{
+						protmodelist::entry *invite;
+
+						if((invite=protmodelist::findSticky(arg[i], INVITE, this)))
+							nickHandle->setReason(invite->fullReason());
+
 						toKick.sortAdd(nickHandle);
 						number++;
 					}
@@ -512,6 +524,11 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				case 'R':
 				if(list[REOP].remove(arg[i]) &&	!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
 				{
+					protmodelist::entry *reop;
+
+					if((reop=protmodelist::findSticky(arg[i], REOP, this)))
+						nickHandle->setReason(reop->fullReason());
+
 					toKick.sortAdd(nickHandle);
 					mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+R", arg[i]);
 					number++;

@@ -366,4 +366,13 @@ bool protmodelist::isSticky(const char *mask, int type, const chan *ch)
 	return false;
 }
 
+protmodelist::entry * protmodelist::findSticky(const char *mask, int type, const chan *ch)
+{
+	entry *b = ch->protlist[type]->find(mask);
+
+	if((b && b->sticky) || ((b = userlist.protlist[type]->find(mask)) && b->sticky))
+		return b;
+
+	return NULL;
+}
 

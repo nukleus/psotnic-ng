@@ -20,7 +20,7 @@
 * Have fun -- pks
 *
 
-Psotnic current (2007/08/29) changes:
+Psotnic current (2007/08/30) changes:
 - fixed: #1745405: added SSL_pending (patch by zerg2012)
 - change: #1761109: enhanced .verify [-a|-p|-h|-c] (Esio)
 - fixed: #1742466: snag in chattr code (Esio)
@@ -45,6 +45,9 @@ Psotnic current (2007/08/29) changes:
 - added: SVN source code revision to bot version string
 - fixed: #1742466: .chattr fixed set functionality 
 - fixed: #1722119: .bots flag matching
+- added: #1742453: reasons set in .+stick/invite/exempt/reop will be used as kickreason,
+                   if a sticky ban/invite/exempt/reop gets removed (patrick)
+
 
 Psotnic 0.2.12 (2007/01/12) changes:
 - added: partyline management of invite, exempt and reop modes. Patch by

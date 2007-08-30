@@ -164,6 +164,7 @@ class protmodelist
 	static int sendShitsToOwner(inetconn *c, int type, const char *channel, const char *expr);
 	void sendToUserlist(inetconn *c, const char *name);
 	static bool isSticky(const char *mask, int type, const chan *ch);
+	static protmodelist::entry * findSticky(const char *mask, int type, const chan *ch);
 
 	static int expireAll();
 	void clear();
