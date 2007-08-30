@@ -253,6 +253,8 @@
 #define S_ADDOFFENCE				"77"
 #define S_ADDIDIOT				"78"
 #define S_CWHO					"79"
+#define S_SHITOBSERVED			"80"
+#define S_LASTUSED_PROTMODE		"81"
 
 #define S_NOPERM				strerror(EACCES)
 #define S_VERSION				"0.2.13rc1" 

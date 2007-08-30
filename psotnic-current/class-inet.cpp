@@ -41,6 +41,15 @@ SSL_CTX *inet::server_ctx = NULL;
 
 /* Network Connection Handling */
 
+inetconn *inet::findMainBot()
+{
+	for(int i=0; i<max_conns; ++i)
+    	if(net.conn[i].isMain() && net.conn[i].fd)
+			return &net.conn[i];
+
+	return NULL;
+}
+
 inet::inet()
 {
 	conn = (inetconn *) malloc(sizeof(inetconn));

@@ -333,6 +333,7 @@ int parse_botnet(inetconn *c, char *data)
 		if(!strcmp(arg[0], S_REQSHIT) && strlen(arg[4]))
 		{
 			//CHANLIST *
+			//FIXME: isn't that what's implemented in S_SHITOBSERVED bellow?
 		}
 		/* S_ADDIDIOT <mask> <chan> <number> <reason> */
 		if(!strcmp(arg[0], S_ADDIDIOT) && strlen(arg[4]))
@@ -341,6 +342,12 @@ int parse_botnet(inetconn *c, char *data)
 		    if(a)
 			userlist.addIdiot(arg[1], arg[2], a, arg[3]);
 		    return 1;
+		}
+
+		/* S_SHITOBSERVED <#channel> <ban_mask> <nick!user@host> */
+		if(!strcmp(arg[0], S_ADDIDIOT) && *arg[3])
+		{
+			protmodelist::updateLastUsedTime(arg[1], arg[2], BAN);
 		}
 	}
 	return 0;

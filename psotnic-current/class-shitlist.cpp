@@ -37,6 +37,7 @@ protmodelist::entry::entry(const char *_mask, const char *_by, const char *_reas
 	when = _when;
 	expires = _expires;
 	sticky = _sticky;
+	last_used = 0;
 }
 
 protmodelist::entry::~entry()
@@ -215,6 +216,8 @@ void protmodelist::sendToUserlist(inetconn *c, const char *name)
 
 		c->send(botnet_cmd, " ", name, " ", s->mask, " ", s->by, " ",
 				itoa(s->when), " ", itoa(s->expires), " ", s->reason, NULL);
+		//if(s->last_used)
+		//	c->send(S_LASTUSED_PROTMODE, " ", type, " ", itoa(s->last_used), NULL); 
 		s++;
 	}
 }
@@ -366,7 +369,7 @@ bool protmodelist::isSticky(const char *mask, int type, const chan *ch)
 	return false;
 }
 
-protmodelist::entry * protmodelist::findSticky(const char *mask, int type, const chan *ch)
+protmodelist::entry *protmodelist::findSticky(const char *mask, int type, const chan *ch)
 {
 	entry *b = ch->protlist[type]->find(mask);
 
@@ -376,3 +379,43 @@ protmodelist::entry * protmodelist::findSticky(const char *mask, int type, const
 	return NULL;
 }
 
+protmodelist::entry *protmodelist::findByMask(const char *mask)
+{
+	ptrlist<entry>::iterator i = data.begin();
+
+    while(i)
+    {
+        if(!strcmp(i->mask, mask))
+            return i;
+        i++;
+    }
+    return NULL;
+}
+
+protmodelist::entry *protmodelist::findBestByMask(const char *channel, const char *mask, int type)
+{
+    protmodelist *s;
+	entry *e;
+
+	int chanNum;
+
+	if((chanNum = userlist.findChannel(channel)) != -1)
+	{
+    	s = userlist.chanlist[chanNum].protlist[type];
+		e = s->findByMask(mask);
+		if(e)
+			return e;
+	}
+
+	return userlist.protlist[type]->findByMask(mask);
+}
+
+protmodelist::entry *protmodelist::updateLastUsedTime(const char *channel, const char *mask, int type)
+{
+	entry *e = findBestByMask(channel, mask, type);
+	if(e)
+		e->last_used = NOW;
+
+	return e;
+	userlist.SN++;
+}

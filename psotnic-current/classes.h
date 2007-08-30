@@ -139,6 +139,7 @@ class protmodelist
 		char *by;
 		time_t expires;
 		time_t when;
+		time_t last_used;
 		bool sticky;
 
 		entry();
@@ -157,6 +158,7 @@ class protmodelist
 	entry *match(const chanuser *u);
 	entry *wildMatch(const char *mask);
 	entry *find(const char *str);
+	entry *findByMask(const char *mask);
 	int remove(const char *mask);
 	int remove(int num);
 
@@ -164,7 +166,9 @@ class protmodelist
 	static int sendShitsToOwner(inetconn *c, int type, const char *channel, const char *expr);
 	void sendToUserlist(inetconn *c, const char *name);
 	static bool isSticky(const char *mask, int type, const chan *ch);
-	static protmodelist::entry * findSticky(const char *mask, int type, const chan *ch);
+	static protmodelist::entry *findSticky(const char *mask, int type, const chan *ch);
+	static entry *updateLastUsedTime(const char *channel, const char *mask, int type);
+	static entry *findBestByMask(const char *channel, const char *mask, int type);
 
 	static int expireAll();
 	void clear();
@@ -538,6 +542,7 @@ class inet
 	void propagate(inetconn *from, const char *str, ...);
 	inetconn *findRedirConn(inetconn *c);
 	int bidMaxFd(int fd);
+	inetconn *findMainBot();
 
 #ifdef HAVE_DEBUG
 	void display();
