@@ -29,21 +29,21 @@ int tcl_timers(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 	char *a;
 	int i = 0;
 
-	PTRLIST<tcl::timer_t> *p = tclparser.timer.first;
+	ptrlist<tcl::timer_t>::iterator p = tclparser.timer.begin();
 
 	while(p)
 	{
-		a = strchr(p->ptr->nick, ' ');
+		a = strchr(p->nick, ' ');
 
-		buf = push(buf, (char *) (i ? " " : ""), "{", itoa(abs(p->ptr->exp - NOW) / *((int *) foo)), NULL);
+		buf = push(buf, (char *) (i ? " " : ""), "{", itoa(abs(p->exp - NOW) / *((int *) foo)), NULL);
 
-		if(a) buf = push(buf, " {", p->ptr->nick, "} timer", itoa(p->ptr->id), NULL);
-		else buf = push(buf, " ", p->ptr->nick, " timer", itoa(p->ptr->id), NULL);
+		if(a) buf = push(buf, " {", p->nick, "} timer", itoa(p->id), NULL);
+		else buf = push(buf, " ", p->nick, " timer", itoa(p->id), NULL);
 
-		p = p->next;
+		p++;
 		++i;
 	}
-	if(set.debug) printf("### timers = %s\b", buf);
+	DEBUG(printf("### timers = %s\b", buf));
 	Tcl_SetResult(tclparser.getInt(), buf, TCL_VOLATILE);
 	free(buf);
 	return TCL_OK;
@@ -113,7 +113,7 @@ int tcl_channels(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 	ch = ME.first ;
 
 	while(ch)
-    {
+	{
 		if(ch == ME.first) strcpy(buf, ch->name);
 		else
 		{
@@ -122,9 +122,9 @@ int tcl_channels(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 		}
 		ch = ch->next;
 	}
-    if(set.debug) printf("### channels = %s\n", buf);
+	DEBUG(printf("### channels = %s\n", buf));
 	Tcl_SetResult(tclparser.getInt(), buf, TCL_VOLATILE);
-    free(buf);
+	free(buf);
 	return TCL_OK;
 }
 
@@ -134,18 +134,20 @@ int tcl_rand(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 	{
 		char buf[16];
 		sprintf(buf, "%d", rand () % atoi(argv[1]));
-        if(set.debug) printf("### rand %d = %s\n", atoi(argv[1]), buf);
+		DEBUG(printf("### rand %d = %s\n", atoi(argv[1]), buf));
 		Tcl_SetResult(tclparser.getInt(), buf, TCL_VOLATILE);
-        return TCL_OK;
+        	return TCL_OK;
 	}
 	return TCL_ERROR;
 }
 
 int tcl_botnick(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 {
-    if(argc != 1) return TCL_ERROR;
-	if(set.debug) printf("### botnick = %s\n", ME.nick);
-	Tcl_SetResult(tclparser.getInt(), ME.nick, TCL_VOLATILE);
+	const char *tmp=ME.nick;
+
+	if(argc != 1) return TCL_ERROR;
+	DEBUG(printf("### botnick = %s\n", (const char*)ME.nick));
+	Tcl_SetResult(tclparser.getInt(), (char *)tmp, TCL_VOLATILE);
 	return TCL_OK;
 }
 int tcl_ctcptype(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
@@ -231,21 +233,23 @@ Tcl_Interp *tcl::getInt()
 
 void tcl::expireTimers()
 {
-	PTRLIST<timer_t> *p = timer.first, *q;
+	ptrlist<tcl::timer_t>::iterator p = timer.begin(), q;
 
 	while(p)
 	{
-		if(p->ptr->exp <= NOW)
-		{
-			printf("### expireTimers: eval(\"%s\")\n", p->ptr->nick);
-			printf(">>> %s\n", eval(p->ptr->nick) == TCL_OK ? "TCL_OK" : "TCL_ERROR");
+		q=p;
+		q++;
 
-            free(p->ptr->nick);
-            q = p->next;
-			timer.Remove(p->ptr);
-			p = q;
+		if(p->exp <= NOW)
+		{
+			printf("### expireTimers: eval(\"%s\")\n", p->nick);
+			printf(">>> %s\n", eval(p->nick) == TCL_OK ? "TCL_OK" : "TCL_ERROR");
+
+			free(p->nick);
+
+			timer.removeLink(p);
 		}
-		else p = p->next;
+		p=q;
 	}
 }
 
