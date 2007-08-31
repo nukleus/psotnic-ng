@@ -560,12 +560,10 @@ int main(int argc, char *argv[])
 			net.hub.SSLHandshake();
 			if(net.hub.status & STATUS_CONNECTED)
 			{
-				printf("!!!!!!!!!!!!!!\n");
 				net.hub.status &= ~STATUS_SSL_HANDSHAKING;
 				net.hub.tmpint = 1;
                 net.hub.killTime = NOW + set.AUTH_TIME;
                 net.hub.send(config.botnetword, NULL);
-				printf("@@@@@@@@@@@@@\n");
 			}
 		}
 #endif
