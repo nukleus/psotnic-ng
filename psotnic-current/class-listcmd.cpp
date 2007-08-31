@@ -114,7 +114,7 @@ int listcmd(char what, const char *from, const char *arg1, const char *arg2, ine
 			{
 				if(!config.server[i].isDefault())
 				{
-					str += config.server[i].getIp();
+					str += config.server[i].getHost().connectionString;
 					str += ":";
 					str += itoa(config.server[i].getPort());
 					str += " ";

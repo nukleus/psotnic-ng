@@ -587,7 +587,7 @@ int main(int argc, char *argv[])
 						net.irc.send("NICK ", (const char *) config.nick, NULL);
 						net.irc.send("USER ", (const char *) config.ident, " 8 * :", (const char *) config.realname, NULL);
 						net.irc.send("VIP ", (const char *) config.vhost, NULL);
-						net.irc.send("CONN ", (const char *) srv->getIp(), " ", itoa(srv->getPort()), NULL);
+						net.irc.send("CONN ", (const char *) srv->getHost().ip, " ", itoa(srv->getPort()), NULL);
 					}
 					else
 					{
@@ -606,7 +606,7 @@ int main(int argc, char *argv[])
 
 						net.irc.killTime = NOW + set.AUTH_TIME;
 						net.irc.send((const char *) config.router.getPass(), NULL);
-						net.irc.send("telnet ", (const char *) srv->getIp(), " ", itoa(srv->getPort()), NULL);
+						net.irc.send("telnet ", (const char *) srv->getHost().ip, " ", itoa(srv->getPort()), NULL);
 						
                         if(net.irc.pass)
                             net.irc.send("PASS ", (const char *) net.irc.pass, NULL);

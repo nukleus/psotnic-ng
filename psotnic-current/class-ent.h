@@ -138,23 +138,28 @@ class entPerc : public entInt
 	virtual ~entPerc() { };
 };
 
-class entIp : public ent
+class entHost : public ent
 {
 	protected:
-	int type;
+	int typesAllowed;
 
 	public:
 	pstring<8> ip;
+	pstring<16> connectionString;
 
-	enum types { ipv4 = 0x01, ipv6 = 0x02, bindCheck = 0x04, resolve = 0x08 };
-	entIp(const char *n="", const int t=ipv4) : ent(n), type(t), ip("0.0.0.0") { };
+	enum types { ipv4 = 0x01, ipv6 = 0x02, bindCheck = 0x04, domain = 0x08, use_ssl = 0xf0};
+	entHost(const char *n="", const int t=ipv4) : ent(n), typesAllowed(t), ip("0.0.0.0"), connectionString("0.0.0.0") { };
 	virtual options::event *setValue(const char *arg1, const char *arg2, const bool justTest=0);
 	virtual const char *getValue() const;
 	virtual void reset();
 	virtual bool isDefault() const;
 	virtual operator const char*() const;
 	virtual operator unsigned int() const;
-	virtual ~entIp() { };
+	virtual ~entHost() { };
+	bool isSSL() { return getConnectionStringType(connectionString) & use_ssl; };
+	bool isIpv6() { return getConnectionStringType(connectionString) & ipv6; };
+	int getConnectionStringType(const char *str=0) const;
+
 
 };
 
@@ -202,10 +207,10 @@ class entMD5Hash : public entWord
 	virtual ~entMD5Hash() { };
 };
 
-class entIPPH : public ent	//ip port password handle
+class entHPPH : public ent	//host port password handle
 {
 	protected:
-	entIp *_ip;
+	entHost *_host;
 	entInt *_port;
 	entWord *_pass;
 	entWord *_handle;
@@ -213,52 +218,41 @@ class entIPPH : public ent	//ip port password handle
 
 	public:
 	virtual options::event *setValue(const char *arg1, const char *arg2, const bool justTest=0);
-	entIPPH(const char *n="", entIp *ip=0, entInt *port=0, entWord *pass=0, entWord *handle=0) :
-			ent(n), _ip(ip), _port(port), _pass(pass), _handle(handle) { };
+	entHPPH(const char *n="", entHost *host=0, entInt *port=0, entWord *pass=0, entWord *handle=0) :
+			ent(n), _host(host), _port(port), _pass(pass), _handle(handle) { };
 	virtual const char *getValue() const;
-	virtual ~entIPPH();
-	virtual entIp &getIp()		{ return *_ip; };
+	virtual ~entHPPH();
+	virtual entHost &getHost()		{ return *_host; };
 	virtual entInt &getPort()	{ return *_port; };
 	virtual entWord &getPass()	{ return *_pass; };
 	virtual entWord &getHandle(){ return *_handle; };
-	virtual entIPPH &operator=(const entIPPH &e);
+	virtual entHPPH &operator=(const entHPPH &e);
 	virtual void reset();
 	virtual bool isDefault() const;
 
 	friend class CONFIG;
+	virtual bool isSSL() const { return _host->isSSL(); };
 };
 
-class entHub : public entIPPH
+class entHub : public entHPPH
 {
+	private:
+
 	public:
 	int failures;
-	entHub(char *n="", entIp *ip=0, entInt *port=0, entMD5Hash *pass=0, entWord *handle=0) :
-		entIPPH(n, ip, port, pass, handle), failures(0) { };
+	entHub(char *n="", entHost *host=0, entInt *port=0, entMD5Hash *pass=0, entWord *handle=0) :
+		entHPPH(n, host, port, pass, handle), failures(0) { };
 	virtual ~entHub() { };
 };
 
 
-class entServer : public entIPPH
+class entServer : public entHPPH
 {
-#ifdef HAVE_SSL
-	private:
-	bool ssl;
-#endif
-	
 	public:
-#ifdef HAVE_SSL
-	entServer(char *n="", entIp *ip=0, entInt *port=0, entWord *pass=0, bool sslCrypted=0) :
-		entIPPH(n, ip, port, pass, 0), ssl(sslCrypted) { };
-#else
-	entServer(char *n="", entIp *ip=0, entInt *port=0, entWord *pass=0) :
-		entIPPH(n, ip, port, pass, 0) { };
-#endif
+	entServer(char *n="", entHost *ip=0, entInt *port=0, entWord *pass=0) :
+		entHPPH(n, ip, port, pass, 0) { };
 	virtual options::event *set(const char *ip, const char *port, const char *pass="", const bool justTest=0);
 	virtual ~entServer() { };
-
-#ifdef HAVE_SSL
-	bool isSSL() const;
-#endif
 };
 
 class entMult : public ent

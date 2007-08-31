@@ -345,18 +345,18 @@ CONFIG::CONFIG()
 	registerObject(oidentd_cfg = entWord("oidentd-config", 1, 255, ""));
 	registerObject(handle = entWord("handle", 1, 15, ""));		// = nick
 
-	registerObject(bnc = entIPPH("bnc",
-			new entIp("ip", entIp::ipv4),
+	registerObject(bnc = entHPPH("bnc",
+			new entHost("host", entHost::ipv4 | entHost::domain),
 			new entInt("port", 1, 65535, 0),
 			new entWord("pass", 1, 256)));
 
-	registerObject(router = entIPPH("router",
-			new entIp("ip", entIp::ipv4),
+	registerObject(router = entHPPH("router",
+			new entHost("host", entHost::ipv4 | entHost::domain),
 			new entInt("port", 1, 65535, 0),
 			new entWord("pass", 1, 256)));
 
 	registerObject(hub = entHub("hub",
-			new entIp("ip", entIp::ipv4),
+			new entHost("host", entHost::ipv4 | entHost::domain | entHost::use_ssl),
 			new entInt("port", 1, 65535, 0),
 			new entMD5Hash("pass"),
 			new entWord("handle", 0, 15)));
@@ -365,7 +365,7 @@ CONFIG::CONFIG()
 	for(i=0; i<MAX_ALTS; ++i)
 	{
 		registerObject(alt[i] = entHub("alt",
-					   new entIp("ip", entIp::ipv4),
+					   new entHost("host", entHost::ipv4 | entHost::domain | entHost::use_ssl),
 					   new entInt("port", 1, 65535, 0)));
 		alt[i].setDontPrintIfDefault(true);
 		alt_storage.add(&alt[i]);
@@ -375,26 +375,16 @@ CONFIG::CONFIG()
 	for(i=0; i<MAX_SERVERS; ++i)
 	{
 		registerObject(server[i] = entServer("server",
-					   new entIp("ip", entIp::ipv4 | entIp::ipv6 | entIp::resolve),
-					   new entInt("port", 1, 65535, 0),
-					   new entWord("pass", 0, 256)));
+						new entHost("host", entHost::ipv4 | entHost::ipv6 | entHost::domain
+#ifdef HAVE_SSL
+																			| entHost::use_ssl
+#endif
+						),
+					  	new entInt("port", 1, 65535, 0),
+					  	new entWord("pass", 0, 256)));
 		server[i].setDontPrintIfDefault(true);
 		server_storage.add(&server[i]);
 	}
-
-#ifdef HAVE_SSL
-	registerObject(ssl_server_storage = entMult("ssl_server"));
-	for(; i<MAX_SERVERS*2; ++i)
-	{
-		registerObject(server[i] = entServer("ssl_server",
-					   new entIp("ip", entIp::ipv4 | entIp::ipv6 | entIp::resolve),
-					   new entInt("port", 1, 65535, 0),
-					   new entWord("pass", 0, 256),
-					   true));
-		server[i].setDontPrintIfDefault(true);
-		ssl_server_storage.add(&server[i]);
-	}
-#endif
 
 	registerObject(module_load_storage = entMult("load"));
 	for(i=0; i<MAX_MODULES; ++i)
@@ -412,8 +402,8 @@ CONFIG::CONFIG()
 		module_debugLoad_storage.add(&module_debugLoad[i]);
 	}
 
-	registerObject(myipv4 = entIp("myipv4", entIp::ipv4 | entIp::bindCheck));
-	registerObject(vhost = entIp("vhost", entIp::ipv4 | entIp::ipv6 | entIp::bindCheck));
+	registerObject(myipv4 = entHost("myipv4", entHost::ipv4 | entHost::bindCheck));
+	registerObject(vhost = entHost("vhost", entHost::ipv4 | entHost::ipv6 | entHost::bindCheck));
 	registerObject(logfile = entWord("logfile", 1, 16));
 	registerObject(userlist_file = entWord("userlist", 1, 255));	// = nick
 	registerObject(altuidnick = entBool("altuidnick", 1));

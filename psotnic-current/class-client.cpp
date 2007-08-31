@@ -258,9 +258,9 @@ int client::jump(const char *host, const char *port, const char *owner, int prot
 {
 	entServer s("server",
 #ifdef HAVE_IPV6
-	new entIp("ip", (protocol == AF_INET ? entIp::ipv4 : protocol == AF_INET6 ? entIp::ipv6 : 0) | entIp::resolve),
+	new entHost("host", (protocol == AF_INET ? entHost::ipv4 : protocol == AF_INET6 ? entHost::ipv6 : 0) | entHost::domain),
 #else
-	new entIp("ip", (protocol == AF_INET ? entIp::ipv4 : 0) | entIp::resolve),
+	new entHost("host", (protocol == AF_INET ? entHost::ipv4 : 0) | entHost::domain),
 #endif
 	new entInt("port", 1, 65535, 0), new entWord("pass", 0, 256));
 
@@ -274,7 +274,7 @@ int client::jump(const char *host, const char *port, const char *owner, int prot
 	net.irc.send("QUIT :changing servers", NULL);
 	net.irc.close("changing servers");
 
-	net.send(HAS_N, "[*] Jumping to ", (const char *) s.getIp(), " port ", itoa(s.getPort()), NULL);
+	net.send(HAS_N, "[*] Jumping to ", (const char *) s.getHost().connectionString, " port ", itoa(s.getPort()), NULL);
 
 	return ME.connectToIRC(&s);
 }
@@ -509,9 +509,9 @@ int client::connectToHUB()
 	if(!config.currentHub) config.currentHub = &config.hub;
 
 	DEBUG(printf("[*] Connecting to HUB: %s port %d\n",
-		  (const char *) config.currentHub->getIp(), (int) config.currentHub->getPort()));
+		  (const char *) config.currentHub->getHost().connectionString, (int) config.currentHub->getPort()));
 
-	fd = doConnect((const char *) config.currentHub->getIp(), config.currentHub->getPort(), config.myipv4, -1);
+	fd = doConnect((const char *) config.currentHub->getHost().ip, config.currentHub->getPort(), config.myipv4, -1);
 
 	if(fd > 0)
 	{
@@ -538,15 +538,15 @@ int client::connectToIRC(entServer *s)
 	else if(!config.bnc.isDefault())
 	{
 		DEBUG(printf("[D] Using bnc to connect: %s %d (%s)\n",
-			(const char *) config.bnc.getIp().getValue(),
+			(const char *) config.bnc.getHost(),
 			(int) config.bnc.getPort(),
 			(const char *) config.bnc.getValue()));
-		n = doConnect(config.bnc.getIp().getValue(), config.bnc.getPort(), 0, -1);
+		n = doConnect((const char *) config.bnc.getHost().ip, config.bnc.getPort(), 0, -1);
 		opt = STATUS_BNC;
 	}
 	else if(!config.router.isDefault())
 	{
-		n = doConnect((const char *) config.router.getIp(), config.router.getPort(), 0, -1);
+		n = doConnect((const char *) config.router.getHost().ip, config.router.getPort(), 0, -1);
 		opt = STATUS_ROUTER;
 	}
 	else
@@ -571,11 +571,11 @@ int client::connectToIRC(entServer *s)
 				net.send(HAS_N, "[!] Cannot create ", (const char *) config.oidentd_cfg, ": ", strerror(errno), NULL);
 		}
 #ifdef HAVE_IPV6
-		if(strchr(s->getIp(), ':'))
-			n = doConnect6(s->getIp(), s->getPort(), config.vhost, -1);
+		if(s->getHost().isIpv6())
+			n = doConnect6(s->getHost().ip, s->getPort(), config.vhost, -1);
 		else
 #endif
-			n = doConnect((const char *) s->getIp(), s->getPort(), config.vhost, -1);
+			n = doConnect((const char *) s->getHost().ip, s->getPort(), config.vhost, -1);
 	}
 
 	if(n > 0)
@@ -594,19 +594,9 @@ int client::connectToIRC(entServer *s)
 			net.irc.pass = (char *) pass;
 		}
 
-		
-//		DEBUG(printf("[D] >>> %s -> %s\n", s->getName(), s->getValue()));
 #ifdef HAVE_SSL		
 		if(s->isSSL())
-		{	/*
-			net.irc.status |= STATUS_SSL;
-			net.irc.ssl_ctx = SSL_CTX_new(SSLv23_method());
-			DEBUG(printf("[D] net.irc.ssl_ctx: %p\n", net.irc.ssl_ctx));
-			SSL_CTX_set_mode(net.irc.ssl_ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
-			net.irc.ssl = SSL_new(net.irc.ssl_ctx);
-			DEBUG(printf("[D] net.irc.ssl: %p\n", net.irc.ssl));
-			SSL_set_fd(net.irc.ssl, n);
-			*/
+		{	
 			net.irc.enableSSL();
 			net.irc.status |= STATUS_SSL_WANT_CONNECT | STATUS_SSL_HANDSHAKING;
 		}

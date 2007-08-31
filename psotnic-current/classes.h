@@ -664,8 +664,8 @@ class CONFIG : public options
 	entWord oidentd_cfg;
 	entWord nickappend;
 	entString realname;
-	entIp myipv4;
-	entIp vhost;
+	entHost myipv4;
+	entHost vhost;
 	entWord userlist_file;
 	entString kickreason;
 	entString quitreason;
@@ -687,8 +687,8 @@ class CONFIG : public options
 	entBool altuidnick;
 	entBool dontfork;
 
-	entIPPH bnc;
-	entIPPH router;
+	entHPPH bnc;
+	entHPPH router;
 
 	entHub hub;
 	entMult alt_storage;

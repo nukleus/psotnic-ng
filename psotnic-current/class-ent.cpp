@@ -320,29 +320,57 @@ const char *entPerc::getMin() const
 }
 
 /**
- * class entIp
+ * class entHost
  */
-entIp::operator const char*() const
+entHost::operator const char*() const
 {
-	return (const char *) ip;
+	return (const char *) connectionString;
 }
 
-const char *entIp::getValue() const
+const char *entHost::getValue() const
 {
-	return ip;
+	return connectionString;
 }
 
-void entIp::reset()
+void entHost::reset()
 {
 	ip = "0.0.0.0";
+	connectionString = "0.0.0.0";
 }
 
-bool entIp::isDefault() const
+bool entHost::isDefault() const
 {
-	return !strcmp(ip, "0.0.0.0");
+	return !strcmp(connectionString, "0.0.0.0");
 }
 
-options::event *entIp::setValue(const char *arg1, const char *arg2, const bool justTest)
+int entHost::getConnectionStringType(const char *str) const
+{
+	int type = 0;
+	const char *ptr = str;
+
+	if(!strncmp(ptr, "ssl:", 4))
+	{
+		type |= use_ssl;
+		ptr += 4;
+	}
+
+	switch(isValidIp(ptr))
+	{
+		case 4: 
+			type |= ipv4;
+			break;
+		case 6:
+			type |= ipv6;
+			break;
+		default:
+			type |= domain;
+	}
+
+	return type;
+}
+
+
+options::event *entHost::setValue(const char *arg1, const char *arg2, const bool justTest)
 {
 	if(!strcmp(arg1, name))
 	{
@@ -352,75 +380,60 @@ options::event *entIp::setValue(const char *arg1, const char *arg2, const bool j
 			return &_event;
 		}
 
-		switch(isValidIp(arg2))
+		int type = getConnectionStringType(arg2);
+		int check = (type & typesAllowed) ^ type;
+
+		if(check != 0)
 		{
-			case 4:
+			//TODO: add more verbous message here
+			_event.setError(this, "%s is not valid: unsupported format", arg2);
+			return &_event;
+		}		
+
+		const char *_arg = (type & use_ssl) ? arg2+4 : arg2;
+
+		if(type & (ipv4 | ipv6))
+		{
+			if(!justTest)
 			{
-				if(type & ipv4)
-				{
-					if(!justTest)
-						ip = arg2;
-					_event.setOk(this, "%s has been set to %s", name, getValue());
-					return &_event;
-				}
-				else
-				{
-					_event.setError(this, "%s is not a valid IPV6 address", arg2);
-					return &_event;
-				}
-			}
-			case 6:
-			{
-				if(type & ipv6)
-				{
-					if(!justTest)
-						ip = arg2;
-					_event.setOk(this, "%s has been set to %s", name, getValue());
-					return &_event;
-				}
-				else
-				{
-					_event.setError(this, "%s is not a valid IPV4 address", arg2);
-					return &_event;
-				}
-			}
-			default:
-			{
-				if(type & resolve)
-				{
-					char buf[MAX_LEN];
-					bool ok = false;
+				ip = _arg;
+				connectionString = arg2;
+			}		
+			_event.setOk(this, "%s has been set to %s", name, getValue());
+			return &_event;
+		}
+		else if(type & domain)
+		{
+			char buf[MAX_LEN];
+			bool ok = false;
 #ifdef HAVE_IPV6
-					if(type & ipv6 && inet::gethostbyname(arg2, buf, AF_INET6))
-						ok = true;
-					else
+			if((typesAllowed & ipv6) && inet::gethostbyname(_arg, buf, AF_INET6))
+				ok = true;
+			else
 #endif
-					if(!ok && type & ipv4 && inet::gethostbyname(arg2, buf, AF_INET))
-						ok = true;
+			if(!ok && (typesAllowed & ipv4) && inet::gethostbyname(_arg, buf, AF_INET))
+				ok = true;
 
-					if(ok)
-					{
-						if(!justTest)
-							ip = buf;
-						_event.setOk(this, "%s has been set to %s", name, getValue());
-					}
-					else if (errno)
-						_event.setError(this, "Unknown host: %s (%s)", arg2, hstrerror(errno));
-					else
-						_event.setError(this, "Unknown host: %s", arg2);
-
-					return &_event;
+			if(ok)
+			{
+				if(!justTest)
+				{
+					ip = buf;
+					connectionString = arg2;
 				}
 
-				if(type & (ipv4 | ipv6) == (ipv4 | ipv6))
-					_event.setError(this, "argument is not a valid IPV4 nor IPV6 address");
-				else if(type & ipv4)
-					_event.setError(this, "argument is not a valid IPV4 address");
-				else if(type & ipv6)
-					_event.setError(this, "argument is not a valid IPV6 address");
-
-				return &_event;
+				_event.setOk(this, "%s has been set to %s", name, getValue());
 			}
+			else if (errno)
+				_event.setError(this, "Unknown host: %s (%s)", _arg, hstrerror(errno));
+			else
+				_event.setError(this, "Unknown host: %s", _arg);
+			return &_event;
+		}
+		else
+		{
+			_event.setError(this, "FIXME: Unsupported type");
+			return &_event;
 		}
 	}
 	else
@@ -430,7 +443,7 @@ options::event *entIp::setValue(const char *arg1, const char *arg2, const bool j
 	}
 }
 
-entIp::operator unsigned int() const
+entHost::operator unsigned int() const
 {
 	return inet_addr(ip);
 }
@@ -547,9 +560,9 @@ options::event *entWord::setValue(const char *arg1, const char *arg2, const bool
 }
 
 /**
- * class entIPPH
+ * class entHPPH
  */
-options::event *entIPPH::_setValue(const char *arg1, const char *arg2, const char *arg3, const char *arg4, const char *arg5, const bool justTest)
+options::event *entHPPH::_setValue(const char *arg1, const char *arg2, const char *arg3, const char *arg4, const char *arg5, const bool justTest)
 {
 	if(!strcmp(arg1, name))
 	{
@@ -560,9 +573,9 @@ options::event *entIPPH::_setValue(const char *arg1, const char *arg2, const cha
 		}
 		options::event *e;
 
-		if(_ip)
+		if(_host)
 		{
-			e = _ip->set(arg2, 1);
+			e = _host->set(arg2, 1);
 			if(!e || !e->ok)
 				return e;
 		}
@@ -587,8 +600,8 @@ options::event *entIPPH::_setValue(const char *arg1, const char *arg2, const cha
 
 		if(!justTest)
 		{
-			if(_ip)
-				_ip->set(arg2);
+			if(_host)
+				_host->set(arg2);
 			if(_port)
 				_port->set(arg3);
 			if(_pass)
@@ -608,12 +621,12 @@ options::event *entIPPH::_setValue(const char *arg1, const char *arg2, const cha
 	}
 }
 
-const char *entIPPH::getValue() const
+const char *entHPPH::getValue() const
 {
 	static char buf[1024];
 
-	if(_ip)
-		strcpy(buf, _ip->getValue());
+	if(_host)
+		strcpy(buf, _host->getValue());
 	if(_port)
 	{
 		strcat(buf, " ");
@@ -633,7 +646,7 @@ const char *entIPPH::getValue() const
 	return buf;
 }
 
-options::event *entIPPH::setValue(const char *arg1, const char *arg2, const bool justTest)
+options::event *entHPPH::setValue(const char *arg1, const char *arg2, const bool justTest)
 {
 	char arg[4][256];
 	str2words(arg[0], arg2 ? arg2 : "", 4, 256);
@@ -641,10 +654,10 @@ options::event *entIPPH::setValue(const char *arg1, const char *arg2, const bool
 	return _setValue(arg1, arg[0], arg[1], arg[2], arg[3], justTest);
 }
 
-void entIPPH::reset()
+void entHPPH::reset()
 {
-	if(_ip)
-		_ip->reset();
+	if(_host)
+		_host->reset();
 	if(_port)
 		_port->reset();
 	if(_pass)
@@ -653,9 +666,9 @@ void entIPPH::reset()
 		_handle->reset();
 }
 
-bool entIPPH::isDefault() const
+bool entHPPH::isDefault() const
 {
-	if(_ip && !_ip->isDefault())
+	if(_host && !_host->isDefault())
 		return false;
 	if(_port && !_port->isDefault())
 		return false;
@@ -667,10 +680,10 @@ bool entIPPH::isDefault() const
 	return true;
 }
 
-entIPPH::~entIPPH()
+entHPPH::~entHPPH()
 {
-	if(_ip)
-		delete _ip;
+	if(_host)
+		delete _host;
 	if(_port)
 		delete _port;
 	if(_pass)
@@ -679,21 +692,28 @@ entIPPH::~entIPPH()
 		delete _handle;
 }
 
-entIPPH &entIPPH::operator=(const entIPPH &e)
+entHPPH &entHPPH::operator=(const entHPPH &e)
 {
 	name = e.name;
 	dontPrintIfDefault = e.dontPrintIfDefault;
 	readOnly = e.readOnly;
 
-	this->~entIPPH();
+	if(_host)
+        delete _host;
+    if(_port)
+        delete _port;
+    if(_pass)
+        delete _pass;
+    if(_handle)
+        delete _handle;
 
-	if(e._ip)
+	if(e._host)
 	{
-		_ip = new entIp();
-		*_ip = *e._ip;
+		_host = new entHost();
+		*_host = *e._host;
 	}
 	else
-		_ip = NULL;
+		_host = NULL;
 
 	if(e._port)
 	{
@@ -876,13 +896,6 @@ options::event *entServer::set(const char *ip, const char *port, const char *pas
 {
 	return _setValue(name, ip, port, pass, ip, justTest);
 }
-
-#ifdef HAVE_SSL
-bool entServer::isSSL() const
-{
-	return ssl;
-}
-#endif
 
 /**
  * entLoadModules
