@@ -419,6 +419,11 @@ int main(int argc, char *argv[])
 			}
 			else if(net.irc.isConnected())
 			{
+#ifdef HAVE_SSL
+                do
+                {
+#endif
+
 #ifdef HAVE_IRC_BACKTRACE			
 				n = net.irc.readln(irc_buf[current_irc_buf], MAX_LEN);
 				if(n > 0)
@@ -438,17 +443,32 @@ int main(int argc, char *argv[])
 				}
 				else if(n == -1)
 					net.irc.close("EOF from client");
+#ifdef HAVE_SSL
+                } while(net.irc.ssl && SSL_pending(net.irc.ssl));
+#endif
+
 			}
 		}
 
 		/* READ from HUB */
  		if(FD_ISSET(net.hub.fd, &rfd))
 		{
-			n = net.hub.readln(buf, MAX_LEN);
-			if(n > 0 && net.hub.status & STATUS_CONNECTED)
-				parse_hub(buf);
-			else if(n == -1)
-				net.hub.close("EOF from client");
+			if(net.hub.isConnected())
+			{
+#ifdef HAVE_SSL
+                do
+                {
+#endif
+
+					n = net.hub.readln(buf, MAX_LEN);
+					if(n > 0 && net.hub.status & STATUS_CONNECTED)
+						parse_hub(buf);
+					else if(n == -1)
+						net.hub.close("EOF from client");
+#ifdef HAVE_SSL
+				} while(net.hub.ssl && SSL_pending(net.hub.ssl));
+#endif
+			}
 		}
 
 		/* ACCEPT connections */
@@ -523,6 +543,33 @@ int main(int argc, char *argv[])
 		}
 
 		/* Asycnhronius connections */
+#ifdef HAVE_SSL
+		if(net.hub.fd && net.hub.status & STATUS_SSL_HANDSHAKING)
+		{
+			if(net.hub.status & STATUS_SYNSENT)
+			{
+				if(FD_ISSET(net.hub.fd, &wfd))
+				{
+					DEBUG(printf("[D] SSL: TCP connection has been established\n"));
+					net.hub.status &= ~STATUS_SYNSENT;
+				}
+				else 
+					continue;
+			}
+		
+			net.hub.SSLHandshake();
+			if(net.hub.status & STATUS_CONNECTED)
+			{
+				printf("!!!!!!!!!!!!!!\n");
+				net.hub.status &= ~STATUS_SSL_HANDSHAKING;
+				net.hub.tmpint = 1;
+                net.hub.killTime = NOW + set.AUTH_TIME;
+                net.hub.send(config.botnetword, NULL);
+				printf("@@@@@@@@@@@@@\n");
+			}
+		}
+#endif
+
 		if(net.hub.fd && net.hub.status & STATUS_SYNSENT)
 		{
 			if(FD_ISSET(net.hub.fd, &wfd))

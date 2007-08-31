@@ -518,6 +518,15 @@ int client::connectToHUB()
 		net.hub.fd = fd;
 		net.hub.status = STATUS_SYNSENT;
 		net.hub.killTime = set.AUTH_TIME + NOW;
+
+#ifdef HAVE_SSL
+        if(config.currentHub->getHost().isSSL())
+        {
+            net.hub.enableSSL();
+            net.hub.status |= STATUS_SSL_WANT_CONNECT | STATUS_SSL_HANDSHAKING;
+        }
+#endif
+
 		return fd;
 	}
 	++config.currentHub->failures;

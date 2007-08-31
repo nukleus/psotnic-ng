@@ -178,7 +178,7 @@ void parse_bot(inetconn *c, char *data)
 
 					mem_strcpy(c->name, arg[3]);
 					mem_strcpy(c->origin, arg[4]);
-					c->status = STATUS_CONNECTED + STATUS_REGISTERED + STATUS_BOT;
+					c->status |= STATUS_CONNECTED | STATUS_REGISTERED | STATUS_BOT;
 					c->tmpint = 0;
 					c->killTime = NOW + set.CONN_TIMEOUT;
 					c->lastPing = NOW;

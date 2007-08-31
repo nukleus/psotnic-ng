@@ -93,7 +93,7 @@ void parse_hub(char *data)
 				{
 					mem_strcpy(net.hub.name, arg[1]);
 					net.hub.tmpint = 0;
-					net.hub.status = STATUS_CONNECTED + STATUS_REGISTERED + STATUS_BOT;
+					net.hub.status |= STATUS_CONNECTED | STATUS_REGISTERED | STATUS_BOT;
 					net.hub.killTime = NOW + set.CONN_TIMEOUT;
 					net.hub.lastPing = NOW;
 

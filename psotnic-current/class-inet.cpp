@@ -623,7 +623,10 @@ int inetconn::va_send(va_list ap, const char *lst)
 	}
 	else
 	{
-		DEBUG(printf("[*] send[%s]: %s", conn->name, p));
+        if(status & STATUS_SSL)
+			DEBUG(printf("[S] send[%s]: %s", conn->name, p));
+		else
+			DEBUG(printf("[*] send[%s]: %s", conn->name, p));
 	}
 
 	if(conn->write.buf)
@@ -829,6 +832,11 @@ int inetconn::enableCrypt(const unsigned char *key, int len)
 {
 	if(fd < 1) return 0;
 
+#ifdef HAVE_SSL
+	if(status & STATUS_SSL)
+		return 0;
+#endif
+
 	if(blowfish)
 	{
 		delete blowfish;
@@ -850,6 +858,11 @@ int inetconn::enableCrypt(const unsigned char *key, int len)
 
 int inetconn::disableCrypt()
 {
+#ifdef HAVE_SSL
+    if(status & STATUS_SSL)
+        return 0;
+#endif
+	
 	if(blowfish)
 	{
 		delete blowfish;
