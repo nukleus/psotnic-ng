@@ -128,7 +128,10 @@ void chan::updateDnsEntries()
 	while(u)
 	{
 		if(!*u->ip4 && !*u->ip6)
-			u->updateDNSEntry();
+		{
+			if(u->updateDNSEntry())
+				checkClone(u);
+		}
 		u++;
 	}
 }
@@ -720,10 +723,14 @@ void chan::gotPart(const char *nick, int netsplit)
 		botsToOp.remove(p);
 		toOp.remove(p);
 
-		clone_host x = clone_host(p);
+		clone_host x1 = clone_host(p, HOST_DOMAIN);
+		clone_host x2 = clone_host(p, HOST_IPV4);
+		clone_host x3 = clone_host(p, HOST_IPV6);
 		clone_ident y = clone_ident(p);
 		clone_proxy z = clone_proxy(p);
-		hostClones.remove(x);
+		hostClones.remove(x1);
+		hostClones.remove(x2);
+		hostClones.remove(x3);
 		identClones.remove(y);
 		proxyClones.remove(z);
 
@@ -769,6 +776,8 @@ void chan::display()
 #endif
 
 
+
+
 bool chan::checkClone(chanuser *p)
 {
 	char buf[MAX_LEN];
@@ -780,7 +789,7 @@ bool chan::checkClone(chanuser *p)
 		buf[0] = '\0';
 
 		/* ident clones */
-		if(set.IDENT_CLONES && identClones.addLast(new clone_ident(p)) > set.IDENT_CLONES && synced())
+		if((p->clones_to_check & CLONE_IDENT) && set.IDENT_CLONES && identClones.addLast(new clone_ident(p)) > set.IDENT_CLONES && synced())
 		{
 			if(isPrefix(*p->ident))
 				snprintf(buf, MAX_LEN, "*!?%s@*", p->ident+1);
@@ -790,9 +799,11 @@ bool chan::checkClone(chanuser *p)
 			punishClones(buf, myTurn(chset->GUARDIAN_BOTS, hash32(p->ident)));
 			badBoy = true;
 		}
+		
+		p->clones_to_check &= ~CLONE_IDENT;
 
 		/* proxy clones */
-		if(set.PROXY_CLONES && isPrefix(*p->ident) && getPartOfDomain(p->host, 3) && synced() &&
+		if((p->clones_to_check & CLONE_PROXY) && set.PROXY_CLONES && isPrefix(*p->ident) && getPartOfDomain(p->host, 3) && synced() &&
 			proxyClones.addLast(new clone_proxy(p)) > set.PROXY_CLONES)
 		{
 			//FIXME: what about ipv6 proxy clones? :P
@@ -802,41 +813,52 @@ bool chan::checkClone(chanuser *p)
 			badBoy = true;
 		}
 
+		p->clones_to_check &= ~CLONE_PROXY;
+
 		/* host clones */
-		if(set.HOST_CLONES && hostClones.addLast(new clone_host(p)) > set.HOST_CLONES && synced())
+		if(set.HOST_CLONES && synced())
 		{
-			switch(p->dnsinfo & (HOST_IPV4 | HOST_IPV6 | HOST_DOMAIN))
+			if(p->dnsinfo & HOST_DOMAIN)
 			{
-				case HOST_DOMAIN:
+				if((p->clones_to_check & CLONE_HOST) && hostClones.addLast(new clone_host(p, HOST_DOMAIN)) > set.HOST_CLONES)
 				{
 					snprintf(buf, MAX_LEN, "*!*@%s", p->host);
-					break;
 				}
-				case HOST_IPV4:
+				p->clones_to_check &= ~CLONE_HOST;
+			}
+			
+			if(p->dnsinfo & HOST_IPV4)
+			{	
+				if((p->clones_to_check & CLONE_IPV4) && hostClones.addLast(new clone_host(p, HOST_IPV4)) > set.HOST_CLONES)
 				{
-					char *n = nindex(p->host, 3, '.');
+					char *n = nindex(p->ip4, 3, '.');
 					if(n)
 					{
 						//the trick
 						*n = '\0';
-						snprintf(buf, MAX_LEN, "*!*@%s.*", p->host);
+						snprintf(buf, MAX_LEN, "*!*@%s.*", p->ip4);
 						*n = '.';
 					}
-					break;
 				}
-				case HOST_IPV6:
+				p->clones_to_check &= ~CLONE_IPV4;
+			}
+			
+			if(p->dnsinfo & HOST_IPV6)
+			{
+				if((p->clones_to_check & CLONE_IPV6) && hostClones.addLast(new clone_host(p, HOST_IPV6)) > set.HOST_CLONES)
 				{
-					char *n = nindex(p->host, 4, ':');
+					char *n = nindex(p->ip6, 4, ':');
 					if(n)
 					{
 						//the trick
 						*n = '\0';
-						snprintf(buf, MAX_LEN, "*!*@%s:*", p->host);
+						snprintf(buf, MAX_LEN, "*!*@%s:*", p->ip6);
 						*n = ':';
 					}
-					break;
 				}
+				p->clones_to_check &= ~CLONE_IPV6;
 			}
+
 			if(*buf)
 			{
 				punishClones(buf, myTurn(chset->GUARDIAN_BOTS, hash32(p->host)));
@@ -1124,16 +1146,29 @@ chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
 
 	hash = ::hash32(nick);
 	handle = NULL;
-	mem_strcpy(ip4, "");
-	mem_strcpy(ip6, "");
 
 	switch(isValidIp(host))
 	{
-		case 4: dnsinfo = HOST_IPV4; break;
-		case 6: dnsinfo = HOST_IPV6; break;
-		case 0: dnsinfo = HOST_DOMAIN; break;
-		default: break;
+		case 4:
+			dnsinfo = HOST_IPV4;
+			mem_strcpy(ip4, host);
+			mem_strcpy(ip6, "");
+			break;
+			
+		case 6:
+			dnsinfo = HOST_IPV6;
+			mem_strcpy(ip4, "");
+			mem_strcpy(ip6, host);
+			break;
+		
+		default:
+			dnsinfo = HOST_DOMAIN;
+			mem_strcpy(ip4, "");
+			mem_strcpy(ip6, "");
+			break;
 	}
+
+	clones_to_check = CLONE_HOST | CLONE_IPV6 | CLONE_IPV4 | CLONE_IDENT | CLONE_PROXY;
 
 #ifdef HAVE_MODULES
 	if(customDataConstructor)
@@ -1238,6 +1273,11 @@ int chanuser::updateDNSEntry()
 
 		mem_strcpy(ip4, info->ip4);
 		mem_strcpy(ip6, info->ip6);
+
+		if(*ip4)
+			dnsinfo |= HOST_IPV4;	
+		if(*ip6)
+			dnsinfo |= HOST_IPV6;
 
 		DEBUG(printf(">>> Updating: %s (%s, %s)\n", nick, ip4, ip6));
 		return 1;

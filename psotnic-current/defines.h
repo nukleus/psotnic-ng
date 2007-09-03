@@ -91,6 +91,13 @@
 #define HOST_DOMAIN				0x00000002
 #define HOST_IPV6				0x00000004
 
+//clone check types
+#define CLONE_IPV4				0x00000001
+#define CLONE_HOST				0x00000002
+#define CLONE_IPV6				0x00000004	
+#define CLONE_PROXY				0x00000008
+#define CLONE_IDENT				0x00000010
+
 //channel stuff
 #define ARG_MODES				"oblkeIvR"
 #define NONARG_MODES			"imntspr"

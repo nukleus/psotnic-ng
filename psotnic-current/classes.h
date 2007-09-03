@@ -309,6 +309,7 @@ class chanuser
 	char *ip4;
 	char *ip6;
 	unsigned int dnsinfo;
+	unsigned int clones_to_check;
 
 	chanuser(const char *n, const char *m, const char *h, const int f=0);
 	chanuser(const char *m, const chan *ch, const int f=0, const bool scan=0);
@@ -343,8 +344,9 @@ class clone_host
 	public:
 	chanuser *user;
 	time_t cr;
+	int type;
 
-	clone_host(chanuser *u);
+	clone_host(chanuser *u, int t);
 	time_t creation();
 
 	int operator==(const clone_host &c);
