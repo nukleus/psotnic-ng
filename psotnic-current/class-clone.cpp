@@ -30,8 +30,6 @@ clone_host::clone_host(chanuser *u, int t)
 	cr = NOW;
 	user = u;
 	type = t;
-	if(type != 2)
-		printf("new type: %d\n", type);
 }
 
 time_t clone_host::creation()
@@ -46,9 +44,6 @@ int clone_host::operator==(const clone_host &c)
 
 int clone_host::operator&(const clone_host &c)
 {
-	//if(c.type != 2)
-	//	printf("type: %d\n", c.type);
-
 	if(c.type == HOST_IPV4 && (user->dnsinfo & HOST_IPV4) && (c.user->dnsinfo & HOST_IPV4) && ipcmp(user->ip4, c.user->ip4, '.', 3))
 	{
 		DEBUG(printf("[D] DNS: HOST_IPV4 matches %s!%s@%s and %s!%s@%s\n", user->nick, user->ident, user->host, c.user->nick, c.user->ident, c.user->host)); 
