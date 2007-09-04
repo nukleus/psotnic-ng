@@ -643,6 +643,10 @@ class chanset : public options
 	entBool INVITE_ON_UNBAN_REQUEST;
 	entBool KEEPOUT;
 	entInt IDIOTS;
+	entInt USER_BANS;
+	entInt USER_INVITES;
+	entInt USER_EXEMPTS;
+	entInt USER_REOPS;
 	
 	chanset();
 	chanset &operator=(const chanset &chset);

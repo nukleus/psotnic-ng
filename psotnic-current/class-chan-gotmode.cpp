@@ -253,14 +253,30 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				///////////////////
 				case 'I':
 				{
-					bool sticky = protmodelist::isSticky(arg[i], INVITE, this);
-					if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+					protmodelist::entry *global=userlist.protlist[INVITE]->find(arg[i]), *local=protlist[INVITE]->find(arg[i]);
+
+					if(chset->USER_INVITES==1 && !(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
 					{
 						mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-I", arg[i]);
 						toKick.sortAdd(nickHandle);
 						number++;
 					}
-					list[INVITE].add(arg[i], nickHandle->nick, sticky ? 0 : set.BIE_MODE_BOUNCE_TIME);
+
+					else if(chset->USER_INVITES==2)
+					{
+						if(!local && !global)
+						{
+							if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+							{
+								toKick.sortAdd(nickHandle);
+								number++;
+							}
+
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-I", arg[i]);
+						}
+					}
+
+					list[INVITE].add(arg[i], nickHandle->nick, ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					sentList[INVITE].remove(arg[i]);
 				}
 				break; //+I
@@ -268,14 +284,30 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				//////////////////
 				case 'e':
 				{
-					bool sticky = protmodelist::isSticky(arg[i], EXEMPT, this);
-					if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+					protmodelist::entry *global=userlist.protlist[EXEMPT]->find(arg[i]), *local=protlist[EXEMPT]->find(arg[i]);
+
+					if(chset->USER_EXEMPTS==1 && !(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
 					{
 						mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-e", arg[i]);
 						toKick.sortAdd(nickHandle);
 						number++;
 					}
-					list[EXEMPT].add(arg[i], nickHandle->nick, sticky ? 0 : set.BIE_MODE_BOUNCE_TIME);
+
+					else if(chset->USER_EXEMPTS==2)
+					{
+						if(!local && !global)
+						{
+							if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+							{
+								toKick.sortAdd(nickHandle);
+								number++;
+							}
+
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-e", arg[i]);
+						}
+					}
+
+					list[EXEMPT].add(arg[i], nickHandle->nick, ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					sentList[EXEMPT].remove(arg[i]);
 				}
 				break; //+e
@@ -283,14 +315,30 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				//////////////////
 				case 'R':
 				{
-					bool sticky = protmodelist::isSticky(arg[i], REOP, this);
-					if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+					protmodelist::entry *global=userlist.protlist[REOP]->find(arg[i]), *local=protlist[REOP]->find(arg[i]);
+
+					if(chset->USER_REOPS==1 && !(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
 					{
 						mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-R", arg[i]);
 						toKick.sortAdd(nickHandle);
 						number++;
 					}
-					list[REOP].add(arg[i], nickHandle->nick, sticky ? 0 : set.BIE_MODE_BOUNCE_TIME);
+
+					else if(chset->USER_REOPS==2)
+					{
+						if(!local && !global)
+						{
+							if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+							{
+								toKick.sortAdd(nickHandle);
+								number++;
+							}
+
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-R", arg[i]);
+						}
+					}
+
+					list[REOP].add(arg[i], nickHandle->nick, ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					sentList[REOP].remove(arg[i]);
 				}
 				break; //+R
@@ -486,52 +534,76 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'e':
-				if(list[EXEMPT].remove(arg[i]) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(list[EXEMPT].remove(arg[i]) && chset->USER_EXEMPTS!=0)
 				{
-					if(*nickHandle->nick)
+					protmodelist::entry *global=userlist.protlist[EXEMPT]->find(arg[i]), *local=protlist[EXEMPT]->find(arg[i]);
+
+					if(chset->USER_EXEMPTS==1 || (chset->USER_EXEMPTS==2 && (local || global)))
 					{
-						protmodelist::entry *exempt;
+						if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+						{
+							if(local && local->sticky)
+								nickHandle->setReason(local->fullReason());
+							else if(global && global->sticky)
+								nickHandle->setReason(global->fullReason());
 
-						if((exempt=protmodelist::findSticky(arg[i], EXEMPT, this)))
-							nickHandle->setReason(exempt->fullReason());
-
-						toKick.sortAdd(nickHandle);
-						number++;
+							toKick.sortAdd(nickHandle);
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+e", arg[i]);
+							number++;
+						}
+						else if(chset->USER_EXEMPTS==2)
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+e", arg[i]);
 					}
-					mqc[mq++] = modeQ[PRIO_HIGH].add(0 ,"+e", arg[i]);
 				}
 				break; //-e
 
 				//////////////////
 				case 'I':
-				if(list[INVITE].remove(arg[i]) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(list[INVITE].remove(arg[i]) && chset->USER_INVITES!=0)
 				{
-					if(*nickHandle->nick)
+					protmodelist::entry *global=userlist.protlist[INVITE]->find(arg[i]), *local=protlist[INVITE]->find(arg[i]);
+
+					if(chset->USER_INVITES==1 || (chset->USER_INVITES==2 && (local || global)))
 					{
-						protmodelist::entry *invite;
+						if(!(nickHandle->flags&(HAS_N|HAS_B))&&*nickHandle->nick)
+						{
+							if(local&&local->sticky)
+								nickHandle->setReason(local->fullReason());
+							else if(global&&global->sticky)
+								nickHandle->setReason(global->fullReason());
 
-						if((invite=protmodelist::findSticky(arg[i], INVITE, this)))
-							nickHandle->setReason(invite->fullReason());
-
-						toKick.sortAdd(nickHandle);
-						number++;
+							toKick.sortAdd(nickHandle);
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+I", arg[i]);
+							number++;
 					}
-					mqc[mq++] = modeQ[PRIO_HIGH].add(0 ,"+I", arg[i]);
+					else if(chset->USER_INVITES==2)
+						mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+I", arg[i]);
+					}
 				}
 				break; //-I
 
 				//////////////////
 				case 'R':
-				if(list[REOP].remove(arg[i]) &&	!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+				if(list[REOP].remove(arg[i]) &&	chset->USER_REOPS!=0)
 				{
-					protmodelist::entry *reop;
+					protmodelist::entry *global=userlist.protlist[REOP]->find(arg[i]), *local=protlist[REOP]->find(arg[i]);
 
-					if((reop=protmodelist::findSticky(arg[i], REOP, this)))
-						nickHandle->setReason(reop->fullReason());
+					if(chset->USER_REOPS==1 || (chset->USER_REOPS==2 && (local || global)))
+					{
+						if(!(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
+						{
+							if(local && local->sticky)
+								nickHandle->setReason(local->fullReason());
+							else if(global && global->sticky)
+								nickHandle->setReason(global->fullReason());
 
-					toKick.sortAdd(nickHandle);
-					mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+R", arg[i]);
-					number++;
+							toKick.sortAdd(nickHandle);
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+R", arg[i]);
+							number++;
+						}
+						else if(chset->USER_REOPS==2)
+							mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+R", arg[i]);
+					}
 				}
 				break; //-R
 

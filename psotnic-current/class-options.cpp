@@ -289,6 +289,9 @@ chanset::chanset()
 	registerObject(INVITE_ON_UNBAN_REQUEST = entBool("invite-on-unban-request", 0));
 	registerObject(KEEPOUT = entBool("keepout", 0));
 	registerObject(IDIOTS = entInt("idiots", 0, 5, 2));
+	registerObject(USER_INVITES = entInt("user-invites", 0, 2, 1));
+	registerObject(USER_EXEMPTS = entInt("user-exempts", 0, 2, 1));
+	registerObject(USER_REOPS = entInt("user-reops", 0, 2, 1));
 }
 
 chanset &chanset::operator=(const chanset &chset)

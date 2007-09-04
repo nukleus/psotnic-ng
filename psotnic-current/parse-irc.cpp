@@ -733,6 +733,8 @@ void parse_irc(char *data)
         ch = ME.findChannel(arg[3]);
         if(ch)
         {
+			protmodelist::entry *global, *local;
+
             switch(i)
             {
             	case RPL_BANLIST:
@@ -742,19 +744,31 @@ void parse_irc(char *data)
             	    ++ch->synlevel;
                 	return;
             	case RPL_EXCEPTLIST:
-                	ch->list[EXEMPT].add(arg[4], "", protmodelist::isSticky(arg[4], EXEMPT, ch) ? 0 : set.BIE_MODE_BOUNCE_TIME);
+					local=ch->protlist[EXEMPT]->find(arg[4]);
+					global=userlist.protlist[EXEMPT]->find(arg[4]);
+					ch->list[EXEMPT].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
+					if(ch->chset->USER_EXEMPTS==2 && !local && !global)
+						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-e", arg[4]);
                 	return;
             	case RPL_ENDOFEXCEPTLIST:
                 	++ch->synlevel;
                 	return;
             	case RPL_INVITELIST:
-                	ch->list[INVITE].add(arg[4], "", protmodelist::isSticky(arg[4], INVITE, ch) ? 0 : set.BIE_MODE_BOUNCE_TIME);
+					local=ch->protlist[INVITE]->find(arg[4]);
+					global=userlist.protlist[INVITE]->find(arg[4]);
+					ch->list[INVITE].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
+					if(ch->chset->USER_INVITES==2 && !local && !global)
+						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-I", arg[4]);
                 	return;
             	case RPL_ENDOFINVITELIST:
                 	++ch->synlevel;
                 	return;
 				case RPL_REOPLIST:
-					ch->list[REOP].add(arg[4], "", protmodelist::isSticky(arg[4], REOP, ch) ? 0 : set.BIE_MODE_BOUNCE_TIME);
+					local=ch->protlist[REOP]->find(arg[4]);
+					global=userlist.protlist[REOP]->find(arg[4]);
+					ch->list[REOP].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
+					if(ch->chset->USER_REOPS==2 && !local && !global)
+						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-R", arg[4]);
                 	return;
 				case RPL_ENDOFREOPLIST:
 					++ch->synlevel;
