@@ -507,7 +507,10 @@ int main(int argc, char *argv[])
 									parse_bot(c, buf);
 							}
 							else if(n == -1)
+							{
+								DEBUG(printf("[D] read -1 bytes, closing socket\n"));
 								c->close("EOF from client");
+							}
 #ifdef HAVE_SSL
 						} while(c->ssl && SSL_pending(c->ssl));
 #endif

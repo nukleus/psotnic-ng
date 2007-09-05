@@ -641,7 +641,18 @@ int inetconn::va_send(va_list ap, const char *lst)
 		int n;
 #ifdef HAVE_SSL
 		if(status & STATUS_SSL)
+		{
 			n = SSL_write(ssl, p, size);
+			if(n < 0)
+			{
+				int ret = SSL_get_error(ssl, n) ;
+				if(ret == SSL_ERROR_WANT_READ || ret == SSL_ERROR_WANT_WRITE)
+				{
+					DEBUG(printf("[D] SSL: write error: want read/write\n"));
+				}
+			}
+			DEBUG(printf("[D] SSL: wrote %d bytes\n", n));
+		}
 		else
 			n = ::write(conn->fd, p, size);
 #else
@@ -678,6 +689,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 {
 	int n, i, ret;
 
+	//repeat:
 #ifdef HAVE_SSL
 	if((ret = status & STATUS_SSL ? SSL_read(ssl, buf, 1) : ::read(fd, buf, 1)) > 0)
 #else
@@ -746,6 +758,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 						return -1;
 					}
 					read.buf[read.len++] = buf[i];
+					
 				}
 			}
 		}
@@ -758,6 +771,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 	else if(status & STATUS_SSL && ((n = SSL_get_error(ssl, ret)) == SSL_ERROR_WANT_READ || n == SSL_ERROR_WANT_WRITE))
 	{
 		DEBUG(printf("[D] SSL: read error: want read/write\n"));
+		//goto repeat;
 		if(ok)
 			*ok = 0;
 		return 0;
@@ -768,6 +782,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 
 	if(ok)
 		*ok = ret ? 0 : 1;
+	
 	return -1;
 }
 
@@ -1087,17 +1102,24 @@ void inetconn::writeBufferedData()
     {
 		//FIXME: we should write more then 1 byte at a time
 #ifdef HAVE_SSL
+		int n;
 		if(status & STATUS_SSL)
 		{
-			if(SSL_write(ssl, write.buf + write.pos, 1) == 1)
+			if((n = SSL_write(ssl, write.buf + write.pos, 1)) == 1)
 				++write.pos;
+			else if(n < 0)
+            {
+                int ret = SSL_get_error(ssl, n);
+                if(ret == SSL_ERROR_WANT_READ || ret == SSL_ERROR_WANT_WRITE)
+                {
+                    DEBUG(printf("[D] SSL: write error (from buffer): want read/write\n"));
+                }
+            }
 		}
-		else if(::write(fd, write.buf + write.pos, 1))
-			++write.pos;
-#else
-		if(::write(fd, write.buf + write.pos, 1))
-			++write.pos;
+		else
 #endif
+		if(::write(fd, write.buf + write.pos, 1) == 1)
+			++write.pos;
 				
 		if(write.pos == write.len)
 		{
