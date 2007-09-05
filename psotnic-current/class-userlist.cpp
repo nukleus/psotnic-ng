@@ -880,6 +880,29 @@ void ul::sendUsers(inetconn *c)
             not_flags |= ft->flag;
             ++ft;
         }
+
+		if(i == GLOBAL)
+		{
+			/* special case, no flags */
+			h = first;
+        	count = 0;
+        	buf = "";
+		
+			while(h)
+			{
+				if(!h->flags[GLOBAL])
+				{
+					++count;
+					if(buf)
+                		buf += "\002,\002 ";
+                	buf += h->name;
+            	}
+            	h = h->next;
+			}
+		
+			if(count)
+				c->send("no flags (\002", itoa(count), "\002)\002:\002 ", (const char *) buf, NULL);
+		}
 	}
 }
 
