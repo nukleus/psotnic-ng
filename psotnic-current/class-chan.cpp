@@ -820,6 +820,8 @@ bool chan::checkClone(chanuser *p)
 		{
 			if(p->dnsinfo & HOST_DOMAIN)
 			{
+				DEBUG((p->clones_to_check & CLONE_HOST) && printf("[D] CLONE_HOST check for: %s!%s@%s\n", p->nick, p->ident, p->host));
+
 				if((p->clones_to_check & CLONE_HOST) && hostClones.addLast(new clone_host(p, HOST_DOMAIN)) > set.HOST_CLONES)
 				{
 					snprintf(buf, MAX_LEN, "*!*@%s", p->host);
@@ -829,6 +831,8 @@ bool chan::checkClone(chanuser *p)
 			
 			if(p->dnsinfo & HOST_IPV4)
 			{	
+				DEBUG((p->clones_to_check & CLONE_IPV4) && printf("[D] CLONE_IPV4 check for: %s!%s@%s\n", p->nick, p->ident, p->ip4));
+				
 				if((p->clones_to_check & CLONE_IPV4) && hostClones.addLast(new clone_host(p, HOST_IPV4)) > set.HOST_CLONES)
 				{
 					char *n = nindex(p->ip4, 3, '.');
@@ -845,6 +849,8 @@ bool chan::checkClone(chanuser *p)
 			
 			if(p->dnsinfo & HOST_IPV6)
 			{
+				DEBUG((p->clones_to_check & CLONE_IPV6) && printf("[D] CLONE_IPV6 check for: %s!%s@%s\n", p->nick, p->ident, p->ip6));
+
 				if((p->clones_to_check & CLONE_IPV6) && hostClones.addLast(new clone_host(p, HOST_IPV6)) > set.HOST_CLONES)
 				{
 					char *n = nindex(p->ip6, 4, ':');

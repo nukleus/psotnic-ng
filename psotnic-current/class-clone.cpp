@@ -44,19 +44,25 @@ int clone_host::operator==(const clone_host &c)
 
 int clone_host::operator&(const clone_host &c)
 {
+	if(c.type != type)
+		return 0;
+
+	assert(c.user != NULL);
+	assert(user != NULL);
+	
 	if(c.type == HOST_IPV4 && (user->dnsinfo & HOST_IPV4) && (c.user->dnsinfo & HOST_IPV4) && ipcmp(user->ip4, c.user->ip4, '.', 3))
 	{
-		DEBUG(printf("[D] DNS: HOST_IPV4 matches %s!%s@%s and %s!%s@%s\n", user->nick, user->ident, user->host, c.user->nick, c.user->ident, c.user->host)); 
+		DEBUG(printf("[D] DNS: HOST_IPV4 matches %s!%s@%s and %s!%s@%s\n", user->nick, user->ident, user->ip4, c.user->nick, c.user->ident, c.user->ip4)); 
 		return 1;
 	}
 	
-	if(c.type == HOST_IPV6 && (user->dnsinfo & HOST_IPV6) && (c.user->dnsinfo & HOST_IPV6) && ipcmp(user->host, c.user->host, ':', 4))
+	if(c.type == HOST_IPV6 && (user->dnsinfo & HOST_IPV6) && (c.user->dnsinfo & HOST_IPV6) && ipcmp(user->ip6, c.user->ip6, ':', 4))
 	{
-		DEBUG(printf("[D] DNS: HOST_IPV6 matches %s!%s@%s and %s!%s@%s\n", user->nick, user->ident, user->host, c.user->nick, c.user->ident, c.user->host));
+		DEBUG(printf("[D] DNS: HOST_IPV6 matches %s!%s@%s and %s!%s@%s\n", user->nick, user->ident, user->ip6, c.user->nick, c.user->ident, c.user->ip6));
 		return 1;
 	}
 	
-	if(c.type == HOST_DOMAIN && !strcmp(c.user->host, user->host))
+	if(c.type == HOST_DOMAIN && (user->dnsinfo & HOST_DOMAIN) && (c.user->dnsinfo & HOST_DOMAIN) && !strcmp(c.user->host, user->host))
 	{
 		DEBUG(printf("[D] DNS: HOST_DOMAIN matches %s!%s@%s and %s!%s@%s\n", user->nick, user->ident, user->host, c.user->nick, c.user->ident, c.user->host));
 		return 1;
