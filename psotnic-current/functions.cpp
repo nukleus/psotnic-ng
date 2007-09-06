@@ -1425,14 +1425,20 @@ void addToCron(int i, char *argv[], int argc)
 int ipcmp(const char *s1, const char *s2, char sep, int count)
 {
 	int i;
+	
+	if(!s1 || !s2)
+		return 0;
 
 	for(i=0; i<count; )
 	{
-		if(!*s1 || !*s2 || *s1 != *s2) return 0;
+		if(!*s1 || !*s2 || *s1 != *s2)
+			return 0;
+		
 		if(*s1 == sep)
 		{
 			++i;
-			if(i == count) return 1;
+			if(i == count)
+				return 1;
 		}
 		++s1;
 		++s2;
