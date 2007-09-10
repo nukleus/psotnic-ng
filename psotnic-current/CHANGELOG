@@ -15,7 +15,7 @@
 * Here is a full list of changes since the first public release, please
 * read out through this file to get full info about all available
 * commands and features. Please also read HOWTO (polish, english, italian
-* slovenian version are available) from http://polibuda.info/~grusin.
+* slovenian version are available) from http://psotnic.sf.net.
 *
 * Have fun -- pks
 *
@@ -48,6 +48,8 @@ Psotnic current (2007/09/03) changes:
 - added: #1742453: reasons set in .+stick/invite/exempt/reop will be used as kickreason,
                    if a sticky ban/invite/exempt/reop gets removed (patrick)
 - added: #1759282: clone detection with on join host resolver (ipv4 /24 and ipv6 /64 prefix) 
+- added: user-invites/exempts/reops chset (patrick)
+- fixed: #1791418: bot could not set -l (patrick)
 
 Psotnic 0.2.12 (2007/01/12) changes:
 - added: partyline management of invite, exempt and reop modes. Patch by

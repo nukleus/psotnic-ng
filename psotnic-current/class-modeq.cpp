@@ -223,7 +223,7 @@ int modeq::validate(modeq_ent *e, int &a, int &n)
 				else return 0;
 			case 'l':
 				if(n == 5) return -1;
-				if(ch->limit && ch->flags & SENT_MINUS_L)
+				if(ch->limit && !(ch->flags & SENT_MINUS_L))
 				{
 					++n;
 					ch->flags |= SENT_MINUS_L;
