@@ -187,6 +187,8 @@ int protmodelist::sendShitsToOwner(inetconn *c, const char *name, int i)
 
 			c->send(s->sticky ? "[ * ]  " : "       ", s->by, "\002:\002 ", s->reason, NULL);
 			c->send("       created\002:\002 ", timestr("%d/%m/%Y %T", s->when), NULL);
+			if(s->last_used)
+				c->send("       last used\002:\002 ", timestr("%d/%m/%Y %T", s->last_used), NULL);
 
 			s++;
 		}
@@ -416,6 +418,7 @@ protmodelist::entry *protmodelist::updateLastUsedTime(const char *channel, const
 	if(e)
 		e->last_used = NOW;
 
-	return e;
+	DEBUG(printf("[D] Updating SHIT last use: %s\n", e->mask));
 	userlist.SN++;
+	return e;
 }
