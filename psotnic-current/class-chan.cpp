@@ -476,7 +476,17 @@ void chan::recheckFlags()
 
 int chan::gotBan(const char *ban, chanuser *caster)
 {
-	if(!ban) return 0;
+	if(!ban)
+		return 0;
+
+	if(config.bottype == BOT_MAIN)
+        protmodelist::updateLastUsedTime(name, ban, BAN);
+    else if(caster == me)
+    {
+        inetconn *c = net.findMainBot();
+        if(c)
+            c->send(S_SHITOBSERVED, " ", (const char *) name, " ", ban, " ", caster->nick, "!", caster->ident, "@", caster->host, NULL);
+    }
 
 	HANDLE *h = userlist.first;
 	ptrlist<chanuser>::iterator u;

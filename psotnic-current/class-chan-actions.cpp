@@ -299,15 +299,6 @@ void chan::enforceBan(const char *ban, chanuser *u, const char *reason, const bo
 		}
 		p++;
 	}
-
-	if(config.bottype == BOT_MAIN)
-		protmodelist::updateLastUsedTime(name, ban, BAN);
-	else if(u == me)
-	{
-		inetconn *c = net.findMainBot();
-		if(c)
-			c->send(S_SHITOBSERVED, " ", (const char *) name, " ", ban, " ", u->nick, "!", u->ident, "@", u->host, NULL);
-	}
 }
 
 void chan::punishClones(const char *mask, bool isMyTurn)
