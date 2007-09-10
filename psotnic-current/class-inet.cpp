@@ -596,7 +596,11 @@ int inetconn::va_send(va_list ap, const char *lst)
 		p[size-1] = '\0';
 		--size;
 
-		if(pset.debug_show_irc_write & 1)
+		if(pset.debug_show_irc_write & 1
+#ifdef DEBUG
+		|| debug
+#endif
+		)
 			printf("[D] send[%s]: %s", conn->name, p);
 		if(pset.debug_show_irc_write & 2)
 			net.send(HAS_N, "[D] send[", conn->name ? conn->name : "???", "]: ", p, NULL);
