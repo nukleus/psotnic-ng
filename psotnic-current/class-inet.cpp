@@ -597,7 +597,7 @@ int inetconn::va_send(va_list ap, const char *lst)
 		--size;
 
 		if(pset.debug_show_irc_write & 1
-#ifdef DEBUG
+#ifdef HAVE_DEBUG
 		|| debug
 #endif
 		)
