@@ -99,7 +99,7 @@ class adns
 
 #endif
 
-
+/*
 class dns
 {
 	struct FOOTER
@@ -124,6 +124,7 @@ class dns
 
 
 };
+*/
 
 class protmodelist 
 {
