@@ -123,16 +123,8 @@ void XSRand::srand(unsigned int seed)
 
 unsigned int XSRand::rand()
 {
-#ifdef LITTLE_ENDIAN
 	x ^= x << a;
     x ^= x >> b;
     x ^= x << c;
-#endif
-
-#ifdef BIG_ENDIAN
-	x ^= x >> a;
-    x ^= x << b;
-    x ^= x >> c;
-#endif
 	return x;
 }
