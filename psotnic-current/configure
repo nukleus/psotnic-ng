@@ -296,9 +296,13 @@ print $f "#define PSOTNIC_SVN_REV_H 1\n\n";
 my $x = `head -n 4 .svn/entries | tail -n 1`;
 $x =~ s/\n//;
 if(!($x =~ /^\d+$/)) {
-	$x = 'UNKNOWN';
+	$x = `head -n 4 .svn/entries | tail -1`;
+	$x =~ s/\n//;
 } 
 
+if(!($x =~ /^\d+$/)) {
+	$x = 'UNKNOWN';
+}
 print $f "#define SVN_REVISION \"$x\"\n";
 print $f "#endif\n";
 

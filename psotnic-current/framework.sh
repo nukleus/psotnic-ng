@@ -54,8 +54,8 @@ echo "typedef int* FUNCTION;" >> $INC/framework.h
 
 echo " " >> $INC/framework.h
 
-cat structs.h classes.h | grep -v '^[*]' | grep -v '^/' | awk '{ if(match($0, "[(][*]") || !match($0, "[()]")) print $0 }' | \
-awk '{ if(length($0) > 0) print $0 }' | sed -e 's/CBlowFish/foobar/g' >> $INC/framework.h
+cat structs.h classes.h | grep -v '^[*]' | grep -v '^/' | gawk '{ if(match($0, "[(][*]") || !match($0, "[()]")) print $0 }' | \
+gawk '{ if(length($0) > 0) print $0 }' | sed -e 's/CBlowFish/foobar/g' >> $INC/framework.h
 
 ############################################################
 echo "[+] Generating $INC/func.h"
