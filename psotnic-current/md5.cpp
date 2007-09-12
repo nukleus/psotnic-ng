@@ -47,7 +47,9 @@
  * doesn't work.
  */
 
+#ifdef HAVE_LITTLE_ENDIAN
 #define __i386__ 1
+#endif
 
 #if defined(__i386__) || defined(__vax__)
 #define SET(n) \

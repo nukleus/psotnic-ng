@@ -36,13 +36,64 @@ sub tryCompile
     print "failed\n";
 }
 
+sub checkCC
+{
+	my $cc = shift;
+	print "`-> looking for $cc: ";
+
+	if(!system("$cc -v 2>/dev/null"))
+	{
+		print "found\n";
+		$have{$cc} = 1;
+		return;
+	}
+	
+	print "not found\n";	
+}
+
 sub getGccOptions
 {
     $lflags = "";
     $cflags = "";
     undef %have;
-    
-    #determine linker options
+   
+	#look for gcc
+	checkCC('gcc');
+	if(!$have{'gcc'})
+	{
+		die 'please instal gcc to continue...';
+	} 
+   
+	#look for g++ 
+    checkCC('g++');
+    if(!$have{'g++'})
+    {
+        die 'please instal g++ to continue...';
+    }
+
+	#get endian
+	tryCompile('gcc', 'endian.c', '-lsocket', '-lnsl', '-lc');
+
+	print "`-> looking for processor architecture: ";
+
+	my $endian = `./endian`;
+	if("$endian" == "LITTLE_ENDIAN")
+	{
+		$cflags .= "-DHAVE_LITTLE_ENDIAN ";
+		print "little endian\n";
+	}
+	elsif("$endian" == "BIG_ENDIAN")
+	{
+		$cflags .= "-DHAVE_BIG_ENDIAN ";
+		print "big endian\n";
+	}
+	else
+	{
+		print "unknown: $endian\n";
+		die;
+	}
+
+	#determine linker options
     tryCompile('g++', 'ipv4.c', '-lsocket', '-lnsl', '-lc');
 
     if(!$have{'ipv4.c'})
