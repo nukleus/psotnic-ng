@@ -76,7 +76,7 @@ sub getGccOptions
 
 	print "`-> looking for processor architecture: ";
 
-	my $endian = `./endian`;
+	my $endian = `./a.out`;
 	if("$endian" eq "LITTLE_ENDIAN\n")
 	{
 		$cflags .= "-DHAVE_LITTLE_ENDIAN ";
