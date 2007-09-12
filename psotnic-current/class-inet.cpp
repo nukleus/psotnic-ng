@@ -958,7 +958,7 @@ int inetconn::enableLameCrypt()
 	if(!fstat(fd, &info))
 	{
 		blowfish = new CBlowFish;
-		int version = 3 + (status & STATUS_ULCRYPT);
+		unsigned int version = 3 + (status & STATUS_ULCRYPT);
 
 		psotnicHeader h;
 
@@ -987,21 +987,22 @@ int inetconn::enableLameCrypt()
 		}
 
 		unsigned char seed[16];
-		switch(version)
+		if(version == (3 + STATUS_ULCRYPT) || version == htonl(3 + STATUS_ULCRYPT))
 		{
-			case 3 + STATUS_ULCRYPT:
-				gen_ul_seed(seed);
-				blowfish->Initialize(seed, 16);
-				memset(seed, 0, 16);
-				break;
-			case 3:
-				gen_cfg_seed(seed);
-				blowfish->Initialize(seed, 16);
-				memset(seed, 0, 16);
-				break;
-			default:
-				printf("[!] Unsupported file format\n");
-				exit(1);
+			gen_ul_seed(seed);
+			blowfish->Initialize(seed, 16);
+			memset(seed, 0, 16);
+		}
+		else if(version == 3 || version == htonl(3))
+		{
+			gen_cfg_seed(seed);
+			blowfish->Initialize(seed, 16);
+			memset(seed, 0, 16);
+		}
+		else
+		{
+			printf("[!] Unsupported file format\n");
+			exit(1);
 		}
 
 		return 1;

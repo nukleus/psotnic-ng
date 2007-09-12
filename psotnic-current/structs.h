@@ -8,7 +8,7 @@ class comment;
 struct psotnicHeader
 {
 	char id[8];
-	int version;
+	unsigned int version;
 };
 
 struct unit_table
