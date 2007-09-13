@@ -245,8 +245,8 @@ settings::settings()
 	registerObject(QUARANTINE_TIME = entTime("quarantine-time", 0, 120, 15));
 	registerObject(BACKUP_MODE_DELAY = entTime("backup-mode-delay", 0, 60, 7));
 	registerObject(DONT_TRUST_OPS = entInt("dont-trust-ops", 0, 2, 0));
-	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 1));
-    registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 1));
+	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 0));
+    registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
 }
 
 /*

@@ -27,7 +27,36 @@ char __itoa[16][16];
 #define __timestr_num	16
 char __timestr[256][16];
 
+#ifdef HAVE_DEBUG
+void doCryptoTests()
+{
+	int i;
+	unsigned int size;
+	unsigned char buf[16], out[16];
+	
+	srand(12345);
+	printf("[D] Testing rand: ");
+	for(i=0; i<8; ++i)
+		printf("%X ", rand());
+	printf("\n");
 
+	printf("[D] Testing md5: ");
+	MD5Hash(buf, "12345678", 8);
+	for(i=0; i<16; i++)
+		printf("%X ", buf[i]);
+	printf("\n");
+
+	printf("[D] Testing blowfish: ");
+	CBlowFish blowfish;
+	for(i=0; i<16; ++i)
+		buf[i] = i*4;
+	blowfish.Initialize(buf, 16);
+	size = blowfish.Encode(buf, out, 16);
+	for(i=0; i<(int)size; ++i)
+		printf("%X ", out[i]);
+	printf("\n");
+}
+#endif
 
 void dumpIrcBacktrace()
 {
@@ -343,6 +372,11 @@ void parse_cmdline(int argc, char *argv[])
 		else if(!strcmp(argv[i], "-u"))
 		{
 			psotget.doUpdate(argv[i] ? argv[i+1] : "");
+			exit(0);
+		}
+		else if(!strcmp(argv[i], "--crypto-tests"))
+		{
+			doCryptoTests();
 			exit(0);
 		}
 #endif
@@ -1572,3 +1606,5 @@ int _isnumber(const char *str)
 	    return 0;
     return 1;
 }
+
+
