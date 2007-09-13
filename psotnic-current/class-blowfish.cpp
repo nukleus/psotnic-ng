@@ -124,108 +124,74 @@ void CBlowFish::Initialize (BYTE key[], int keybytes)
 	}
 }
 
-// get output length, which must be even MOD 8
-DWORD CBlowFish::GetOutputLength (DWORD lInputLong)
-{
-	DWORD 	lVal ;
-
-	lVal = lInputLong % 8 ;	// find out if uneven number of bytes at the end
-	if (lVal != 0)
-		return lInputLong + 8 - lVal ;
-	else
-		return lInputLong ;
+#ifdef HAVE_BIG_ENDIAN
+void CBlowFish::mix(BYTE *str, unsigned long lSize) {
+  unsigned int dx;
+  BYTE d0,d1,d2,d3;
+  for (dx=0;dx<lSize;dx+=4) {
+    d0=str[dx];
+    d1=str[dx+1];
+    d2=str[dx+2];
+    d3=str[dx+3];
+    str[dx]=d3;
+    str[dx+1]=d2;
+    str[dx+2]=d1;
+    str[dx+3]=d0;
+  }
 }
+#endif
 
 // Encode pIntput into pOutput.  Input length in lSize.  Returned value
 // is length of output which will be even MOD 8 bytes.  Input buffer and
 // output buffer can be the same, but be sure buffer length is even MOD 8.
 DWORD CBlowFish::Encode (BYTE * pInput, BYTE * pOutput, DWORD lSize)
 {
-	DWORD 	lCount, lOutSize, lGoodBytes ;
-	BYTE	*pi, *po ;
-	int		i, j ;
-	int		SameDest = (pInput == pOutput ? 1 : 0) ;
+  DWORD lCount, lOutSize, dx;
+  int SameDest=(pInput==pOutput ? 1 : 0);
 
-	lOutSize = GetOutputLength (lSize) ;
-	for (lCount = 0 ; lCount < lOutSize ; lCount += 8)
-	{
-		if (SameDest)	// if encoded data is being written into input buffer
-		{
-		 	if (lCount < lSize - 7)	// if not dealing with uneven bytes at end
-		 	{
-		 	 	Blowfish_encipher ((DWORD *) pInput,
-		 	 		(DWORD *) (pInput + 4)) ;
-		 	}
-		 	else	// pad end of data with null bytes to complete encryption
-		 	{
-				po = pInput + lSize ;		// point at byte past the end of actual data
-				j = (int) (lOutSize - lSize) ;	// number of bytes to set to null
-				for (i = 0 ; i < j ; i++)
-					*po++ = 0 ;
-		 	 	Blowfish_encipher ((DWORD *) pInput,
-		 	 		(DWORD *) (pInput + 4)) ;
-		 	}
-		 	pInput += 8 ;
-		}
-		else 			// output buffer not equal to input buffer, so must copy
-		{               // input to output buffer prior to encrypting
-		 	if (lCount < lSize - 7)	// if not dealing with uneven bytes at end
-		 	{
-		 		pi = pInput ;
-		 		po = pOutput ;
-		 		for (i = 0 ; i < 8 ; i++)
-				// copy bytes to output
-		 			*po++ = *pi++ ;
-		 	 	Blowfish_encipher ((DWORD *) pOutput,	// now encrypt them
-		 	 		(DWORD *) (pOutput + 4)) ;
-		 	}
-		 	else		// pad end of data with null bytes to complete encryption
-		 	{
-		 		lGoodBytes = lSize - lCount ;	// number of remaining data bytes
-		 		po = pOutput ;
-		 		for (i = 0 ; i < (int) lGoodBytes ; i++)
-		 			*po++ = *pInput++ ;
-		 		for (j = i ; j < 8 ; j++)
-		 			*po++ = 0 ;
-		 	 	Blowfish_encipher ((DWORD *) pOutput,
-		 	 		(DWORD *) (pOutput + 4)) ;
-		 	}
-		 	pInput += 8 ;
-		 	pOutput += 8 ;
-		}
-	}
-	return lOutSize ;
+  // if input differs from output copy input to output
+  if (!SameDest) for (dx=0;dx<lSize;dx++) pOutput[dx]=pInput[dx];
+  // if the size isn't dividable by 8 pad the end of output with zeros
+  if (lSize%8) {
+    for (dx=0;dx<8-lSize%8;dx++) pOutput[lSize+dx]=0;
+    lOutSize=lSize+dx;
+  } else lOutSize=lSize;
+  // big endian hotfix, reverse the byte order of every 4 byte block
+#ifdef HAVE_BIG_ENDIAN
+  BYTE *temp=pOutput;
+  mix(pOutput,lOutSize);
+#endif
+  // now we have the correct thing to encode
+  for (lCount=0;lCount<lOutSize;lCount+=8) {
+    Blowfish_encipher((DWORD *)pOutput, (DWORD *)(pOutput+4));
+    pOutput+=8;
+  }
+  // change the order back
+#ifdef HAVE_BIG_ENDIAN
+  mix(temp,lOutSize);
+#endif
+  return lOutSize ;
  }
 
 // Decode pIntput into pOutput.  Input length in lSize.  Input buffer and
 // output buffer can be the same, but be sure buffer length is even MOD 8.
 void CBlowFish::Decode (BYTE * pInput, BYTE * pOutput, DWORD lSize)
 {
-	DWORD 	lCount ;
-	BYTE	*pi, *po ;
-	int		i ;
-	int		SameDest = (pInput == pOutput ? 1 : 0) ;
+  DWORD lCount,dx;
+  int SameDest=(pInput==pOutput ? 1 : 0);
 
-	for (lCount = 0 ; lCount < lSize ; lCount += 8)
-	{
-		if (SameDest)	// if encoded data is being written into input buffer
-		{
-	 	 	Blowfish_decipher ((DWORD *) pInput,
-	 	 		(DWORD *) (pInput + 4)) ;
-		 	pInput += 8 ;
-		}
-		else 			// output buffer not equal to input buffer
-		{               // so copy input to output before decoding
-	 		pi = pInput ;
-	 		po = pOutput ;
-	 		for (i = 0 ; i < 8 ; i++)
-	 			*po++ = *pi++ ;
-	 	 	Blowfish_decipher ((DWORD *) pOutput,
-	 	 		(DWORD *) (pOutput + 4)) ;
-		 	pInput += 8 ;
-		 	pOutput += 8 ;
-		}
-	}
+  if (!SameDest) for (dx=0;dx<lSize;dx++) pOutput[dx]=pInput[dx];
+#ifdef HAVE_BIG_ENDIAN
+  BYTE *temp=pOutput;
+  mix(pOutput,lSize);
+#endif
+  for (lCount=0;lCount<lSize;lCount+=8) {
+    Blowfish_decipher((DWORD *)pOutput, (DWORD *)(pOutput+4));
+    pOutput+=8;
+  }
+#ifdef HAVE_BIG_ENDIAN
+  mix(temp,lSize);
+#endif
 }
 
 char *CBlowFish::smartDecode(char c, char *output)

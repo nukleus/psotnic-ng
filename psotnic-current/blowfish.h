@@ -23,6 +23,9 @@ class CBlowFish
 	void Blowfish_decipher (DWORD *xl, DWORD *xr);
 	char buf[8];
 	int pos;
+#ifdef HAVE_BIG_ENDIAN
+	void CBlowFish::mix(BYTE *,unsigned long);
+#endif
 
 	public:
 	CBlowFish();
@@ -34,10 +37,7 @@ class CBlowFish
 	char *smartDecode(char c, char *output);
 };
 
-// choose a byte order for your hardware
-#define ORDER_DCBA	// chosing Intel in this case
-
-#ifdef ORDER_DCBA  	// DCBA - little endian - intel
+#ifndef HAVE_BIG_ENDIAN
 	union aword {
 	  DWORD dword;
 	  BYTE byte [4];
@@ -48,9 +48,7 @@ class CBlowFish
 	    unsigned int byte0:8;
 	  } w;
 	};
-#endif
-
-#ifdef ORDER_ABCD  	// ABCD - big endian - motorola
+#else
 	union aword {
 	  DWORD dword;
 	  BYTE byte [4];
@@ -61,19 +59,8 @@ class CBlowFish
 	    unsigned int byte3:8;
 	  } w;
 	};
+
 #endif
 
-#ifdef ORDER_BADC  	// BADC - vax
-	union aword {
-	  DWORD dword;
-	  BYTE byte [4];
-	  struct {
-	    unsigned int byte1:8;
-	    unsigned int byte0:8;
-	    unsigned int byte3:8;
-	    unsigned int byte2:8;
-	  } w;
-};
-#endif
 #endif
 
