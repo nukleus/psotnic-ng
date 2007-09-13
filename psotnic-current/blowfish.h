@@ -24,7 +24,7 @@ class CBlowFish
 	char buf[8];
 	int pos;
 #ifdef HAVE_BIG_ENDIAN
-	void CBlowFish::mix(BYTE *,unsigned long);
+	void mix(BYTE *,unsigned long);
 #endif
 
 	public:
