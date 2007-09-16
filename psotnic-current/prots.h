@@ -38,7 +38,7 @@ void srand(int a=0, int b=0, int c=0);
 #include <fcntl.h>
 #include <errno.h>
 #include <math.h>
-#include <arpa/nameser.h>
+//#include <arpa/nameser.h>
 #include <dirent.h>
 #define comment pwd_h_comment
 #include <pwd.h>
