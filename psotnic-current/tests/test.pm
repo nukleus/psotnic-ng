@@ -12,7 +12,7 @@ sub tryCompile
     
     print "`-> testing $file: ";
     
-    if(!system("$cc $file $lflags 2> /dev/null" )) {
+    if(!system("$cc -o a.out $file $lflags 2> /dev/null" )) {
         print "ok\n";
         $have{$file} = 1;
         return;
