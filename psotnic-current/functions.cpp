@@ -62,7 +62,7 @@ void dumpIrcBacktrace()
 {
 #ifdef HAVE_IRC_BACKTRACE
 	static char buf[256];
-	snprintf(buf, 256, ".irc-backtrace-%d", getpid());
+	snprintf(buf, 256, ".irc-backtrace-%d", (int) getpid());
 	FILE *f = fopen(buf, "w");
 	
 	if(!f)
@@ -256,7 +256,7 @@ void lurk()
 		}
 		else
 		{
-			printf("[+] Going into background [pid: %d]\n", pid);
+			printf("[+] Going into background [pid: %d]\n", (int) pid);
 			inetconn p;
 			char buf[MAX_LEN];
 			snprintf(buf, MAX_LEN, "pid.%s", (const char *) config.handle);

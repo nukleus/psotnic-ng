@@ -113,7 +113,7 @@ bool update::doUpdate(const char *site)
 		if(link.ok() && match("*.tar.gz", link.file) && strlen(link.file) < MAX_LEN)
 		{
 			printf("[+] The newest version is: %s, downloading (this may take a while)\n", link.file);
-			snprintf(updir, 256, ".update-%d", getpid());
+			snprintf(updir, 256, ".update-%d", (int) getpid());
 			
 			if(mkdir(updir, 0700))
 			{

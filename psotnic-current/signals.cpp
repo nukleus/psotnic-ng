@@ -60,7 +60,7 @@ void sigSegv()
     int bt = 0;
     unsigned int core = 0;
 
-    snprintf(cmdlist, 256, "/tmp/.psotnic-%d", getpid());
+    snprintf(cmdlist, 256, "/tmp/.psotnic-%d", (int) getpid());
     FILE *f = fopen(cmdlist, "w");
 
     if(f)
@@ -71,7 +71,7 @@ void sigSegv()
         fprintf(f, "q\n");
         fclose(f);
 
-        snprintf(btfile, 256, ".gdb-backtrace-%d", getpid());
+        snprintf(btfile, 256, ".gdb-backtrace-%d", (int) getpid());
         snprintf(gdb, MAX_LEN, "gdb -q -x %s > %s 2>&1", cmdlist, btfile);
         if(!system(gdb))
             bt = 1;
