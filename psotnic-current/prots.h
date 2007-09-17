@@ -215,4 +215,8 @@ int _isnumber(const char *str);
 
 void gen_ul_seed(unsigned char *);
 void gen_cfg_seed(unsigned char *);
+
+/* dlsym cast 'bug' warkaround */
+DLSYM_FUNCTION dlsym_cast(void *handle, const char *symbol);
+
 #endif

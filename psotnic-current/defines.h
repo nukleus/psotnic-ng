@@ -264,7 +264,7 @@
 #define S_LASTUSED_PROTMODE		"81"
 
 #define S_NOPERM				strerror(EACCES)
-#define S_VERSION				"0.2.13rc1" 
+#define S_VERSION				"0.2.13rc2" 
 
 #define S_BOTNAME				"psotnic"
 #define S_COPYRIGHT				"Copyright (C) 2003-2007 Grzegorz Rusin <grusin@gmail.com>"
@@ -308,6 +308,7 @@
 		if((chLst = &userlist.chanlist[_i])->name && ::match(mask, chLst->name))
 
 typedef int* FUNCTION;
+typedef unsigned int(*DLSYM_FUNCTION)();
 
 #ifdef HAVE_MODULES
 #define HOOK(__name, __fun)									\

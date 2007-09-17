@@ -80,10 +80,10 @@ cat export.variables.cpp | grep -v '^//' | awk '{ if(length($0) > 0) { print "ex
 ############################################################
 echo "[+] Generating load_module.h"
 blah > register_module.h
-echo "void registerAll(int (*_register)(const char *name, FUNCTION address))" >> register_module.h
+echo "void registerAll(int (*_register)(const char *name, DLSYM_FUNCTION address))" >> register_module.h
 echo "{" >> register_module.h
-cat export.functions.cpp | grep -v '//' | awk '{ if(length($0) > 0) print "\t_register(\"" $2 "\", (FUNCTION) &" $2 ");" }' >> register_module.h
-cat export.variables.cpp | grep -v '//' | awk '{ if(length($0) > 0) print "\t_register(\"" $2 "\", (FUNCTION) &" $2 ");" }' >> register_module.h
+cat export.functions.cpp | grep -v '//' | awk '{ if(length($0) > 0) print "\t_register(\"" $2 "\", (DLSYM_FUNCTION) &" $2 ");" }' >> register_module.h
+cat export.variables.cpp | grep -v '//' | awk '{ if(length($0) > 0) print "\t_register(\"" $2 "\", (DLSYM_FUNCTION) &" $2 ");" }' >> register_module.h
 echo "}" >> register_module.h
 echo "" >> register_module.h
 

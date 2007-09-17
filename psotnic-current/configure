@@ -53,6 +53,7 @@ class-options.o
 class-shitlist.o
 class-socks5.o
 config-load.o
+dlsym_cast.o
 functions.o
 hidden-seed-functions.o
 inet_pton.o
