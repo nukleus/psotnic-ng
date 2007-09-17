@@ -309,6 +309,7 @@
 
 typedef int* FUNCTION;
 typedef unsigned int(*DLSYM_FUNCTION)();
+typedef void* DLSYM_OBJECT;
 
 #ifdef HAVE_MODULES
 #define HOOK(__name, __fun)									\
