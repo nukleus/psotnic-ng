@@ -104,7 +104,7 @@ echo "    int res;" >> $INT/register.cpp
 echo ""	 >> $INT/register.cpp    
 echo "    while((res = *str1 - *str2) == 0)" >> $INT/register.cpp
 echo "    {" >> $INT/register.cpp
-echo "        if(*str1 == '\0')" >> $INT/register.cpp
+printf "        if(*str1 == '\\\0')\n"  >> $INT/register.cpp
 echo "            return 0;" >> $INT/register.cpp
 echo "        str1++;" >> $INT/register.cpp
 echo "        str2++;" >> $INT/register.cpp
