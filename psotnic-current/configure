@@ -113,7 +113,7 @@ $filelist =~ tr/\n/ /;
 my $ver = `cat defines.h | egrep S_VERSION | awk '{ print substr(\$3, 2, length(\$3)-2) }'`;
 $ver =~ s/\n//;
 
-system("./framework.sh");
+system("sh ./framework.sh");
 
 #
 # Generating makefile
