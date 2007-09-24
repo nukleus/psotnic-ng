@@ -104,8 +104,16 @@ void sigCpuTime()
 	stopPsotnic = 1;
 }
 
+void sigUpdateFailed()
+{
+	DEBUG(printf("[D] got: SIGUSR2\n"));
+	psotget.end();
+}
+
 void sigUpdated()
 {
+	DEBUG(printf("[D] got: SIGUSR1\n"));
+	psotget.end();
 #ifdef RESTART_AFTER_UPDATE
 	ME.restart();
 #endif
@@ -128,6 +136,7 @@ void signalHandling()
 	register_signal(SIGINT, (sighandler_t) sigInt);
 	register_signal(SIGHUP, (sighandler_t) sigHup);
 	register_signal(SIGUSR1, (sighandler_t) sigUpdated);
+	register_signal(SIGUSR2, (sighandler_t) sigUpdateFailed);
 	register_signal(SIGSEGV, (sighandler_t) sigSegv);
 	register_signal(SIGXCPU, (sighandler_t) sigCpuTime);
 }

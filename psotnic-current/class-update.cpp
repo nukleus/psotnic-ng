@@ -32,6 +32,7 @@ bool update::forkAndGo(char *site)
 	if(child.fd)
 	{
 		net.send(HAS_N, "[*] Already updating", NULL);
+		net.send(HAS_B, "[*] To stop update issue .stopupdate <bot> command", NULL);
 		return false;
 	}
 
@@ -65,7 +66,15 @@ bool update::forkAndGo(char *site)
 				dup2(parent, fileno(stdout));
 				dup2(parent, fileno(stderr));
 				if(doUpdate(site))
+				{
+					sleep(1);
 					kill(pid, SIGUSR1); //that should restart parent;
+				}
+				else
+				{
+					sleep(1);
+					kill(pid, SIGUSR2); //that should notify parent that update has failed
+				}
 			}
 			end();
 			_exit(0);
@@ -109,6 +118,8 @@ bool update::doUpdate(const char *site)
 	if((n = php.get(updateSite)) > 0)
 	{
 		http::url link(php.data);
+		
+		//DEBUG(printf("[D] php.data = %s; n = %d\n", php.data, n));
 		
 		if(link.ok() && match("*.tar.gz", link.file) && strlen(link.file) < MAX_LEN)
 		{

@@ -88,7 +88,7 @@ void inet::resize()
 		conn = (inetconn *) realloc(conn, size*sizeof(inetconn));
 		for(i=max_conns; i<size; ++i) memset(&conn[i], 0, sizeof(inetconn));
 		max_conns = size;
-		DEBUG(printf("max_conns(up): %d\n", max_conns));
+		//DEBUG(printf("max_conns(up): %d\n", max_conns));
 
 	}
 	else if(conns <= max_conns / 4 && conns > 4)
@@ -113,7 +113,7 @@ void inet::resize()
 		free(old);
 		max_conns = size;
 
-		DEBUG(printf("max_conns(down): %d\n", max_conns));
+		//DEBUG(printf("max_conns(down): %d\n", max_conns));
 	}
 }
 
@@ -175,7 +175,7 @@ int inet::closeConn(inetconn *c, const char *reason)
 	/* is this right connection? */
 	pos = abs(c - &conn[0]);
 
-	DEBUG(printf("pos: %d\n", pos));
+	//DEBUG(printf("pos: %d\n", pos));
 
 	if(pos >= 0 && pos < max_conns || c == &net.hub)
 	{
