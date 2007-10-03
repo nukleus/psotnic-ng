@@ -114,10 +114,25 @@ void parse_ctcp(char *mask, char *data, char *to)
 	/* dcc chat */
 	if(!strcmp(arg[0], "DCC") && !strcmp(arg[1], "CHAT") && strlen(arg[4]))
 	{
-		sprintf(buf, "%s", inet2char(htonl(strtoul(arg[3], NULL, 10))));
+		if(isValidIp(buf) == 6)
+			strncpy(buf, arg[3], MAX_LEN-1);
+		else 
+			sprintf(buf, "%s", inet2char(htonl(strtoul(arg[3], NULL, 10))));
+
 		if(config.bottype == BOT_MAIN && (p = userlist.hasPartylineAccess(mask)))
   		{
-			n = doConnect(buf, atoi(arg[4]), config.myipv4, -1);
+			switch(isValidIp(buf))
+			{
+				#ifdef HAVE_IPV6
+				case 6:
+					n = doConnect6(buf, atoi(arg[4]), 0, -1);
+					break;
+				#endif
+
+				default:
+					n = doConnect(buf, atoi(arg[4]), config.myipv4, -1);
+			}
+
 			if(n > 0)
 			{
 				inetconn *c = net.addConn(n);
