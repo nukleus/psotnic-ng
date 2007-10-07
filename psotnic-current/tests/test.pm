@@ -5,6 +5,11 @@ use strict;
 my ($lflags, $cflags);
 my %have;
 
+our ($antiptrace, $noircbacktrace, $ssl, $little_endian, $big_endian, $cc_prefix, $cc_options, $ld_options, $disable_adns);
+
+$lflags = "$ld_options ";
+$cflags = "$cc_options ";
+
 sub tryCompile
 {
     my ($cc, $file, @opts) = @_;
@@ -53,30 +58,36 @@ sub checkCC
 
 sub getGccOptions
 {
-    $lflags = "";
-    $cflags = "";
     undef %have;
    
 	#look for gcc
-	checkCC('gcc');
-	if(!$have{'gcc'})
+	checkCC("${cc_prefix}gcc");
+	if(!$have{"${cc_prefix}gcc"})
 	{
-		die 'please instal gcc to continue...';
+		die "please instal ${cc_prefix}gcc to continue...";
 	} 
    
 	#look for g++ 
-    checkCC('g++');
-    if(!$have{'g++'})
+    checkCC("${cc_prefix}g++");
+    if(!$have{"${cc_prefix}g++"})
     {
-        die 'please instal g++ to continue...';
+        die "please instal ${cc_prefix}g++ to continue...";
     }
 
-	#get endian
-	tryCompile('gcc', 'endian.c', '-lsocket', '-lnsl', '-lc');
+	my $endian;
+	if($big_endian) {
+		$endian = "BIG_ENDIAN\n";
+	}
+	elsif($little_endian) {
+		$endian = "LITTLE_ENDIAN\n";
+	}
+	else {
+		tryCompile("${cc_prefix}gcc", 'endian.c', '-lsocket', '-lnsl', '-lc', '-lm');
+		$endian = `./a.out`;
+	}
 
 	print "`-> looking for processor architecture: ";
 
-	my $endian = `./a.out`;
 	if("$endian" eq "LITTLE_ENDIAN\n")
 	{
 		$cflags .= "-DHAVE_LITTLE_ENDIAN ";
@@ -94,7 +105,7 @@ sub getGccOptions
 	}
 
 	#determine linker options
-    tryCompile('g++', 'ipv4.c', '-lsocket', '-lnsl', '-lc');
+    tryCompile("${cc_prefix}g++", 'ipv4.c', '-lsocket', '-lnsl', '-lc', '-lm');
 
     if(!$have{'ipv4.c'})
     {
@@ -102,7 +113,7 @@ sub getGccOptions
     }
 
     #check for stack protector
-    if(!system("g++ empty.c -fno-stack-protector 2> /dev/null" )) {
+    if(!system("${cc_prefix}g++ empty.c -fno-stack-protector 2> /dev/null" )) {
         print "`-> looking for stack protector: found, disabling\n";
         $lflags .= '-fno-stack-protector ';
     }
@@ -111,13 +122,16 @@ sub getGccOptions
         print "`-> looking for stack protector: not found (good)\n";
     }
 
-    tryCompile('g++', 'ipv6.c', '-lsocket', '-lnsl', '-ldl', '-lc');
-    tryCompile('g++', 'pthread.c', '-lthread', '-lpthread');
-    tryCompile('g++', 'gethostbyname.c', '-lsocket', '-lnsl', '-ldl', '-lc');
-    tryCompile('g++', 'gethostbyname2.c', '-lsocket', '-lnsl', '-ldl', '-lc');
-    tryCompile('g++', 'gethostbyname2_r.c', '-lsocket', '-lnsl', '-ldl', '-lc');
-    tryCompile('g++', 'dlopen.c', '-ldl', '-lc');
-    tryCompile('g++', 'resolv.c', '-lresolv');
+	tryCompile("${cc_prefix}g++", 'math.c', '-lsocket', '-lnsl', '-ldl', '-lc', '-lm');
+    tryCompile("${cc_prefix}g++", 'ipv6.c', '-lsocket', '-lnsl', '-ldl', '-lc', '-lm');
+    if(!$disable_adns) {
+		tryCompile("${cc_prefix}g++", 'pthread.c', '-lthread', '-lpthread', '-lm');
+	}
+    tryCompile("${cc_prefix}g++", 'gethostbyname.c', '-lsocket', '-lnsl', '-ldl', '-lc', '-lm');
+    tryCompile("${cc_prefix}g++", 'gethostbyname2.c', '-lsocket', '-lnsl', '-ldl', '-lc', '-lm');
+    tryCompile("${cc_prefix}g++", 'gethostbyname2_r.c', '-lsocket', '-lnsl', '-ldl', '-lc', '-lm');
+    tryCompile("${cc_prefix}g++", 'dlopen.c', '-ldl', '-lc', '-lm');
+    tryCompile("${cc_prefix}g++", 'resolv.c', '-lresolv', '-lm');
 
     #determine compiler options
     if($have{'ipv6.c'})
@@ -130,9 +144,9 @@ sub getGccOptions
         $cflags .= "-DNO_6DNS ";
     }
 
-    if($have{'gethostbyname2_r.c'})
+    if($have{'gethostbyname2_r.c'} && !$disable_adns)
     {
-	$cflags .= "-DHAVE_ADNS ";
+		$cflags .= "-DHAVE_ADNS ";
     }
 
     if(!$have{'dlopen.c'})

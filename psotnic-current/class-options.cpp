@@ -344,7 +344,7 @@ CONFIG::CONFIG()
 	registerObject(realname = entString("realname", 1, 255, "Psotnic C++ Edition"));
 	registerObject(nickappend = entWord("nickappend", 1, 255, "_-^`|"));
 	
-	registerObject(ident = entWord("ident", 1, 12, pent->pw_name));
+	registerObject(ident = entWord("ident", 1, 12, pent->pw_name ? pent->pw_name : "nobody"));
 	registerObject(oidentd_cfg = entWord("oidentd-config", 1, 255, ""));
 	registerObject(handle = entWord("handle", 1, 15, ""));		// = nick
 

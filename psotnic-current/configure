@@ -4,13 +4,17 @@ use strict;
 use FileHandle;
 use Getopt::Long;
 
-require 'tests/test.pm';
-
-my ($antiptrace, $noircbacktrace, $ssl);
+our ($antiptrace, $noircbacktrace, $ssl, $little_endian, $big_endian, $cc_prefix, $cc_options, $ld_options, $disable_adns);
 
 if(!GetOptions(
 	"--with-antiptrace" => \$antiptrace,
 	"--no-irc-backtrace" => \$noircbacktrace,
+	"--little-endian" => \$little_endian,
+	"--big-endian" => \$big_endian,
+	"--cc-prefix:s" => \$cc_prefix,
+	"--cc-options:s" => \$cc_options,
+	"--ld-options:s" => \$ld_options,
+	"--disable-adns" => \$disable_adns,
 	"--with-ssl" => \$ssl))
 {
 	exit();
@@ -71,6 +75,7 @@ parse-owner.o
 random.o
 signals.o";
 
+require 'tests/test.pm';
 chdir('tests');
 print "[*] Running system check (this may take a while)\n";
 my $os = `uname`;
@@ -212,23 +217,23 @@ foreach $t (keys %targets)
     print $f ".SUFFIXES: .o .c .cpp\n\n";
     print $f ".c.o:\n";
     print $f "\t\@echo [*] Compiling \$<\n";
-    print $f "\t\@g++ -c \$< $targets{$t} $cflags\n\n";
+    print $f "\t\@${cc_prefix}g++ -c \$< $targets{$t} $cflags\n\n";
 	
     print $f ".cpp.o:\n";
     print $f "\t\@echo [*] Compiling \$<\n";
-    print $f "\t\@g++ -c \$< $targets{$t} $cflags\n\n";
+    print $f "\t\@${cc_prefix}g++ -c \$< $targets{$t} $cflags\n\n";
 	
     print $f ".cc.o:\n";
     print $f "\t\@echo [*] Compiling \$<\n";
-    print $f "\t\@g++ -c \$< $targets{$t} $cflags\n\n";
+    print $f "\t\@${cc_prefix}g++ -c \$< $targets{$t} $cflags\n\n";
 
     print $f "tar: $filelist\n";
     print $f "\t\@echo [*] Linking\n";
-    print $f "\t\@g++ $filelist -o $out $targets{$t} $cflags $lflags\n";
+    print $f "\t\@${cc_prefix}g++ $filelist -o $out $targets{$t} $cflags $lflags\n";
 	
     if(!($t =~ /debug/)) {
 	print $f "\t\@echo [*] Striping debug information\n";
-	print $f "\t\@strip $out\n";
+	print $f "\t\@${cc_prefix}strip $out\n";
     }
 
     print $f "\t\@echo [*] We are done\n";
