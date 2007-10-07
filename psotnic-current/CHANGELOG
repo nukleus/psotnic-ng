@@ -51,6 +51,7 @@ Psotnic current (2007/09/14) changes:
 - added: user-invites/exempts/reops chset (patrick)
 - fixed: #1791418: bot could not set -l (patrick)
 - added: support for big endian machines
+- added: report expired shits/invites/exempts/reops on partyline (patrick)
 
 Psotnic 0.2.12 (2007/01/12) changes:
 - added: partyline management of invite, exempt and reop modes. Patch by

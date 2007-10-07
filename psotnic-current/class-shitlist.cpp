@@ -286,7 +286,7 @@ int protmodelist::expire(const char *channel)
 	ptrlist<entry>::iterator n, s = data.begin();
 	int i=0;
 	chan *ch;
-	char  *botnet_cmd, _mode[3];
+	char *botnet_cmd, _mode[3], *type_str;
 
 	_mode[0] = '-';
 	_mode[1] = mode;
@@ -294,10 +294,10 @@ int protmodelist::expire(const char *channel)
 
 	switch(type)
 	{
-		case BAN : botnet_cmd=S_RMSHIT; break;
-		case INVITE : botnet_cmd=S_RMINVITE; break;
-		case EXEMPT : botnet_cmd=S_RMEXEMPT; break;
-		case REOP : botnet_cmd=S_RMREOP; break;
+		case BAN : botnet_cmd=S_RMSHIT; type_str="shit"; break;
+		case INVITE : botnet_cmd=S_RMINVITE; type_str="invite"; break;
+		case EXEMPT : botnet_cmd=S_RMEXEMPT; type_str="exempt"; break;
+		case REOP : botnet_cmd=S_RMREOP; type_str="reop"; break;
 		default : return 0;
 	}
 
@@ -310,15 +310,21 @@ int protmodelist::expire(const char *channel)
 			net.send(HAS_B, botnet_cmd, " ", s->mask, " ", channel, NULL);
 
 			if(channel)
-			{	
+			{
+				net.send(HAS_N, "[*] ", type_str, " `\002", s->mask, "'\002 on `\002", channel, "\002' has expired", NULL);
+	
 				if((ch=ME.findChannel(channel)) && ch->synced() && ch->myTurn(ch->chset->GUARDIAN_BOTS, hash32(s->mask)))
 					ch->modeQ[PRIO_LOW].add(NOW+5, _mode, s->mask);
 			}
 
 			else
+			{
+				net.send(HAS_N, "[*] ", type_str, " `\002", s->mask, "'\002 has expired", NULL);
+
 				foreachSyncedChannel(ch)
 					if(ch->myTurn(ch->chset->GUARDIAN_BOTS, hash32(s->mask)))
 						ch->modeQ[PRIO_LOW].add(NOW+5, _mode, s->mask);
+			}
 
 			data.removeLink(s);
 			++userlist.SN;
