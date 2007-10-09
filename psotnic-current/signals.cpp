@@ -137,6 +137,8 @@ void signalHandling()
 	register_signal(SIGHUP, (sighandler_t) sigHup);
 	register_signal(SIGUSR1, (sighandler_t) sigUpdated);
 	register_signal(SIGUSR2, (sighandler_t) sigUpdateFailed);
+#ifndef HAVE_DEBUG
 	register_signal(SIGSEGV, (sighandler_t) sigSegv);
+#endif
 	register_signal(SIGXCPU, (sighandler_t) sigCpuTime);
 }

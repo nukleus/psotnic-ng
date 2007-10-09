@@ -72,8 +72,6 @@ class adns
 	int n;
 	pthread_t *th;
 
-	void lock();
-	void unlock();
 	void work();
 	host2ip *__getIp(const char *host);
 

@@ -70,16 +70,6 @@ unsigned int adns::host2resolv::hash32() const
 	return hash;
 }
 
-void adns::lock()
-{
-	pthread_mutex_lock(&mutex);
-}
-
-void adns::unlock()
-{
-	pthread_mutex_unlock(&mutex);
-}
-
 adns::host2ip *adns::__getIp(const char *host)
 {
 	host2ip tmp(host);
@@ -96,12 +86,12 @@ adns::host2ip *adns::getIp(const char *host)
 	if(!th)
 		return NULL;
 
-	lock();
+	pthread_mutex_lock(&data_mutex);
 	host2ip *ip = __getIp(host);
-	unlock();
 
 	if(ip)
 		ip->creat_t = NOW;
+	pthread_mutex_unlock(&data_mutex);
 	return ip;
 }
 
@@ -110,27 +100,29 @@ void adns::resolv(const char *host)
 	if(!th)
 		return;
 
-	lock();
+	DEBUG(printf(">>> Attempting to resolv: %s\n", host));
+	pthread_mutex_lock(&data_mutex);
 	if(!__getIp(host))
 	{
 		host2resolv *h = new host2resolv(host);
 		if(resolving->find(*h) || todo->find(*h))
 		{
 			delete h;
-			//DEBUG(printf(">>> %s is already RESOLVING\n", host));
-			unlock();
-			return;
+			DEBUG(printf(">>> %s is already RESOLVING\n", host));
 		}
+		else
+		{
+			DEBUG(printf("adns::resolver::todo->add(\"%s\")\n", host));
+			todo->add(h);
 
-		//DEBUG(printf("adns::resolver::todo->add(\"%s\")\n", host));
-		todo->add(h);
-		pthread_cond_signal(&condition);
+			pthread_cond_broadcast(&condition);
+		}
 	}
 	else
 	{
-		//DEBUG(printf(">>> %s hits CACHE\n", host));
+		DEBUG(printf(">>> %s hits CACHE\n", host));
 	}
-	unlock();
+	pthread_mutex_unlock(&data_mutex);
 }
 
 void adns::work()
@@ -145,7 +137,7 @@ void adns::work()
 
 	while(1)
 	{
-		lock();
+		pthread_mutex_lock(&data_mutex);
 		h = todo->pop();
 
 		if(h)
@@ -154,7 +146,7 @@ void adns::work()
 			DEBUG(if(__getIp(h->host))
 				printf(">>> DOUBLE RESOLVE of %s", h->host));
 			strncpy(resbuf, h->host, MAX_LEN);
-			unlock();
+			pthread_mutex_unlock(&data_mutex);
 
 			if(die)
 				break;
@@ -165,7 +157,7 @@ void adns::work()
 			if(!gethostbyname2_r(resbuf, AF_INET, &ret, buf4, MAX_LEN, &retptr, &error) && retptr)
 			{
 				inet_ntop(AF_INET, ret.h_addr, buf4, MAX_LEN);
-				//DEBUG(printf(">>> %s resolved to: %s !!!\n", h->host, buf4));
+				DEBUG(printf(">>> %s resolved to: %s !!!\n", h->host, buf4));
 			}
 			else
 				*buf4 = '\0';
@@ -173,7 +165,7 @@ void adns::work()
 			if(!gethostbyname2_r(resbuf, AF_INET6, &ret, buf6, MAX_LEN, &retptr, &error) && retptr)
 			{
 				inet_ntop(AF_INET6, ret.h_addr, buf6, MAX_LEN);
-				//DEBUG(printf(">>> %s resolved to: %s !!!\n", h->host, buf6));
+				DEBUG(printf(">>> %s resolved to: %s !!!\n", h->host, buf6));
 
 			}
 			else
@@ -182,20 +174,23 @@ void adns::work()
 			if(die)
 				break;
 
-			lock();
+			pthread_mutex_lock(&data_mutex);
 			if(*buf4 || *buf6)
 				cache->add(new host2ip(resbuf, buf4, buf6));
 			//else
 			//	DEBUG(printf(">>> unknown host: %s\n", h->host));
 
-			resolving->remove(h);
-			unlock();
+			host2resolv h2(resbuf);
+			resolving->remove(h2);
+			pthread_mutex_unlock(&data_mutex);
 		}
 		else
 		{
-			//lock();
-			pthread_cond_wait(&condition, &mutex);
-			unlock();
+			pthread_mutex_unlock(&data_mutex);
+			
+			pthread_mutex_lock(&condition_mutex);
+			pthread_cond_wait(&condition, &condition_mutex);
+			
 		}
 		if(die)
 			break;
@@ -258,7 +253,7 @@ adns::~adns()
 #ifdef HAVE_DEBUG
 void adns::display()
 {
-	lock();
+	pthread_mutex_lock(&data_mutex);
 	if(todo)
 	{
 		printf(">>> todo\n");
@@ -269,7 +264,7 @@ void adns::display()
 		printf(">>> cache\n");
 		cache->displayStats();
 	}
-	unlock();
+	pthread_mutex_unlock(&data_mutex);
 }
 #endif
 
@@ -286,10 +281,12 @@ unsigned int adns::xorHash(const char *str)
 
 void adns::expire(time_t t, time_t now)
 {
-	lock();
+	pthread_mutex_lock(&data_mutex);
+	DEBUG(printf("[D] adns::expire start\n"));
 	if(cache)
 		cache->expire(t, now);
-	unlock();
+	DEBUG(printf("[D] ands::expire end\n"));
+	pthread_mutex_unlock(&data_mutex);
 }
 
 void adns::closeThreads()
@@ -301,10 +298,10 @@ void adns::closeThreads()
 	{
 		DEBUG(printf("[*] AsyncDNS: joining thread %d\n", i));
 
-		lock();
+		pthread_mutex_lock(&condition_mutex);
 		die = 1;
 		pthread_cond_broadcast(&condition);
-		unlock();
+		pthread_mutex_unlock(&condition_mutex);
 
 		if(pthread_join(th[i], (void **)&status))
 			printf("[-] AsyncDNS: pthread %d join failed\n", i);
