@@ -422,9 +422,10 @@ protmodelist::entry *protmodelist::updateLastUsedTime(const char *channel, const
 {
 	entry *e = findBestByMask(channel, mask, type);
 	if(e)
+	{
 		e->last_used = NOW;
-
-	DEBUG(printf("[D] Updating SHIT last use: %s\n", e->mask));
-	userlist.SN++;
+		DEBUG(printf("[D] Updating SHIT last use: %s\n", e->mask));
+		userlist.SN++;
+	}
 	return e;
 }
