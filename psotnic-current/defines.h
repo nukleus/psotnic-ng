@@ -264,7 +264,7 @@
 #define S_LASTUSED_PROTMODE		"81"
 
 #define S_NOPERM				strerror(EACCES)
-#define S_VERSION				"0.2.13" 
+#define S_VERSION				"0.2.14pre1" 
 
 #define S_BOTNAME				"psotnic"
 #define S_COPYRIGHT				"Copyright (C) 2003-2007 Grzegorz Rusin <grusin@gmail.com>"
