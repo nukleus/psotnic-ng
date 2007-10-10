@@ -296,24 +296,46 @@ else
 
 print "[*] Generating SVN revision file\n";
 
+
+my $svn_entries = ".svn/entries";
+
+sub check_svn_revision {
+	my $f = shift;
+
+	my $x = `head -n 4 $f | tail -n 1 2>/dev/null`;
+	$x =~ s/\n//;
+	if(!($x =~ /^\d+$/)) {
+    	$x = `head -n 4 $f | tail -1 2>/dev/null`;
+	    $x =~ s/\n//;
+	}
+
+	if(!($x =~ /^\d+$/)) {
+		$x = 'UNKNOWN';
+	}
+
+	return $x;
+}
+
+my $svn_rev = check_svn_revision($svn_entries);
+
+if($svn_rev == 'UNKNOWN') {
+	my $currDir = `pwd`;
+	
+if($currDir =~ /.*\/\.update-[0-9]*$/) {
+		$svn_entries = `ls psotnic-*/.svn/entries`;
+		$svn_entries =~ s/\n//;
+		if($svn_entries =~ /entries/) {
+			$svn_rev = check_svn_revision($svn_entries);
+		}
+	}
+}
+
 $f = new FileHandle "> svn-rev.h";
 print $f "#ifndef PSOTNIC_SVN_REV_H\n";
 print $f "#define PSOTNIC_SVN_REV_H 1\n\n";
-my $x = `head -n 4 .svn/entries | tail -n 1 2>/dev/null`;
-$x =~ s/\n//;
-if(!($x =~ /^\d+$/)) {
-	$x = `head -n 4 .svn/entries | tail -1 2>/dev/null`;
-	$x =~ s/\n//;
-} 
-
-if(!($x =~ /^\d+$/)) {
-	$x = 'UNKNOWN';
-}
-print $f "#define SVN_REVISION \"$x\"\n";
+print $f "#define SVN_REVISION \"$svn_rev\"\n";
 print $f "#endif\n";
-
 $f->close;
-
-print "[+] Done; Source Code Revision = $x\n";
+print "[+] Done; Source Code Revision = $svn_rev\n";
 
 1;
