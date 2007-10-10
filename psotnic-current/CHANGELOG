@@ -20,7 +20,7 @@
 * Have fun -- pks
 *
 
-Psotnic current (2007/09/14) changes:
+Psotnic 0.2.13 (2007/10/10) changes:
 - fixed: #1745405: added SSL_pending (patch by zerg2012)
 - change: #1761109: enhanced .verify [-a|-p|-h|-c] (Esio)
 - fixed: #1742466: snag in chattr code (Esio)
@@ -52,6 +52,7 @@ Psotnic current (2007/09/14) changes:
 - fixed: #1791418: bot could not set -l (patrick)
 - added: support for big endian machines
 - added: report expired shits/invites/exempts/reops on partyline (patrick)
+- change: please refer to http://psotnic.wiki.sourceforge.net/Changelog for more changes
 
 Psotnic 0.2.12 (2007/01/12) changes:
 - added: partyline management of invite, exempt and reop modes. Patch by
