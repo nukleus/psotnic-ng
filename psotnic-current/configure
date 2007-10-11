@@ -158,7 +158,7 @@ print $f "\t\@echo [*] Making static\n";
 print $f "\t\@make -f Makefile.static\n\n";
 
 print $f "\nclean:\n";
-print $f "\t\@rm -f *.o core psotnic-* psotnic validator *.log vgcore.* tests/a.out make-hiddenseed\n\n";
+print $f "\t\@rm -f *.exe *.o core psotnic-* psotnic validator *.log vgcore.* tests/a.out tests/a.exe make-hiddenseed\n\n";
 print $f "\t\@echo [*] Removing temporary files\n";
     
 print $f "\ndistclean:\n";
