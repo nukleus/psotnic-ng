@@ -438,6 +438,7 @@ void ul::cleanHandle(HANDLE *h)
 int ul::parse(char *data)
 {
 	char arg[10][MAX_LEN];
+	char *marg;
 	HANDLE *h;
 
 	if(!data || !strlen(data)) return 0;
@@ -450,16 +451,16 @@ int ul::parse(char *data)
 	{
 		if((h = userlist.findHandle(arg[1])))
 		{
-            ptime t(arg[2], arg[3]);
+        		ptime t(arg[2], arg[3]);
 
 			if(!memcmp(&t.tv, &h->creation->tv, sizeof(timeval)))
 			{
-                h->updated = 1;
+            			h->updated = 1;
 				return 0;
 			}
 			else
 			{
-                userlist.removeHandle(arg[1]);
+            			userlist.removeHandle(arg[1]);
 			}
 		}
 
@@ -546,7 +547,8 @@ int ul::parse(char *data)
 		int i = userlist.findChannel(arg[1]);
 		if(i != -1)
 		{
-			userlist.chanlist[i].chset->setVariable(arg[2], arg[3]);
+			marg = srewind(data, 3);		
+    			userlist.chanlist[i].chset->setVariable(arg[2], marg ? marg : "");
 			return 1;
 		}
 		return 0;
@@ -554,12 +556,14 @@ int ul::parse(char *data)
 	}
 	if(!strcmp(arg[0], S_DSET))
 	{
-		dset->setVariable(arg[1], arg[2]);
+		marg = srewind(data, 2);		
+		dset->setVariable(arg[1], marg ? marg : "");
 		return 1;
 	}
 	if(!strcmp(arg[0], S_GCHSET) && strlen(arg[2]))
 	{
-		userlist.globalChset(NULL, arg[1], arg[2]);
+		marg = srewind(data, 2);
+		userlist.globalChset(NULL, arg[1], marg ? marg : "");
 		return 1;
 	}
 	if((!strcmp(arg[0], S_PASSWD) || !strcmp(arg[0], "PASSWD")) && strlen(arg[2]))

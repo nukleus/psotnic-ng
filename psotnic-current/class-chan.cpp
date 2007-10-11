@@ -240,7 +240,7 @@ void chan::cwho(const char *owner, const char *arg)
 	    p++;
 	}
 
-	if(!i) net.sendOwner(owner, "-!- Psotnic: No matches found", NULL);
+	if(!i) net.sendOwner(owner, "[*] Psotnic: No matches found", NULL);
 }
 
 int chan::userLevel(int flags) const
@@ -1350,18 +1350,29 @@ void chan::checkProtectedChmodes()
 		{
 			case '+' : pos=true; break;
 			case '-' : pos=false; break;
-			default  : if(pos && strchr(ARG_MODES, modes[i]))
-				   	break;
-				   if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])))
+			default  : if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])) || 
+			(pos && (modes[i] == 'k' && strcmp((const char *) key, chset->PROTECT_CHMODES.getKey()) && hasFlag(modes[i])
+			|| (modes[i] == 'l' && limit != chset->PROTECT_CHMODES.getLimit()) && hasFlag(modes[i]))))
 				   {
 					   mode[0]=pos?'+':'-';
 					   mode[1]=modes[i];
 					   mode[2]='\0';
 					   
-					   if(modes[i]=='k')
-						   modeQ[PRIO_HIGH].add(NOW, mode, key);
-					   else
+					    if(modes[i] == 'k')
+					    {
+						if(pos == false)
+						    modeQ[PRIO_HIGH].add(NOW, mode, key);
+						else
+						    modeQ[PRIO_HIGH].add(NOW, mode, chset->PROTECT_CHMODES.getKey());
+					    }
+					    else if(pos == true && modes[i] == 'l')
+					    {
+						modeQ[PRIO_HIGH].add(NOW, mode, itoa(chset->PROTECT_CHMODES.getLimit()));
+					    }
+					    else
+					    {
 					   	modeQ[PRIO_HIGH].add(NOW, mode);
+					    }
 				   }
 		}
 	}

@@ -1292,8 +1292,8 @@ void parse_owner(inetconn *c, char *data)
 			c->send(S_NOPERM, NULL);
 			return;
 		}
-
-		if(userlist.dset->parseUser(c->name, arg[1], arg[2], "dset"))
+		a = srewind(data, 2);
+		if(userlist.dset->parseUser(c->name, arg[1], a ? a : "", "dset"))
 			userlist.nextSave = NOW + SAVEDELAY;
 		return;
 	}
@@ -1308,9 +1308,10 @@ void parse_owner(inetconn *c, char *data)
 		i = userlist.findChannel(arg[1]);
 		if(i != -1)
 		{
-			if(userlist.chanlist[i].chset->parseUser(c->name, arg[2], arg[3], arg[1], "chset "))
+			a = srewind(data, 3);
+			if(userlist.chanlist[i].chset->parseUser(c->name, arg[2], a ? a : "", arg[1], "chset "))
 			{
-				net.send(HAS_B, S_CHSET, " ", arg[1], " ", arg[2],  " ", arg[3], NULL);
+				net.send(HAS_B, S_CHSET, " ", arg[1], " ", arg[2],  " ", a, NULL);
 				++userlist.SN;
 				userlist.nextSave = NOW + SAVEDELAY;
 			}
@@ -1326,10 +1327,10 @@ void parse_owner(inetconn *c, char *data)
 			c->send(S_NOPERM, NULL);
 			return;
 		}
-
-		if(userlist.globalChset(c, arg[1], arg[2]))
+		a = srewind(data, 2);
+		if(userlist.globalChset(c, arg[1], a))
 		{
-			net.send(HAS_B, S_GCHSET, " ", arg[1], " ", arg[2], NULL);
+			net.send(HAS_B, S_GCHSET, " ", arg[1], " ", a, NULL);
 			++userlist.SN;
 			userlist.nextSave = NOW + SAVEDELAY;
 		}

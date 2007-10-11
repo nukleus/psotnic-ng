@@ -101,7 +101,7 @@
 //channel stuff
 #define ARG_MODES				"oblkeIvR"
 #define NONARG_MODES			"imntspr"
-#define CHATTR_MODES                    "imntsprkl"
+#define CHATTR_MODES                    "imntsprlk"
 
 //inetconn flags
 #define STATUS_CONNECTED		0x00000001
@@ -156,6 +156,10 @@
 #define OFFENCE_DUPLICATE_TIME			10 /* secs */
 #define MAX_WHOIS_OFFENCES			3 /* number of offences showed in 'whois' */
 //#define RERSTART_AFTER_UPDATE			1 /* if this is defined bot restart after succesufull update */
+
+//used in str2args function for detecting BEGIN and END of argument
+#define BEGIN_ARG_CHAR				'"'
+#define END_ARG_CHAR				'"' 
 
 #define CHAN_LEN				50
 

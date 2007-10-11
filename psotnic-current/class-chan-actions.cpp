@@ -28,28 +28,37 @@ void chan::updateLimit()
 	int tolerance;
 
 	if(nextlimit == -1 || !synced())
-        return;
+    	    return;
 	if(chset->LIMIT_TOLERANCE > 0)
-        tolerance = chset->LIMIT_TOLERANCE;
+    	    tolerance = chset->LIMIT_TOLERANCE;
 	else
-        tolerance = (chset->LIMIT_TOLERANCE * chset->LIMIT_OFFSET)/(-100);
+    	    tolerance = (chset->LIMIT_TOLERANCE * chset->LIMIT_OFFSET)/(-100);
    
-	if(chset->LIMIT && nextlimit <= NOW && me->flags & IS_OP &&
-		myTurn(chset->LIMIT_BOTS))
+	if(chset->LIMIT && nextlimit <= NOW && me->flags & IS_OP && myTurn(chset->LIMIT_BOTS))
 	{
-		if((limit <= users.entries() + chset->LIMIT_OFFSET - tolerance) ||
-			(limit > users.entries() + chset->LIMIT_OFFSET + tolerance))
+	    if(chset->PROTECT_CHMODES.hasFlag(0,'l',1))
+	    {
+		    if(limit != chset->PROTECT_CHMODES.getLimit())
+		    {
+			sprintf(buf, "%ld", chset->PROTECT_CHMODES.getLimit());
+			net.irc.send("MODE ", (const char *) name, " +l ", buf, NULL);
+			penalty += 4;		
+		    }
+	    }
+	    else
+	    {
+		if((limit <= users.entries() + chset->LIMIT_OFFSET - tolerance) || (limit > users.entries() + chset->LIMIT_OFFSET + tolerance))
 		{
 			sprintf(buf, "%d", users.entries() + chset->LIMIT_OFFSET);
 			net.irc.send("MODE ", (const char *) name, " +l ", buf, NULL);
 			penalty += 4;
 		}
-
-        if(set.PRE_0211_FINAL_COMPAT)
+	    }
+    	    if(set.PRE_0211_FINAL_COMPAT)
 		    nextlimit = NOW + chset->LIMIT_TIME * chset->LIMIT_BOTS;
 	    else
-            nextlimit = NOW + chset->LIMIT_TIME_UP + rand() % 10;
-    }
+        	    nextlimit = NOW + chset->LIMIT_TIME_UP + rand() % 10;
+	}
 }
 
 void chan::enforceLimits()

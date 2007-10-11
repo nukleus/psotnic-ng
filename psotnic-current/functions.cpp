@@ -447,6 +447,61 @@ char *srewind(const char *str, int word)
 	return const_cast<char*> (str);
 }
 
+void str2args(char *word, const char *str, int x, int y)
+{
+    int i, j, c;
+    
+    for(i = 0; i < x; i++)
+    {
+	*word = '\0';
+	while(*str && isspace(*str))
+	    str++;
+	    
+	if(*str == '\0') break;
+	
+	for(j = 0, c = 0; (*str != '\0') && (j < (y - 1)) && 
+	((!c && !isspace(*str)) || (c) )
+	; str++)
+	{
+	    /*  --- zabezpieczenie przed obcinaniem slow po srodku ---
+	    
+		jezeli slowo nie zaczyna sie od BEGIN_ARG_CHAR to znak BEGIN_CHAR_ARG 
+		wystepujacy w tym slowie zostanie z ignorowany. podobnie dla znaku
+		END_CHAR_ARG. jezeli znak za nim nie istnieje, lub nie jest to spacja to
+		znaki END_CHAR_ARG w srodku sa ignorowane. 
+		przyk³ady:
+		str2args('cos "1 2"') = 'cos', '1 2'
+	        str2args('cos 1" 2"') = 'cos', '1"', '2"'
+		str2args('cos c"o"s" dupa') = 'cos', 'c"o"s"', 'dupa'
+	    */
+	    if(!c && !j && *str == BEGIN_ARG_CHAR) 
+	    {
+		c = 1;
+		continue;	
+	    }
+	    
+	    if(c && *str == END_ARG_CHAR && (*(str+1) == '\0' || isspace(*(str+1))) )
+		break;
+	    else
+	    {
+		*(word++) = *str;
+		j++;
+	    }
+	}
+	
+	memset(word, 0, y - j - 1);
+	word += y - j;
+	
+	if(c && *str == END_ARG_CHAR) str++;
+	if(*str == '\0') break;
+    }
+    for(++i; i < x; i++)
+    {
+	memset(word, 0, y - 1);
+	word += y;
+    }
+}
+
 void str2words(char *word, const char *str, int x, int y, int ircstrip)
 {
 	int i, j, strip = 1;
@@ -1599,9 +1654,9 @@ char *rtrim(char *str)
 
 int _isnumber(const char *str)
 {
-    int i;
+    int i = (str[0] == '-') ? 1 : 0;
     
-    for(i = 0; str[i]; i++)
+    for( ; str[i]; i++)
 	if(!isdigit((int) str[i]))
 	    return 0;
     return 1;
