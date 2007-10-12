@@ -65,6 +65,19 @@ options::event *options::setVariable(const char *var, const char *value)
 	return &_event;
 }
 
+const char *options::getValue(const char *var)
+{
+	ptrlist<ent>::iterator o = list.begin();
+
+	while(o)
+	{
+		if(!strcmp(var, o->getName()))
+		    return o->getValue();
+		o++;
+	}
+	return NULL;
+}
+
 void options::sendToOwner(const char *owner, const char *var, const char *prefix)
 {
 	ptrlist<ent>::iterator o = list.begin();

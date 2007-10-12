@@ -1083,7 +1083,7 @@ int ul::isIdiot(const char *mask, int channum) const
 	return 0;
 }
 
-bool ul::globalChset(inetconn *c, const char *var, const char *value)
+bool ul::globalChset(inetconn *c, const char *var, const char *value, int *index)
 {
 	int i, updated = 0;
 	options::event *e;
@@ -1097,7 +1097,11 @@ bool ul::globalChset(inetconn *c, const char *var, const char *value)
 			if(c && !updated)
 			{
 				if(e->ok)
+				{
 					net.sendCmd(c, "gset ", e->entity->print(), NULL);
+					/* compatybylity reasons */
+					if(index != NULL && *index != -1) *index = i;
+				}
 				c->send("gset: ", (const char *) e->reason, NULL);
 			}
 

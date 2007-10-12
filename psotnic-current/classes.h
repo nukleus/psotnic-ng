@@ -984,7 +984,7 @@ class ul
 	int addChannel(const char *name, const char *pass, const char *attr);
 	int removeChannel(const char *name, char *removedName=NULL);
 	int findChannel(const char *name) const;
-	bool globalChset(inetconn *c, const char *var, const char *value);
+	bool globalChset(inetconn *c, const char *var, const char *value, int *index=NULL);
 	int isRjoined(int i, const HANDLE *h=NULL);
 	int rjoin(const char *bot, const char *channel);
 	int rpart(const char *bot, const char *channel);

@@ -32,6 +32,7 @@ class options
 	options();
 
 	event *setVariable(const char *var, const char *value);
+	const char *getValue(const char *var);
 	void sendToOwner(const char *owner, const char *var, const char *prefix);
 	bool parseUser(const char *from, const char *var, const char *value, const char *prefix, const char *prefix2="");
 	void reset();
