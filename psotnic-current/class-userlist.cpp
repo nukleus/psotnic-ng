@@ -651,7 +651,7 @@ int ul::parse(char *data)
 	{
 		chan *ch;
 		protmodelist::entry *s;
-		int type;
+		int type = -1;
 
 		if(!strcmp(arg[0], S_ADDSTICK) || !strcmp(arg[0], S_ADDSHIT))
 			type = BAN;
@@ -692,7 +692,7 @@ int ul::parse(char *data)
 		chan *ch;
 		protmodelist::entry *s;
 		char mode[3];
-		int type;
+		int type = -1;
 
 		if(!strcmp(arg[0], S_RMSHIT))
 			type = BAN;

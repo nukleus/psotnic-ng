@@ -292,8 +292,6 @@ void adns::expire(time_t t, time_t now)
 void adns::closeThreads()
 {
 	//inform all threads that they have to die
-	int status;
-
 	for(int i=0; i<n; ++i)
 	{
 		DEBUG(printf("[*] AsyncDNS: joining thread %d\n", i));
@@ -303,7 +301,8 @@ void adns::closeThreads()
 		pthread_cond_broadcast(&condition);
 		pthread_mutex_unlock(&condition_mutex);
 
-		if(pthread_join(th[i], (void **)&status))
+		
+		if(pthread_join(th[i], NULL))
 			printf("[-] AsyncDNS: pthread %d join failed\n", i);
 		else
 			DEBUG(printf("[+] AsyncDNS: pthread %d join SUCCESS\n", i));

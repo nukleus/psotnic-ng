@@ -2199,32 +2199,32 @@ void parse_owner(inetconn *c, char *data)
 	}
 	if(!strcmp(arg[0], ".whob") || !strcmp(arg[0], ".who"))
 	{
-		if(!c->checkFlag(HAS_N))
-		{
-			c->send(S_NOPERM, NULL);
-			return;
-		}
+		int flags[2];
+
 		int i;
+
+		if(!c->checkFlag(HAS_S))
+			return;
 
 		if(!strcmp(arg[0], ".who"))
 		{
-			if(!c->checkFlag(HAS_S)) return;
+			flags[1] = flags[0] = STATUS_PARTY;
+			net.sendCmd(c, "who", NULL);
+			
 		}
 		else
 		{
-			if(!c->checkFlag(HAS_S))
-			{
-				c->send(S_NOPERM, NULL);
-				return;
-			}
+			flags[0] = (STATUS_BOT | STATUS_REDIR);
+			flags[1] = STATUS_BOT;
 			net.sendCmd(c, "whob", NULL);
-			n = 0;
 		}
 
+		n = 0;
+		
 		for(i=0; i<net.max_conns; ++i)
 		{
 			if(net.conn[i].fd >0 && net.conn[i].isRegBot() &&
-				(net.conn[i].status & (STATUS_BOT | STATUS_REDIR)) == STATUS_BOT)
+				(net.conn[i].status & flags[0]) == flags[1])
 			{
 				snprintf(buf, MAX_LEN, "[#%02d] ", n+1);
 				c->send(buf, net.conn[i].handle->name, " (slave\002,\002 ",
@@ -2443,8 +2443,8 @@ void parse_owner(inetconn *c, char *data)
 		protmodelist *protlist;
 		protmodelist::entry *s;
 		chan *ch;
-		int type;
-		char *botnet_cmd, mode[3];
+		int type = -1;
+		char *botnet_cmd = NULL, mode[3];
 
 		if(!strcmp(arg[0], ".-shit"))
 		{
@@ -2829,4 +2829,7 @@ void parse_owner(inetconn *c, char *data)
 			&& ((c->status & STATUS_NOECHO) ? c != &net.conn[i] : 1))
 			net.conn[i].send("<\002", c->name, "\002> ", data, NULL);
 	}
+
+	//for sake of compiler warnings
+	n = 0;
 }

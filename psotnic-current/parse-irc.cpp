@@ -471,7 +471,7 @@ void parse_irc(char *data)
 
     if(!strcmp(arg[1], "INVITE"))
     {
-		chan *ch;
+		chan *ch = NULL;
         if((i = userlist.findChannel(arg[3])) != -1 && !(ch = ME.findChannel(arg[3])))
         {
             if(!(userlist.chanlist[i].status & JOIN_SENT) && userlist.isRjoined(i))

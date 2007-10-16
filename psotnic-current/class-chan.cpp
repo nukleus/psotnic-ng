@@ -1337,7 +1337,7 @@ void chan::checkKeepout()
 void chan::checkProtectedChmodes()
 {
 	unsigned int i;
-	bool pos;
+	bool pos = true;
 	const char *modes=chset->PROTECT_CHMODES.getValue();
 	char mode[3];
 
