@@ -33,8 +33,8 @@ void chan::updateLimit()
     	    tolerance = chset->LIMIT_TOLERANCE;
 	else
     	    tolerance = (chset->LIMIT_TOLERANCE * chset->LIMIT_OFFSET)/(-100);
-   
-	if(chset->LIMIT && nextlimit <= NOW && me->flags & IS_OP && myTurn(chset->LIMIT_BOTS))
+
+	if((chset->LIMIT || chset->PROTECT_CHMODES.hasFlag(0,'l',1))  && nextlimit <= NOW && me->flags & IS_OP && myTurn(chset->LIMIT_BOTS))
 	{
 	    if(chset->PROTECT_CHMODES.hasFlag(0,'l',1))
 	    {
@@ -42,7 +42,7 @@ void chan::updateLimit()
 		    {
 			sprintf(buf, "%ld", chset->PROTECT_CHMODES.getLimit());
 			net.irc.send("MODE ", (const char *) name, " +l ", buf, NULL);
-			penalty += 4;		
+			penalty += 4;
 		    }
 	    }
 	    else

@@ -27,7 +27,7 @@ void chan::recheckShits()
 {
 	if(synced() < 9)
 		return;
-	
+
 	protmodelist::entry *s;
 	ptrlist<chanuser>::iterator u = users.begin();
 
@@ -62,7 +62,7 @@ protmodelist::entry *chan::checkShit(const chanuser *u, const char *host)
 		snprintf(h, MAX_LEN, "%s!%s@%s", u->nick, u->ident, u->host);
 		host = h;
 	}
-	if(!(u->flags & HAS_F) && synced() >= 9 && !list[EXEMPT].match(host) && 
+	if(!(u->flags & HAS_F) && synced() >= 9 && !list[EXEMPT].match(host) &&
 		((s = protlist[BAN]->match(u)) || (s = userlist.protlist[BAN]->match(u))))
 		return s;
 	else
@@ -83,7 +83,7 @@ void chan::checkList()
 	// global
 
 	for(j=0; j<sizeof(userlist.protlist)/sizeof(userlist.protlist[0]); j++)
-	{ 
+	{
 		mode[0] = '+';
 		mode[1] = userlist.protlist[j]->mode;
 		mode[2] = '\0';
@@ -215,11 +215,11 @@ void chan::cwho(const char *owner, const char *arg)
 	ptrlist<chanuser>::iterator p = users.begin();
 	if(arg && *arg)
 	{
-	    if(strchr(arg, 'v')) f |= IS_VOICE;    
+	    if(strchr(arg, 'v')) f |= IS_VOICE;
 	    if(strchr(arg, 'o')) f |= IS_OP;
 	    if(strchr(arg, 'l')) f |= IS_LUSER;
 	}
-	
+
 	while(p)
 	{
 	    if(f)
@@ -229,13 +229,13 @@ void chan::cwho(const char *owner, const char *arg)
 		    memset(buf, 0, sizeof(buf));
 		    snprintf(buf, 512, "[%3d] [%c%-12s] [%12s\002@\002%-40s]", ++i, p->flags & IS_OP ? '@' : p->flags & IS_VOICE ? '+' : ' ', (const char *) p->nick, (const char *) p->ident, (const char *) p->host);
 		    net.sendOwner(owner, buf, NULL);
-		}		    
-	    }	
+		}
+	    }
 	    else
 	    {
 		memset(buf, 0, sizeof(buf));
 		snprintf(buf, 512, "[%3d] [%c%-12s] [%12s\002@\002%-40s]", ++i, p->flags & IS_OP ? '@' : p->flags & IS_VOICE ? '+' : ' ', (const char *) p->nick, (const char *) p->ident, (const char *) p->host);
-		net.sendOwner(owner, buf, NULL);	    
+		net.sendOwner(owner, buf, NULL);
 	    }
 	    p++;
 	}
@@ -528,7 +528,7 @@ int chan::gotBan(const char *ban, chanuser *caster)
 	{
 		static char reason[MAX_LEN], buf[MAX_LEN];
 		protmodelist::entry *s = NULL;
-		
+
 		if(caster->flags & HAS_B)
 		{
 			if((s = protlist[BAN]->find(ban)) || (s = userlist.protlist[BAN]->find(ban)))
@@ -540,7 +540,7 @@ int chan::gotBan(const char *ban, chanuser *caster)
 					return 0;
 			}
 			else
-				snprintf(reason, MAX_LEN, "banned");	
+				snprintf(reason, MAX_LEN, "banned");
 		}
 		else
 			snprintf(reason, MAX_LEN, "banned by %s: \002%s\002", caster->nick, ban);
@@ -670,15 +670,15 @@ void chan::gotKick(const char *victim, const char *offender)
 			if(myTurn(chset->PUNISH_BOTS, kicker->hash32()))
 			{
 				kick(kicker, config.kickreason);
-				
+
 				/* idiots code */
-				if((int) chset->IDIOTS) 
+				if((int) chset->IDIOTS)
 				{
 				    char *b = push(NULL, (const char *) "kick ", victim, NULL);
-			    
-				    /* should we remove spaces from end of reason? */    
+
+				    /* should we remove spaces from end of reason? */
 				    //b = rtrim(b);
-	
+
 				    if(userlist.isMain(userlist.me()))
 		    			userlist.addIdiot(offender, (const char *) name, b, 1);
 	    			    else
@@ -693,10 +693,10 @@ void chan::gotKick(const char *victim, const char *offender)
                         			    net.conn[i].send(S_ADDIDIOT, " ", offender, " ", (const char *) name, " 1 ", b, NULL);
                         			    break;
                     				}
-                			}	
+                			}
         			    }
 				    free(b);
-				}				
+				}
 			}
 		}
 	}
@@ -753,16 +753,16 @@ void chan::gotPart(const char *nick, int netsplit)
 			ME.rejoin(name, 0);
 		}
 	}
-    
+
     if(!set.PRE_0211_FINAL_COMPAT && synced() && nextlimit > NOW + chset->LIMIT_TIME_DOWN)
     {
         int tolerance;
-        
+
         if(chset->LIMIT_TOLERANCE > 0)
             tolerance = chset->LIMIT_TOLERANCE;
         else
             tolerance = (chset->LIMIT_TOLERANCE * chset->LIMIT_OFFSET)/(-100);
-                
+
         if(limit > users.entries() + chset->LIMIT_OFFSET + tolerance)
             nextlimit = NOW + chset->LIMIT_TIME_DOWN;
     }
@@ -809,7 +809,7 @@ bool chan::checkClone(chanuser *p)
 			punishClones(buf, myTurn(chset->GUARDIAN_BOTS, hash32(p->ident)));
 			badBoy = true;
 		}
-		
+
 		p->clones_to_check &= ~CLONE_IDENT;
 
 		/* proxy clones */
@@ -838,11 +838,11 @@ bool chan::checkClone(chanuser *p)
 				}
 				p->clones_to_check &= ~CLONE_HOST;
 			}
-			
+
 			if(p->dnsinfo & HOST_IPV4)
-			{	
+			{
 				DEBUG((p->clones_to_check & CLONE_IPV4) && printf("[D] CLONE_IPV4 check for: %s!%s@%s\n", p->nick, p->ident, p->ip4));
-				
+
 				if((p->clones_to_check & CLONE_IPV4) && hostClones.addLast(new clone_host(p, HOST_IPV4)) > set.HOST_CLONES)
 				{
 					char *n = nindex(p->ip4, 3, '.');
@@ -856,7 +856,7 @@ bool chan::checkClone(chanuser *p)
 				}
 				p->clones_to_check &= ~CLONE_IPV4;
 			}
-			
+
 			if(p->dnsinfo & HOST_IPV6)
 			{
 				DEBUG((p->clones_to_check & CLONE_IPV6) && printf("[D] CLONE_IPV6 check for: %s!%s@%s\n", p->nick, p->ident, p->ip6));
@@ -926,7 +926,7 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 				snprintf(buf, MAX_LEN, "*!%s@%s", over->ident, over->host);
 				enforceBan(buf, me, config.limitreason);
 			}
-			
+
 			if(badBoy == true && (int) chset->IDIOTS)
 			{
 			    char *a = push(NULL, (const char*) "invite ", mask, NULL);
@@ -1170,13 +1170,13 @@ chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
 			mem_strcpy(ip4, host);
 			mem_strcpy(ip6, "");
 			break;
-			
+
 		case 6:
 			dnsinfo = HOST_IPV6;
 			mem_strcpy(ip4, "");
 			mem_strcpy(ip6, host);
 			break;
-		
+
 		default:
 			dnsinfo = HOST_DOMAIN;
 			mem_strcpy(ip4, "");
@@ -1291,7 +1291,7 @@ int chanuser::updateDNSEntry()
 		mem_strcpy(ip6, info->ip6);
 
 		if(*ip4)
-			dnsinfo |= HOST_IPV4;	
+			dnsinfo |= HOST_IPV4;
 		if(*ip6)
 			dnsinfo |= HOST_IPV6;
 
@@ -1313,7 +1313,7 @@ void chan::checkKeepout()
 		modeQ[PRIO_HIGH].add(NOW, "+i");
 		modeQ[PRIO_HIGH].flush(PRIO_HIGH);
 	}
-		
+
 	ptrlist<chanuser>::iterator u = users.begin();
 
 	while(u)
@@ -1340,38 +1340,49 @@ void chan::checkProtectedChmodes()
 	bool pos = true;
 	const char *modes=chset->PROTECT_CHMODES.getValue();
 	char mode[3];
+	time_t flush_time = NOW;
+	int PRIO = LOW_PRIO;
 
 	if(synced() < 9 || !(me->flags & IS_OP))
 		return;
-	
+
+	if(myTurn(chset->GUARDIAN_BOTS))
+	{
+	 	PRIO = HIGH_PRIO;
+	}
+	else
+	{
+	 	flush_time += (rand() % 16);
+	}
+
 	for(i=0; i<strlen(modes); i++)
 	{
 		switch(modes[i])
 		{
 			case '+' : pos=true; break;
 			case '-' : pos=false; break;
-			default  : if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])) || 
+			default  : if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])) ||
 			(pos && (modes[i] == 'k' && strcmp((const char *) key, chset->PROTECT_CHMODES.getKey()) && hasFlag(modes[i])
 			|| (modes[i] == 'l' && limit != chset->PROTECT_CHMODES.getLimit()) && hasFlag(modes[i]))))
 				   {
 					   mode[0]=pos?'+':'-';
 					   mode[1]=modes[i];
 					   mode[2]='\0';
-					   
+
 					    if(modes[i] == 'k')
 					    {
 						if(pos == false)
-						    modeQ[PRIO_HIGH].add(NOW, mode, key);
+						    modeQ[PRIO].add(flush_time, mode, key);
 						else
-						    modeQ[PRIO_HIGH].add(NOW, mode, chset->PROTECT_CHMODES.getKey());
+						    modeQ[PRIO].add(flush_time, mode, chset->PROTECT_CHMODES.getKey());
 					    }
 					    else if(pos == true && modes[i] == 'l')
 					    {
-						modeQ[PRIO_HIGH].add(NOW, mode, itoa(chset->PROTECT_CHMODES.getLimit()));
+						modeQ[PRIO].add(flush_time, mode, itoa(chset->PROTECT_CHMODES.getLimit()));
 					    }
 					    else
 					    {
-					   	modeQ[PRIO_HIGH].add(NOW, mode);
+					   	modeQ[PRIO].add(flush_time, mode);
 					    }
 				   }
 		}
