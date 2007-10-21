@@ -1341,14 +1341,14 @@ void chan::checkProtectedChmodes()
 	const char *modes=chset->PROTECT_CHMODES.getValue();
 	char mode[3];
 	time_t flush_time = NOW;
-	int PRIO = LOW_PRIO;
+	int PRIO = PRIO_LOW;
 
 	if(synced() < 9 || !(me->flags & IS_OP))
 		return;
 
 	if(myTurn(chset->GUARDIAN_BOTS))
 	{
-	 	PRIO = HIGH_PRIO;
+	 	PRIO = PRIO_HIGH;
 	}
 	else
 	{
