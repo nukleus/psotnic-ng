@@ -109,7 +109,7 @@ if($ssl) {
 else {
 	print "[-] Disabling SSL support (pass --with-ssl to enable)\n";
 }
-    
+
 print "[*] Compile options: $cflags\n";
 print "[*] Link options: $lflags\n";
 
@@ -143,7 +143,7 @@ print $f "\t\@echo '* static'\n";
 print $f "\t\@echo '* debug'\n\n";
 
 print $f "create_hidden_seed:\n";
-print $f "\t\@gcc -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c\n\n";
+print $f "\t\@${cc_prefix}g++ -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c\n\n";
 
 print $f "debug: create_hidden_seed\n";
 print $f "\t\@echo [*] Making debug\n";
@@ -160,14 +160,14 @@ print $f "\t\@make -f Makefile.static\n\n";
 print $f "\nclean:\n";
 print $f "\t\@rm -f *.exe *.o core psotnic-* psotnic validator *.log vgcore.* tests/a.out tests/a.exe make-hiddenseed\n\n";
 print $f "\t\@echo [*] Removing temporary files\n";
-    
+
 print $f "\ndistclean:\n";
 print $f "\t\@make clean\n";
 print $f "\t\@echo [*] Removing seed.h\n";
 print $f "\t\@rm -f seed.h\n";
 print $f "\t\@make -C framework clean\n";
 print $f "\t\@rm -rf bin/* pid.* *.ul Makefile Makefile.*\n\n";
-        
+
 print $f "current:\n";
 print $f "\t\@echo [*] Making current source package\n";
 print $f "\t\@make distclean\n";
@@ -182,8 +182,8 @@ print $f "\t\@tar -cf ../psotnic-current.tar ../psotnic-current/\n";
 print $f "\t\@gzip -f9 ../psotnic-current.tar\n";
 print $f "\t\@echo [+] Done\n";
 
-        
-$f->close;	
+
+$f->close;
 
 #
 # Generating Makefile.$target
@@ -191,7 +191,7 @@ $f->close;
 
 if($os =~ /cygwin/i) {
     $out = "bin/psotnic.exe";
-	
+
 	if($cflags =~/-DHAVE_IPV6/)	{
 		$cflags .= "-Dsocklen_t=int -fpermissive ";
 	}
@@ -213,16 +213,16 @@ foreach $t (keys %targets)
     print $f "# Copyright (c) 2003-2005 Grzegorz Rusin <grusin\@gmail.com>\n";
     print $f "# WARNING! All changes made in this file will be lost!\n";
     print $f "# \n\n";
-			
+
     print $f ".SUFFIXES: .o .c .cpp\n\n";
     print $f ".c.o:\n";
     print $f "\t\@echo [*] Compiling \$<\n";
     print $f "\t\@${cc_prefix}g++ -c \$< $targets{$t} $cflags\n\n";
-	
+
     print $f ".cpp.o:\n";
     print $f "\t\@echo [*] Compiling \$<\n";
     print $f "\t\@${cc_prefix}g++ -c \$< $targets{$t} $cflags\n\n";
-	
+
     print $f ".cc.o:\n";
     print $f "\t\@echo [*] Compiling \$<\n";
     print $f "\t\@${cc_prefix}g++ -c \$< $targets{$t} $cflags\n\n";
@@ -230,7 +230,7 @@ foreach $t (keys %targets)
     print $f "tar: $filelist\n";
     print $f "\t\@echo [*] Linking\n";
     print $f "\t\@${cc_prefix}g++ $filelist -o $out $targets{$t} $cflags $lflags\n";
-	
+
     if(!($t =~ /debug/)) {
 	print $f "\t\@echo [*] Striping debug information\n";
 	print $f "\t\@${cc_prefix}strip $out\n";
@@ -261,10 +261,10 @@ else
     	print $f " */\n\n";
 	    print $f "#ifndef PSOTNIC_SEED_H\n";
     	print $f "#define PSOTNIC_SEED_H 1\n\n";
-    
+
 	    my $cfg_seed = "";
     	my $ul_seed = "";
-    
+
 	    for($i=0; $i<16; ++$i) {
 			$cfg_seed .= sprintf("\\x%02x", rand(256));
 	    }
@@ -272,9 +272,9 @@ else
     	for($i=0; $i<16; ++$i) {
 			$ul_seed .= sprintf("\\x%02x", rand(256));
 	    }
-    
-    	print $f "static unsigned char cfg_seed[] = \"$cfg_seed\";\n"; 
-	    print $f "static unsigned char ul_seed[] = \"$ul_seed\";\n\n"; 
+
+    	print $f "static unsigned char cfg_seed[] = \"$cfg_seed\";\n";
+	    print $f "static unsigned char ul_seed[] = \"$ul_seed\";\n\n";
     	print $f "#endif\n";
 
 	    print "[*] Random seeds for all binaries are located in seed.h\n";
@@ -320,7 +320,7 @@ my $svn_rev = check_svn_revision($svn_entries);
 
 if($svn_rev == 'UNKNOWN') {
 	my $currDir = `pwd`;
-	
+
 if($currDir =~ /.*\/\.update-[0-9]*$/) {
 		$svn_entries = `ls psotnic-*/.svn/entries`;
 		$svn_entries =~ s/\n//;
