@@ -562,6 +562,7 @@ void sendLogo(inetconn *c)
 	c->send("\002_/       _/_/_/   _/_/_/     _/    _/      _/  _/   _/_/_/\002", NULL);
 	c->send("", NULL);
 	c->send("   Copyright (c) 2003-2007 Grzegorz Rusin <grusin@gmail.com>", NULL);
+	c->send("       Please donate at http://psotnic.sf.net/donate", NULL);
 	c->send("", NULL);
 
 	if(c->checkFlag(HAS_N))
@@ -651,7 +652,8 @@ void propaganda()
 #endif
 	printf("\n");
 	printf(S_COPYRIGHT);
-	printf("\n\n");
+	printf("\nIf you find this software useful please donate at http://psotnic.sf.net/donate\n");
+	printf("\n");
 }
 
 int extendhost(const char *host, char *buf, unsigned int len)
