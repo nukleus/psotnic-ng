@@ -97,33 +97,6 @@ class adns
 
 #endif
 
-/*
-class dns
-{
-	struct FOOTER
-	{
-		short int qtype;
-		short int qclass;
-	};
-
-	char dnspacket[PACKETSZ];
-	int packetlen;
-	sockaddr_in ns[2];
-	int fd;
-
-	private:
-	void showPacketInfo(void *pkt);
-
-	public:
-	int buildQuery(char *query, int type);
-	dns(char *primary="0.0.0.0", char *secondary="0.0.0.0");
-	int sendQuery();
-	int recvAnswer();
-
-
-};
-*/
-
 class protmodelist 
 {
 	int expire(const char *channel = NULL);
