@@ -1,0 +1,13 @@
+#!/bin/sh
+#phase init
+dispn "Checking for id..."
+if /usr/xpg4/bin/id 2>/dev/null; then
+	disp "found, /usr/xpg4/bin/id"
+	ID="/usr/xpg4/bin/id"
+elif id 2>/dev/null; then
+	disp "found, id"
+	ID="id"
+else
+	disp "not found, aborting"
+	exit 1
+fi

@@ -1,0 +1,25 @@
+#!/bin/sh
+#require prefix
+#require makefiletop
+#phase config
+#phase makefile
+#after makefile_makefiletop
+case $PHASE in
+	config)
+		dispn "Reading firemake.headers..."
+		HEADERS=`cat firemake.headers 2>/dev/null`
+		disp "done"
+		;;
+	makefile)
+		dispn "Writing header installation entry..."
+
+		$ECHO "install_headers:"
+
+		for HEADER in $HEADERS; do
+			$ECHO "	$INSTALL $HEADER \$(INCLUDEDIR) $INSTALL_USER $INSTALL_GROUP 0644"
+		done
+		$ECHO
+
+		disp "done"
+		;;
+esac

@@ -5,7 +5,7 @@ use strict;
 my ($lflags, $cflags);
 my %have;
 
-our ($antiptrace, $noircbacktrace, $ssl, $little_endian, $big_endian, $cc_prefix, $cc_options, $ld_options, $disable_adns);
+our ($antiptrace, $noircbacktrace, $ssl, $little_endian, $big_endian, $cc_prefix, $cc_options, $ld_options, $disable_adns, $firedns);
 
 $lflags = "$ld_options ";
 $cflags = "$cc_options ";
@@ -55,6 +55,11 @@ sub checkCC
 	
 	print "not found\n";	
 }
+
+sub compileFireDNS
+{
+	`cd firedns && ./configure && make` or die('cannot compile firedns');
+} 
 
 sub getGccOptions
 {
@@ -154,6 +159,11 @@ sub getGccOptions
         $cflags .= "-DHAVE_STATIC ";
 	
     }
+
+	if($firedns)
+	{
+		$cflags .= "-Ifiredns/ -Ifiredns/firestring/ ";
+	}
 
     return ($cflags, $lflags);
 }

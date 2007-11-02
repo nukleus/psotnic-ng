@@ -114,7 +114,7 @@ void client::sendStatus(const char *name)
 
 	if(resolver.n)
 	{
-		pthread_mutex_lock(&data_mutex);
+		resolver.lock_data();
 		resolver.todo->stats(min, avg, max, sum);
 		snprintf(buf, MAX_LEN, "\002-\002 resolver::todo::stats (min/avg/max/total): %d/%g/%d/%d", min, avg, max, sum);
 		net.sendOwner(name, buf, NULL);
@@ -126,7 +126,7 @@ void client::sendStatus(const char *name)
 		resolver.cache->stats(min, avg, max, sum);
 		snprintf(buf, MAX_LEN, "\002-\002 resolver::cache::stats (min/avg/max/total): %d/%g/%d/%d", min, avg, max, sum);
 		net.sendOwner(name, buf, NULL);
-		pthread_mutex_unlock(&data_mutex);
+		resolver.unlock_data();
 	}
 #else
 	net.sendOwner(name, "Resolving threads: \002not supported\002", NULL);

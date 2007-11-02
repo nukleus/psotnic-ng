@@ -1278,7 +1278,7 @@ bool chanuser::ok() const
 #ifdef HAVE_ADNS
 int chanuser::updateDNSEntry()
 {
-	adns::host2ip *info = resolver.getIp(host);
+	adns_pthread::host2ip *info = resolver.getIp(host);
 
 	if(info)
 	{

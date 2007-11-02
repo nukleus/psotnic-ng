@@ -4,7 +4,7 @@ use strict;
 use FileHandle;
 use Getopt::Long;
 
-our ($antiptrace, $noircbacktrace, $ssl, $little_endian, $big_endian, $cc_prefix, $cc_options, $ld_options, $disable_adns);
+our ($antiptrace, $noircbacktrace, $ssl, $little_endian, $big_endian, $cc_prefix, $cc_options, $ld_options, $disable_adns, $firedns);
 
 if(!GetOptions(
 	"--with-antiptrace" => \$antiptrace,
@@ -15,7 +15,8 @@ if(!GetOptions(
 	"--cc-options:s" => \$cc_options,
 	"--ld-options:s" => \$ld_options,
 	"--disable-adns" => \$disable_adns,
-	"--with-ssl" => \$ssl))
+	"--with-ssl" => \$ssl,
+	"--with-firedns" => \$firedns))
 {
 	exit();
 }
@@ -27,7 +28,7 @@ $targets{'static'} = '-Wall -Wno-non-virtual-dtor -static -DHAVE_STATIC';
 $targets{'debug'} = '-DHAVE_DEBUG -g -fno-inline -pedantic -Wall -Wno-long-long -Wformat=2 -Wunused -Wno-non-virtual-dtor';
 
 my $filelist = "
-class-adns.o
+class-adns-pthread.o
 botcmd.o
 class-blowfish.o
 class-chan-actions.o

@@ -1,0 +1,18 @@
+#!/bin/sh
+#require compiletest
+#require cflags
+#phase init
+#after init_cflags
+case $PHASE in
+	init)
+		dispn "Checking for gcvt()..."
+		PROGRAM="#include <stdlib.h>
+int main () {
+	char buf[16];
+	gcvt(1.0,8,buf);
+	return 0;
+}"
+		compile_test_wrapper "$PROGRAM" "-DHAVE_GCVT" "" "" || \
+		disp "not found, some functionality may be missing"
+		;;
+esac

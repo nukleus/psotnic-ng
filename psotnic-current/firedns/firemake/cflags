@@ -1,0 +1,15 @@
+#!/bin/sh
+#require cc
+#phase init
+#after init_cc
+dispn "Attempting to determine correct CFLAGS..."
+if test ! "$CFLAGS" = ""; then
+	disp "CFLAGS provided by environment: \"$CFLAGS\""
+	FM_CFLAGS="$CFLAGS"
+elif test "`basename $CC`" = "gcc"; then
+	disp "compiler is gcc, using \"-O20 -fstrict-aliasing -funroll-loops -fexpensive-optimizations -fomit-frame-pointer\""
+	FM_CFLAGS="-O20 -fstrict-aliasing -funroll-loops -fexpensive-optimizations -fomit-frame-pointer"
+else
+	disp "compiler is unknown, using \"-O\""
+	FM_CFLAGS="-O"
+fi

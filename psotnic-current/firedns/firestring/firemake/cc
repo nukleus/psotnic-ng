@@ -1,0 +1,15 @@
+#!/bin/sh
+#phase init
+dispn "Checking for a compiler..."
+if test "$CC" != ""; then
+	disp "found in environment: \"$CC\""
+elif (gcc --version >/dev/null 2>/dev/null; test "$?" = "0"); then
+	disp "found gcc"
+	CC="gcc"
+elif (CC=`which cc`; test "$?" = "0" -a -x "$CC"); then
+	disp "found cc"
+	CC="cc"
+else
+	disp "not found, unable to continue"
+	exit 1
+fi

@@ -1,0 +1,104 @@
+#!/bin/sh
+#require prefix
+#require make
+#phase makefile
+dispn "Writing Makefile top entries..."
+if test "$MAKE_CONDSET" = "y"; then
+	$ECHO "PREFIX ?= $FM_PREFIX"
+
+	if test "$FM_MANDIRSTRICT" = "y"; then
+		$ECHO "MANDIR ?= $FM_MANDIR"
+	else
+		$ECHO "MANDIR ?= \$(PREFIX)/man"
+	fi
+
+	if test "$FM_CONFDIRSTRICT" = "y"; then
+		$ECHO "CONFDIR ?= $FM_CONFDIR"
+	else
+		$ECHO "CONFDIR ?= \$(PREFIX)/etc"
+	fi
+
+	if test "$FM_BINDIRSTRICT" = "y"; then
+		$ECHO "BINDIR ?= $FM_BINDIR"
+	else
+		$ECHO "BINDIR ?= \$(PREFIX)/bin"
+	fi
+
+	if test "$FM_SBINDIRSTRICT" = "y"; then
+		$ECHO "SBINDIR ?= $FM_SBINDIR"
+	else
+		$ECHO "SBINDIR ?= \$(PREFIX)/sbin"
+	fi
+
+	if test "$FM_LIBDIRSTRICT" = "y"; then
+		$ECHO "LIBDIR ?= $FM_LIBDIR"
+	else
+		$ECHO "LIBDIR ?= \$(PREFIX)/lib"
+	fi
+
+	if test "$FM_INCLUDEDIRSTRICT" = "y"; then
+		$ECHO "INCLUDEDIR ?= $FM_INCLUDEDIR"
+	else
+		$ECHO "INCLUDEDIR ?= \$(PREFIX)/include"
+	fi
+else
+	$ECHO "PREFIX = $FM_PREFIX"
+	$ECHO "MANDIR = $FM_MANDIR"
+	$ECHO "CONFDIR = $FM_CONFDIR"
+	$ECHO "BINDIR = $FM_BINDIR"
+	$ECHO "SBINDIR = $FM_SBINDIR"
+	$ECHO "LIBDIR = $FM_LIBDIR"
+	$ECHO "INCLUDEDIR = $FM_INCLUDEDIR"
+fi
+$ECHO
+$ECHO "all:"
+if module subdir; then
+	# make even inside parents; brute force dependency handling
+	for SUBDIR in $FM_SUBDIRS; do
+		$ECHO "	cd $SUBDIR && \$(MAKE) all && cd .."
+	done
+fi
+if module binaries; then
+	$ECHO "	\$(MAKE) binaries"
+fi
+if module libraries; then
+	$ECHO "	\$(MAKE) libraries"
+fi
+$ECHO
+$ECHO
+
+
+$ECHO ".c.o:"
+$ECHO "	$CC $FM_CFLAGS -DCONFDIR=\"\\\"\$(CONFDIR)\\\"\" -DBINDIR=\"\\\"\$(BINDIR)\\\"\" -DSBINDIR=\"\\\"\$(SBINDIR)\\\"\" -DLIBDIR=\"\\\"\$(LIBDIR)\\\"\" -DMANDIR=\"\\\"\$(MANDIR)\\\"\" -c -o \$@ \$<"
+$ECHO
+
+
+$ECHO "clean:"
+if module subdir; then
+	for SUBDIR in $FM_CLEAN_SUBDIRS; do
+		$ECHO "	cd $SUBDIR && \$(MAKE) clean && cd .."
+	done
+fi
+if module binaries; then
+	$ECHO "	\$(MAKE) clean_binaries"
+fi
+if module libraries; then
+	$ECHO "	\$(MAKE) clean_libraries"
+fi
+$ECHO
+
+
+$ECHO "distclean:"
+$ECHO "	\$(MAKE) clean"
+if module subdir; then
+	for SUBDIR in $FM_CLEAN_SUBDIRS; do
+		$ECHO "	cd $SUBDIR && \$(MAKE) distclean && cd .."
+	done
+fi
+if module install; then
+	$ECHO "	\$(MAKE) clean_install"
+fi
+$ECHO "	rm -f Makefile compiletest.log dependencies.log firemake.h"
+$ECHO
+
+disp "done"

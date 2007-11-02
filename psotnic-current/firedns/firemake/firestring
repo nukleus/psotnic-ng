@@ -1,0 +1,41 @@
+#!/bin/sh
+#require compiletest
+#require cflags
+#phase init
+#after init_cflags
+#phase header
+case $PHASE in
+	init)
+		dispn "Checking for firestring library..."
+		PROGRAM="#include <firestring.h>
+int main() {
+	firestring_printf(\"test %e\",&ESTR_S(\"foo\"));
+	return 0;
+}"
+		compile_test_wrapper "$PROGRAM" "" "" "-lfirestring" || \
+		compile_test_wrapper "$PROGRAM" "-I/usr/local/include" "-L/usr/local/lib" "-lfirestring" || \
+		compile_test_wrapper "$PROGRAM" "-I/usr/local/include" "-L/usr/local/lib -R/usr/local/lib" "-lfirestring" || \
+		{
+			if (module "subdir" && test -x firestring/configure); then
+				subdir firestring
+				disp "Adding -Ifirestring/ to CFLAGS"
+				FM_CFLAGS="$FM_CFLAGS -Ifirestring/"
+				disp "Adding firestring/libfirestring.a to STATICLIBS"
+				FM_STATICLIBS="$FM_STATICLIBS firestring/libfirestring.a"
+			elif (module "subdir" && test "$FM_IN_SUBDIR" = "y" && test -x ../firestring/configure); then
+				parentdir ../firestring
+				disp "Adding -I../firestring/ to CFLAGS"
+				FM_CFLAGS="$FM_CFLAGS -I../firestring/"
+				disp "Adding ../firestring/libfirestring.a to STATICLIBS"
+				FM_STATICLIBS="$FM_STATICLIBS ../firestring/libfirestring.a"
+			else
+				disp "not found, unable to continue"
+				exit 1
+			fi
+		}
+		;;
+	header)
+		disp "Adding \"#include <firestring.h>\" to header"
+		$ECHO "#include <firestring.h>"
+		;;
+esac

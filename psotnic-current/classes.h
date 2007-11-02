@@ -31,7 +31,7 @@ class XSRand
 };
 
 #ifdef HAVE_ADNS
-class adns
+class adns_pthread
 {
 	public:
 	class host2ip
@@ -69,6 +69,10 @@ class adns
 	hashlist<host2resolv> *todo;
 	bool die;
 
+	pthread_mutex_t data_mutex;
+	pthread_mutex_t condition_mutex;
+	pthread_cond_t condition;
+
 	int n;
 	pthread_t *th;
 
@@ -78,14 +82,16 @@ class adns
 	public:
 	void resolv(const char *host);
 	host2ip *getIp(const char *host);
-	adns();
-	~adns();
+	adns_pthread();
+	~adns_pthread();
 	void setTumberOfThreads(int threads);
 
 	static unsigned int xorHash(const char *str);
 	void expire(time_t t, time_t now);
 	void killThreads();
 	void closeThreads();
+	void lock_data();
+	void unlock_data();
 
 #ifdef HAVE_DEBUG
 	void display();

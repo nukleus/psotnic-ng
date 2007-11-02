@@ -1,0 +1,14 @@
+#!/bin/sh
+#phase init
+dispn "Checking to see if make supports \"?=\"..."
+rm -f Makefile
+echo "PREFIX ?= /usr/local" > Makefile
+echo "all:" >> Makefile
+make >/dev/null 2>&1
+if test "$?" = "0"; then
+	disp "yes"
+	MAKE_CONDSET="y"
+else
+	disp "no"
+	MAKE_CONDSET="n"
+fi

@@ -1,0 +1,72 @@
+#!/bin/sh
+#require cflags
+#phase init
+#after init_cflags
+dispn "Attempting to determine correct PREFIX..."
+if test ! "$PREFIX" = ""; then
+	disp "PREFIX provided by environment: \"$PREFIX\""
+	FM_PREFIX="$PREFIX"
+else
+	disp "prefix is unknown, using \"/usr/local\""
+	FM_PREFIX="/usr/local"
+fi
+
+dispn "Attempting to determine correct BINDIR..."
+if test ! "$BINDIR" = ""; then
+	disp "BINDIR provided by environment: \"$BINDIR\""
+	FM_BINDIRSTRICT="y"
+	FM_BINDIR="$BINDIR"
+else
+	disp "bindir is unknown, deriving from PREFIX: \"$FM_PREFIX/bin\""
+	FM_BINDIR="$FM_PREFIX/bin"
+fi
+
+dispn "Attempting to determine correct SBINDIR..."
+if test ! "$SBINDIR" = ""; then
+	disp "SBINDIR provided by environment: \"$SBINDIR\""
+	FM_SBINDIRSTRICT="y"
+	FM_SBINDIR="$SBINDIR"
+else
+	disp "sbindir is unknown, deriving from PREFIX: \"$FM_PREFIX/sbin\""
+	FM_SBINDIR="$FM_PREFIX/sbin"
+fi
+
+dispn "Attempting to determine correct MANDIR..."
+if test ! "$MANDIR" = ""; then
+	disp "MANDIR provided by environment: \"$MANDIR\""
+	FM_MANDIRSTRICT="y"
+	FM_MANDIR="$MANDIR"
+else
+	disp "mandir is unknown, deriving from PREFIX: \"$FM_PREFIX/man\""
+	FM_MANDIR="$FM_PREFIX/man"
+fi
+
+dispn "Attempting to determine correct CONFDIR..."
+if test ! "$CONFDIR" = ""; then
+	disp "CONFDIR provided by environment: \"$CONFDIR\""
+	FM_CONFDIRSTRICT="y"
+	FM_CONFDIR="$CONFDIR"
+else
+	disp "confdir is unknown, deriving from PREFIX: \"$FM_PREFIX/etc\""
+	FM_CONFDIR="$FM_PREFIX/etc"
+fi
+
+dispn "Attempting to determine correct LIBDIR..."
+if test ! "$LIBDIR" = ""; then
+	disp "LIBDIR provided by environment: \"$LIBDIR\""
+	FM_LIBDIRSTRICT="y"
+	FM_LIBDIR="$LIBDIR"
+else
+	disp "libdir is unknown, deriving from PREFIX: \"$FM_PREFIX/lib\""
+	FM_LIBDIR="$FM_PREFIX/lib"
+fi
+
+dispn "Attempting to determine correct INCLUDEDIR..."
+if test ! "$INCLUDEDIR" = ""; then
+	disp "INCLUDEDIR provided by environment: \"$INCLUDEDIR\""
+	FM_INCLUDEDIRSTRICT="y"
+	FM_INCLUDEDIR="$INCLUDEDIR"
+else
+	disp "includedir is unknown, deriving from PREFIX: \"$FM_PREFIX/include\""
+	FM_INCLUDEDIR="$FM_PREFIX/include"
+fi

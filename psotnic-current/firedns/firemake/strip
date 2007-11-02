@@ -1,0 +1,10 @@
+#!/bin/sh
+#phase init
+dispn "Checking for strip..."
+if strip -V 2>/dev/null; then
+	disp "found strip"
+	STRIP="strip"
+else
+	disp "not found, continuing without"
+	STRIP=""
+fi

@@ -1,0 +1,99 @@
+#!/bin/sh
+#require prefix
+#require strip
+#require makefiletop
+#phase config
+#phase makefile
+#after makefile_makefiletop
+case $PHASE in
+	config)
+		dispn "Reading firemake.binaries..."
+		BINARIES=`cut -d ':' -f 1 firemake.binaries 2>/dev/null`
+		disp "done"
+
+		dispn "Reading firemake.sbinaries..."
+		SBINARIES=`cut -d ':' -f 1 firemake.sbinaries 2>/dev/null`
+		disp "done"
+
+		dispn "Reading firemake.suidbinaries..."
+		SUIDBINARIES=`cut -d ':' -f 1 firemake.suidbinaries 2>/dev/null`
+
+		FULLBINARIES="$BINARIES $SBINARIES $SUIDBINARIES"
+
+		dispn "Reading firemake.noinstall..."
+		NOINSTALL=`cat firemake.noinstall 2>/dev/null`
+		disp "done"
+		;;
+	makefile)
+		disp "Writing binary creation entries..."
+		for BINARY in $FULLBINARIES; do
+			dispn "	$BINARY..."
+			DEPS="`grep \"^$BINARY:\" firemake.binaries 2>/dev/null | cut -d ':' -f 2` `grep \"^$BINARY:\" firemake.sbinaries 2>/dev/null | cut -d ':' -f 2` `grep \"^$BINARY:\" firemake.suidbinaries 2>/dev/null | cut -d ':' -f 2`"
+			$ECHO "$BINARY: $DEPS"
+			$ECHO "	$CC $FM_CFLAGS $FM_LDFLAGS -o $BINARY $DEPS $FM_STATICLIBS $FM_LIBS"
+			$ECHO
+			BINARYLIST="$BINARYLIST $BINARY"
+			BINARY_CLEANLIST="$BINARY_CLEANLIST $BINARY $DEPS"
+			disp "done"
+			if module dependencies; then
+				DEPPREPEND="$PREPEND"
+				PREPEND="$PREPEND	"
+				customdeplist "$DEPS"
+				PREPEND="$DEPPREPEND"
+			fi
+		done
+		dispn "Writing binary index entry..."
+		$ECHO "binaries: $BINARYLIST"
+		$ECHO
+		disp "done"
+
+		disp "Writing binary install entries..."
+		$ECHO "install_binaries: $BINARYLIST"
+		for BINARY in $BINARIES; do
+			$ECHO "$NOINSTALL" | grep "^$BINARY\$" >/dev/null 2>/dev/null
+			if test "$?" = "0"; then
+				disp "	skipping $BINARY"
+			else
+				dispn "	$BINARY..."
+				$ECHO "	$INSTALL $BINARY \$(BINDIR) $INSTALL_USER $INSTALL_GROUP 0755"
+				if test "$STRIP" != ""; then
+					$ECHO "	$STRIP \$(BINDIR)/$BINARY"
+				fi
+				disp "done"
+			fi
+		done
+		for BINARY in $SBINARIES; do
+			$ECHO "$NOINSTALL" | grep "^$BINARY\$" >/dev/null 2>/dev/null
+			if test "$?" = "0"; then
+				disp "	skipping $BINARY"
+			else
+				dispn "	$BINARY..."
+				$ECHO "	$INSTALL $BINARY \$(SBINDIR) $INSTALL_USER $INSTALL_GROUP 0755"
+				if test "$STRIP" != ""; then
+					$ECHO "	$STRIP \$(SBINDIR)/$BINARY"
+				fi
+				disp "done"
+			fi
+		done
+		for BINARY in $SUIDBINARIES; do
+			$ECHO "$NOINSTALL" | grep "^$BINARY\$" >/dev/null 2>/dev/null
+			if test "$?" = "0"; then
+				disp "	skipping $BINARY"
+			else
+				dispn "	$BINARY..."
+				$ECHO "	$INSTALL $BINARY \$(BINDIR) $INSTALL_USER $INSTALL_GROUP 4755"
+				if test "$STRIP" != ""; then
+					$ECHO "	$STRIP \$(BINDIR)/$BINARY"
+				fi
+				disp "done"
+			fi
+		done
+		$ECHO
+
+		dispn "Writing binary cleanup entry..."
+		$ECHO "clean_binaries:"
+		$ECHO "	rm -f $BINARY_CLEANLIST"
+		$ECHO
+		disp "done"
+		;;
+esac
