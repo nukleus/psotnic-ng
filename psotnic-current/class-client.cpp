@@ -109,7 +109,8 @@ void client::sendStatus(const char *name)
 			ch = ch->next;
 		}
 	}
-#ifdef HAVE_ADNS
+#ifdef HAVE_ADNS_FIXME
+	//TODO: fix statistics
 	net.sendOwner(name, "Resolving threads: \002", itoa(resolver.n), "\002", NULL);
 
 	if(resolver.n)
@@ -220,8 +221,12 @@ void client::restart()
 	char buf[MAX_LEN];
 
 	net.~inet();
-#ifdef HAVE_ADNS
-	resolver.closeThreads();
+#ifdef HAVE_ADNS_PTHREAD
+	dynamic_cast<adns_pthread*>(resolver)->setupPool(0);
+#endif
+
+#ifdef HAVE_ADNS_FIREDNS
+	dynamic_cast<adns_firedns*>(resolver)->closeAllConnections();
 #endif
 
 	snprintf(buf, MAX_LEN, "pid.%s", (const char *) config.nick);

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003-2005 by Grzegorz Rusin                             *
+ *   Copyright (C) 2003-2007 by Grzegorz Rusin                             *
  *   grusin@gmail.com                                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -41,6 +41,16 @@ class hashlist
 	}
 
 	public:
+	
+	ptrlist<T> *getContainer()
+	{
+		return _cont;
+	}
+
+	int getContainerSize()
+	{
+		return _n;
+	}
 
 	void expire(time_t t, time_t now)
 	{

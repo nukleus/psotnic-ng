@@ -36,7 +36,7 @@ extern tcl tclparser;
 //extern int noulimit;
 
 #ifdef HAVE_ADNS
-extern adns_pthread resolver;
+extern adns *resolver;
 #endif
 
 #ifdef HAVE_IRC_BACKTRACE

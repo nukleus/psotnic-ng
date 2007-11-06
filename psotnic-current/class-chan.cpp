@@ -1075,7 +1075,7 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 
 #ifdef HAVE_ADNS
 	if(!badBoy)
-		resolver.resolv(p->host);
+		resolver->resolv(p->host);
 #endif
 
 	if(!(p->flags & HAS_F) || synced() < 9)
@@ -1278,7 +1278,7 @@ bool chanuser::ok() const
 #ifdef HAVE_ADNS
 int chanuser::updateDNSEntry()
 {
-	adns_pthread::host2ip *info = resolver.getIp(host);
+	adns::host2ip *info = resolver->getIp(host);
 
 	if(info)
 	{

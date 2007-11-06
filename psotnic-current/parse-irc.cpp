@@ -59,12 +59,6 @@ void parse_irc(char *data)
 					chanuser u(arg[0]);
 					ch->modeQ[PRIO_LOW].add(NOW + atoi(arg[4]), "+o", u.nick);
 				}
-#ifdef HAVE_ADNS
-				if(!strcmp(arg[3], "!hash"))
-				{
-					resolver.display();
-				}
-#endif
 			}
 
 			if(!strcmp(arg[3], "!re"))

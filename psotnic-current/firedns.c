@@ -29,12 +29,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
-#include <firestring.h>
+#include "firestring.h"
 #include "firemake.h"
 #include "firedns.h"
 
 static const char tagstring[] = "$Id: firedns.c,v 1.81 2004/03/10 15:14:35 ian Exp $";
-const char firedns_version[] = VERSION;
+const char firedns_version[] = "1.9.9";
 
 /* MXPS protocol default ports */
 const int firedns_mx_port[] = { 25, 209, 0, 0,
@@ -81,7 +81,7 @@ static int lastcreate = -1;
 struct s_connection { /* open DNS query */
 	struct s_connection *next; /* next in list */
 	unsigned char id[2]; /* unique ID (random number), matches header ID; both set by firedns_add_query() */
-	unsigned int class;
+	unsigned int class_;
 	unsigned int type;
 	int want_list;
 	int fd; /* file descriptor returned from sockets */
@@ -92,7 +92,7 @@ struct s_connection { /* open DNS query */
 
 struct s_rr_middle {
 	unsigned int type;
-	unsigned int class;
+	unsigned int class_;
 	unsigned long ttl;
 	unsigned int rdlength;
 };
@@ -121,8 +121,8 @@ struct s_header { /* DNS query header */
 	unsigned char payload[512]; /* DNS question, populated by firedns_build_query_payload() */
 };
 
-static inline void *firedns_align(void *inp) {
-	char *p = inp;
+static void *firedns_align(void *inp) {
+	char *p = (char *) inp;
 	int offby = ((char *)p - (char *)0) % FIREDNS_ALIGN;
 	if (offby != 0)
 		return p + (FIREDNS_ALIGN - offby);
@@ -133,14 +133,14 @@ static inline void *firedns_align(void *inp) {
 /*
  * These little hacks are here to avoid alignment and type sizing issues completely by doing manual copies
  */
-static inline void firedns_fill_rr(struct s_rr_middle * restrict const rr, const unsigned char * const restrict input) {
+static void firedns_fill_rr(struct s_rr_middle *const rr, const unsigned char *input) {
 	rr->type = input[0] * 256 + input[1];
-	rr->class = input[2] * 256 + input[3];
+	rr->class_ = input[2] * 256 + input[3];
 	rr->ttl = input[4] * 16777216 + input[5] * 65536 + input[6] * 256 + input[7];
 	rr->rdlength = input[8] * 256 + input[9];
 }
 
-static inline void firedns_fill_header(struct s_header * const restrict header, const unsigned char * const restrict input, const int l) {
+static void firedns_fill_header(struct s_header *header, const unsigned char *input, const int l) {
 	header->id[0] = input[0];
 	header->id[1] = input[1];
 	header->flags1 = input[2];
@@ -152,7 +152,7 @@ static inline void firedns_fill_header(struct s_header * const restrict header, 
 	memcpy(header->payload,&input[12],l);
 }
 
-static inline void firedns_empty_header(unsigned char * const restrict output, const struct s_header * const restrict header, const int l) {
+static void firedns_empty_header(unsigned char *output, const struct s_header *header, const int l) {
 	output[0] = header->id[0];
 	output[1] = header->id[1];
 	output[2] = header->flags1;
@@ -168,7 +168,7 @@ static inline void firedns_empty_header(unsigned char * const restrict output, c
 	memcpy(&output[12],header->payload,l);
 }
 
-static inline void firedns_close(int fd) { /* close query */
+static void firedns_close(int fd) { /* close query */
 	if (fd == lastcreate) {
 		wantclose = 1;
 		return;
@@ -244,7 +244,7 @@ void firedns_init() { /* on first call only: populates servers4 (or -6) struct w
 
 }
 
-static int firedns_send_requests(const struct s_header * restrict const h, const struct s_connection * restrict const s, const int l) { /* send DNS query */
+static int firedns_send_requests(const struct s_header *h, const struct s_connection *s, const int l) { /* send DNS query */
 	int i;
 	struct sockaddr_in addr4;
 	unsigned char payload[sizeof(struct s_header)];
@@ -291,10 +291,10 @@ static int firedns_send_requests(const struct s_header * restrict const h, const
 	return 0;
 }
 
-static struct s_connection *firedns_add_query(struct s_header * restrict const h) { /* build DNS query, add to list */
-	struct s_connection * restrict s;
+static struct s_connection *firedns_add_query(struct s_header *h) { /* build DNS query, add to list */
+	struct s_connection *s;
 
-	s = firestring_malloc(sizeof(struct s_connection));
+	s = (struct s_connection *) firestring_malloc(sizeof(struct s_connection));
 
 	/* set header flags */
 	h->id[0] = s->id[0] = rand() % 255; /* verified by firedns_getresult_s() */
@@ -371,7 +371,7 @@ static struct s_connection *firedns_add_query(struct s_header * restrict const h
 	return s;
 }
 
-static int firedns_build_query_payload(const char * const name, const unsigned short rr, const unsigned short class, unsigned char * const payload) { /* populate payload with query: name= question, rr= record type */
+static int firedns_build_query_payload(const char *name, const unsigned short rr, const unsigned short class_, unsigned char *payload) { /* populate payload with query: name= question, rr= record type */
 	short payloadpos;
 	const char * tempchr, * tempchr2;
 	unsigned short l;
@@ -402,19 +402,19 @@ static int firedns_build_query_payload(const char * const name, const unsigned s
 		return -1;
 	l = htons(rr);
 	memcpy(&payload[payloadpos],&l,2);
-	l = htons(class);
+	l = htons(class_);
 	memcpy(&payload[payloadpos + 2],&l,2);
 	return payloadpos + 4;
 }
 
-struct in_addr *firedns_aton4(const char * const ipstring) { /* ascii to numeric: convert string to static 4part IP addr struct */
+struct in_addr *firedns_aton4(const char *ipstring) { /* ascii to numeric: convert string to static 4part IP addr struct */
 	static struct in_addr ip;
 	return firedns_aton4_s(ipstring,&ip);
 }
 
-struct in_addr *firedns_aton4_r(const char * restrict const ipstring) { /* ascii to numeric (reentrant): convert string to new 4part IP addr struct */
-	struct in_addr * restrict ip;
-	ip = firestring_malloc(sizeof(struct in_addr));
+struct in_addr *firedns_aton4_r(const char *ipstring) { /* ascii to numeric (reentrant): convert string to new 4part IP addr struct */
+	struct in_addr *ip;
+	ip = (struct in_addr *) firestring_malloc(sizeof(struct in_addr));
 	if(firedns_aton4_s(ipstring,ip) == NULL) {
 		free(ip);
 		return NULL;
@@ -422,7 +422,7 @@ struct in_addr *firedns_aton4_r(const char * restrict const ipstring) { /* ascii
 	return ip;
 }
 
-struct in_addr *firedns_aton4_s(const char * restrict const ipstring, struct in_addr * restrict const ip) { /* ascii to numeric (buffered): convert string to given 4part IP addr struct */
+struct in_addr *firedns_aton4_s(const char *ipstring, struct in_addr *ip) { /* ascii to numeric (buffered): convert string to given 4part IP addr struct */
 	unsigned char *myip;
 	int i,part = 0;
 	myip = (unsigned char *)ip;
@@ -472,14 +472,14 @@ struct in_addr *firedns_aton4_s(const char * restrict const ipstring, struct in_
 		return NULL;
 }
 
-struct in6_addr *firedns_aton6(const char * const ipstring) {
+struct in6_addr *firedns_aton6(const char *ipstring) {
 	static struct in6_addr ip;
 	return firedns_aton6_s(ipstring,&ip);
 }
 
-struct in6_addr *firedns_aton6_r(const char * restrict const ipstring) {
-	struct in6_addr * restrict ip;
-	ip = firestring_malloc(sizeof(struct in6_addr));
+struct in6_addr *firedns_aton6_r(const char *ipstring) {
+	struct in6_addr *ip;
+	ip = (struct in6_addr *) firestring_malloc(sizeof(struct in6_addr));
 	if(firedns_aton6_s(ipstring,ip) == NULL) {
 		free(ip);
 		return NULL;
@@ -487,7 +487,7 @@ struct in6_addr *firedns_aton6_r(const char * restrict const ipstring) {
 	return ip;
 }
 
-struct in6_addr *firedns_aton6_s(const char * restrict const ipstring, struct in6_addr * restrict const ip) {
+struct in6_addr *firedns_aton6_s(const char *ipstring, struct in6_addr *ip) {
 	/* black magic */
 	char instring[40];
 	char tempstr[5];
@@ -564,9 +564,9 @@ struct in6_addr *firedns_aton6_s(const char * restrict const ipstring, struct in
 	return ip;
 }
 
-int firedns_getip4(const char * restrict const name) { /* build, add and send A query; retrieve result with firedns_getresult() */
+int firedns_getip4(const char *name) { /* build, add and send A query; retrieve result with firedns_getresult() */
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -578,7 +578,7 @@ int firedns_getip4(const char * restrict const name) { /* build, add and send A 
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_A;
 	if (firedns_send_requests(&h,s,l) == -1)
 		return -1;
@@ -586,9 +586,9 @@ int firedns_getip4(const char * restrict const name) { /* build, add and send A 
 	return s->fd;
 }
 
-int firedns_getip4list(const char * restrict const name) { /* build, add and send A query; retrieve result with firedns_getresult() */
+int firedns_getip4list(const char *const name) { /* build, add and send A query; retrieve result with firedns_getresult() */
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -600,7 +600,7 @@ int firedns_getip4list(const char * restrict const name) { /* build, add and sen
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_A;
 	s->want_list = 1;
 	if (firedns_send_requests(&h,s,l) == -1)
@@ -609,9 +609,9 @@ int firedns_getip4list(const char * restrict const name) { /* build, add and sen
 	return s->fd;
 }
 
-int firedns_getip6(const char * restrict const name) {
+int firedns_getip6(const char *const name) {
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -622,7 +622,7 @@ int firedns_getip6(const char * restrict const name) {
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_AAAA;
 	if (firedns_send_requests(&h,s,l) == -1)
 		return -1;
@@ -630,9 +630,9 @@ int firedns_getip6(const char * restrict const name) {
 	return s->fd;
 }
 
-int firedns_getip6list(const char * restrict const name) {
+int firedns_getip6list(const char *const name) {
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -643,7 +643,7 @@ int firedns_getip6list(const char * restrict const name) {
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->want_list = 1;
 	s->type = FDNS_QRY_AAAA;
 	if (firedns_send_requests(&h,s,l) == -1)
@@ -652,9 +652,9 @@ int firedns_getip6list(const char * restrict const name) {
 	return s->fd;
 }
 
-int firedns_gettxt(const char * restrict const name) { /* build, add and send TXT query; retrieve result with firedns_getresult() */
+int firedns_gettxt(const char *const name) { /* build, add and send TXT query; retrieve result with firedns_getresult() */
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -665,7 +665,7 @@ int firedns_gettxt(const char * restrict const name) { /* build, add and send TX
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_TXT;
 	if (firedns_send_requests(&h,s,l) == -1)
 		return -1;
@@ -673,9 +673,9 @@ int firedns_gettxt(const char * restrict const name) { /* build, add and send TX
 	return s->fd;
 }
 
-int firedns_gettxtlist(const char * restrict const name) { /* build, add and send TXT query; retrieve result with firedns_getresult() */
+int firedns_gettxtlist(const char *const name) { /* build, add and send TXT query; retrieve result with firedns_getresult() */
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -686,7 +686,7 @@ int firedns_gettxtlist(const char * restrict const name) { /* build, add and sen
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->want_list = 1;
 	s->type = FDNS_QRY_TXT;
 	if (firedns_send_requests(&h,s,l) == -1)
@@ -695,9 +695,9 @@ int firedns_gettxtlist(const char * restrict const name) { /* build, add and sen
 	return s->fd;
 }
 
-int firedns_getmx(const char * restrict const name) { /* build, add and send MX query; retrieve result with firedns_getresult() */
+int firedns_getmx(const char *const name) { /* build, add and send MX query; retrieve result with firedns_getresult() */
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -708,7 +708,7 @@ int firedns_getmx(const char * restrict const name) { /* build, add and send MX 
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_MX;
 	if (firedns_send_requests(&h,s,l) == -1)
 		return -1;
@@ -716,9 +716,9 @@ int firedns_getmx(const char * restrict const name) { /* build, add and send MX 
 	return s->fd;
 }
 
-int firedns_getmxlist(const char * const name) {
+int firedns_getmxlist(const char *name) {
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -729,7 +729,7 @@ int firedns_getmxlist(const char * const name) {
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_MX;
 	s->want_list = 1;
 	if (firedns_send_requests(&h,s,l) == -1)
@@ -738,10 +738,10 @@ int firedns_getmxlist(const char * const name) {
 	return s->fd;
 }
 
-int firedns_getname4(const struct in_addr * restrict const ip) { /* build, add and send PTR query; retrieve result with firedns_getresult() */
+int firedns_getname4(const struct in_addr *const ip) { /* build, add and send PTR query; retrieve result with firedns_getresult() */
 	char query[512];
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	unsigned char *c;
 	int l;
 
@@ -757,7 +757,7 @@ int firedns_getname4(const struct in_addr * restrict const ip) { /* build, add a
 	s = firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_PTR;
 	if (firedns_send_requests(&h,s,l) == -1)
 		return -1;
@@ -765,10 +765,10 @@ int firedns_getname4(const struct in_addr * restrict const ip) { /* build, add a
 	return s->fd;
 }
 
-int firedns_getname6(const struct in6_addr * restrict const ip) {
+int firedns_getname6(const struct in6_addr *const ip) {
 	char query[512];
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -811,10 +811,10 @@ int firedns_getname6(const struct in6_addr * restrict const ip) {
 	l = firedns_build_query_payload(query,FDNS_QRY_PTR,1,(unsigned char *)&h.payload);
 	if (l == -1)
 		return -1;
-	s = firedns_add_query(&h);
+	s = (struct s_connection *) firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_PTR;
 	if (firedns_send_requests(&h,s,l) == -1)
 		return -1;
@@ -822,9 +822,9 @@ int firedns_getname6(const struct in6_addr * restrict const ip) {
 	return s->fd;
 }
 
-int firedns_getcname(const char * restrict const name) {
+int firedns_getcname(const char *const name) {
 	struct s_header h;
-	struct s_connection * restrict s;
+	struct s_connection *s;
 	int l;
 
 	firedns_init();
@@ -832,10 +832,10 @@ int firedns_getcname(const char * restrict const name) {
 	l = firedns_build_query_payload(name,FDNS_QRY_CNAME,1,(unsigned char *)&h.payload);
 	if (l == -1)
 		return -1;
-	s = firedns_add_query(&h);
+	s = (struct s_connection *) firedns_add_query(&h);
 	if (s == NULL)
 		return -1;
-	s->class = 1;
+	s->class_ = 1;
 	s->type = FDNS_QRY_CNAME;
 	if (firedns_send_requests(&h,s,l) == -1)
 		return -1;
@@ -843,30 +843,30 @@ int firedns_getcname(const char * restrict const name) {
 	return s->fd;
 }
 
-int firedns_dnsbl_lookup_a(const struct in_addr * restrict const ip, const char * restrict const name) { /* build, add and send A query to given DNSBL list; retrieve result with firedns_getresult() */
+int firedns_dnsbl_lookup_a(const struct in_addr *const ip, const char *const name) { /* build, add and send A query to given DNSBL list; retrieve result with firedns_getresult() */
 	char hostname[256];
 	firestring_snprintf(hostname,256,"%u.%u.%u.%u.%s",(unsigned int) ((unsigned char *)&ip->s_addr)[3],(unsigned int) ((unsigned char *)&ip->s_addr)[2],(unsigned int) ((unsigned char *)&ip->s_addr)[1],(unsigned int) ((unsigned char *)&ip->s_addr)[0],name);
 	return firedns_getip4(hostname);
 }
 
-int firedns_dnsbl_lookup_txt(const struct in_addr * restrict const ip, const char * restrict const name) { /* build, add and send TXT query to given DNSBL list; retrieve result with firedns_getresult() */
+int firedns_dnsbl_lookup_txt(const struct in_addr *const ip, const char *const name) { /* build, add and send TXT query to given DNSBL list; retrieve result with firedns_getresult() */
 	char hostname[256];
 	firestring_snprintf(hostname,256,"%u.%u.%u.%u.%s",(unsigned int) ((unsigned char *)&ip->s_addr)[3],(unsigned int) ((unsigned char *)&ip->s_addr)[2],(unsigned int) ((unsigned char *)&ip->s_addr)[1],(unsigned int) ((unsigned char *)&ip->s_addr)[0],name);
 	return firedns_gettxt(hostname);
 }
 
-char *firedns_ntoa4(const struct in_addr * const ip) { /* numeric to ascii: convert 4part IP addr struct to static string */
+char *firedns_ntoa4(const struct in_addr *ip) { /* numeric to ascii: convert 4part IP addr struct to static string */
 	static char result[256];
 	return firedns_ntoa4_s(ip,result);
 }
 
-char *firedns_ntoa4_r(const struct in_addr * restrict const ip) { /* numeric to ascii (reentrant): convert 4part IP addr struct to new string */
-	char * restrict result;
-	result = firestring_malloc(256);
+char *firedns_ntoa4_r(const struct in_addr *const ip) { /* numeric to ascii (reentrant): convert 4part IP addr struct to new string */
+	char *result;
+	result = (char *) firestring_malloc(256);
 	return firedns_ntoa4_s(ip,result);
 }
 
-char *firedns_ntoa4_s(const struct in_addr * restrict const ip, char * restrict const result) { /* numeric to ascii (buffered): convert 4part IP addr struct to given string */
+char *firedns_ntoa4_s(const struct in_addr *const ip, char *const result) { /* numeric to ascii (buffered): convert 4part IP addr struct to given string */
 	unsigned char *m;
 	m = (unsigned char *)&ip->s_addr;
 	sprintf(result,"%d.%d.%d.%d",m[0],m[1],m[2],m[3]);
@@ -878,13 +878,13 @@ char *firedns_ntoa6(const struct in6_addr *ip) {
 	return firedns_ntoa6_s(ip,result);
 }
 
-char *firedns_ntoa6_r(const struct in6_addr * restrict ip) {
-	char * restrict result;
-	result = firestring_malloc(256);
+char *firedns_ntoa6_r(const struct in6_addr *ip) {
+	char *result;
+	result = (char *) firestring_malloc(256);
 	return firedns_ntoa6_s(ip,result);
 }
 
-char *firedns_ntoa6_s(const struct in6_addr * restrict const ip, char * restrict const result) {
+char *firedns_ntoa6_s(const struct in6_addr *const ip, char *const result) {
 	char *c;
 	sprintf(result,"%x:%x:%x:%x:%x:%x:%x:%x",
 			ntohs(*((unsigned short *)&ip->s6_addr[0])),
@@ -917,7 +917,7 @@ char *firedns_getresult(const int fd) { /* retrieve result of DNS query */
 
 char *firedns_getresult_r(const int fd) { /* retrieve result of DNS query (reentrant) */
 	char *result;
-	result = firestring_malloc(RESULTSIZE);
+	result = (char *) firestring_malloc(RESULTSIZE);
 	if(firedns_getresult_s(fd,result) == NULL) {
 		free(result);
 		return NULL;
@@ -925,9 +925,9 @@ char *firedns_getresult_r(const int fd) { /* retrieve result of DNS query (reent
 	return result;
 }
 
-char *firedns_getresult_s(const int fd, char * restrict const result) { /* retrieve result of DNS query (buffered) */
+char *firedns_getresult_s(const int fd, char *const result) { /* retrieve result of DNS query (buffered) */
 	struct s_header h;
-	struct s_connection * restrict c, *prev;
+	struct s_connection *c, *prev;
 	int l,i,q,curanswer,o;
 	struct s_rr_middle rr;
 	unsigned char buffer[sizeof(struct s_header)];
@@ -984,21 +984,21 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 	i = 0;
 	q = 0;
 	l -= 12;
-	while (q < h.qdcount && i < l) {
+	while (q < (signed) h.qdcount && i < l) {
 		if (h.payload[i] > 63) { /* pointer */
-			i += 6; /* skip pointer, class and type */
+			i += 6; /* skip pointer, class_ and type */
 			q++;
 		} else { /* label */
 			if (h.payload[i] == 0) {
 				q++;
-				i += 5; /* skip nil, class and type */
+				i += 5; /* skip nil, class_ and type */
 			} else
 				i += h.payload[i] + 1; /* skip length and label */
 		}
 	}
 	/* &h.payload[i] should now be the start of the first response */
 	curanswer = 0;
-	while (curanswer < h.ancount) {
+	while (curanswer < (signed) h.ancount) {
 		q = 0;
 		while (q == 0 && i < l) {
 			if (h.payload[i] > 63) { /* pointer */
@@ -1023,16 +1023,16 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 			i += rr.rdlength;
 			continue;
 		}
-		if (rr.class != c->class) {
+		if (rr.class_ != c->class_) {
 			curanswer++;
 			i += rr.rdlength;
 			continue;
 		}
 		break;
 	}
-	if (curanswer == h.ancount)
+	if (curanswer == (signed) h.ancount)
 		return NULL;
-	if (i + rr.rdlength > l)
+	if ((signed) (i + rr.rdlength) > l)
 		return NULL;
 	if (rr.rdlength > 1023)
 		return NULL;
@@ -1099,7 +1099,7 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 					mxa->name[o++] = '\0';
 					mxa->next = NULL;
 					i = g;
-					if (curanswer < h.ancount) {
+					if (curanswer < (signed) h.ancount) {
 						q = 0;
 						while (q == 0 && i < l) {
 							if (h.payload[i] > 63) { /* pointer */
@@ -1121,7 +1121,7 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 						i += 10;
 						if (rr.type != FDNS_QRY_MX)
 							break;
-						if (rr.class != 1)
+						if (rr.class_ != 1)
 							break;
 						mxa->next = (struct firedns_mxlist *) firedns_align((((char *) mxa) + sizeof(struct firedns_mxlist) + o));
 						mxa = mxa->next;
@@ -1160,13 +1160,13 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 				while ((char *)txtlist - (char *)result < 700) {
 					if (rr.type != FDNS_QRY_TXT)
 						break;
-					if (rr.class != 1)
+					if (rr.class_ != 1)
 						break;
 					{
 						unsigned char *end, *trailer;
 						int o;
 
-						txtlist->txt = firedns_align(((char *)txtlist) + sizeof(struct firedns_txtlist));
+						txtlist->txt = (char *) firedns_align(((char *)txtlist) + sizeof(struct firedns_txtlist));
 
 						trailer = &h.payload[i];
 						end = &h.payload[i] + rr.rdlength;
@@ -1185,7 +1185,7 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 						}
 						txtlist->txt[o] = '\0';
 					}
-					if (++curanswer >= h.ancount)
+					if (++curanswer >= (signed) h.ancount)
 						break;
 					i += rr.rdlength;
 					{
@@ -1242,14 +1242,14 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 				while ((char *)alist - (char *)result < 700) {
 					if (rr.type != FDNS_QRY_A)
 						break;
-					if (rr.class != 1)
+					if (rr.class_ != 1)
 						break;
 					if (rr.rdlength != 4) {
 						free(c);
 						return NULL;
 					}
 					memcpy(&alist->ip,&h.payload[i],4);
-					if (++curanswer >= h.ancount)
+					if (++curanswer >= (signed) h.ancount)
 						break;
 					i += rr.rdlength;
 					{
@@ -1289,14 +1289,14 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 				while ((char *)alist - (char *)result < 700) {
 					if (rr.type != FDNS_QRY_AAAA)
 						break;
-					if (rr.class != 1)
+					if (rr.class_ != 1)
 						break;
 					if (rr.rdlength != 16) {
 						free(c);
 						return NULL;
 					}
 					memcpy(&alist->ip,&h.payload[i],16);
-					if (++curanswer >= h.ancount)
+					if (++curanswer >= (signed) h.ancount)
 						break;
 					i += rr.rdlength;
 					{
@@ -1340,10 +1340,10 @@ char *firedns_getresult_s(const int fd, char * restrict const result) { /* retri
 	return result;
 }
 
-static inline struct in_addr *firedns_resolveip4_i(const char * restrict const name, char *(* const result)(int)) { /* immediate A query */
+static inline struct in_addr *firedns_resolveip4_i(const char *const name, char *(*result)(int)) { /* immediate A query */
 	int fd;
 	int t,i;
-	struct in_addr * restrict ret;
+	struct in_addr *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1363,18 +1363,18 @@ static inline struct in_addr *firedns_resolveip4_i(const char * restrict const n
 	return NULL;
 }
 
-struct in_addr *firedns_resolveip4(const char * const name) { /* immediate A query */
+struct in_addr *firedns_resolveip4(const char *name) { /* immediate A query */
 	return firedns_resolveip4_i(name,firedns_getresult);
 }
 
-struct in_addr *firedns_resolveip4_r(const char * const name) { /* immediate A query (reentrant) */
+struct in_addr *firedns_resolveip4_r(const char *name) { /* immediate A query (reentrant) */
 	return firedns_resolveip4_i(name,firedns_getresult_r);
 }
 
-static inline struct firedns_ip4list *firedns_resolveip4list_i(const char * restrict const name, char *(* const result)(int)) { /* immediate A query */
+static inline struct firedns_ip4list *firedns_resolveip4list_i(const char *const name, char *(*result)(int)) { /* immediate A query */
 	int fd;
 	int t,i;
-	struct firedns_ip4list * restrict ret;
+	struct firedns_ip4list *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1394,18 +1394,18 @@ static inline struct firedns_ip4list *firedns_resolveip4list_i(const char * rest
 	return NULL;
 }
 
-struct firedns_ip4list *firedns_resolveip4list(const char * const name) { /* immediate A query */
+struct firedns_ip4list *firedns_resolveip4list(const char *name) { /* immediate A query */
 	return firedns_resolveip4list_i(name,firedns_getresult);
 }
 
-struct firedns_ip4list *firedns_resolveip4list_r(const char * const name) { /* immediate A query (reentrant) */
+struct firedns_ip4list *firedns_resolveip4list_r(const char *name) { /* immediate A query (reentrant) */
 	return firedns_resolveip4list_i(name,firedns_getresult_r);
 }
 
-static inline struct in6_addr *firedns_resolveip6_i(const char * restrict const name, char *(* const result)(int)) {
+static inline struct in6_addr *firedns_resolveip6_i(const char *const name, char *(*result)(int)) {
 	int fd;
 	int t,i;
-	struct in6_addr * restrict ret;
+	struct in6_addr *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1425,18 +1425,18 @@ static inline struct in6_addr *firedns_resolveip6_i(const char * restrict const 
 	return NULL;
 }
 
-struct in6_addr *firedns_resolveip6(const char * const name) {
+struct in6_addr *firedns_resolveip6(const char *name) {
 	return firedns_resolveip6_i(name,firedns_getresult);
 }
 
-struct in6_addr *firedns_resolevip6_r(const char * const name) {
+struct in6_addr *firedns_resolevip6_r(const char *name) {
 	return firedns_resolveip6_i(name,firedns_getresult_r);
 }
 
-static inline struct firedns_ip6list *firedns_resolveip6list_i(const char * restrict const name, char *(* const result)(int)) { 
+static inline struct firedns_ip6list *firedns_resolveip6list_i(const char *const name, char *(*result)(int)) { 
 	int fd;
 	int t,i;
-	struct firedns_ip6list * restrict ret;
+	struct firedns_ip6list *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1456,18 +1456,18 @@ static inline struct firedns_ip6list *firedns_resolveip6list_i(const char * rest
 	return NULL;
 }
 
-struct firedns_ip6list *firedns_resolveip6list(const char * const name) { 
+struct firedns_ip6list *firedns_resolveip6list(const char *name) { 
 	return firedns_resolveip6list_i(name,firedns_getresult);
 }
 
-struct firedns_ip6list *firedns_resolveip6list_r(const char * const name) { 
+struct firedns_ip6list *firedns_resolveip6list_r(const char *name) { 
 	return firedns_resolveip6list_i(name,firedns_getresult_r);
 }
 
-static inline char *firedns_resolvetxt_i(const char * restrict const name, char *(* const result)(int)) {
+static inline char *firedns_resolvetxt_i(const char *const name, char *(*result)(int)) {
 	int fd;
 	int t,i;
-	char * restrict ret;
+	char *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1487,18 +1487,18 @@ static inline char *firedns_resolvetxt_i(const char * restrict const name, char 
 	return NULL;
 }
 
-char *firedns_resolvetxt(const char * const name) { /* immediate TXT query */
+char *firedns_resolvetxt(const char *name) { /* immediate TXT query */
 	return firedns_resolvetxt_i(name,firedns_getresult);
 }
 
-char *firedns_resolvetxt_r(const char * const name) {
+char *firedns_resolvetxt_r(const char *name) {
 	return firedns_resolvetxt_i(name,firedns_getresult_r);
 }
 
-static inline struct firedns_txtlist *firedns_resolvetxtlist_i(const char * restrict const name, char *(* const result)(int)) { 
+static inline struct firedns_txtlist *firedns_resolvetxtlist_i(const char *const name, char *(*result)(int)) { 
 	int fd;
 	int t,i;
-	struct firedns_txtlist * restrict ret;
+	struct firedns_txtlist *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1518,18 +1518,18 @@ static inline struct firedns_txtlist *firedns_resolvetxtlist_i(const char * rest
 	return NULL;
 }
 
-struct firedns_txtlist *firedns_resolvetxtlist(const char * const name) { 
+struct firedns_txtlist *firedns_resolvetxtlist(const char *name) { 
 	return firedns_resolvetxtlist_i(name,firedns_getresult);
 }
 
-struct firedns_txtlist *firedns_resolvetxtlist_r(const char * const name) { 
+struct firedns_txtlist *firedns_resolvetxtlist_r(const char *name) { 
 	return firedns_resolvetxtlist_i(name,firedns_getresult_r);
 }
 
-static inline char *firedns_resolvemx_i(const char * restrict const name, char *(* const result)(int)) {
+static inline char *firedns_resolvemx_i(const char *const name, char *(*result)(int)) {
 	int fd;
 	int t,i;
-	char * restrict ret;
+	char *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1550,18 +1550,18 @@ static inline char *firedns_resolvemx_i(const char * restrict const name, char *
 	return NULL;
 }
 
-char *firedns_resolvemx(const char * const name) { /* immediate MX query */
+char *firedns_resolvemx(const char *name) { /* immediate MX query */
 	return firedns_resolvemx_i(name,firedns_getresult);
 }
 
-char *firedns_resolvemx_r(const char * const name) {
+char *firedns_resolvemx_r(const char *name) {
 	return firedns_resolvemx_i(name,firedns_getresult_r);
 }
 
-static inline struct firedns_mxlist *firedns_resolvemxlist_i(const char * restrict const name, char *(* const result)(int)) {
+static inline struct firedns_mxlist *firedns_resolvemxlist_i(const char *const name, char *(*result)(int)) {
 	int fd;
 	int t,i;
-	struct firedns_mxlist * restrict ret;
+	struct firedns_mxlist *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1582,15 +1582,15 @@ static inline struct firedns_mxlist *firedns_resolvemxlist_i(const char * restri
 	return NULL;
 }
 
-struct firedns_mxlist *firedns_resolvemxlist(const char * const name) {
+struct firedns_mxlist *firedns_resolvemxlist(const char *name) {
 	return firedns_resolvemxlist_i(name,firedns_getresult);
 }
 
-struct firedns_mxlist *firedns_resolvemxlist_r(const char * const name) {
+struct firedns_mxlist *firedns_resolvemxlist_r(const char *name) {
 	return firedns_resolvemxlist_i(name,firedns_getresult_r);
 }
 
-struct firedns_mxlist *firedns_resolvemxalist(const char * const name) {
+struct firedns_mxlist *firedns_resolvemxalist(const char *name) {
 	int t,i,n,c = 0;
 	int cname_fd[256] = {0};
 	int alist_fd[256] = {0};
@@ -1604,23 +1604,23 @@ struct firedns_mxlist *firedns_resolvemxalist(const char * const name) {
 	mxlist = firedns_resolvemxlist_r(name);
 
 	if (mxlist == NULL) {
-		mxlist = firestring_malloc(sizeof(struct firedns_mxlist) + strlen(name) + 1 + FIREDNS_ALIGN);
+		mxlist = (struct firedns_mxlist *) firestring_malloc(sizeof(struct firedns_mxlist) + strlen(name) + 1 + FIREDNS_ALIGN);
 		mxlist->next = NULL;
 		mxlist->cname = NULL;
 		mxlist->ip4list = NULL;
 		mxlist->ip6list = NULL;
 		mxlist->protocol = FIREDNS_MX_SMTP;
 		mxlist->priority = 0;
-		mxlist->name = firedns_align(((char *)mxlist) + sizeof(struct firedns_mxlist));
+		mxlist->name = (char *) firedns_align(((char *)mxlist) + sizeof(struct firedns_mxlist));
 		strcpy(mxlist->name,name);
 	}
 
 	/* walk the list and allocate A space */
 	iter = mxlist;
 	while (iter != NULL) {
-		iter->ip4list = firestring_malloc(RESULTSIZE);
-		iter->ip6list = firestring_malloc(RESULTSIZE);
-		iter->cname = firestring_malloc(RESULTSIZE);
+		iter->ip4list = (struct firedns_ip4list *) firestring_malloc(RESULTSIZE);
+		iter->ip6list = (struct firedns_ip6list *) firestring_malloc(RESULTSIZE);
+		iter->cname = (char *) firestring_malloc(RESULTSIZE);
 		iter = iter->next;
 		c += 3;
 	}
@@ -1747,10 +1747,10 @@ struct firedns_mxlist *firedns_resolvemxalist(const char * const name) {
 	return NULL;
 }
 
-static inline char *firedns_resolvename4_i(const struct in_addr * restrict const ip, char *(* const result)(int)) {
+static inline char *firedns_resolvename4_i(const struct in_addr *const ip, char *(*result)(int)) {
 	int fd;
 	int t,i;
-	char * restrict ret;
+	char *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1770,18 +1770,18 @@ static inline char *firedns_resolvename4_i(const struct in_addr * restrict const
 	return NULL;
 }
 
-char *firedns_resolvename4(const struct in_addr * const ip) { /* immediate PTR query */
+char *firedns_resolvename4(const struct in_addr *ip) { /* immediate PTR query */
 	return firedns_resolvename4_i(ip,firedns_getresult);
 }
 
-char *firedns_resolvename4_r(const struct in_addr * const ip) {
+char *firedns_resolvename4_r(const struct in_addr *ip) {
 	return firedns_resolvename4_i(ip,firedns_getresult_r);
 }
 
-static inline char *firedns_resolvename6_i(const struct in6_addr * restrict const ip, char *(* const result)(int)) {
+static inline char *firedns_resolvename6_i(const struct in6_addr *const ip, char *(*result)(int)) {
 	int fd;
 	int t,i;
-	char * restrict ret;
+	char *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1801,18 +1801,18 @@ static inline char *firedns_resolvename6_i(const struct in6_addr * restrict cons
 	return NULL;
 }
 
-char *firedns_resolvename6(const struct in6_addr * const ip) {
+char *firedns_resolvename6(const struct in6_addr *ip) {
 	return firedns_resolvename6_i(ip,firedns_getresult);
 }
 
-char *firedns_resolvename6_r(const struct in6_addr * const ip) {
+char *firedns_resolvename6_r(const struct in6_addr *ip) {
 	return firedns_resolvename6_i(ip,firedns_getresult_r);
 }
 
-static inline char *firedns_resolvecname_i(const char * restrict const name, char *(* const result)(int)) {
+static inline char *firedns_resolvecname_i(const char *const name, char *(*result)(int)) {
 	int fd;
 	int t,i;
-	char * restrict ret;
+	char *ret;
 	fd_set s;
 	struct timeval tv;
 
@@ -1832,11 +1832,11 @@ static inline char *firedns_resolvecname_i(const char * restrict const name, cha
 	return NULL;
 }
 
-char *firedns_resolvecname(const char * const name) {
+char *firedns_resolvecname(const char *name) {
 	return firedns_resolvecname_i(name,firedns_getresult);
 }
 
-char *firedns_resolvecname_r(const char * const name) {
+char *firedns_resolvecname_r(const char *name) {
 	return firedns_resolvecname_i(name,firedns_getresult_r);
 }
 

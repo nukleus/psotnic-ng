@@ -56,7 +56,7 @@ int creation;
 //int noulimit = 0;
 
 #ifdef HAVE_ADNS
-adns_pthread resolver;
+adns *resolver;
 #endif
 
 unit_table ut_time[] = {
@@ -76,26 +76,6 @@ unit_table ut_perc[] = {
 
 #ifdef HAVE_TCL
 tcl tclparser;
-#endif
-
-#if (HAVE_DEBUG && HAVE_ADNS)
-void __debug()
-{
-	debug = 1;
-	resolver.setTumberOfThreads(4);
-
-	for(int i=0; i<100; ++i)
-	{
-		resolver.resolv("wp.pl");
-		resolver.resolv("onet.pl");
-		resolver.resolv("microsoft.com");
-		resolver.resolv("nasa.gov");
-		resolver.resolv("yahoo.com");
-	}
-
-	printf(">>> WORKING <<<\n");
-	while(1) { };
-}
 #endif
 
 extern char **environ;
@@ -135,11 +115,22 @@ int main(int argc, char *argv[])
 #ifdef HAVE_SSL
 	SSL_library_init();
 #endif
+
+
 	signalHandling();
 	srand();
 
 	precache();
 	parse_cmdline(argc, argv);
+
+#ifdef HAVE_ADNS_PTHREAD
+	resolver = new adns_pthread(config.resolve_threads);
+#endif
+
+#ifdef HAVE_ADNS_FIREDNS
+	resolver = new adns_firedns();
+#endif
+
 
 	userlist.addHandle("idiots", 0, 0, 0, 0, config.handle);
 	userlist.first->flags[MAX_CHANNELS] = HAS_D;
@@ -187,9 +178,6 @@ int main(int argc, char *argv[])
 	if(!creation) lurk();
 #endif
 
-#ifdef HAVE_ADNS
-	resolver.setTumberOfThreads(config.resolve_threads);
-#endif
 	precache_expand();
 
 	last_dns = last = NOW = time(NULL);
@@ -264,6 +252,10 @@ int main(int argc, char *argv[])
 			}
 		}
 
+#ifdef HAVE_ADNS_FIREDNS
+		net.bidMaxFd(dynamic_cast<adns_firedns*>(resolver)->fillFDSET(&rfd));
+#endif
+
 		/* SELECT */
 		ret = select(net.maxFd+1, &rfd, &wfd, NULL, &tv);
 
@@ -327,7 +319,7 @@ int main(int argc, char *argv[])
 			if(NOW - last_dns >= 5*60)
 			{
 				last_dns = NOW;
-				resolver.expire(config.domain_ttl, NOW);
+				resolver->expire(config.domain_ttl, NOW);
 			}
 #endif
 		}
@@ -567,6 +559,11 @@ int main(int argc, char *argv[])
 			}
 		}
 #endif
+
+		/* firedns resolver */
+#ifdef HAVE_ADNS_FIREDNS
+		dynamic_cast<adns_firedns*>(resolver)->processResultSET(&rfd);
+#endif		
 
 		if(net.hub.fd && net.hub.status & STATUS_SYNSENT)
 		{

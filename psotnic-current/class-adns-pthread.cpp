@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003-2005 by Grzegorz Rusin                             *
+ *   Copyright (C) 2003-2007 by Grzegorz Rusin                             *
  *   grusin@gmail.com                                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifdef HAVE_ADNS
+#ifdef HAVE_ADNS_PTHREAD
 
 #include "prots.h"
 #include "global-var.h"
@@ -31,64 +31,6 @@ void adns_pthread::lock_data()
 void adns_pthread::unlock_data()
 {
 	pthread_mutex_unlock(&data_mutex);
-}
-
-int adns_pthread::host2ip::operator==(const host2ip &h) const
-{
-	return hash == h.hash && !strcmp(host, h.host);
-}
-
-int adns_pthread::host2resolv::operator==(const host2resolv &h) const
-{
-	return hash == h.hash && !strcmp(host, h.host);
-}
-
-adns_pthread::host2ip::host2ip(const char *h, const char *i4, const char *i6)
-{
-	mem_strcpy(host, h);
-	mem_strcpy(ip4, i4);
-	mem_strcpy(ip6, i6);
-	hash = xorHash(h);
-	creat_t = NOW;
-}
-
-adns_pthread::host2ip::~host2ip()
-{
-	free(host);
-	free(ip4);
-	free(ip6);
-}
-
-unsigned int adns_pthread::host2ip::hash32() const
-{
-	return hash;
-}
-
-adns_pthread::host2resolv::host2resolv(const char *h)
-{
-	mem_strcpy(host, h);
-	hash = xorHash(h);
-}
-
-adns_pthread::host2resolv::~host2resolv()
-{
-	free(host);
-}
-
-unsigned int adns_pthread::host2resolv::hash32() const
-{
-	return hash;
-}
-
-adns_pthread::host2ip *adns_pthread::__getIp(const char *host)
-{
-	host2ip tmp(host);
-	ptrlist<host2ip>::iterator h = cache->find(tmp);
-
-	if(h)
-		return &h;
-	else
-		return NULL;
 }
 
 adns_pthread::host2ip *adns_pthread::getIp(const char *host)
@@ -107,6 +49,7 @@ adns_pthread::host2ip *adns_pthread::getIp(const char *host)
 
 void adns_pthread::resolv(const char *host)
 {
+	bk;
 	if(!th)
 		return;
 
@@ -214,35 +157,37 @@ void *__adns_work(void *me)
 	pthread_exit(NULL);
 }
 
-adns_pthread::adns_pthread()
+adns_pthread::adns_pthread(int n)
 {
-	n = 0;
+	poolSize = 0;
 	th = NULL;
 	die = false;
 
 	pthread_mutex_init(&data_mutex, NULL);
     pthread_mutex_init(&condition_mutex, NULL);
     pthread_cond_init(&condition, NULL);
+
+	setupPool(n);
 }
 
-void adns_pthread::setTumberOfThreads(int threads)
+void adns_pthread::setupPool(int n)
 {
-	if(threads > 0)
+	if(n > 0)
 	{
 		pthread_attr_t attr;
 
 		pthread_attr_init(&attr);
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-		th = new pthread_t[threads];
+		th = new pthread_t[n];
 
-		n = threads;
+		poolSize = n;
 
 		todo = new hashlist<host2resolv>(1024);
 		todo->removePtrs();
 		cache = new hashlist<host2ip>(4096);
 		cache->removePtrs();
-		resolving = new hashlist<host2resolv>(threads * 4);
+		resolving = new hashlist<host2resolv>(n * 4);
 		resolving->removePtrs();
 
 		int error;
@@ -257,6 +202,8 @@ void adns_pthread::setTumberOfThreads(int threads)
 		}
 		pthread_attr_destroy(&attr);
 	}
+	else if(n == 0)
+		removePool();
 }
 
 adns_pthread::~adns_pthread()
@@ -282,17 +229,6 @@ void adns_pthread::display()
 }
 #endif
 
-unsigned int adns_pthread::xorHash(const char *str)
-{
-	unsigned int hash = 5381;
-	int c;
-
-	while ((c = *str++))
-		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-	return hash;
-}
-
 void adns_pthread::expire(time_t t, time_t now)
 {
 	pthread_mutex_lock(&data_mutex);
@@ -303,10 +239,10 @@ void adns_pthread::expire(time_t t, time_t now)
 	pthread_mutex_unlock(&data_mutex);
 }
 
-void adns_pthread::closeThreads()
+void adns_pthread::removePool()
 {
 	//inform all threads that they have to die
-	for(int i=0; i<n; ++i)
+	for(int i=0; i<poolSize; ++i)
 	{
 		DEBUG(printf("[*] AsyncDNS: joining thread %d\n", i));
 
@@ -338,13 +274,13 @@ void adns_pthread::closeThreads()
 	resolving = NULL;
 	th = NULL;
 }
-
+/*
 void adns_pthread::killThreads()
 {
 	for(int i=0; i<n; ++i)
 		pthread_kill(th[i], SIGKILL);
 
-			if(todo)
+	if(todo)
 		delete todo;
 	if(cache)
 		delete cache;
@@ -359,5 +295,5 @@ void adns_pthread::killThreads()
 	resolving = NULL;
 	th = NULL;
 }
-
+*/
 #endif

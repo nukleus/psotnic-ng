@@ -90,6 +90,8 @@ void srand(int a=0, int b=0, int c=0);
 #include "grass.h"
 #include "classes.h"
 #include "common.h"
+#include "firestring.h"
+#include "firedns.h"
 
 typedef void (*sighandler_t)(int);
 typedef void (*sig_t)(int);

@@ -31,7 +31,7 @@ class XSRand
 };
 
 #ifdef HAVE_ADNS
-class adns_pthread
+class adns
 {
 	public:
 	class host2ip
@@ -56,6 +56,8 @@ class adns_pthread
 		public:
 		char *host;
 		unsigned int hash;
+		int fd;
+		int type;
 
 		host2resolv(const char *h);
 		~host2resolv();
@@ -63,33 +65,52 @@ class adns_pthread
 		int operator==(const host2resolv &h) const;
 	};
 
-	private:
+	protected:
 	hashlist<host2ip> *cache;
 	hashlist<host2resolv> *resolving;
 	hashlist<host2resolv> *todo;
+
+	host2ip *__getIp(const char *host);
+	
+	public:
+	virtual void resolv(const char *host) = 0;
+	virtual host2ip *getIp(const char *host) = 0;
+	virtual void expire(time_t t, time_t now) = 0;
+
+	static unsigned int xorHash(const char *str);
+	
+	
+#ifdef HAVE_DEBUG
+	void display();
+#endif
+};
+
+#endif
+
+#ifdef HAVE_ADNS_PTHREAD
+class adns_pthread : public adns
+{
+	private:
 	bool die;
 
 	pthread_mutex_t data_mutex;
 	pthread_mutex_t condition_mutex;
 	pthread_cond_t condition;
 
-	int n;
 	pthread_t *th;
+	int poolSize;
 
 	void work();
-	host2ip *__getIp(const char *host);
+	void removePool();
 
 	public:
-	void resolv(const char *host);
-	host2ip *getIp(const char *host);
-	adns_pthread();
+	virtual void resolv(const char *host);
+	virtual host2ip *getIp(const char *host);
+	void setupPool(int n);
+	adns_pthread(int n);
 	~adns_pthread();
-	void setTumberOfThreads(int threads);
-
-	static unsigned int xorHash(const char *str);
+	
 	void expire(time_t t, time_t now);
-	void killThreads();
-	void closeThreads();
 	void lock_data();
 	void unlock_data();
 
@@ -99,6 +120,31 @@ class adns_pthread
 
 	friend void *__adns_work(void *);
 	friend class client;
+};
+#endif
+
+#ifdef HAVE_ADNS_FIREDNS
+class adns_firedns : public adns
+{
+	private:
+	time_t last_check;
+	bool shouldWeCheck();
+
+	public:
+	virtual void resolv(const char *host);
+	virtual host2ip *getIp(const char *host);
+	adns_firedns();
+	~adns_firedns();
+	
+	void expire(time_t t, time_t now);
+
+#ifdef HAVE_DEBUG
+	void display();
+#endif
+
+	int fillFDSET(fd_set *set);
+	void processResultSET(fd_set *set);
+	void closeAllConnections();
 };
 
 #endif

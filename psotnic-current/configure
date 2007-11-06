@@ -28,6 +28,8 @@ $targets{'static'} = '-Wall -Wno-non-virtual-dtor -static -DHAVE_STATIC';
 $targets{'debug'} = '-DHAVE_DEBUG -g -fno-inline -pedantic -Wall -Wno-long-long -Wformat=2 -Wunused -Wno-non-virtual-dtor';
 
 my $filelist = "
+class-adns.o
+class-adns-firedns.o
 class-adns-pthread.o
 botcmd.o
 class-blowfish.o
@@ -59,6 +61,8 @@ class-shitlist.o
 class-socks5.o
 config-load.o
 dlsym_cast.o
+firedns.o
+firestring.o
 functions.o
 hidden-seed-functions.o
 inet_pton.o

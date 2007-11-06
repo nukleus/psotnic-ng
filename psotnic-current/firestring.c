@@ -40,7 +40,7 @@ Parts of this library are taken from dstr and dconf, part of LibD:
 static void firestring_int_errorhandler();
 
 static const char tagstring[] = "$Id: firestring.c,v 1.107 2004/03/09 14:47:53 ian Exp $";
-const char firestring_version[] = VERSION;
+const char firestring_version[] = "1.9.9";
 
 static void (*error_handler)() = firestring_int_errorhandler;
 
@@ -212,45 +212,45 @@ void firestring_set_error_handler(void (*e)()) {
 
 void *firestring_malloc(const size_t size) {
 	char *output;
-	output = malloc(size);
+	output = (char *) malloc(size);
 	if (output == NULL)
 		error_handler();
 	return output;
 }
 
-void *firestring_realloc(void * old, const size_t new) {
+void *firestring_realloc(void * old, const size_t _new) {
 	char *output;
-	output = realloc(old,new);
+	output = (char *) realloc(old,_new);
 	if (output == NULL)
 		error_handler();
 	return output;
 }
 
-char *firestring_strdup(const char * restrict const input) { /* allocate and return pointer to duplicate string */
-	char * restrict output;
+char *firestring_strdup(const char * input) { /* allocate and return pointer to duplicate string */
+	char * output;
 	size_t s;
 	if (input == NULL)
 		return NULL;
 	s = strlen(input) + 1;
-	output = firestring_malloc(s);
+	output = (char *) firestring_malloc(s);
 	memcpy(output,input,s);
 	return(output);
 }
 
-void firestring_strncpy(char * restrict const to, const char * restrict const from, const size_t size) {
+void firestring_strncpy(char * to, const char * from, const size_t size) {
 	strncpy(to,from,size);
 	to[size - 1]= '\0';
 	return;
 }
 
-void firestring_strncat(char * restrict const to, const char * restrict const from, const size_t size) {
+void firestring_strncat(char * to, const char * from, const size_t size) {
 	size_t l;
 	l = strlen(to);
 	firestring_strncpy(&to[l],from,size - l);
 	return;
 }
 
-static inline int showdate(char * const dest, const int space, const time_t t) {
+static inline int showdate(char * dest, const int space, const time_t t) {
 	struct tm bt;
 	int i;
 
@@ -267,14 +267,14 @@ static inline int showdate(char * const dest, const int space, const time_t t) {
 	return 17;
 }
 
-static inline int shownum_unsigned(unsigned long long m, const int padzero, int numpad, char * const numbuf, const int space) {
+static int shownum_unsigned(unsigned long long m, const int padzero, int numpad, char * numbuf, const int space) {
 	int power; /* smallest power of 10 greater than m */
 	long long multiple = 1;
 	int r;
 	char f;
 	int i = 0;
 
-	for (power = 0; multiple <= m; power++)
+	for (power = 0; multiple <= (signed) m; power++)
 		multiple *= 10;
 
 	/* fixup 0 case, which shouldn't really display in technical terms */
@@ -302,7 +302,7 @@ static inline int shownum_unsigned(unsigned long long m, const int padzero, int 
 	return i;
 }
 
-static inline int shownum_funsigned(const double m, const int padzero, int numpad, char * const numbuf, const int space) {
+static int shownum_funsigned(const double m, const int padzero, int numpad, char * numbuf, const int space) {
 	char f;
 	int i,j;
 
@@ -335,7 +335,7 @@ static inline int shownum_funsigned(const double m, const int padzero, int numpa
 	return numpad;
 }
 
-static inline int shownum_signed(const long long n, const int padzero, const int numpad, char * const numbuf, const int space) {
+static int shownum_signed(const long long n, const int padzero, const int numpad, char * numbuf, const int space) {
 	unsigned long long m;
 	int i = 0;
 
@@ -351,7 +351,7 @@ static inline int shownum_signed(const long long n, const int padzero, const int
 		return shownum_unsigned(m,padzero,numpad,numbuf,space);
 }
 
-static inline int shownum_fsigned(const double n, const int padzero, const int numpad, char * const numbuf, const int space) {
+static int shownum_fsigned(const double n, const int padzero, const int numpad, char * numbuf, const int space) {
 	double m;
 	int i = 0;
 
@@ -367,17 +367,18 @@ static inline int shownum_fsigned(const double n, const int padzero, const int n
 		return shownum_funsigned(m,padzero,numpad,numbuf,space);
 }
 
-long firestring_fprintf(FILE * restrict stream, const char * restrict const format, ...) {
+long firestring_fprintf(FILE * stream, const char * format, ...) {
 	va_list ap;
 	long o;
-
+	static struct firestring_estr_t t = { (char *) format, strlen(format), strlen(format) };
+	
 	va_start(ap,format);
-	o = firestring_vfprintfe(stream,&ESTR_D((char *)format),ap);
+	o = firestring_vfprintfe(stream,&t,ap);
 	va_end(ap);
 	return o;
 }
 
-long firestring_fprintfe(FILE * restrict stream, const struct firestring_estr_t * restrict const format, ...) {
+long firestring_fprintfe(FILE * stream, const struct firestring_estr_t * format, ...) {
 	va_list ap;
 	long o;
 
@@ -387,17 +388,17 @@ long firestring_fprintfe(FILE * restrict stream, const struct firestring_estr_t 
 	return o;
 }
 
-long firestring_printf(const char * restrict const format, ...) {
+long firestring_printf(const char * format, ...) {
 	va_list ap;
 	long o;
-
+	static struct firestring_estr_t t = { (char *) format, strlen(format), strlen(format) };
 	va_start(ap,format);
-	o = firestring_vfprintfe(stdout,&ESTR_D((char *)format),ap);
+	o = firestring_vfprintfe(stdout,&t,ap);
 	va_end(ap);
 	return o;
 }
 
-long firestring_printfe(const struct firestring_estr_t * restrict const format, ...) {
+long firestring_printfe(const struct firestring_estr_t * format, ...) {
 	va_list ap;
 	long o;
 
@@ -407,7 +408,7 @@ long firestring_printfe(const struct firestring_estr_t * restrict const format, 
 	return o;
 }
 
-long firestring_snprintf(char * restrict const out, const long size, const char * restrict const format, ...) {
+long firestring_snprintf(char * out, const long size, const char * format, ...) {
 	va_list ap;
 	struct firestring_estr_t o;
 
@@ -421,7 +422,7 @@ long firestring_snprintf(char * restrict const out, const long size, const char 
 	return o.l;
 }
 
-int firestring_strncasecmp(const char * restrict const s1, const char * restrict const s2, const long n) {
+int firestring_strncasecmp(const char * s1, const char * s2, const long n) {
 	long s;
 	for (s = 0; s < n; s++) {
 		if (tolower((unsigned char) s1[s]) != tolower((unsigned char) s2[s])) {
@@ -436,7 +437,7 @@ int firestring_strncasecmp(const char * restrict const s1, const char * restrict
 	return 0;
 }
 
-int firestring_strcasecmp(const char * restrict const s1, const char * restrict const s2) { /* case-insensitive string comparison, ignores tail of longer string */
+int firestring_strcasecmp(const char * s1, const char * s2) { /* case-insensitive string comparison, ignores tail of longer string */
 	size_t s;
 	char c1, c2;
 	for (s = 0; (s1[s] != '\0') && (s2[s] != '\0') && (tolower((unsigned char) s1[s]) == tolower((unsigned char) s2[s])); s++);
@@ -451,11 +452,11 @@ int firestring_strcasecmp(const char * restrict const s1, const char * restrict 
 		return 1;
 }
 
-char *firestring_concat (const char * restrict const s, ...) {
+char *firestring_concat (const char * s, ...) {
 	const char *curr;
 	size_t len = 0;
 	va_list va;
-	char * restrict ret = NULL;
+	char * ret = NULL;
 
 	/* get length */
 	va_start(va,s);
@@ -468,7 +469,7 @@ char *firestring_concat (const char * restrict const s, ...) {
 
 	/* allocate string */
 	if (len) {
-		ret = firestring_malloc(len + 1);
+		ret = (char *) firestring_malloc(len + 1);
 		*ret = '\0';
 	}
 
@@ -510,28 +511,28 @@ char *firestring_trim(char *s) {
 	return firestring_chug(firestring_chomp(s));
 }
 
-void firestring_estr_alloc(struct firestring_estr_t * const f, const long a) {
-	if (a + 1 > UINT_MAX) {
+void firestring_estr_alloc(struct firestring_estr_t * f, const long a) {
+	if (a + 1 > (signed) UINT_MAX) {
 		errno = EINVAL;
 		error_handler();
 	}
-	f->s = firestring_malloc(a + 1);
+	f->s = (char *) firestring_malloc(a + 1);
 	f->a = a;
 	f->l = 0;
 }
 
-void firestring_estr_expand(struct firestring_estr_t * const f, const long a) {
-	if (f->a >= a)
+void firestring_estr_expand(struct firestring_estr_t * f, const long a) {
+	if ((signed) f->a >= a)
 		return;
-	if (a + 1 > UINT_MAX) {
+	if (a + 1 > (signed) UINT_MAX) {
 		errno = EINVAL;
 		error_handler();
 	}
-	f->s = firestring_realloc(f->s, a + 1);
+	f->s = (char *) firestring_realloc(f->s, a + 1);
 	f->a = a;
 }
 
-void firestring_estr_free(struct firestring_estr_t * const f) {
+void firestring_estr_free(struct firestring_estr_t * f) {
 	if (f->s != NULL)
 		free(f->s);
 	f->a = 0;
@@ -539,12 +540,12 @@ void firestring_estr_free(struct firestring_estr_t * const f) {
 	f->s = NULL;
 }
 
-void firestring_estr_0(struct firestring_estr_t * const f) {
+void firestring_estr_0(struct firestring_estr_t * f) {
 	if (f->s != NULL)
 		f->s[f->l] = '\0';
 }
 
-int firestring_estr_read(struct firestring_estr_t * const f, const int fd) {
+int firestring_estr_read(struct firestring_estr_t * f, const int fd) {
 	long i;
 	if (f->l == f->a)
 		return 2;
@@ -557,25 +558,27 @@ int firestring_estr_read(struct firestring_estr_t * const f, const int fd) {
 	return 0;
 }
 
-long firestring_estr_sprintf(struct firestring_estr_t * restrict const o, const char * restrict const format, ...) {
+long firestring_estr_sprintf(struct firestring_estr_t * o, const char * format, ...) {
 	va_list ap;
+	static struct firestring_estr_t t = { (char *) format, strlen(format), strlen(format) };
 
 	va_start(ap,format);
-	return firestring_estr_vsprintfe(o,&ESTR_D((char *)format),ap);
+	return firestring_estr_vsprintfe(o,&t,ap);
 }
 
-long firestring_estr_sprintfe(struct firestring_estr_t * restrict const o, const struct firestring_estr_t * restrict const format, ...) {
+long firestring_estr_sprintfe(struct firestring_estr_t * o, const struct firestring_estr_t * format, ...) {
 	va_list ap;
 
 	va_start(ap,format);
 	return firestring_estr_vsprintfe(o,format,ap);
 }
 
-long firestring_estr_vsprintf(struct firestring_estr_t * restrict const o, const char * restrict const format, va_list ap) {
-	return firestring_estr_vsprintfe(o,&ESTR_D((char *)format),ap);
+long firestring_estr_vsprintf(struct firestring_estr_t * o, const char * format, va_list ap) {
+	static struct firestring_estr_t t = { (char *) format, strlen(format), strlen(format) };
+	return firestring_estr_vsprintfe(o,&t,ap);
 }
 
-long firestring_estr_vsprintfe(struct firestring_estr_t * restrict const o, const struct firestring_estr_t * restrict const format, va_list ap) {
+long firestring_estr_vsprintfe(struct firestring_estr_t * o, const struct firestring_estr_t * format, va_list ap) {
 	size_t f,tl;
 	const char *tempchr;
 	const struct firestring_estr_t *e;
@@ -607,7 +610,7 @@ long firestring_estr_vsprintfe(struct firestring_estr_t * restrict const o, cons
 
 	o->l = 0;
 
-	for (f = 0; f < format->l && o->l < o->a && b == 0; f++) {
+	for (f = 0; (signed) f < format->l && o->l < o->a && b == 0; f++) {
 		if (format->s[f] == '%') {
 			padzero = 0;
 			numpad = 0;
@@ -634,7 +637,7 @@ eformatcheck:
 					if (tempchr == NULL)
 						tempchr = "(null)";
 					tl = strlen(tempchr);
-					if (tl + o->l > o->a)
+					if ((signed) (tl + o->l) > o->a)
 						b = 1;
 					else {
 						memcpy(&o->s[o->l],tempchr,tl);
@@ -691,11 +694,12 @@ eformatcheck:
 	return o->l;
 }
 
-long firestring_vfprintf(FILE *stream, const char * restrict const format, va_list ap) {
-	return firestring_vfprintfe(stream,&ESTR_D((char *)format),ap);
+long firestring_vfprintf(FILE *stream, const char * format, va_list ap) {
+	static struct firestring_estr_t t = { (char *) format, strlen(format), strlen(format) };
+	return firestring_vfprintfe(stream,&t,ap);
 }
 
-long firestring_vfprintfe(FILE *stream, const struct firestring_estr_t * restrict const format, va_list ap) {
+long firestring_vfprintfe(FILE *stream, const struct firestring_estr_t * format, va_list ap) {
 	size_t f,tl;
 	const char *tempchr;
 	const struct firestring_estr_t *e;
@@ -725,7 +729,7 @@ long firestring_vfprintfe(FILE *stream, const struct firestring_estr_t * restric
 	out += m; \
 	fwrite(numbuf,m,1,stream);
 
-	for (f = 0; f < format->l; f++) {
+	for (f = 0; (signed) f < format->l; f++) {
 		if (format->s[f] == '%') {
 			padzero = 0;
 			numpad = 0;
@@ -802,7 +806,7 @@ eformatcheck:
 	return out;
 }
 
-long firestring_estr_strchr(const struct firestring_estr_t * const f, const char c, const long start) {
+long firestring_estr_strchr(const struct firestring_estr_t * f, const char c, const long start) {
 	long i;
 
 	for (i = start; i < f->l; i++)
@@ -812,7 +816,7 @@ long firestring_estr_strchr(const struct firestring_estr_t * const f, const char
 	return -1;
 }
 
-long firestring_estr_strstr(const struct firestring_estr_t * restrict const f, const char * restrict s, const long start) {
+long firestring_estr_strstr(const struct firestring_estr_t * f, const char * s, const long start) {
 	long i;
 	long l;
 	
@@ -825,7 +829,7 @@ long firestring_estr_strstr(const struct firestring_estr_t * restrict const f, c
 	return -1;
 }
 
-long firestring_estr_stristr(const struct firestring_estr_t * restrict const f, const char * restrict s, const long start) {
+long firestring_estr_stristr(const struct firestring_estr_t * f, const char * s, const long start) {
 	long i;
 	long j;
 	long l;
@@ -843,18 +847,20 @@ long firestring_estr_stristr(const struct firestring_estr_t * restrict const f, 
 	return -1;
 }
 
-int firestring_estr_starts(const struct firestring_estr_t * restrict const f, const char * restrict const s) {
-	return firestring_estr_estarts(f,&ESTR_D((char *)s));
+int firestring_estr_starts(const struct firestring_estr_t * f, const char * s) {
+        static struct firestring_estr_t t = { (char *) s, strlen(s), strlen(s) };
+	return firestring_estr_estarts(f,&t);
 }
 
-int firestring_estr_ends(const struct firestring_estr_t * restrict const f, const char * restrict const s) {
-	return firestring_estr_eends(f,&ESTR_D((char *)s));
+int firestring_estr_ends(const struct firestring_estr_t * f, const char * s) {
+        static struct firestring_estr_t t = { (char *) s, strlen(s), strlen(s) };
+	return firestring_estr_eends(f,&t);
 }
 
-int firestring_estr_strcasecmp(const struct firestring_estr_t * restrict const f, const char * restrict const s) {
+int firestring_estr_strcasecmp(const struct firestring_estr_t * f, const char * s) {
 	long i;
 
-	if (f->l != strlen(s))
+	if (f->l != (signed) strlen(s))
 		return 1;
 
 	for (i = 0; i < f->l; i++)
@@ -864,10 +870,10 @@ int firestring_estr_strcasecmp(const struct firestring_estr_t * restrict const f
 	return 0;
 }
 
-int firestring_estr_strcmp(const struct firestring_estr_t * restrict const f, const char * restrict const s) {
+int firestring_estr_strcmp(const struct firestring_estr_t * f, const char * s) {
 	long i;
 
-	if (f->l != strlen(s))
+	if (f->l != (signed) strlen(s))
 		return 1;
 
 	for (i = 0; i < f->l; i++)
@@ -877,7 +883,7 @@ int firestring_estr_strcmp(const struct firestring_estr_t * restrict const f, co
 	return 0;
 }
 
-int firestring_estr_strcpy(struct firestring_estr_t * restrict const f, const char * restrict const s) {
+int firestring_estr_strcpy(struct firestring_estr_t * f, const char * s) {
 	long l;
 
 	l = strlen(s);
@@ -890,7 +896,7 @@ int firestring_estr_strcpy(struct firestring_estr_t * restrict const f, const ch
 	return 0;
 }
 
-int firestring_estr_astrcpy(struct firestring_estr_t * restrict const f, const char * restrict const s) {
+int firestring_estr_astrcpy(struct firestring_estr_t * f, const char * s) {
 	long l;
 
 	l = strlen(s);
@@ -902,7 +908,7 @@ int firestring_estr_astrcpy(struct firestring_estr_t * restrict const f, const c
 	return 0;
 }
 
-int firestring_estr_strcat(struct firestring_estr_t * restrict const f, const char * restrict const s) {
+int firestring_estr_strcat(struct firestring_estr_t * f, const char * s) {
 	long l;
 
 	l = strlen(s);
@@ -915,7 +921,7 @@ int firestring_estr_strcat(struct firestring_estr_t * restrict const f, const ch
 	return 0;
 }
 
-int firestring_estr_astrcat(struct firestring_estr_t * restrict const f, const char * restrict const s) {
+int firestring_estr_astrcat(struct firestring_estr_t * f, const char * s) {
 	long l;
 
 	l = strlen(s);
@@ -927,7 +933,7 @@ int firestring_estr_astrcat(struct firestring_estr_t * restrict const f, const c
 	return 0;
 }
 
-int firestring_estr_estrcasecmp(const struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f, const long start) {
+int firestring_estr_estrcasecmp(const struct firestring_estr_t * t, const struct firestring_estr_t * f, const long start) {
 	long i;
 
 	if (f->l != t->l - start)
@@ -940,7 +946,7 @@ int firestring_estr_estrcasecmp(const struct firestring_estr_t * restrict const 
 	return 0;
 }
 
-int firestring_estr_estrncasecmp(const struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f, const long length, const long start) {
+int firestring_estr_estrncasecmp(const struct firestring_estr_t * t, const struct firestring_estr_t * f, const long length, const long start) {
 	long i;
 
 	for (i = 0; i < length; i++)
@@ -950,7 +956,7 @@ int firestring_estr_estrncasecmp(const struct firestring_estr_t * restrict const
 	return 0;
 }
 
-int firestring_estr_estrcpy(struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f, const long start) {
+int firestring_estr_estrcpy(struct firestring_estr_t * t, const struct firestring_estr_t *f, const long start) {
 	if (f->l - start > t->a)
 		return 1;
 
@@ -960,12 +966,12 @@ int firestring_estr_estrcpy(struct firestring_estr_t * restrict const t, const s
 	return 0;
 }
 
-int firestring_estr_aestrcpy(struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f, const long start) {
+int firestring_estr_aestrcpy(struct firestring_estr_t * t, const struct firestring_estr_t * f, const long start) {
 	firestring_estr_expand(t,f->l - start);
 	return firestring_estr_estrcpy(t,f,start);
 }
 
-int firestring_estr_munch(struct firestring_estr_t * const t, const long length) {
+int firestring_estr_munch(struct firestring_estr_t * t, const long length) {
 	if (length > t->l)
 		return 1;
 
@@ -975,12 +981,12 @@ int firestring_estr_munch(struct firestring_estr_t * const t, const long length)
 	return 0;
 }
 
-void firestring_estr_chomp(struct firestring_estr_t * const s) { /* remove trailing whitespace */
+void firestring_estr_chomp(struct firestring_estr_t * s) { /* remove trailing whitespace */
 	while (s->l > 0 && isspace(s->s[s->l - 1]))
 		s->l--;
 }
 
-void firestring_estr_chug(struct firestring_estr_t * const s) { /* remove leading whitespace */
+void firestring_estr_chug(struct firestring_estr_t * s) { /* remove leading whitespace */
 	while (s->l > 0 && isspace(s->s[0])) {
 		s->s++;
 		s->l--;
@@ -988,7 +994,7 @@ void firestring_estr_chug(struct firestring_estr_t * const s) { /* remove leadin
 	}
 }
 
-void firestring_estr_ip_chug(struct firestring_estr_t * const s) { /* remove leading whitespace in place */
+void firestring_estr_ip_chug(struct firestring_estr_t * s) { /* remove leading whitespace in place */
 	long start = 0;
 	while (start < s->l && isspace(s->s[start]))
 		start++;
@@ -996,17 +1002,17 @@ void firestring_estr_ip_chug(struct firestring_estr_t * const s) { /* remove lea
 	s->l -= start;
 }
 
-void firestring_estr_trim(struct firestring_estr_t * const s) {
+void firestring_estr_trim(struct firestring_estr_t * s) {
 	firestring_estr_chug(s);
 	firestring_estr_chomp(s);
 }
 
-void firestring_estr_ip_trim(struct firestring_estr_t * const s) {
+void firestring_estr_ip_trim(struct firestring_estr_t * s) {
 	firestring_estr_ip_chug(s);
 	firestring_estr_chomp(s);
 }
 
-int firestring_estr_estrcmp(const struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f, const long start) {
+int firestring_estr_estrcmp(const struct firestring_estr_t * t, const struct firestring_estr_t * f, const long start) {
 	long i;
 
 	if (f->l != t->l - start)
@@ -1019,7 +1025,7 @@ int firestring_estr_estrcmp(const struct firestring_estr_t * restrict const t, c
 	return 0;
 }
 
-int firestring_estr_estrcat(struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f, const long start) {
+int firestring_estr_estrcat(struct firestring_estr_t * t, const struct firestring_estr_t * f, const long start) {
 	if (f->l - start + t->l > t->a)
 		return 1;
 
@@ -1029,12 +1035,12 @@ int firestring_estr_estrcat(struct firestring_estr_t * restrict const t, const s
 	return 0;
 }
 
-int firestring_estr_aestrcat(struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f, const long start) {
+int firestring_estr_aestrcat(struct firestring_estr_t * t, const struct firestring_estr_t * f, const long start) {
 	firestring_estr_expand(t,t->l + (f->l - start));
 	return firestring_estr_estrcat(t,f,start);
 }
 
-long firestring_estr_estrstr(const struct firestring_estr_t * restrict const haystack, const struct firestring_estr_t * restrict const needle, const long start) {
+long firestring_estr_estrstr(const struct firestring_estr_t * haystack, const struct firestring_estr_t * needle, const long start) {
 	long i,l;
 
 	l = haystack->l - needle->l;
@@ -1046,7 +1052,7 @@ long firestring_estr_estrstr(const struct firestring_estr_t * restrict const hay
 	return -1;
 }
 
-long firestring_estr_estristr(const struct firestring_estr_t * restrict const haystack, const struct firestring_estr_t * restrict const needle, const long start) {
+long firestring_estr_estristr(const struct firestring_estr_t * haystack, const struct firestring_estr_t * needle, const long start) {
 	long i,j,l;
 
 	l = haystack->l - needle->l;
@@ -1061,7 +1067,7 @@ long firestring_estr_estristr(const struct firestring_estr_t * restrict const ha
 	return -1;
 }
 
-int firestring_estr_estarts(const struct firestring_estr_t * restrict const f, const struct firestring_estr_t * restrict const s) {
+int firestring_estr_estarts(const struct firestring_estr_t * f, const struct firestring_estr_t * s) {
 	long i;
 
 	if (f->l < s->l)
@@ -1074,7 +1080,7 @@ int firestring_estr_estarts(const struct firestring_estr_t * restrict const f, c
 	return 0;
 }
 
-int firestring_estr_eends(const struct firestring_estr_t * restrict const f, const struct firestring_estr_t * restrict const s) {
+int firestring_estr_eends(const struct firestring_estr_t * f, const struct firestring_estr_t * s) {
 	long i,t;
 
 	if (f->l < s->l)
@@ -1088,7 +1094,7 @@ int firestring_estr_eends(const struct firestring_estr_t * restrict const f, con
 	return 0;
 }
 
-int firestring_estr_replace(struct firestring_estr_t * const dest, const struct firestring_estr_t * const source, const struct firestring_estr_t * const to, const struct firestring_estr_t * const from) {
+int firestring_estr_replace(struct firestring_estr_t * dest, const struct firestring_estr_t * source, const struct firestring_estr_t * to, const struct firestring_estr_t * from) {
 	int i = 0, oldi = 0;
 	struct firestring_estr_t tempe;
 	dest->l = 0;
@@ -1109,7 +1115,7 @@ int firestring_estr_replace(struct firestring_estr_t * const dest, const struct 
 	return 0;
 }
 
-int firestring_estr_areplace(struct firestring_estr_t * const dest, const struct firestring_estr_t * const source, const struct firestring_estr_t * const to, const struct firestring_estr_t * const from) {
+int firestring_estr_areplace(struct firestring_estr_t * dest, const struct firestring_estr_t * source, const struct firestring_estr_t * to, const struct firestring_estr_t * from) {
 	int i = 0, oldi = 0;
 	struct firestring_estr_t tempe;
 	dest->l = 0;
@@ -1130,7 +1136,7 @@ int firestring_estr_areplace(struct firestring_estr_t * const dest, const struct
 	return 0;
 }
 
-int firestring_estr_tolower(struct firestring_estr_t * const dest, const struct firestring_estr_t * const source, const long start) {
+int firestring_estr_tolower(struct firestring_estr_t * dest, const struct firestring_estr_t * source, const long start) {
 	long i;
 
 	if (source->l - start > dest->a)
@@ -1142,7 +1148,7 @@ int firestring_estr_tolower(struct firestring_estr_t * const dest, const struct 
 	return 0;
 }
 
-int firestring_estr_toupper(struct firestring_estr_t * const dest, const struct firestring_estr_t * const source, const long start) {
+int firestring_estr_toupper(struct firestring_estr_t * dest, const struct firestring_estr_t * source, const long start) {
 	long i;
 
 	if (source->l - start > dest->a)
@@ -1154,7 +1160,7 @@ int firestring_estr_toupper(struct firestring_estr_t * const dest, const struct 
 	return 0;
 }
 
-int firestring_hextoi(const char * const input) {
+int firestring_hextoi(const char * input) {
 	char o1, o2;
 
 	o1 = hex_decode_table[(int)input[0]];
@@ -1166,7 +1172,7 @@ int firestring_hextoi(const char * const input) {
 	return (o1 << 4) | o2;
 }
 
-int firestring_estr_base64_encode(struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f) {
+int firestring_estr_base64_encode(struct firestring_estr_t * t, const struct firestring_estr_t * f) {
 	long i;
 	unsigned char *s, *d;
 
@@ -1199,7 +1205,7 @@ int firestring_estr_base64_encode(struct firestring_estr_t * restrict const t, c
 	return 0;
 }
 
-int firestring_estr_base64_decode(struct firestring_estr_t * const t, const struct firestring_estr_t * const f) {
+int firestring_estr_base64_decode(struct firestring_estr_t * t, const struct firestring_estr_t * f) {
 	long i,j,o;
 	unsigned char tempblock[4];
 
@@ -1235,7 +1241,7 @@ base64_end:
 	return 0;
 }
 
-int firestring_estr_xml_encode(struct firestring_estr_t * restrict const t, const struct firestring_estr_t * restrict const f) {
+int firestring_estr_xml_encode(struct firestring_estr_t * t, const struct firestring_estr_t * f) {
 	long i,j,k;
 
 	if (t->a < f->l * XML_WORSTCASE)
@@ -1259,7 +1265,7 @@ int firestring_estr_xml_encode(struct firestring_estr_t * restrict const t, cons
 	return 0;
 }
 
-int firestring_estr_xml_decode(struct firestring_estr_t * const t, const struct firestring_estr_t * const f) {
+int firestring_estr_xml_decode(struct firestring_estr_t * t, const struct firestring_estr_t * f) {
 	long i = 0, o = 0;
 	long j,k,l;
 	int tempint;
@@ -1435,7 +1441,7 @@ static struct firestring_conf_keyword_t default_keywords[] = {
 	{ NULL, NULL },
 };
 
-struct firestring_conf_t *firestring_conf_parse_next(const char * const filename, struct firestring_conf_t *prev) {
+struct firestring_conf_t *firestring_conf_parse_next(const char * filename, struct firestring_conf_t *prev) {
 	struct firestring_conf_t *conf = prev;
 	char buf[512], *ctx = NULL;
 	FILE *fp;
@@ -1451,15 +1457,15 @@ struct firestring_conf_t *firestring_conf_parse_next(const char * const filename
 	return conf;
 }
 
-struct firestring_conf_t *firestring_conf_parse(const char * const filename) {
+struct firestring_conf_t *firestring_conf_parse(const char * filename) {
 	return firestring_conf_parse_next(filename, NULL);
 }
 
-struct firestring_conf_t *firestring_conf_add(struct firestring_conf_t * restrict const next, const char * restrict const var, const char * restrict const value) { /* insert config val in list, return new list head */
+struct firestring_conf_t *firestring_conf_add(struct firestring_conf_t * next, const char * var, const char * value) { /* insert config val in list, return new list head */
 	struct firestring_conf_t *conf;
 
 	if (var != NULL && value != NULL) {
-		conf = firestring_malloc(sizeof(*conf));
+		conf = (struct firestring_conf_t *) firestring_malloc(sizeof(*conf));
 		conf->next = next;
 		conf->var = firestring_strdup(var);
 		conf->value = firestring_strdup(value);
@@ -1490,11 +1496,12 @@ struct firestring_conf_t *firestring_conf_delete(struct firestring_conf_t *conf,
 	return head;
 }
 
-char *firestring_conf_find(const struct firestring_conf_t * restrict config, const char * restrict const var) { /* find in list and return pointer to config val */
+char *firestring_conf_find(const struct firestring_conf_t * config, const char * var) { /* find in list and return pointer to config val */
 	return firestring_conf_find_next(config,var,NULL);
 }
 
-char *firestring_conf_find_next(const struct firestring_conf_t * restrict config, const char * restrict const var, const char * const prev) {
+char *firestring_conf_find_next(const struct firestring_conf_t * config, const char * 
+const var, const char *prev) {
 	int canreturn = 0;
 
 	if (prev == NULL)

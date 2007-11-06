@@ -56,11 +56,6 @@ sub checkCC
 	print "not found\n";	
 }
 
-sub compileFireDNS
-{
-	`cd firedns && ./configure && make` or die('cannot compile firedns');
-} 
-
 sub getGccOptions
 {
     undef %have;
@@ -149,23 +144,25 @@ sub getGccOptions
         $cflags .= "-DNO_6DNS ";
     }
 
-    if($have{'gethostbyname2_r.c'} && !$disable_adns)
-    {
-		$cflags .= "-DHAVE_ADNS ";
-    }
+	if(!$disable_adns)
+	{
+		if($firedns)
+		{
+			$cflags .= "-DHAVE_ADNS -DHAVE_ADNS_FIREDNS ";
+		}
+	    elsif($have{'gethostbyname2_r.c'})
+    	{
+			$cflags .= "-DHAVE_ADNS -DHAVE_ADNS_PTHREAD ";
+	    }
+	}
 
     if(!$have{'dlopen.c'})
     {
         $cflags .= "-DHAVE_STATIC ";
 	
     }
-
-	if($firedns)
-	{
-		$cflags .= "-Ifiredns/ -Ifiredns/firestring/ ";
-	}
-
-    return ($cflags, $lflags);
+	
+	return ($cflags, $lflags);
 }
 
 #getGccOptions();
