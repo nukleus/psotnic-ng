@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <pthread.h>
+//#include <pthread.h>
 #include "firestring.h"
 #include "firemake.h"
 #include "firedns.h"
@@ -99,7 +99,7 @@ struct s_rr_middle {
 
 #define FIREDNS_POINTER_VALUE 0xc000
 
-static pthread_mutex_t connlist_lock = PTHREAD_MUTEX_INITIALIZER;
+//static pthread_mutex_t connlist_lock = PTHREAD_MUTEX_INITIALIZER;
 static struct s_connection *connection_head = NULL; /* linked list of open DNS queries; populated by firedns_add_query(), decimated by firedns_getresult_s() */
 
 struct s_header { /* DNS query header */
@@ -358,7 +358,7 @@ static struct s_connection *firedns_add_query(struct s_header *h) { /* build DNS
 	}
 #endif
 	/* create new connection object, add to linked list */
-	pthread_mutex_lock(&connlist_lock);
+	//pthread_mutex_lock(&connlist_lock);
 	s->next = connection_head;
 	connection_head = s;
 
@@ -367,7 +367,7 @@ static struct s_connection *firedns_add_query(struct s_header *h) { /* build DNS
 		wantclose = 0;
 	}
 	lastcreate = s->fd;
-	pthread_mutex_unlock(&connlist_lock);
+	//pthread_mutex_unlock(&connlist_lock);
 	return s;
 }
 
@@ -934,7 +934,7 @@ char *firedns_getresult_s(const int fd, char *const result) { /* retrieve result
 	unsigned short p;
 
 	prev = NULL;
-	pthread_mutex_lock(&connlist_lock);
+	//pthread_mutex_lock(&connlist_lock);
 	c = connection_head;
 	while (c != NULL) { /* find query in list of open queries */
 		if (c->fd == fd)
@@ -943,7 +943,7 @@ char *firedns_getresult_s(const int fd, char *const result) { /* retrieve result
 		c = c->next;
 	}
 	if (c == NULL) {
-		pthread_mutex_unlock(&connlist_lock);
+		//pthread_mutex_unlock(&connlist_lock);
 		return NULL; /* query not found */
 	}
 	/* query found-- pull from list: */
@@ -951,7 +951,7 @@ char *firedns_getresult_s(const int fd, char *const result) { /* retrieve result
 		prev->next = c->next;
 	else
 		connection_head = c->next;
-	pthread_mutex_unlock(&connlist_lock);
+	//pthread_mutex_unlock(&connlist_lock);
 
 	l = recv(c->fd,buffer,sizeof(struct s_header),0);
 	firedns_close(c->fd);

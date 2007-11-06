@@ -59,7 +59,9 @@ void srand(int a=0, int b=0, int c=0);
 	#include <openssl/err.h>
 #endif
 
-#include <pthread.h>
+#ifdef HAVE_ADNS_PTHREAD
+	#include <pthread.h>
+#endif
 #include <typeinfo>
 #include <assert.h>
 #ifdef HAVE_MODULES
