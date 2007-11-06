@@ -31,6 +31,10 @@ extern const char *firedns_mx_name[];
 
 #define VERSION "cos"
 
+#ifndef bzero
+    #define bzero(a, b) memset(a, 0, b)
+#endif
+
 #ifndef AF_INET6
 struct in6_addr {
 	unsigned char   s6_addr[16];
