@@ -152,37 +152,37 @@ print $f "\t\@${cc_prefix}g++ -o make-hiddenseed make-hiddenseed.c && ./make-hid
 
 print $f "debug: create_hidden_seed\n";
 print $f "\t\@echo [*] Making debug\n";
-print $f "\t\@make -f Makefile.debug\n\n";
+print $f "\t\@\$(MAKE) -f Makefile.debug\n\n";
 
 print $f "dynamic: create_hidden_seed\n";
 print $f "\t\@echo [*] Making dynamic\n";
-print $f "\t\@make -f Makefile.dynamic\n\n";
+print $f "\t\@\$(MAKE) -f Makefile.dynamic\n\n";
 
 print $f "static: create_hidden_seed\n";
 print $f "\t\@echo [*] Making static\n";
-print $f "\t\@make -f Makefile.static\n\n";
+print $f "\t\@\$(MAKE) -f Makefile.static\n\n";
 
 print $f "\nclean:\n";
 print $f "\t\@rm -f *.exe *.o core psotnic-* psotnic validator *.log vgcore.* tests/a.out tests/a.exe make-hiddenseed\n\n";
 print $f "\t\@echo [*] Removing temporary files\n";
 
 print $f "\ndistclean:\n";
-print $f "\t\@make clean\n";
+print $f "\t\@\$(MAKE) clean\n";
 print $f "\t\@echo [*] Removing seed.h\n";
 print $f "\t\@rm -f seed.h\n";
-print $f "\t\@make -C framework clean\n";
+print $f "\t\@\$(MAKE) -C framework clean\n";
 print $f "\t\@rm -rf bin/* pid.* *.ul Makefile Makefile.*\n\n";
 
 print $f "current:\n";
 print $f "\t\@echo [*] Making current source package\n";
-print $f "\t\@make distclean\n";
+print $f "\t\@\$(MAKE) distclean\n";
 print $f "\t\@tar -cf ../psotnic-current.tar ../psotnic-current/\n";
 print $f "\t\@gzip -f9 ../psotnic-current.tar\n";
 print $f "\t\@echo [+] Done\n";
 
 print $f "release:\n";
 print $f "\t\@echo [*] Making release source package\n";
-print $f "\t\@make distclean\n";
+print $f "\t\@\$(MAKE) distclean\n";
 print $f "\t\@tar -cf ../psotnic-current.tar ../psotnic-current/\n";
 print $f "\t\@gzip -f9 ../psotnic-current.tar\n";
 print $f "\t\@echo [+] Done\n";
