@@ -997,7 +997,7 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 	else if((s = checkShit(p, mask)))
 	{
 		p->setReason(s->fullReason());
-		toKick.sortAdd(p);
+		//toKick.sortAdd(p);
 		badBoy = true;
 
 		if(myTurn(chset->PUNISH_BOTS, p->hash32()))
