@@ -29,8 +29,6 @@ extern const int firedns_mx_port[];
 extern const char *firedns_mx_name[];
 #endif
 
-#define VERSION "cos"
-
 #ifndef bzero
     #define bzero(a, b) memset(a, 0, b)
 #endif
