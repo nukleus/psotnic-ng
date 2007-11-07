@@ -704,7 +704,7 @@ void chan::gotKick(const char *victim, const char *offender)
 
 	HOOK(kick, kick(this, kicked, kicker));
 
-	if((limit <= users.entries() - 1 || flags & FLAG_I) && kicked->flags & HAS_I &&
+	if((limit <= users.entries() - 1 || (flags & FLAG_I)) && (kicked->flags & HAS_I) &&
 		myTurn(chset->INVITE_BOTS, kicker->hash32()))
 		inv = 1;
 
