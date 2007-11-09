@@ -79,7 +79,8 @@ class adns
 
 	static unsigned int xorHash(const char *str);
 	
-	
+
+	virtual ~adns();	
 #ifdef HAVE_DEBUG
 	void display();
 #endif
@@ -108,7 +109,7 @@ class adns_pthread : public adns
 	virtual host2ip *getIp(const char *host);
 	void setupPool(int n);
 	adns_pthread(int n);
-	~adns_pthread();
+	virtual ~adns_pthread();
 	
 	void expire(time_t t, time_t now);
 	void lock_data();
@@ -134,7 +135,7 @@ class adns_firedns : public adns
 	virtual void resolv(const char *host);
 	virtual host2ip *getIp(const char *host);
 	adns_firedns();
-	~adns_firedns();
+	virtual ~adns_firedns();
 	
 	void expire(time_t t, time_t now);
 

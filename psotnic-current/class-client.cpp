@@ -221,13 +221,7 @@ void client::restart()
 	char buf[MAX_LEN];
 
 	net.~inet();
-#ifdef HAVE_ADNS_PTHREAD
-	dynamic_cast<adns_pthread*>(resolver)->setupPool(0);
-#endif
-
-#ifdef HAVE_ADNS_FIREDNS
-	dynamic_cast<adns_firedns*>(resolver)->closeAllConnections();
-#endif
+	delete resolver;
 
 	snprintf(buf, MAX_LEN, "pid.%s", (const char *) config.nick);
 	unlink(buf);

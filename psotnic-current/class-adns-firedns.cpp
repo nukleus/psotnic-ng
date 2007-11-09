@@ -28,10 +28,6 @@ bool adns_firedns::shouldWeCheck()
 	return (NOW != last_check);
 }
 
-void adns_firedns::closeAllConnections()
-{
-}
-
 int adns_firedns::fillFDSET(fd_set *set)
 {
 	if(!shouldWeCheck())

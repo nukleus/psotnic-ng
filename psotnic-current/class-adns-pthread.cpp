@@ -250,7 +250,6 @@ void adns_pthread::removePool()
 		die = 1;
 		pthread_cond_broadcast(&condition);
 		pthread_mutex_unlock(&condition_mutex);
-
 		
 		if(pthread_join(th[i], NULL))
 			printf("[-] AsyncDNS: pthread %d join failed\n", i);

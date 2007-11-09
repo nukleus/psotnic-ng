@@ -23,6 +23,10 @@
 
 #ifdef HAVE_ADNS
 
+adns::~adns()
+{
+}
+
 adns::host2ip *adns::__getIp(const char *host)
 {
     host2ip tmp(host);
@@ -77,6 +81,8 @@ adns::host2resolv::host2resolv(const char *h)
 adns::host2resolv::~host2resolv()
 {
 	free(host);
+	if(fd > 0)
+		killSocket(fd);
 }
 
 unsigned int adns::host2resolv::hash32() const
