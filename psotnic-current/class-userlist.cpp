@@ -1100,7 +1100,7 @@ bool ul::globalChset(inetconn *c, const char *var, const char *value, int *index
 				{
 					net.sendCmd(c, "gset ", e->entity->print(), NULL);
 					/* compatybylity reasons */
-					if(index != NULL && *index == -1) *index = i;
+					if(index != NULL && *index != -1) *index = i;
 				}
 				c->send("gset: ", (const char *) e->reason, NULL);
 			}
