@@ -103,6 +103,7 @@ class adns_pthread : public adns
 
 	void work();
 	void removePool();
+	void killThreads();
 
 	public:
 	virtual void resolv(const char *host);

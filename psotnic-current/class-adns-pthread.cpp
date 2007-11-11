@@ -205,7 +205,7 @@ void adns_pthread::setupPool(int n)
 		pthread_attr_destroy(&attr);
 	}
 	else if(n == 0)
-		removePool();
+		killThreads();
 }
 
 adns_pthread::~adns_pthread()
@@ -275,10 +275,10 @@ void adns_pthread::removePool()
 	resolving = NULL;
 	th = NULL;
 }
-/*
+
 void adns_pthread::killThreads()
 {
-	for(int i=0; i<n; ++i)
+	for(int i=0; i<poolSize; ++i)
 		pthread_kill(th[i], SIGKILL);
 
 	if(todo)
@@ -287,7 +287,7 @@ void adns_pthread::killThreads()
 		delete cache;
 	if(resolving)
 		delete resolving;
-
+	
 	if(th)
 		delete [] th;
 
@@ -295,6 +295,7 @@ void adns_pthread::killThreads()
 	cache = NULL;
 	resolving = NULL;
 	th = NULL;
+
+	poolSize = 0;
 }
-*/
 #endif
