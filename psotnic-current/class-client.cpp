@@ -221,8 +221,9 @@ void client::restart()
 	char buf[MAX_LEN];
 
 	net.~inet();
+#ifdef HAVE_ADNS
 	delete resolver;
-
+#endif
 	snprintf(buf, MAX_LEN, "pid.%s", (const char *) config.nick);
 	unlink(buf);
 
