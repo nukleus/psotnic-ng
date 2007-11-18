@@ -44,6 +44,7 @@ int adns_firedns::fillFDSET(fd_set *set)
 		
 		while(p)
 		{
+			DEBUG(assert(p->fd > 0));
 			FD_SET(p->fd, set);
 			max = MAX(p->fd, max);
 			p++;
@@ -76,6 +77,7 @@ void adns_firedns::processResultSET(fd_set *set)
 			q = p;
 			p++;
 
+			DEBUG(assert(q->fd > 0));
 			if(FD_ISSET(q->fd, set))
 			{
 				m = firedns_getresult(q->fd);
@@ -104,7 +106,6 @@ void adns_firedns::processResultSET(fd_set *set)
 							DEBUG(printf("[D] FIREDNS :: processResult :: unknown type : %s\n", q->host));
 							break;
 					}
-					killSocket(q->fd);
 				}
 				resolving->remove(q);
 			}

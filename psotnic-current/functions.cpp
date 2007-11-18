@@ -243,25 +243,26 @@ void lurk()
 		if(pid == -1)
 		{
 	    	printf("[-] Fork failed: %s\n", strerror(errno));
+			_exit(1);
 		}
 		else if(!pid)
 		{
-			//freopen("/dev/null", "r", stdin);
-    		//freopen("/dev/null", "w", stdout);
-			//freopen("/dev/null", "w", stderr);
-#ifdef HAVE_ANTIPTRACE
-			antiptrace_lurk();
-#endif
-			return;
-		}
-		else
-		{
-			printf("[+] Going into background [pid: %d]\n", (int) pid);
+			printf("[+] Going into background [pid: %d]\n", (int) getpid());
+			if(setsid() == -1)
+				perror("[!] Cannot create new session: setsid()");
+			freopen("/dev/null", "r", stdin);
+    		freopen("/dev/null", "w", stdout);
+			freopen("/dev/null", "w", stderr);
+			
 			inetconn p;
 			char buf[MAX_LEN];
 			snprintf(buf, MAX_LEN, "pid.%s", (const char *) config.handle);
 			p.open(buf, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-			p.send(itoa(pid), NULL);
+			p.send(itoa(getpid()), NULL);
+			return;
+		}
+		else
+		{
 			_exit(0);
 		}
 	}
