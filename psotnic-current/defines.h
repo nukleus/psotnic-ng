@@ -343,5 +343,7 @@ typedef void* DLSYM_OBJECT;
     #define bzero(a, b) memset(a, 0, b)
 #endif
 	
-
+#ifndef MAX
+	#define MAX(A, B) (A) > (B) ? (A) : (B)
+#endif
 #endif

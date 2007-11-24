@@ -46,7 +46,7 @@ void srand(int a=0, int b=0, int c=0);
 #include <sys/types.h>
 //#include <sys/dir.h>
 
-#ifdef HAVE_ADNS
+#ifdef HAVE_ADNS_PTHREAD
     #include <resolv.h>
 #endif
 
