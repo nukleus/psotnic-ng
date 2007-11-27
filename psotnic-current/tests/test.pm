@@ -104,6 +104,21 @@ sub getGccOptions
 		die;
 	}
 
+	tryCompile("${cc_prefix}gcc", 'select.c', '-lsocket', '-lnsl', '-lc', '-lm');
+	my $fd_setsize = `./a.out`;
+
+	print "`-> determining select set size: ";
+
+	if($fd_setsize < 1024)
+	{
+		print "too small ($fd_setsize), redefining to 1024\n";
+		$cflags .= "-DFD_SETSIZE=1024 ";
+	}
+	else
+	{
+		print "ok ($fd_setsize)\n";
+	}
+
 	#determine linker options
     tryCompile("${cc_prefix}g++", 'ipv4.c', '-lsocket', '-lnsl', '-lc', '-lm');
 

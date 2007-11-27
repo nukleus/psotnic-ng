@@ -562,9 +562,7 @@ int main(int argc, char *argv[])
 
 		/* firedns resolver */
 #ifdef HAVE_ADNS_FIREDNS
-		bk;
 		dynamic_cast<adns_firedns*>(resolver)->processResultSET(&rfd);
-		bk;
 #endif		
 
 		if(net.hub.fd && net.hub.status & STATUS_SYNSENT)
