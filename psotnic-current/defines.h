@@ -346,4 +346,8 @@ typedef void* DLSYM_OBJECT;
 #ifndef MAX
 	#define MAX(A, B) (A) > (B) ? (A) : (B)
 #endif
+
+#ifndef MIN
+	#define MIN(a,b) (a) > (b) ? (b) : (a)
+#endif
 #endif

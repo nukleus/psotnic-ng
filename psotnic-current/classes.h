@@ -628,6 +628,7 @@ class settings : public options
 	entBool DONT_TRUST_OPS;
 	entBool PRE_023_FINAL_COMPAT;
     entBool PRE_0211_FINAL_COMPAT;
+	entBool PRE_0214_FINAL_COMPAT;
     
 	settings();
 };

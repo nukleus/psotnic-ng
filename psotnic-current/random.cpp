@@ -63,8 +63,35 @@ int getRandomItems(chanuser **ret, ptrlist<chanuser>::iterator p, int interval, 
 	return r;
 }
 
+int getRandomNumbers_safe(int top, int *ret, int num)
+{
+    int tmp, n, i, *array = new int[top];
+
+    for(i=0; i<top; ++i)
+        array[i] = i;
+
+    for(i=0; i<top; ++i)
+    {
+        n = rand() % top;
+        tmp = array[n];
+        array[n] = array[i];
+        array[i] = tmp;
+    }
+
+    num = MIN(num, top);
+
+    memcpy(ret, array, sizeof(int)*num);
+    delete [] array;
+
+    return num;
+
+}
+
 int getRandomNumbers(int top, int *ret, int num)
 {
+	if(!set.PRE_0214_FINAL_COMPAT)
+		return getRandomNumbers_safe(top, ret, num);
+
     int i, k;
 	char *t = new char[top];
 

@@ -260,6 +260,7 @@ settings::settings()
 	registerObject(DONT_TRUST_OPS = entInt("dont-trust-ops", 0, 2, 0));
 	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 0));
     registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
+	registerObject(PRE_0214_FINAL_COMPAT = entBool("pre-0.2.14-final-compat", 1));
 }
 
 /*
