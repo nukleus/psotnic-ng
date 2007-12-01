@@ -147,7 +147,7 @@ entServer *client::getRandomServer()
 #endif
 		if(!config.server[i].isDefault())
 			++num;
-		
+
 
 	if(!num)
 		return 0;
@@ -161,7 +161,7 @@ entServer *client::getRandomServer()
 	{
 		if(!config.server[i].isDefault())
 			--num;
-		
+
 		if(!num)
 			return &config.server[i];
 	}
@@ -186,7 +186,7 @@ void client::newHostNotify()
             hostNotify = 0;
             return;
         }
-		
+
         int i;
 
 		if(config.bottype == BOT_MAIN)
@@ -338,7 +338,7 @@ void client::joinAllChannels()
 {
     if(joinDelay ==  -1)
         return;
-    
+
 	int i, j;
 
 	Pchar buf;
@@ -595,7 +595,8 @@ int client::connectToIRC(entServer *s)
 		net.irc.status |= STATUS_SYNSENT | opt;
 		net.irc.killTime = set.AUTH_TIME + NOW;
 		net.irc.pass = NULL;
-		
+		nextReconnect = 0;
+
 		if(s)
 		{
 		    pass = (const char *) s->getPass();
@@ -603,9 +604,9 @@ int client::connectToIRC(entServer *s)
 			net.irc.pass = (char *) pass;
 		}
 
-#ifdef HAVE_SSL		
+#ifdef HAVE_SSL
 		if(s->isSSL())
-		{	
+		{
 			net.irc.enableSSL();
 			net.irc.status |= STATUS_SSL_WANT_CONNECT | STATUS_SSL_HANDSHAKING;
 		}
@@ -656,17 +657,17 @@ void client::checkQueue()
 #endif
 			ch->recheckShits();
 			ch->checkList();
-			
+
 			if(ch->chset->KEEPOUT && (ch->me->flags & IS_OP))
 				ch->checkKeepout();
 
 			ch->checkProtectedChmodes();
-			
+
 			if(!(ch->me->flags & IS_OP))
 			{
 				if(!ch->opedBots.entries()) ch->initialOp = 0;
-				if(ch->chset->BOT_AOP_MODE == 0 || 
-					(ch->chset->BOT_AOP_MODE == 1 && ch->toKick.entries() <= 4) || 
+				if(ch->chset->BOT_AOP_MODE == 0 ||
+					(ch->chset->BOT_AOP_MODE == 1 && ch->toKick.entries() <= 4) ||
 					ch->initialOp <= NOW - set.ASK_FOR_OP_DELAY && ch->initialOp)
 				{
 					ch->requestOp();
@@ -759,7 +760,7 @@ void client::checkQueue()
 						ch->modeQ[PRIO_HIGH].add(NOW, "-i");
 					else
 						ch->modeQ[PRIO_HIGH].add(NOW+ch->myPos()*set.BACKUP_MODE_DELAY, "-i");
-						
+
 				}
 			}
 		}
@@ -1006,7 +1007,7 @@ void client::reset()
 	{
 		p = ch;
 		ch = ch->next;
-	
+
 		//p->wasop is infact chanlist->wasop
 		//so it will preserve itself across delete/new
 		if(p->wasop && !p->wasop->isEmpty())
@@ -1016,7 +1017,7 @@ void client::reset()
 			{
 				if((u->flags & (IS_OP | HAS_F)) == IS_OP && !p->toKick.find(u))
 					p->wasop->add(u);
-					
+
 				u++;
 			}
 		}
