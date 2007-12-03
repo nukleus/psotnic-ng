@@ -251,6 +251,7 @@ int client::jumps5(const char *proxyhost, int proxyport, const char *ircserver, 
 
 	net.irc.send("QUIT :changing servers", NULL);
 	net.irc.close("changing servers");
+	nextReconnect = 0;
 	return ME.connectToIRC();
 }
 
@@ -275,7 +276,7 @@ int client::jump(const char *host, const char *port, const char *owner, int prot
 	net.irc.close("changing servers");
 
 	net.send(HAS_N, "[*] Jumping to ", (const char *) s.getHost().connectionString, " port ", itoa(s.getPort()), NULL);
-
+        nextReconnect = 0;
 	return ME.connectToIRC(&s);
 }
 
@@ -595,7 +596,6 @@ int client::connectToIRC(entServer *s)
 		net.irc.status |= STATUS_SYNSENT | opt;
 		net.irc.killTime = set.AUTH_TIME + NOW;
 		net.irc.pass = NULL;
-		nextReconnect = 0;
 
 		if(s)
 		{
