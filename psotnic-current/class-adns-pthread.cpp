@@ -85,6 +85,7 @@ void adns_pthread::work()
 	char buf4[MAX_LEN];
 	char buf6[MAX_LEN];
 	char resbuf[MAX_LEN];
+	char resbuf2[MAX_LEN];
 	int error;
 
 	while(1)
@@ -98,6 +99,7 @@ void adns_pthread::work()
 			DEBUG(if(__getIp(h->host))
 				printf(">>> DOUBLE RESOLVE of %s", h->host));
 			strncpy(resbuf, h->host, MAX_LEN);
+			strncpy(resbuf2, h->host, MAX_LEN);
 			pthread_mutex_unlock(&data_mutex);
 
 			if(die)
@@ -132,7 +134,7 @@ void adns_pthread::work()
 			//else
 			//	DEBUG(printf(">>> unknown host: %s\n", h->host));
 
-			host2resolv h2(resbuf);
+			host2resolv h2(resbuf2);
 			resolving->remove(h2);
 			pthread_mutex_unlock(&data_mutex);
 		}
