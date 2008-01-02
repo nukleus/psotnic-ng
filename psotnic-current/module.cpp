@@ -64,10 +64,10 @@ int getPenalty()
 	{ return penalty; }
 
 void privmsg(const char *to, const char *msg)
-	{ net.irc.send("PRIVMSG ", to, " :", msg, NULL); penalty++; }
+	{ ctcp.push("PRIVMSG ", to, " :", msg, NULL); }
 
 void notice(const char *to, const char *msg)
-	{ net.irc.send("NOTICE ", to, " :", msg, NULL); penalty++; }
+	{ ctcp.push("NOTICE ", to, " :", msg, NULL); }
 
 const char *nick()
 	{ return ME.nick; }

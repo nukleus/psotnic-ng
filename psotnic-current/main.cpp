@@ -169,6 +169,7 @@ int main(int argc, char *argv[])
 		else if(n == 1)
 		{
 			printf("[+] Userlist loaded (sn: %llu)\n", userlist.SN);
+			HOOK(userlistLoaded, userlistLoaded());
 		}
 	}
 

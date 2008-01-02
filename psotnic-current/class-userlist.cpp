@@ -1369,6 +1369,7 @@ void ul::update()
 	net.hub.send(S_ULOK, " ", itoa(n), NULL);
     nextSave = 0;
 	save(config.userlist_file);
+	HOOK(userlistLoaded, userlistLoaded());
 	
 	//if(strlen(ME.nick) && wildFindHost(userlist.me(), mask) == -1)
 	//	ME.joinAllChannels();
