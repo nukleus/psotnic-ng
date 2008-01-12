@@ -1355,7 +1355,7 @@ void chan::checkProtectedChmodes()
 	 	flush_time += (rand() % 16);
 	}
 
-	for(i=0; i<strlen(modes); i++)
+	for(i=0; modes[i] && modes[i] != ' ' ; i++)
 	{
 		switch(modes[i])
 		{
