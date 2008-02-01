@@ -25,7 +25,7 @@
 
 // if defined only users that have +v flag can use the commands
 
-#define VCTRL_ADDED_ONLY
+#undef VCTRL_ADDED_ONLY
 
 // delay to prevent mode flood
 
