@@ -23,6 +23,10 @@
 
 #define VCTRL_NOTICE
 
+// if defined only users that have +v flag can use the commands
+
+#define VCTRL_ADDED_ONLY
+
 // delay to prevent mode flood
 
 #define VCTRL_MAX_DELAY 0
@@ -76,6 +80,11 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     if(!(u->flags & IS_VOICE))      // user is not voiced
         return;
 
+#ifdef VCTRL_ADDED_ONLY
+   if(!(u->flags & (HAS_V | HAS_O)))
+        return;
+#endif
+
     str2words(cmd, msg, 1, MAX_LEN, 0);
 
     for(fptr=vctrl_flist; fptr->command; fptr++)
@@ -106,13 +115,19 @@ void hook_modeWho(chan *ch, const char (*mode)[MODES_PER_LINE], const char **use
     if(!(ch->me->flags & IS_OP))
         return;
 
+    if(!findUser(mask, ch)) // could be a servermode
+        return;
+
     for(int i=0; i<MODES_PER_LINE; i++, *user++)
     {
         if(mode[0][i]=='+' && mode[1][i]=='v')
         {
-            if(!findUser(mask, ch)) // could be a servermode
-                return;
+#ifdef VCTRL_ADDED_ONLY
+            chanuser *u=findUser(*user, ch);
 
+            if(!u || !(u->flags & (HAS_V | HAS_O)))
+                continue;
+#endif
             strncpy(buf, VCTRL_INTRO, MAX_LEN-1);
             buf[MAX_LEN-1]='\0';
 
@@ -324,7 +339,7 @@ int vctrl_get_delay(void)
 
 extern "C" module *init()
 {
-    module *m=new module("voicecontrol", "Patrick Okraku <patrick@okraku.de>", "0.2");
+    module *m=new module("voicecontrol", "patrick <patrick@psotnic.com>", "0.3");
     struct timeval tv;
 
     m->hooks->privmsg=hook_privmsg;

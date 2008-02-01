@@ -68,7 +68,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 
 extern "C" module *init()
 {
-    module *m=new module("!uptime", "Patrick Okraku <patrick@okraku.de>", "0.1");
+    module *m=new module("!uptime", "patrick <patrick@psotnic.com>", "0.1");
     m->hooks->privmsg=hook_privmsg;
     return m;
 }

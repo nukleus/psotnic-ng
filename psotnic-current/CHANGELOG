@@ -7,7 +7,7 @@
 *              reports and core dumps ;-P
 *            - Pawe³ (Googie) Salawa, boogie@myslenice.one.pl:
 *              tcl hints, .bottree command
-*            - patrick, patrick@hiddenbox.de:
+*            - patrick, patrick@psotnic.com:
 *              many patches, modules
 *            - ppl from #psotnic @ IRCnet:
 *              ideas, bug reports, feature requests
@@ -113,7 +113,7 @@ Psotnic 0.2.11 (2006/10/26) changes:
 - fixed: shits did not expire.
 - added: .bc bot cfg +/-(debug)load module" works, patch by patrick
   (http://hiddenbox.de/patrick/psotnic/module.diff)
-- added: vcntl.cpp module by patrick
+- added: vctrl.cpp module by patrick
 - fixed: bot keepnick works after colission, bot takes nick when it sees his
   nick quiting - patch by patrick
 - fixed: bot removes bans upon shits expiration or .-shit - patch by patrick

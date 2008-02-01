@@ -117,7 +117,7 @@ void hook_timer()
 
 extern "C" module *init()
 {
-    module *m=new module("noautorejoin", "Patrick Okraku <patrick@okraku.de>", "0.1");
+    module *m=new module("noautorejoin", "patrick <patrick@psotnic.com>", "0.1");
     m->hooks->join=hook_join;
     m->hooks->kick=hook_kick;
     m->hooks->timer=hook_timer;

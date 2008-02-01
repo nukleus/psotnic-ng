@@ -569,7 +569,7 @@ void prepareCustomData()
 
 extern "C" module *init()
 {
-    module *m=new module("repeat", "Patrick Okraku <patrick@okraku.de>", "0.1");
+    module *m=new module("repeat", "patrick <patrick@psotnic.com>", "0.1");
     initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
 #ifndef BAN_DIRECTLY
     initCustomData("chan", (FUNCTION) chanConstructor, (FUNCTION) chanDestructor);
