@@ -156,6 +156,18 @@ bool isSticky (const char *ban, chan *ch)
 	return protmodelist::isSticky(ban, BAN, ch);
 }
 
+void stop()
+{
+	stopParsing=true;
+}
+
+void reconnect(const char *reason, int delay=0)
+{
+	net.irc.send("QUIT :", reason, NULL);
+	net.irc.close(reason);
+	ME.nextConnToIrc = NOW + delay;
+}
+
 /*
  * Module loading related stuff
  */

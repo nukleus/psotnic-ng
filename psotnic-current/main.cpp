@@ -42,6 +42,7 @@ update psotget;
 asyn_socks5 socks5;
 int hostNotify;
 int stopPsotnic = 0;
+bool stopParsing = false;
 
 #ifdef HAVE_DEBUG
 int debug;

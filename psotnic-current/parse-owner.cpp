@@ -412,6 +412,17 @@ void parse_owner(inetconn *c, char *data)
 	}
 	/* REGISTERED OWNER */
 
+        if(arg[0][0] == '.')
+        {
+		HOOK(partylineCmd, partylineCmd(c->name, c->handle->flags[GLOBAL], arg[0], srewind(data, 1)));
+
+		if(stopParsing)
+		{
+			stopParsing=false;
+                	return;
+		}
+        }
+
 	if(!strcmp(arg[0], ".bye") || !strcmp(arg[0], ".exit") || !strcmp(arg[0], ".quit"))
 	{
 		a = srewind(data, 1);
@@ -2816,8 +2827,6 @@ void parse_owner(inetconn *c, char *data)
 
 	if(arg[0][0] == '.')
 	{
-		//FIXME: we whould check some kind of return condition
-		HOOK(unknownPartylineCmd, unknownPartylineCmd(c->name, c->handle->flags[GLOBAL], arg[0], srewind(data, 1)));
 		c->send("What? You need `.help'?", NULL);
 		return;
 	}

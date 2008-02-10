@@ -99,3 +99,8 @@ char* httpget (const char *link)
 // desc: find first connection from given handle
 inetconn* findConnByHandle (HANDLE *h)
 inetconn* findConnByName (const char *name)
+
+// desc: tells the bot that it should not do any further parsing
+void stop ()
+
+void reconnect (char *reason, int delay)

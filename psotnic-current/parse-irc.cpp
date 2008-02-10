@@ -481,6 +481,14 @@ void parse_irc(char *data)
 
 	if(!strcmp(arg[1], "NOTICE"))
 	{
+		HOOK(notice, notice(arg[0], arg[2], srewind(data, 3) + 1));
+
+		if(stopParsing)
+		{
+			stopParsing=false;
+			return;
+		}
+
 		if(strchr(arg[0], '.') && !strchr(arg[0], '@'))
 		{
 			chan *ch = ME.findChannel(arg[2]);
@@ -499,7 +507,6 @@ void parse_irc(char *data)
 			}
 		}
 
-		HOOK(notice, notice(arg[0], arg[2], srewind(data, 3) + 1));
 		return;
 	}
 
@@ -517,6 +524,14 @@ void parse_irc(char *data)
             parse_ctcp(arg[0], data + 2, arg[2]);
             return;
         }
+
+	HOOK(privmsg, privmsg(arg[0], arg[2], srewind(data, 3) + 1));
+
+	if(stopParsing)
+	{
+		stopParsing=false;
+		return;
+	}
 
 		if(!strcmp(ME.nick, arg[2]))
 		{
@@ -718,7 +733,6 @@ void parse_irc(char *data)
 	        }
 		}
 
-		HOOK(privmsg, privmsg(arg[0], arg[2], srewind(data, 3) + 1));
         return;
     }
     /* some numeric replies */

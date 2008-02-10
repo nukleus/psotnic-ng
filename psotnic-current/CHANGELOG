@@ -20,6 +20,20 @@
 * Have fun -- pks
 *
 
+***************************************************************************************
+* to get the complete changelog, visit: http://psotnic.wiki.sourceforge.net/Changelog *
+***************************************************************************************
+
+Psotnic 0.2.14-pre1 (2008/02/10) most important changes:
+- modules: added stop() command that tells the bot to stop parsing after HOOK() (patrick)
+- security fix: if .set pre0.2.11finalcompat was OFF, bots could fall into endless loop (grusin)
+- added key support for protectchmodes (Esio)
+- fixed problem when kick was sent before ban upon on join shit (grusin)
+- added firedns resolver, it is disabled by default, to enable do ./configure withfiredns (grusin)
+- fixed module compilation problems brought in 0.2.13 (grusin)
+- fixed problem with compiling and detecting processor architecture as UNKNOWN on FreeBSD 4.7 and maybe other OSes (Esio)
+- fixed protectchmodes compatybility and flood problem (Esio)
+
 Psotnic 0.2.13 (2007/10/10) changes:
 - fixed: #1745405: added SSL_pending (patch by zerg2012)
 - change: #1761109: enhanced .verify [-a|-p|-h|-c] (Esio)
@@ -86,6 +100,7 @@ Psotnic 0.2.12 (2007/01/12) changes:
 - added: last 3 offences are now showed in whois reply :)
 	[ it can be changed to more/less by changing the value of MAX_WHOIS_OFFENCES
 	  in defines.h :) ] (Esio)
+- change: nickgenerator has been rewritten (by patrick)
 
 Psotnic 0.2.11 (2006/10/26) changes:
 - fixed: bot thought that he was already up, when pid file was empty.

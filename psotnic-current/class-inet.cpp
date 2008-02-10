@@ -469,18 +469,25 @@ void inetconn::_close(const char *reason)
 		{
 			if(status & STATUS_REGISTERED)
 			{
-				net.send(HAS_N, "[-] Disconnected from server ", net.irc.name, " (", reason, ")", NULL);
 				net.propagate(NULL, S_CHNICK, NULL);
 
-				HOOK(disconnected, disconnected());
+				HOOK(disconnected, disconnected(reason));
+				if(stopParsing)
+					stopParsing=false;
+				else
+					net.send(HAS_N, "[-] Disconnected from server ", net.irc.name, " (", reason, ")", NULL);
 
 			}
-			if(status & STATUS_KLINED)
+			else if(status & STATUS_KLINED)
 			{
-				net.send(HAS_N, "[-] I am K-lined on ", net.irc.name, " (", reason, ")", NULL);
-
 				HOOK(klined, klined(reason));
+				if(stopParsing)
+					stopParsing=false;
+				else
+					net.send(HAS_N, "[-] I am K-lined on ", net.irc.name, " (", reason, ")", NULL);
+
 			}
+
 			ME.reset();
 		}
 		else if(this == &net.hub)

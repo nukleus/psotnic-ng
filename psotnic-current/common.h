@@ -19,8 +19,9 @@ class Hooks
 	void (*join)(chanuser *u, chan *ch, const char *mask, int netjoin);
 	void (*botnetcmd)(const char *from, const char *cmd);
 	void (*timer)();
+	void (*connecting)();
 	void (*connected)();
-	void (*disconnected)();
+	void (*disconnected)(const char *reason);
 	void (*klined)(const char *reason);
 	void (*mode)(chan *ch, const char mode[2][MODES_PER_LINE], const char *arg[MODES_PER_LINE]);
 	void (*modeWho)(chan *ch, const char mode[2][MODES_PER_LINE], const char *arg[MODES_PER_LINE], const char *mask);
@@ -32,7 +33,7 @@ class Hooks
 	void (*rawirc)(const char *data);
 	void (*ctcp)(const char *from, const char *to, const char *msg);
 	void (*justSynced)(chan *ch);
-	int (*unknownPartylineCmd)(const char *from, int flags, const char *cmd, const char *args);
+	void (*partylineCmd)(const char *from, int flags, const char *cmd, const char *args);
 	void (*topicChange)(chan *ch, const char *topic, chanuser *u, const char *oldtopic);
 	void (*pre_part)(const char *mask, const char *channel);
 	void (*post_part)(const char *mask, const char *channel);

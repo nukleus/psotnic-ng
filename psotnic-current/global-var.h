@@ -23,6 +23,7 @@ extern update psotget;
 extern int hostNotify;
 extern int stopPsotnic;
 extern ptrlist<module> modules;
+extern bool stopParsing;
 
 #ifdef HAVE_DEBUG
 extern int debug;
