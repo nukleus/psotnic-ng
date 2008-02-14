@@ -50,14 +50,14 @@ bool update::forkAndGo(char *site)
 	parent = tmp[1];
 
 	pid = fork();
-	
+
 	switch(pid)
 	{
 		case -1:
 			net.send(HAS_N, "[-] fork() failed: ", strerror(errno), NULL);
 			end();
 			return false;
-		
+
 		case 0:
 			if(!fcntl(parent, F_SETFL, O_NONBLOCK))
 			{
@@ -78,7 +78,7 @@ bool update::forkAndGo(char *site)
 			}
 			end();
 			_exit(0);
-			
+
 		default:
 			return true;
 	}
@@ -90,7 +90,7 @@ void update::end()
 	close(parent);
 	if(child_pid > 0)
 	    kill(child_pid, 9);
-	
+
 	child_pid = child.fd = parent = 0;
 }
 
@@ -118,51 +118,51 @@ bool update::doUpdate(const char *site)
 	if((n = php.get(updateSite)) > 0)
 	{
 		http::url link(php.data);
-		
+
 		//DEBUG(printf("[D] php.data = %s; n = %d\n", php.data, n));
-		
+
 		if(link.ok() && match("*.tar.gz", link.file) && strlen(link.file) < MAX_LEN)
 		{
 			printf("[+] The newest version is: %s, downloading (this may take a while)\n", link.file);
 			snprintf(updir, 256, ".update-%d", (int) getpid());
-			
+
 			if(mkdir(updir, 0700))
 			{
 				printf("[-] Cannot create update directory: %s\n", strerror(errno));
 				return false;
 			}
-			 
+
 			if(chdir(updir))
 			{
 				printf("[-] Cannot change directory to %s: %s\n", updir, strerror(errno));
 				return false;
-			}	
-			
+			}
+
 //			return false;
 			if((n = file.get(link, link.file)) > 0)
 			{
 				//return false;
 				printf("[+] Unpacking\n");
-				
+
 				int len = strlen(link.file) - 7;
-				
+
 				strncpy(dir, link.file, len);
 				dir[len] = '\0';
-				
+
 				snprintf(buf, MAX_LEN, "tar -zxf %s && mv %s/* .", link.file, dir);
 				if(system(buf))
 					goto dupa;
-					
+
 				printf("[+] Restoring seeds (creating seed.h)\n");
 				FILE *f = fopen("seed.h", "w+");
 				if(!f)
 					goto dupa;
-			
+
 				unsigned char seed[16];
-				
+
 				fprintf(f, "#ifndef PSOTNIC_SEED_H\n");
 				fprintf(f, "#define PSOTNIC_SEED_H 1\n");
-				
+
 				gen_cfg_seed(seed);
 				fprintf(f, "static unsigned char cfg_seed[] = \"");
 				for(int i=0; i<16; ++i)
@@ -175,7 +175,7 @@ bool update::doUpdate(const char *site)
 					fprintf(f, "\\x%02x", seed[i]);
 				fprintf(f, "\";\n");
 				fprintf(f, "#endif\n");
-				
+
 				memset(seed, 0, 16);
 				if(fclose(f))
 					goto dupa;
@@ -183,13 +183,18 @@ bool update::doUpdate(const char *site)
 				strcpy(buf, "./configure");
 #ifdef HAVE_SSL
 				strcat(buf, " --with-ssl");
-#endif								
-#ifdef HAVE_ANTIPTRACE				
+#endif
+#ifdef HAVE_ANTIPTRACE
 				strcat(buf, " --with-antiptrace");
 #endif
+
+#ifdef HAVE_ANDS_FIREDNS
+      				strcat(buf, " --with-firedns");
+#endif
+
 				if(system(buf))
 					goto dupa;
-			
+
 				printf("[*] Compiling (this may take a longer while)\n");
 
 #ifdef HAVE_DEBUG
@@ -202,7 +207,7 @@ bool update::doUpdate(const char *site)
 	#endif
 #endif
 					goto dupa;
-				
+
 				printf("[*] Copying files\n");
 #ifdef HAVE_CYGWIN
 				if(rename("bin/psotnic.exe", "../psotnic.exe"))
@@ -210,7 +215,7 @@ bool update::doUpdate(const char *site)
 				if(rename("bin/psotnic", "../psotnic"))
 #endif
 					goto dupa;
-				
+
 				printf("[*] Cleaning up\n");
 
 				if(chdir("..") || rmdirext(updir))
@@ -218,9 +223,9 @@ bool update::doUpdate(const char *site)
 					printf("[-] Failed to remove %s: %s\n", updir, strerror(errno));
 					return false;
 				}
-				
+
 				printf("[+] We are ready to rock'n'roll ;-)\n");
-				
+
 				return true;
 			}
 			else
@@ -228,11 +233,11 @@ bool update::doUpdate(const char *site)
 				printf("[-] Unable to download file: %s\n", file.error(n));
 				dupa:
 				printf("[-] Error occured during last operation: %s\n", strerror(errno));
-				
+
 				printf("[*] Cleaning up after a failure\n");
 				if(chdir("..") || rmdirext(updir))
 					printf("[-] Failed to remove %s: %s\n", updir, strerror(errno));
-				
+
 				return false;
 			}
 		}
