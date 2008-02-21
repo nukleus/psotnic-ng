@@ -34,7 +34,7 @@ flagTable FT[] = {
     { 'i',  HAS_I,  0,  0,          "auto invite",      "auto invite when kicked out" },
     { 'e',  HAS_E,  0,  0,          "idiot exempted",         "ignored by idiots check" },
     { 'c',  HAS_C,  0,  0,          "clone exempted",   "ignored by clone check" },
-    { 't',  0,      0,  0,          "ignored",          "ignored; left for compatibility reasons" }, 
+    { 't',  0,      0,  0,          "ignored",          "ignored; left for compatibility reasons" },
     { 'p',  HAS_P,  0,  0,          "partyline",        "allowed to access partyline, level is defined by 'n', 's', 'x' flags" },
     { 'q',  HAS_Q, -1,  0,          "quiet",            "not allowed to have voice" },
     { 'd',  HAS_D, -2,  0,          "deoped",           "not allowed to have op" },
@@ -67,7 +67,7 @@ flagTable *ul::findFlagByLetter(char letter, flagTable *ft)
 
         ++ft;
     }
-        
+
     return NULL;
 }
 
@@ -86,7 +86,7 @@ bool ul::mergeFlags(unsigned int &flags, const char *str)
 
     if(!strcmp(str, "*"))
         return true;
-    
+
     bool plus = true;
     bool bot = flags & HAS_B;
     flagTable *ft;
@@ -96,9 +96,9 @@ bool ul::mergeFlags(unsigned int &flags, const char *str)
 	if(!bot)
 	    flags = 0;
 //	else
-//	    flags = HAS_B; 
+//	    flags = HAS_B;
     }
-    
+
     while(*str)
     {
         switch(*str)
@@ -122,7 +122,7 @@ bool ul::mergeFlags(unsigned int &flags, const char *str)
                     else
                         return false;
                 }
-                
+
                 if(plus)
                     flags |= ft->flag | ft->enforced;
                 else
@@ -235,7 +235,7 @@ void ul::sendHandleInfo(inetconn *c, const HANDLE *h, const char *mask)
 		c->send(a+1, NULL);
 		free(a);
 	}
-		
+
 	if(h->createdBy)
 		c->send("created at ", h->creation->ctime(), " by ", h->createdBy, NULL);
 	else
@@ -246,13 +246,13 @@ void ul::sendHandleInfo(inetconn *c, const HANDLE *h, const char *mask)
 	    char flags1[32], flags2[32];
 	    ptrlist<offence::entry>::iterator e = h->history->data.begin();
 	    i = 0;
-	    
+
 	    c->send("offence history: ", NULL);
 	    while(e && i < MAX_WHOIS_OFFENCES)
 	    {
 		userlist.flags2str(e->fromFlags, flags1);
 		userlist.flags2str(e->toFlags, flags2);
-		snprintf(buf, MAX_LEN, "[%3d]: %s(%d): %s\n       %s flags decreased from `%s' to `%s'\n       Created: %s", 
+		snprintf(buf, MAX_LEN, "[%3d]: %s(%d): %s\n       %s flags decreased from `%s' to `%s'\n       Created: %s",
 		++i, e->chan, e->count, e->mode, e->global ? "Global" : "Channel", flags1, flags2, timestr("%d/%m/%Y %T", e->time));
 		c->send(buf, NULL);
 		e++;
@@ -547,8 +547,7 @@ int ul::parse(char *data)
 		int i = userlist.findChannel(arg[1]);
 		if(i != -1)
 		{
-			marg = srewind(data, 3);		
-    			userlist.chanlist[i].chset->setVariable(arg[2], marg ? marg : "");
+    			userlist.chanlist[i].chset->setVariable(arg[2], strlen(arg[4]) ? srewind(data, 3) : arg[3]);
 			return 1;
 		}
 		return 0;
@@ -556,14 +555,12 @@ int ul::parse(char *data)
 	}
 	if(!strcmp(arg[0], S_DSET))
 	{
-		marg = srewind(data, 2);		
-		dset->setVariable(arg[1], marg ? marg : "");
+		dset->setVariable(arg[1], strlen(arg[3]) ? srewind(data, 2) : arg[2]);
 		return 1;
 	}
 	if(!strcmp(arg[0], S_GCHSET) && strlen(arg[2]))
 	{
-		marg = srewind(data, 2);
-		userlist.globalChset(NULL, arg[1], marg ? marg : "");
+		userlist.globalChset(NULL, arg[1], strlen(arg[3]) ? srewind(data, 2) : arg[2]);
 		return 1;
 	}
 	if((!strcmp(arg[0], S_PASSWD) || !strcmp(arg[0], "PASSWD")) && strlen(arg[2]))
@@ -634,7 +631,7 @@ int ul::parse(char *data)
 			h->info->add(arg[2], a);
 		}
 		return 0;
-	}	
+	}
 	if(!strcmp(arg[0], S_ADDOFFENCE) && strlen(arg[8]))
 	{
 		HANDLE *h = userlist.findHandle(arg[1]);
@@ -645,7 +642,7 @@ int ul::parse(char *data)
 			h->history->add(arg[2], a, atol(arg[3]), atoi(arg[4]), atoi(arg[5]), atoi(arg[6]), atoi(arg[7]) ? true : false);
 		}
 		return 0;
-	}	
+	}
 	int stick;
 	if(((stick = !strcmp(arg[0], S_ADDSTICK)) || !strcmp(arg[0], S_ADDSHIT) || (stick=!strcmp(arg[0], S_ADDINVITE)) || (stick=!strcmp(arg[0], S_ADDEXEMPT)) || (stick=!strcmp(arg[0], S_ADDREOP))) && strlen(arg[5]))
 	{
@@ -770,7 +767,7 @@ int ul::userLevel(const HANDLE *h, int n) const
         return 0;
 
     flagTable *ft = FT;
-    
+
     while(ft->letter)
     {
         if(h->flags[n] & ft->flag)
@@ -798,7 +795,7 @@ void ul::reportNewOffences(inetconn *c, const bool showCmd)
     HANDLE *h = first;
     int count = 0;
     pstring<128> buf = "";
-    
+
     while(h)
     {
 	if(h->history && h->history->data.entries())
@@ -815,7 +812,7 @@ void ul::reportNewOffences(inetconn *c, const bool showCmd)
     }
     if(showCmd)
 	net.sendCmd(c, "offences", NULL);
-    
+
     if(count)
 	c->send("New offences (\002", itoa(count), "\002)\002:\002 ", (const char *) buf, NULL);
     else
@@ -832,7 +829,7 @@ void ul::sendUsers(inetconn *c)
     unsigned int not_flags;
     flagTable *ft;
     bool send_chan;
-        
+
     for(i=GLOBAL; i != -1; --i)
 	{
 		if(i == GLOBAL)
@@ -848,16 +845,16 @@ void ul::sendUsers(inetconn *c)
             continue;
         else
             send_chan = true;
-        
+
         ft = FT;
         not_flags = 0;
-        
+
         while(ft->letter)
         {
             h = first;
             count = 0;
             buf = "";
-            
+
             while(h)
 		    {
 			    if(!(h->flags[GLOBAL] & HAS_B) && hasReadAccess(c, h) &&
@@ -870,7 +867,7 @@ void ul::sendUsers(inetconn *c)
 				}
 			    h = h->next;
 		    }
-            
+
             if(count)
             {
                 if(send_chan)
@@ -891,7 +888,7 @@ void ul::sendUsers(inetconn *c)
 			h = first;
         	count = 0;
         	buf = "";
-		
+
 			while(h)
 			{
 				if(!h->flags[GLOBAL])
@@ -903,7 +900,7 @@ void ul::sendUsers(inetconn *c)
             	}
             	h = h->next;
 			}
-		
+
 			if(count)
 				c->send("no flags (\002", itoa(count), "\002)\002:\002 ", (const char *) buf, NULL);
 		}
@@ -1370,7 +1367,7 @@ void ul::update()
     nextSave = 0;
 	save(config.userlist_file);
 	HOOK(userlistLoaded, userlistLoaded());
-	
+
 	//if(strlen(ME.nick) && wildFindHost(userlist.me(), mask) == -1)
 	//	ME.joinAllChannels();
 }
@@ -1700,7 +1697,7 @@ void ul::flags2str(int flags, char *str)
     if(flags & HAS_B)
     {
 		str[i++] = 'b';
-    	
+
         if(flags & HAS_L)
     	{
 			if(flags & HAS_H)
@@ -1725,7 +1722,7 @@ void ul::flags2str(int flags, char *str)
             ft++;
         }
     }
-                
+
 	if(i == 0)
         str[i++] = '-';
 	str[i] = '\0';
@@ -1743,7 +1740,7 @@ int ul::str2userFlags(const char *str)
             flags |= ft->flag | ft->enforced;
         ft++;
     }
-    
+
 	return flags;
 }
 
@@ -1759,7 +1756,7 @@ int ul::str2botFlags(const char *str)
             flags |= ft->flag | ft->enforced;
         ft++;
     }
-    
+
 	return flags;
 }
 
@@ -1776,7 +1773,7 @@ int ul::changeFlags(HANDLE *p, const char *flags, int channum, inetconn *c)
 
     if(!mergeFlags(f, flags))
         return -5;
-        
+
 	//changing user flags
 	if(!isBot(p))
     {
@@ -1787,11 +1784,11 @@ int ul::changeFlags(HANDLE *p, const char *flags, int channum, inetconn *c)
 		/* forbiden global flags: z */
 		if(channum == GLOBAL && f & HAS_Z)
 			return -6;
-		
+
 		/* negtive flags shouldnt exists with positive */
 		/* comment if dont want to use this feature */
 		if(((f & HAS_D) || (f & HAS_Q) || (f & HAS_K)) && userLevel(f) > 0)
-		    return -7; 
+		    return -7;
 
 		/* oh, we got some user */
 		if(c)
@@ -1830,7 +1827,7 @@ int ul::changeFlags(HANDLE *p, const char *flags, int channum, inetconn *c)
 			    if(channum == GLOBAL)
             			p->flags[channum] |= HAS_D;
 			    // should we remove channel flags?
-			    //else 
+			    //else
 			    //	p->flags[channum] = 0;
 			}
 		}
@@ -2219,7 +2216,7 @@ int ul::levelFlags(int level) const
 		//case 1: return HAS_V;
 		case 1:
 		case 0: return 0;
-		
+
 		//case -1: return HAS_Q;
 		//case -2: return HAS_D;
 		//case -3: return HAS_K;
@@ -2285,10 +2282,10 @@ HANDLE *ul::findHandleByHost(const char *host, const int channum) const
 	//HANDLE *p = first->next; // we should handle `idiots' handle also first;
 
 	while(p)
-	{	
+	{
 		for(i=0; i<MAX_HOSTS; i++)
 			if(p->host[i])
-				if(match(p->host[i],host)) 
+				if(match(p->host[i],host))
 				{
 				    if(ret)
 				    {
@@ -2299,7 +2296,7 @@ HANDLE *ul::findHandleByHost(const char *host, const int channum) const
 				    }
 				    ret = p;
 				}
-			
+
 		p = p->next;
 	}
 	return ret;
@@ -2326,29 +2323,29 @@ int ul::addIdiot(const char *mask, const char *channel, const char *reason, unsi
 	static char buf[MAX_LEN], buf2[MAX_LEN];
 	HANDLE *h = findHandleByHost(mask, chnum);
 	int i;
-	
+
 	if(!h) // if handle not found we add host to global idiots handle
 	{
 		h = userlist.first;
-		chanuser *user = new chanuser(mask, (chan*)0, 0, 0);	
+		chanuser *user = new chanuser(mask, (chan*)0, 0, 0);
 		if(isPrefix(user->ident[0]))
 			snprintf(buf, MAX_LEN, "*!?%s@%s", (char *) user->ident+1, user->host);
 		else
                 	snprintf(buf, MAX_LEN, "*!%s@%s", user->ident, user->host);
 
                 if((i = addHost(first, buf, config.handle, NOW)) != -1)
-                {		
-			net.send(HAS_N, "New offence", (number == 1) ? " " : "s ", "spoted on \002", (const char*) channel, "\002 from \002", mask, "\002: ", reason, NULL);	
+                {
+			net.send(HAS_N, "New offence", (number == 1) ? " " : "s ", "spoted on \002", (const char*) channel, "\002 from \002", mask, "\002: ", reason, NULL);
 
                      	net.send(HAS_N, "Adding host `\002", buf, "\002' to handle `\002", first->name, "\002'", NULL);
                      	net.send(HAS_B, S_ADDHOST, " ", first->name, " ", buf, NULL);
-			
-			if(!h->history) h->history = new offence;			
-			
+
+			if(!h->history) h->history = new offence;
+
 			snprintf(buf2, MAX_LEN, "%s (by %s)", reason, mask);
 			if(h->history->add((const char *) channel, (const char *) buf2, NOW, number, 0, HAS_D))
 			{
-			    //net.send(HAS_S, S_ADDOFFENCE, " ", first->name, " ", channel, " ", itoa(NOW), " 0 ", atoi(HAS_D), " 1 ", buf2, NULL);	
+			    //net.send(HAS_S, S_ADDOFFENCE, " ", first->name, " ", channel, " ", itoa(NOW), " 0 ", atoi(HAS_D), " 1 ", buf2, NULL);
                      	    ++userlist.SN;
                 	    userlist.nextSave = NOW + SAVEDELAY;
 			    //ME.nextRecheck = NOW + SAVEDELAY;
@@ -2367,39 +2364,39 @@ int ul::addIdiot(const char *mask, const char *channel, const char *reason, unsi
 
 	if((h->flags[GLOBAL] & (HAS_E | HAS_B)) || (h->flags[chnum] & HAS_E))
 		return 4;
-	
+
 	if(!h->history) h->history = new offence;
-	
-	// check for duplicate entries.. 
+
+	// check for duplicate entries..
 	if(h->history->data.entries())
 	{
 	    offence::entry *e = h->history->get(channel, reason, NOW, number);
 	    if(e) // found entries
 		return 5;
 	}
-		
-	
+
+
 	if(value != 5)
 	    i = h->flags[chnum];
 	else
 	    i = h->flags[GLOBAL];
-	    
+
 	net.send(HAS_N, "New offence", (number == 1) ? " " : "s ", "spoted on \002", (const char*) channel, "\002 from \002", h->name, "\002: ", reason, NULL);
 
 	if(!punishIdiot(h, chnum, number)) // we've changded some flags
 	{
 		userlist.flags2str(i, buf2);
-		
-		if(value != 5)	
+
+		if(value != 5)
 		{
 		    userlist.flags2str(h->flags[chnum], buf);
 
 		    net.send(HAS_N, "Changing \002", channel, "\002 flags for `\002", h->name, "\002' to `\002", buf, "\002'", NULL);
-		
+
 		    if(set.PRE_0211_FINAL_COMPAT)
 		    {
-			net.send(HAS_B, S_CHATTR, " ", h->name, " - ", channel, NULL);		    
-			net.send(HAS_B, S_CHATTR, " ", h->name, " ", buf, " ", channel, NULL);		    
+			net.send(HAS_B, S_CHATTR, " ", h->name, " - ", channel, NULL);
+			net.send(HAS_B, S_CHATTR, " ", h->name, " ", buf, " ", channel, NULL);
 			++userlist.SN;
 		    }
 		    else
@@ -2410,48 +2407,48 @@ int ul::addIdiot(const char *mask, const char *channel, const char *reason, unsi
 		    userlist.flags2str(h->flags[GLOBAL], buf);
 
 		    net.send(HAS_N, "Changing Global flags for `\002", h->name, "\002' to `\002", buf, "\002'", NULL);
-		
+
 		    if(set.PRE_0211_FINAL_COMPAT)
 		    {
-			net.send(HAS_B, S_CHATTR, " ", h->name, " -", NULL);		    
-			net.send(HAS_B, S_CHATTR, " ", h->name, " ", buf,  NULL);		    
+			net.send(HAS_B, S_CHATTR, " ", h->name, " -", NULL);
+			net.send(HAS_B, S_CHATTR, " ", h->name, " ", buf,  NULL);
 			++userlist.SN;
 		    }
 		    else
 			net.send(HAS_B, S_CHATTR, " ", h->name, " -", buf2, "+", buf, NULL);
-		
+
 		    for(int j = 0; j < MAX_CHANNELS; j++)
 		    {
 			if(userlist.chanlist[j].name) // chan exists
 			{
 			    if(h->flags[j] && h->flags[j] != HAS_D) //user has flags and dont has +d
-			    {	
+			    {
 				net.send(HAS_N, "Changing \002", (const char *) userlist.chanlist[j].name, "\002 flags for `\002", h->name, "\002' to `\002-\002'", NULL);
-			    
+
 				h->flags[j] = 0; // no flags
-				net.send(HAS_B, S_CHATTR, " ", h->name, " - ", (const char *) userlist.chanlist[j].name, NULL);		    
+				net.send(HAS_B, S_CHATTR, " ", h->name, " - ", (const char *) userlist.chanlist[j].name, NULL);
 				++userlist.SN;
 			    }
 			}
 		    }
 		}
-				    
+
         	++userlist.SN;
         }
 
 	if(value != 5)
 	{
 	    h->history->add((const char *) channel, (const char *) reason, NOW, number, i, h->flags[chnum]);
-	    //net.send(HAS_S, S_ADDOFFENCE, " ", h->name, " ", channel, " ", itoa(NOW), " ", itoa(i), " ", itoa(h->flags[chnum]), " 0 ", reason, NULL);	
+	    //net.send(HAS_S, S_ADDOFFENCE, " ", h->name, " ", channel, " ", itoa(NOW), " ", itoa(i), " ", itoa(h->flags[chnum]), " 0 ", reason, NULL);
 	}
 	else
 	{
 	    h->history->add((const char *) channel, (const char *) reason, NOW, number, i, h->flags[GLOBAL], true);
-	    //net.send(HAS_S, S_ADDOFFENCE, " ", h->name, " ", channel, " ", itoa(NOW), " ", itoa(i), " ", itoa(h->flags[chnum]), " 1 ", reason, NULL);	
+	    //net.send(HAS_S, S_ADDOFFENCE, " ", h->name, " ", channel, " ", itoa(NOW), " ", itoa(i), " ", itoa(h->flags[chnum]), " 1 ", reason, NULL);
 	}
 	//ME.nextRecheck = NOW + SAVEDELAY;
         userlist.nextSave = NOW + SAVEDELAY;
-	
+
 	return 0;
 }
 
@@ -2459,7 +2456,7 @@ unsigned int ul::offences() const
 {
     unsigned int i = 0;
     HANDLE *h = first;
-    
+
     while(h)
     {
 	if(h->history && h->history->data.entries()) i++;

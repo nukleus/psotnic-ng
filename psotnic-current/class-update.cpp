@@ -188,7 +188,7 @@ bool update::doUpdate(const char *site)
 				strcat(buf, " --with-antiptrace");
 #endif
 
-#ifdef HAVE_ANDS_FIREDNS
+#ifdef HAVE_ADNS_FIREDNS
       				strcat(buf, " --with-firedns");
 #endif
 
