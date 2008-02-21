@@ -438,7 +438,6 @@ void ul::cleanHandle(HANDLE *h)
 int ul::parse(char *data)
 {
 	char arg[10][MAX_LEN];
-	char *marg;
 	HANDLE *h;
 
 	if(!data || !strlen(data)) return 0;
