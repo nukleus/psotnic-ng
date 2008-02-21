@@ -173,7 +173,7 @@ void parse_irc(char *data)
     if(!strcmp(arg[1], "PART"))
     {
 		HOOK(pre_part, pre_part(arg[0], arg[2]));
-		HOOK(pre_partMsg, pre_partMsg(arg[0], arg[2], srewind(data,3), true));
+		HOOK(pre_partMsg, pre_partMsg(arg[0], arg[2], srewind(data,3), false));
 		
         if(!strcasecmp(ME.mask, arg[0]))
         {
@@ -192,7 +192,7 @@ void parse_irc(char *data)
 
         }
 		HOOK(post_part, post_part(arg[0], arg[2]));
-		HOOK(post_partMsg, post_partMsg(arg[0], arg[2], srewind(data,3), true));
+		HOOK(post_partMsg, post_partMsg(arg[0], arg[2], srewind(data,3), false));
         return;
     }
     if(!strcmp(arg[1], "NICK"))
