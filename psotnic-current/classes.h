@@ -625,7 +625,7 @@ class settings : public options
 	entInt CRITICAL_BOTS;
 	entTime QUARANTINE_TIME;
 	entTime BACKUP_MODE_DELAY;
-	entBool DONT_TRUST_OPS;
+	entInt DONT_TRUST_OPS;
 	entBool PRE_023_FINAL_COMPAT;
     entBool PRE_0211_FINAL_COMPAT;
 	entBool PRE_0214_FINAL_COMPAT;
