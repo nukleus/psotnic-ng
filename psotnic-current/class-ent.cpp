@@ -900,7 +900,7 @@ options::event *entServer::set(const char *ip, const char *port, const char *pas
 /**
  * entLoadModules
  */
-extern void registerAll(int (*_register)(const char *name, DLSYM_FUNCTION address));
+//extern void registerAll(int (*_register)(const char *name, DLSYM_FUNCTION address));
 
 bool entLoadModules::isDefault() const
 {
@@ -993,7 +993,7 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 			digestHex[0] = '\0';
 
 
-		int (*_register)(const char *name, DLSYM_FUNCTION address);
+		//int (*_register)(const char *name, DLSYM_FUNCTION address);
 		module *(*init)();
 		void *handle = dlopen(arg2, RTLD_LAZY);
 
@@ -1003,12 +1003,12 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 			return &_event;
 		}
 
-		_register = (int (*)(const char*, DLSYM_FUNCTION)) dlsym_cast(handle, "_register");
+		/*_register = (int (*)(const char*, DLSYM_FUNCTION)) dlsym_cast(handle, "_register");
 		if(!_register)
 		{
 			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
 			return &_event;
-		}
+		}*/
 
 		init = (module*(*)()) dlsym_cast(handle, "init");
 		if(!init)
@@ -1017,7 +1017,7 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 			return &_event;
 		}
 
-		registerAll(_register);
+		//registerAll(_register);
 
 		void *(*destroy)()=(void*(*)()) dlsym_cast(handle, "destroy");
 

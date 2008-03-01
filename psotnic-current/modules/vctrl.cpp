@@ -17,7 +17,9 @@
  *		- get rid of delay
 */
 
-#include "includes/psotnic.h"
+#include "../prots.h"
+#include "../global-var.h"
+#include "module.h"
 
 // if defined the bot will send notices (introduction, errors)
 

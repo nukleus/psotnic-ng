@@ -234,7 +234,13 @@ foreach $t (keys %targets)
 
     print $f "tar: $filelist\n";
     print $f "\t\@echo [*] Linking\n";
-    print $f "\t\@${cc_prefix}g++ $filelist -o $out $targets{$t} $cflags $lflags\n";
+
+    if($t =~ /debug|dynamic/) {
+	print $f "\t\@${cc_prefix}g++ $filelist -o $out $targets{$t} $cflags $lflags -export-dynamic\n";
+    }
+    else {
+	print $f "\t\@${cc_prefix}g++ $filelist -o $out $targets{$t} $cflags $lflags\n";
+    }
 
     if(!($t =~ /debug/)) {
 	print $f "\t\@echo [*] Striping debug information\n";

@@ -4,7 +4,9 @@
    supports linux (with proc fs) and *bsd (sysctl).
 */
 
-#include "includes/psotnic.h"
+#include "../prots.h"
+#include "../global-var.h"
+#include "module.h"
 #include <sys/param.h>
 
 #ifdef linux 
@@ -84,7 +86,7 @@ bool has_global_flag(chanuser *u, int flag)
 
     snprintf(mask, MAX_LEN, "%s!%s@%s", u->nick, u->ident, u->host);
 
-    for(h=userlist->first; h; h=h->next)
+    for(h=userlist.first; h; h=h->next)
     {
 	if(!(h->flags[GLOBAL] & flag))
             continue;

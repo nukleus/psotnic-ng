@@ -6,7 +6,9 @@
    TODO: -testing ;-)
 */
 
-#include "includes/psotnic.h"
+#include "../prots.h"
+#include "../global-var.h"
+#include "module.h"
 
 // configuration
 
@@ -99,7 +101,7 @@ public:
             strncpy(this->content, content, RP_BUFSIZE-1);
             this->content[RP_BUFSIZE-1]='\0';
             count=1;
-            timestamp=(*NOW);
+            timestamp=NOW;
             next=NULL;
         }
 
@@ -179,7 +181,7 @@ public:
         {
             help=ptr->next;
 
-            if((*NOW)>ptr->timestamp+RP_SECONDS)
+            if(NOW>ptr->timestamp+RP_SECONDS)
                 delLine(ptr->content);
 
             ptr=help;
@@ -203,14 +205,14 @@ public:
     {
         if(timer==0)
         {
-            timer=(*NOW);
+            timer=NOW;
             count=1;
             return;
         }
 
-        if((*NOW)>=timer+FL_SECONDS) // expired
+        if(NOW>=timer+FL_SECONDS) // expired
         {
-            timer=(*NOW);
+            timer=NOW;
             count=1;
             return;
         }
@@ -264,7 +266,7 @@ public:
             this->ident[sizeof(this->ident)-1]='\0';
             strncpy(this->host, host, sizeof(this->host)-1);
             this->host[sizeof(this->host)-1]='\0';
-            timestamp=(*NOW);
+            timestamp=NOW;
             next=NULL;
         }
 
@@ -335,7 +337,7 @@ public:
         {
             help=ptr->next;
 
-            if((*NOW)>ptr->timestamp+RP_FORGET_DELAY*60)
+            if(NOW>ptr->timestamp+RP_FORGET_DELAY*60)
                 del(ptr->ident, ptr->host);
 
             ptr=help;
@@ -358,10 +360,10 @@ void hook_privmsg_notice(const char *from, const char *to, const char *msg)
     chanuser *cu;
 
 #ifdef USE_LAGCHECK
-    if(!strcasecmp(from, ME->mask) && !strcasecmp(to, ME->nick) && !strcmp(msg, "RP_LAGCHECK"))
+    if(!strcasecmp(from, ME.mask) && !strcasecmp(to, ME.nick) && !strcmp(msg, "RP_LAGCHECK"))
     {
-        lagcheck.current_lag=(*NOW)-lagcheck.sent;
-        lagcheck.next=(*NOW)+LAGCHECK_DELAY;
+        lagcheck.current_lag=NOW-lagcheck.sent;
+        lagcheck.next=NOW+LAGCHECK_DELAY;
         lagcheck.in_progress=false;
         return;
     }
@@ -423,7 +425,7 @@ void hook_timer()
 
     for(int i=0; i<MAX_CHANNELS; i++)
     {
-        if((ch=findChannel(userlist->chanlist[i].name)))
+        if((ch=findChannel(userlist.chanlist[i].name)))
         {
             for(u=ch->users.begin(); u; u++)
             {
@@ -437,12 +439,12 @@ void hook_timer()
     }
 #ifdef USE_LAGCHECK
     if(lagcheck.in_progress)
-        lagcheck.current_lag=(*NOW)-lagcheck.sent;
+        lagcheck.current_lag=NOW-lagcheck.sent;
 
-    else if(lagcheck.next && (*NOW)>=lagcheck.next)
+    else if(lagcheck.next && NOW>=lagcheck.next)
     {
-        privmsg(ME->nick, "RP_LAGCHECK");
-        lagcheck.sent=(*NOW);
+        privmsg(ME.nick, "RP_LAGCHECK");
+        lagcheck.sent=NOW;
         lagcheck.in_progress=true;
     }
 #endif
@@ -451,11 +453,11 @@ void hook_timer()
 #ifdef USE_LAGCHECK
 void hook_connected()
 {
-    lagcheck.next=(*NOW)+120;
+    lagcheck.next=NOW+120;
     lagcheck.in_progress=false;
 }
 
-void hook_disconnected()
+void hook_disconnected(const char *reason)
 {
     lagcheck.current_lag=0;
     lagcheck.next=0;
@@ -555,7 +557,7 @@ void prepareCustomData()
  
     for(int i=0; i<MAX_CHANNELS; i++)
     {
-        if((ch=findChannel(userlist->chanlist[i].name)))
+        if((ch=findChannel(userlist.chanlist[i].name)))
         {
             for(u=ch->users.begin(); u; u++)
                 if((cu=findUser(u->nick, ch)))

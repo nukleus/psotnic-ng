@@ -4,7 +4,9 @@
  * The user will be banned temporarily.
  */
 
-#include "includes/psotnic.h"
+#include "../prots.h"
+#include "../global-var.h"
+#include "module.h"
 
 /* if the user rejoins after being kicked within this time (in seconds),
    it will be handled as autorejoin.
@@ -47,7 +49,7 @@ arj_chk::entry::entry(chan *_channel, char *_nick, time_t _timestamp)
 
 bool arj_chk::entry::expired()
 {
-    return (*NOW)>timestamp+NOARJ_DELAY;
+    return NOW>timestamp+NOARJ_DELAY;
 }
 
 arj_chk::arj_chk()
@@ -57,7 +59,7 @@ arj_chk::arj_chk()
 
 void arj_chk::add(chan *channel, char *nick)
 {
-	entry *node=new entry(channel, nick, (*NOW));
+	entry *node=new entry(channel, nick, NOW);
 	data.add(node);
 }
 
