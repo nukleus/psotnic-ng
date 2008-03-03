@@ -301,6 +301,32 @@ else
 #moved to makefiles, to keep compatybility
 #`gcc -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c`;
 
+
+#
+# Generating config.h
+#
+	$f = new FileHandle "> config.h";
+    if(defined $f)
+    {
+		print "[+] Generating config.h\n";
+        print $f "#ifndef PSOTNIC_CONFIG_H\n";
+        print $f "#define PSOTNIC_CONFIG_H 1\n\n";
+
+		my @arr = split(/ /, $cflags);
+ 
+		foreach(@arr)
+		{
+		    if(/(-D)(.*)=(.*)/) {
+        		print $f "#define $2\t$3\n";
+		    }
+		    elsif(/(-D)(.*)/) {
+        		print $f "#define $2\t1\n";
+		    }
+		}
+		print $f "\n#endif\n";
+		$f->close		
+	}
+
 #
 # Creating revision file
 #
