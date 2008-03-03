@@ -106,5 +106,4 @@ void botnetcmd(const char *from, const char *cmd)
 		else
 			net.sendOwner(arg[0], S_NOPERM, NULL);
 	}
-	HOOK(botnetcmd, botnetcmd(from, cmd));
 }
