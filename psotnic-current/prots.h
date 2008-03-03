@@ -18,6 +18,7 @@ void srand(int a=0, int b=0, int c=0);
 
 #endif
 
+#include "config.h"
 #include <stdarg.h>
 #include <string.h>
 #include <signal.h>
