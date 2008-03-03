@@ -25,6 +25,13 @@ void botnetcmd(const char *from, const char *cmd)
 {
 	char arg[10][MAX_LEN];
 
+	HOOK(botnetcmd, botnetcmd(from, cmd));
+	if(stopParsing)
+	{
+		stopParsing=false;
+		return;
+	}
+
 	str2words(arg[0], cmd, 10, MAX_LEN);
 
 	if(!strcmp(arg[1], "pset"))

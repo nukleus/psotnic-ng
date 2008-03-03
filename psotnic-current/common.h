@@ -19,7 +19,7 @@ class Hooks
 	void (*join)(chanuser *u, chan *ch, const char *mask, int netjoin);
 	void (*botnetcmd)(const char *from, const char *cmd);
 	void (*timer)();
-	void (*connecting)(int fd);
+	void (*connecting)();
 	void (*connected)();
 	void (*disconnected)(const char *reason);
 	void (*klined)(const char *reason);

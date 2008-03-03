@@ -611,7 +611,7 @@ int client::connectToIRC(entServer *s)
 			net.irc.status |= STATUS_SSL_WANT_CONNECT | STATUS_SSL_HANDSHAKING;
 		}
 #endif
-		HOOK(connecting, connecting(net.irc.fd));
+		HOOK(connecting, connecting());
 		return n;
 	}
 	return 0;

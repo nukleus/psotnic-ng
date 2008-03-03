@@ -420,7 +420,10 @@ int main(int argc, char *argv[])
 				if(n > 0)
 				{
 					HOOK(rawirc, rawirc(irc_buf[current_irc_buf]));
-					parse_irc(irc_buf[current_irc_buf]);
+					if(stopParsing)
+						stopParsing=false;
+					else
+						parse_irc(irc_buf[current_irc_buf]);
 					if(++current_irc_buf == IRC_BUFS)
 						current_irc_buf = 0;
 
@@ -428,8 +431,11 @@ int main(int argc, char *argv[])
 				n = net.irc.readln(buf, MAX_LEN);
 				if(n > 0)
 				{
-					parse_irc(buf);
 					HOOK(rawirc, rawirc(buf));
+					if(stopParsing)
+						stopParsing=false;
+					else
+						parse_irc(buf);
 #endif
 				}
 				else if(n == -1)
