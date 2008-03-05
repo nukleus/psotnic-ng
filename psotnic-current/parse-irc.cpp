@@ -165,6 +165,7 @@ void parse_irc(char *data)
             ch = ME.findChannel(arg[2]);
             if(ch) {
                 HOOK(kickMsg, kickMsg(ch, arg[3], arg[0], srewind(data, 4)));
+		stopParsing=false;
                 ch->gotKick(arg[3], arg[0]);
             }
         }
@@ -173,7 +174,10 @@ void parse_irc(char *data)
     if(!strcmp(arg[1], "PART"))
     {
 		HOOK(pre_part, pre_part(arg[0], arg[2]));
+		stopParsing=false;
+
 		HOOK(pre_partMsg, pre_partMsg(arg[0], arg[2], srewind(data,3), false));
+		stopParsing=false;
 		
         if(!strcasecmp(ME.mask, arg[0]))
         {
@@ -192,7 +196,10 @@ void parse_irc(char *data)
 
         }
 		HOOK(post_part, post_part(arg[0], arg[2]));
+		stopParsing=false;
+
 		HOOK(post_partMsg, post_partMsg(arg[0], arg[2], srewind(data,3), false));
+		stopParsing=false;
         return;
     }
     if(!strcmp(arg[1], "NICK"))
@@ -252,6 +259,7 @@ void parse_irc(char *data)
 
 
 			HOOK(justSynced, justSynced(ch));
+			stopParsing=false;
 		}
         return;
     }
@@ -414,6 +422,7 @@ void parse_irc(char *data)
 		if(!creation)
 		{
 			HOOK(connected, connected());
+			stopParsing=false;
 		}
 
 		return;
@@ -446,6 +455,7 @@ void parse_irc(char *data)
 		{
 			ch->topic = srewind(data, 4)+1;
 			HOOK(topicChange, topicChange(ch, ch->topic, NULL, NULL));
+			stopParsing=false;
 		}
 		return;
 	}
@@ -460,6 +470,7 @@ void parse_irc(char *data)
 			ch->topic = srewind(data, 3)+1;
 
 			HOOK(topicChange, topicChange(ch, ch->topic, u, oldtopic));
+			stopParsing=false;
 		}
 	}
 
@@ -476,6 +487,7 @@ void parse_irc(char *data)
         }
 
 		HOOK(invite, invite(arg[0], arg[3], ch, i == -1 ? NULL : &userlist.chanlist[i]));
+		stopParsing=false;
         return;
     }
 
@@ -852,4 +864,5 @@ void parse_irc(char *data)
     }
 
 	HOOK(crap, crap(data));
+	stopParsing=false;
 }

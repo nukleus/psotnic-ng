@@ -703,6 +703,7 @@ void chan::gotKick(const char *victim, const char *offender)
 
 
 	HOOK(kick, kick(this, kicked, kicker));
+	stopParsing=false;
 
 	if((limit <= users.entries() - 1 || (flags & FLAG_I)) && (kicked->flags & HAS_I) &&
 		myTurn(chset->INVITE_BOTS, kicker->hash32()))
@@ -1085,7 +1086,10 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 		modeQ[PRIO_HIGH].flush(PRIO_HIGH);
 
 	if(synced())
+	{
 		HOOK(join, join(p, this, mask, def_flags & NET_JOINED));
+		stopParsing=false;
+	}
 
 	return p;
 }

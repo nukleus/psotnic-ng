@@ -171,6 +171,7 @@ int main(int argc, char *argv[])
 		{
 			printf("[+] Userlist loaded (sn: %llu)\n", userlist.SN);
 			HOOK(userlistLoaded, userlistLoaded());
+			stopParsing=false;
 		}
 	}
 
@@ -317,6 +318,7 @@ int main(int argc, char *argv[])
 			tclparser.expireTimers();
 #endif
 			HOOK(timer, timer());
+			stopParsing=false;
 #ifdef HAVE_ADNS
 			if(NOW - last_dns >= 5*60)
 			{

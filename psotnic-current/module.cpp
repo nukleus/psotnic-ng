@@ -45,7 +45,7 @@ int kick4(chan *channel, chanuser **multHandle, int num)
 int kick6(chan *channel, chanuser **multHandle, int num)
 	{ return channel->kick6(multHandle, num); }
 
-int kick(chan *channel, chanuser *p, char *reason)
+int kick(chan *channel, chanuser *p, const char *reason)
 	{ return channel->kick(p, reason); }
 
 void setReason(chanuser *u, const char *reason)
