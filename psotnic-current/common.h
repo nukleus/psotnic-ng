@@ -40,6 +40,7 @@ class Hooks
 	void (*pre_partMsg)(const char *mask, const char *channel, const char *msg, bool quit);
 	void (*post_partMsg)(const char *mask, const char *channel, const char *msg, bool quit);
 	void (*userlistLoaded)();
+	void (*chanuserConstructor)(const chan *ch, chanuser *cu);
 
 	Hooks()
 	{

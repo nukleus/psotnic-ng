@@ -1194,10 +1194,19 @@ chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
 	if(customDataConstructor)
 		customDataConstructor(this);
 #endif
+	if(ch)
+	{
+		HOOK(chanuserConstructor, chanuserConstructor(ch, this));
+		stopParsing=false;
+	}
 }
 
 chanuser::~chanuser()
 {
+#ifdef HAVE_MODULES
+	if(host && customDataDestructor)
+		customDataDestructor(this);
+#endif
 	if(nick) free(nick);
 	if(ident) free(ident);
 	if(ip4) free(ip4);
@@ -1205,10 +1214,6 @@ chanuser::~chanuser()
 	if(host)
 	{
 		free(host);
-#ifdef HAVE_MODULES
-		if(customDataDestructor)
-			customDataDestructor(this);
-#endif
 	}
 
 	if(reason) free(reason);
