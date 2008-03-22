@@ -357,7 +357,7 @@ CONFIG::CONFIG()
 	/* optional options :) */
 	registerObject(realname = entString("realname", 1, 255, "Psotnic C++ Edition"));
 	registerObject(nickappend = entWord("nickappend", 1, 255, "_-^`|"));
-	
+	registerObject(altnick = entWord("altnick", 1, 15));
 	registerObject(ident = entWord("ident", 1, 12, pent->pw_name ? pent->pw_name : "nobody"));
 	registerObject(oidentd_cfg = entWord("oidentd-config", 1, 255, ""));
 	registerObject(handle = entWord("handle", 1, 15, ""));		// = nick
@@ -423,7 +423,6 @@ CONFIG::CONFIG()
 	registerObject(vhost = entHost("vhost", entHost::ipv4 | entHost::ipv6 | entHost::bindCheck));
 	registerObject(logfile = entWord("logfile", 1, 16));
 	registerObject(userlist_file = entWord("userlist", 1, 255));	// = nick
-	registerObject(altuidnick = entBool("altuidnick", 1));
 	registerObject(dontfork = entBool("dontfork", 0));
 	registerObject(keepnick = entBool("keepnick", 0));
 	registerObject(kickreason = entString("kickreason", 1, 255));

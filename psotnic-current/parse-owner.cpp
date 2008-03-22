@@ -1657,27 +1657,20 @@ void parse_owner(inetconn *c, char *data)
 			return;
 		}
 		
-		int _test;
-		if(strlen(arg[1]))
-		{
-		    if(strstr(arg[1], "-a"))
+		int _test = -1;
+		if(!strlen(arg[1]) || !strcmp(arg[1], "a") || !strcmp(arg[1], "all"))
 			_test = 0;
-		    else if(strstr(arg[1], "-p"))
+		else if(!strcmp(arg[1], "p") || !strcmp(arg[1], "pass") || !strcmp(arg[1], "passwords"))
 			_test = 1;
-		    else if(strstr(arg[1], "-h"))
+		else if(!strcmp(arg[1], "h") || !strcmp(arg[1], "hosts"))
 			_test = 2;
-		    else if(strstr(arg[1], "-c"))
+		else if(!strcmp(arg[1], "c") || !strcmp(arg[1], "flags") || !strcmp(arg[1], "chflags"))
 			_test = 3;
-		    else
-			_test = -1;
-		}
-		else
-		    _test = 0;
 		
 		if(_test == -1)
 		{
-		    c->send("Usage: .verify [-a|-p|-h|-c]", NULL);
-		    return;
+			c->send("What? You need `\002.help\002'?", NULL);
+			return;
 		}
 		
 		net.sendCmd(c, "verify ", arg[1], NULL);
@@ -1702,7 +1695,7 @@ void parse_owner(inetconn *c, char *data)
 			    _i++;
 			}
 			
-			if(!h->flags[GLOBAL] && (_test == 0 || _test == 3))
+			if(!h->flags[GLOBAL] && !(h->flags[GLOBAL] & HAS_H) && (_test == 0 || _test == 3))
 			{
 			    for(j = 0, _j = -1; _j == -1 && j < MAX_CHANNELS; j++)
 				if(h->flags[j] && userlist.chanlist[j].name)
@@ -2246,7 +2239,7 @@ void parse_owner(inetconn *c, char *data)
 		}
 		return;
 	}
-	if(!strcmp(arg[0], ".echo") && *arg[1])
+	if(!strcmp(arg[0], ".echo") && strlen(arg[1]))
 	{
 		if(!strcmp(arg[1], "on"))
 		{
@@ -2604,7 +2597,7 @@ void parse_owner(inetconn *c, char *data)
 		c->send(".-reop   <mask>   [chan]          .reops    [chan]", NULL);
 		c->send(".bots    [expr]   [flags]         .status   [bot]", NULL);
 		c->send(".offences [handle]                .clearoffences [handle]", NULL);
-		c->send(".verify [-a|-p|-h|-c]             ", NULL);
+		c->send(".verify [aphc]", NULL);
 		c->send(".upbots .downbots .bottree  .who      .whom   .whob", NULL);
 		c->send(".owners .channels .users    .save     .abuse ", NULL);
 		c->send("allowed global flags: -aofmnxstrickedvqp (flag `d' overrides `aofm' flags)", NULL);

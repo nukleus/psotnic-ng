@@ -323,11 +323,11 @@ void parse_irc(char *data)
             ME.nextNickCheck = NOW + set.KEEP_NICK_CHECK_DELAY;
         else
         {
-			if(config.altuidnick && !strcmp(arg[3], config.nick))
-				net.irc.send("NICK 0", NULL);
-			else
-				ME.registerWithNewNick(arg[3]);
-            sleep(1);
+            if(config.altnick.getLen() && !strcmp(arg[3], config.nick) && strcmp(arg[3], config.altnick))
+                net.irc.send("NICK ", (const char*) config.altnick, NULL);
+            else
+                ME.registerWithNewNick(arg[3]);
+           sleep(1);
         }
         return;
     }

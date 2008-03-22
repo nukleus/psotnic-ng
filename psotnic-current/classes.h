@@ -693,6 +693,7 @@ class CONFIG : public options
 	public:
 	pstring<> file;
 	entWord nick;
+	entWord altnick;
 	entWord ident;
 	entWord oidentd_cfg;
 	entWord nickappend;
@@ -717,7 +718,6 @@ class CONFIG : public options
 #endif
 	entBool keepnick;
 	entInt ctcptype;
-	entBool altuidnick;
 	entBool dontfork;
 
 	entHPPH bnc;

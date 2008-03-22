@@ -196,6 +196,6 @@ int initCustomData(const char *Class, FUNCTION constructor, FUNCTION destructor)
 	return 0;
 }
 
-#include "register_module.h"
+//#include "register_module.h"
 
 #endif

@@ -970,7 +970,7 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
     {
         if(synced())
         {
-            if(!hasFlag('i') && myTurn(chset->GUARDIAN_BOTS, hash32("KEEPOUT_LOCK")))
+            if(!hasFlag('i') && myTurn(chset->GUARDIAN_BOTS, p->hash32()))
             {
                 modeQ[PRIO_HIGH].add(NOW, "+i");
                 modeQ[PRIO_HIGH].flush(PRIO_HIGH);
