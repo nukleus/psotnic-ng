@@ -218,13 +218,14 @@ void chan::cwho(const char *owner, const char *arg)
 	    if(strchr(arg, 'v')) f |= IS_VOICE;
 	    if(strchr(arg, 'o')) f |= IS_OP;
 	    if(strchr(arg, 'l')) f |= IS_LUSER;
+	    if(strchr(arg, 'b')) f |= HAS_B;
 	}
 
 	while(p)
 	{
 	    if(f)
 	    {
-		if(((f & IS_VOICE) && (p->flags & IS_VOICE)) || ((f & IS_OP) && (p->flags & IS_OP)) || ((f & IS_LUSER) && !(p->flags & IS_VOICE || p->flags & IS_OP)))
+		if(((f & IS_VOICE) && (p->flags & IS_VOICE)) || ((f & IS_OP) && (p->flags & IS_OP)) || ((f & HAS_B) && (p->flags & HAS_B)) || ((f & IS_LUSER) && !(p->flags & IS_VOICE || p->flags & IS_OP)))
 		{
 		    memset(buf, 0, sizeof(buf));
 		    snprintf(buf, 512, "[%3d] [%c%-12s] [%12s\002@\002%-40s]", ++i, p->flags & IS_OP ? '@' : p->flags & IS_VOICE ? '+' : ' ', (const char *) p->nick, (const char *) p->ident, (const char *) p->host);
