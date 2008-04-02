@@ -262,7 +262,7 @@ settings::settings()
 	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 0));
     registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
 	registerObject(PRE_0214_FINAL_COMPAT = entBool("pre-0.2.14-final-compat", 1));
-	registerObject(PRE_REV124_COMPAT = entBool("pre-rev124-compat", 1));
+	registerObject(PRE_REV124_COMPAT = entBool("pre-rev127-compat", 1));
 }
 
 /*
