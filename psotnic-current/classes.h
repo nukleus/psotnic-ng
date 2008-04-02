@@ -626,6 +626,7 @@ class settings : public options
 	entTime QUARANTINE_TIME;
 	entTime BACKUP_MODE_DELAY;
 	entInt DONT_TRUST_OPS;
+	entTime SERVER_LIMIT_TIME;
 	entBool PRE_023_FINAL_COMPAT;
     entBool PRE_0211_FINAL_COMPAT;
 	entBool PRE_0214_FINAL_COMPAT;

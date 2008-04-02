@@ -258,6 +258,7 @@ settings::settings()
 	registerObject(QUARANTINE_TIME = entTime("quarantine-time", 0, 120, 15));
 	registerObject(BACKUP_MODE_DELAY = entTime("backup-mode-delay", 0, 60, 7));
 	registerObject(DONT_TRUST_OPS = entInt("dont-trust-ops", 0, 2, 0));
+	registerObject(SERVER_LIMIT_TIME = entTime("server-limit-time", 0, MAX_INT, 5));
 	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 0));
     registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
 	registerObject(PRE_0214_FINAL_COMPAT = entBool("pre-0.2.14-final-compat", 1));
@@ -274,7 +275,7 @@ chanset::chanset()
 	registerObject(BOT_AOP_MODE = entInt("bot-aop-mode", 0, 2, 1));
 	registerObject(PUNISH_BOTS = entPerc("punish-bots", -100, 0, -30));
 	registerObject(GETOP_BOTS = entInt("getop-bots", 0, MAX_INT, 1));
-	registerObject(INVITE_BOTS = entInt("invite_bots", 0, MAX_INT, 2));
+	registerObject(INVITE_BOTS = entInt("invite-bots", 0, MAX_INT, 2));
 	registerObject(GUARDIAN_BOTS = entInt("guardian-bots", 0, MAX_INT, 2));
 	registerObject(CHANNEL_CTCP = entBool("channel-ctcp", 1));
 	registerObject(ENFORCE_BANS = entInt("enforce-bans", 0, 2, 1));

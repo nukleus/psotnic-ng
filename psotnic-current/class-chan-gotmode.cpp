@@ -259,7 +259,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 						}
 						/* server has changed the limit */
 						else if(nickHandle == &serverHandle)
-							nextlimit = NOW + chset->OWNER_LIMIT_TIME;
+							nextlimit = NOW + set.SERVER_LIMIT_TIME;
 					}
 				}
 				/* some lame has changed the limit */

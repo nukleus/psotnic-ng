@@ -2581,25 +2581,25 @@ void parse_owner(inetconn *c, char *data)
 		c->send(".rjump   <bot>    <host>  [port]  .boot     <handle> <reason>", NULL);
 		c->send(".rjump6  <bot>    <host>  [port]  .rflags   <handle> <chan>", NULL);
 		c->send(".rjumps5 <bot>    <proxy> <port>  <server>  <port>", NULL);
-		c->send(".list    <apcdsvuiU>      [bot]   .cwho     <bot>    <chan>    [flags]", NULL);
+		c->send(".list    <apcdsvuiU>      [bot]   .cwho     <bot>    <chan>   [v|o|l|b]", NULL);
 		c->send(".rdie    <bot>                    .names    <bot>    <chan>", NULL);
 		c->send(".update  <bot>    [URL]           .restart  <bot>", NULL);
 		c->send(".+info   <handle> <key>   <value> .-info    <handle> <key>", NULL);
 		c->send(".info    <handle>                 .chhandle <handle> <handle>", NULL);
-		c->send(".+shit   [#chan]  [%time] <mask>  [reason]", NULL);
-		c->send(".+stick  [#chan]  [%time] <mask>  [reason]", NULL);
+		c->send(".+shit   [chan]   [%time] <mask>  [reason]", NULL);
+		c->send(".+stick  [chan]   [%time] <mask>  [reason]", NULL);
 		c->send(".-shit   <mask>   [chan]          .shits    [chan]", NULL);
-		c->send(".+exempt   [#chan]  [%time] <mask>  [reason]", NULL);
-		c->send(".-exempt   <mask>   [chan]        .exempts    [chan]", NULL);
-		c->send(".+invite   [#chan]  [%time] <mask>  [reason]", NULL);
-		c->send(".-invite   <mask>   [chan]        .invites    [chan]", NULL);
-		c->send(".+reop   [#chan]  [%time] <mask>  [reason]", NULL);
+		c->send(".+exempt [chan]   [%time] <mask>  [reason]", NULL);
+		c->send(".-exempt <mask>   [chan]          .exempts  [chan]", NULL);
+		c->send(".+invite [chan]   [%time] <mask>  [reason]", NULL);
+		c->send(".-invite <mask>   [chan]          .invites  [chan]", NULL);
+		c->send(".+reop   [chan]   [%time] <mask>  [reason]", NULL);
 		c->send(".-reop   <mask>   [chan]          .reops    [chan]", NULL);
 		c->send(".bots    [expr]   [flags]         .status   [bot]", NULL);
+		c->send(".verify  [a|p|h|c]                .channels [chan]", NULL);
 		c->send(".offences [handle]                .clearoffences [handle]", NULL);
-		c->send(".verify [aphc]", NULL);
-		c->send(".upbots .downbots .bottree  .who      .whom   .whob", NULL);
-		c->send(".owners .channels .users    .save     .abuse ", NULL);
+		c->send(".upbots  .downbots  .bottree  .who    .whom  .whob", NULL);
+		c->send(".owners  .users     .save     .abuse  .me    .echo", NULL);
 		c->send("allowed global flags: -aofmnxstrickedvqp (flag `d' overrides `aofm' flags)", NULL);
     		c->send("not allowed channel flags: -sxtp", NULL);
     		c->send("allowed bot flags: -lshp", NULL);
@@ -2651,7 +2651,7 @@ void parse_owner(inetconn *c, char *data)
 		    
 			if((unsigned) h->flags[n] == (unsigned) o->fromFlags)
 			{
-			    c->send("Flags are allready the same; not changed", NULL);
+			    c->send("Flags are already the same; not changed", NULL);
 			    return;
 			}
 			char flags1[32], flags2[32];
