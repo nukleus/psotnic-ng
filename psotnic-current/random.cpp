@@ -124,7 +124,12 @@ void srand(int a, int b, int c)
 		else Isaac.srand(a, b, c);
 	}
 	else
-		xsrand.srand(a ? a : nanotime());
+	{
+		if(set.PRE_REV124_COMPAT)
+			xsrand.srand(a ? a : nanotime());
+		else
+			xsrand.srand(a ^ b ? a ^ b : nanotime());
+	}
 
 
 }

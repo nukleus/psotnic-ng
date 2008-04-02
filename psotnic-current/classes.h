@@ -630,6 +630,7 @@ class settings : public options
 	entBool PRE_023_FINAL_COMPAT;
     entBool PRE_0211_FINAL_COMPAT;
 	entBool PRE_0214_FINAL_COMPAT;
+	entBool PRE_REV124_COMPAT;
     
 	settings();
 };
