@@ -1695,7 +1695,7 @@ void parse_owner(inetconn *c, char *data)
 			    _i++;
 			}
 			
-			if(!h->flags[GLOBAL] && !(h->flags[GLOBAL] & HAS_H) && (_test == 0 || _test == 3))
+			if(!h->flags[GLOBAL] && (_test == 0 || _test == 3))
 			{
 			    for(j = 0, _j = -1; _j == -1 && j < MAX_CHANNELS; j++)
 				if(h->flags[j] && userlist.chanlist[j].name)
