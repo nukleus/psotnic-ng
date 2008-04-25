@@ -326,7 +326,29 @@ class entChattr : public ent
 	virtual const char *getValue() const;
 	virtual void reset();
 	virtual bool isDefault() const;
-	entChattr(const char *n="", const char *modes="");
+	entChattr(const char *n="", const char *modes="") : ent(n) 
+	{
+		memset(pFlags, 0, sizeof(pFlags));
+	    memset(mFlags, 0, sizeof(mFlags));
+	    memset(Key, 0, sizeof(Key));
+    	Limit = 0;
+
+	    if(strlen(modes))
+    	{
+		    setValue(n, modes, 1);
+		    strcpy(dpFlags, pFlags);
+		    strcpy(dmFlags, mFlags);
+		    strcpy(dKey, Key);
+		    dLimit = Limit;
+	    }
+	    else
+    	{
+		    memset(dpFlags, 0, sizeof(dpFlags));
+		    memset(dmFlags, 0, sizeof(dmFlags));
+		    memset(dKey, 0, sizeof(dKey));
+		    dLimit = 0;
+	    }
+	}
 	virtual ~entChattr() { };
 };
 
