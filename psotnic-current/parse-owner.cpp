@@ -889,7 +889,7 @@ void parse_owner(inetconn *c, char *data)
 		return;
 	}
 
-	if(!strcmp(arg[0], ".-chan") || !strcmp(arg[0], ".mpart") && strlen(arg[1]))
+	if((!strcmp(arg[0], ".-chan") || !strcmp(arg[0], ".mpart")) && strlen(arg[1]))
 	{
 		if(!c->checkFlag(HAS_S))
 		{
@@ -1967,7 +1967,7 @@ void parse_owner(inetconn *c, char *data)
 		}
 		return;
 	}
-	if((!strcmp(arg[0], ".names") || !strcmp(arg[0], ".n") && strlen(arg[2])))
+	if((!strcmp(arg[0], ".names") || !strcmp(arg[0], ".n")) && strlen(arg[2]))
 	{
 		if(!c->checkFlag(HAS_N))
 		{
@@ -1996,7 +1996,7 @@ void parse_owner(inetconn *c, char *data)
 		}
 		return;
 	}
-	if((!strcmp(arg[0], ".cwho") || !strcmp(arg[0], ".chusers") && strlen(arg[2])))
+	if((!strcmp(arg[0], ".cwho") || !strcmp(arg[0], ".chusers")) && strlen(arg[2]))
 	{
 		if(!c->checkFlag(HAS_N))
 		{
