@@ -630,7 +630,7 @@ class settings : public options
 	entBool PRE_023_FINAL_COMPAT;
     entBool PRE_0211_FINAL_COMPAT;
 	entBool PRE_0214_FINAL_COMPAT;
-	entBool PRE_REV124_COMPAT;
+	entBool PRE_REV127_COMPAT;
     
 	settings();
 };
@@ -666,7 +666,8 @@ class chanset : public options
 	entBool DYNAMIC_INVITES;
 	entBool LOCKDOWN;
 	entTime LOCKDOWN_TIME;
-	entChattr PROTECT_CHMODES;
+	entInt PROTECT_CHMODES;
+	entChattr MODE_LOCK;
 	entBool STRICT_BANS;
 	entBool CHECK_SHIT_ON_NICK_CHANGE;
 	entBool INVITE_ON_UNBAN_REQUEST;

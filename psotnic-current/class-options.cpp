@@ -262,7 +262,7 @@ settings::settings()
 	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 0));
     registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
 	registerObject(PRE_0214_FINAL_COMPAT = entBool("pre-0.2.14-final-compat", 1));
-	registerObject(PRE_REV124_COMPAT = entBool("pre-rev127-compat", 1));
+	registerObject(PRE_REV127_COMPAT = entBool("pre-rev127-compat", 1));
 }
 
 /*
@@ -299,7 +299,8 @@ chanset::chanset()
 	registerObject(DYNAMIC_EXEMPTS = entBool("dynamic-exempts", 1));
 	registerObject(LOCKDOWN = entBool("lockdown", 0));
 	registerObject(LOCKDOWN_TIME = entTime("lockdown-time", 0, MAX_INT, 180));
-	registerObject(PROTECT_CHMODES = entChattr("protect-chmodes", "+nt"));
+	registerObject(PROTECT_CHMODES = entInt("protect-chmodes", 0, 2, 2));
+	registerObject(MODE_LOCK = entChattr("mode-lock", "+nt"));
 	registerObject(STRICT_BANS = entBool("strict-bans", 1));
 	registerObject(CHECK_SHIT_ON_NICK_CHANGE = entBool("check-shit-on-nick-change", 0));
 	registerObject(INVITE_ON_UNBAN_REQUEST = entBool("invite-on-unban-request", 0));

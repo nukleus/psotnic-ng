@@ -1348,7 +1348,7 @@ void chan::checkProtectedChmodes()
 {
 	unsigned int i;
 	bool pos = true;
-	const char *modes=chset->PROTECT_CHMODES.getValue();
+	const char *modes=chset->MODE_LOCK.getValue();
 	char mode[3];
 	time_t flush_time = NOW;
 	int PRIO = PRIO_LOW;
@@ -1372,8 +1372,8 @@ void chan::checkProtectedChmodes()
 			case '+' : pos=true; break;
 			case '-' : pos=false; break;
 			default  : if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])) ||
-			(pos && (modes[i] == 'k' && strcmp((const char *) key, chset->PROTECT_CHMODES.getKey()) && hasFlag(modes[i])
-			|| (modes[i] == 'l' && limit != chset->PROTECT_CHMODES.getLimit()) && hasFlag(modes[i]))))
+			(pos && (modes[i] == 'k' && strcmp((const char *) key, chset->MODE_LOCK.getKey()) && hasFlag(modes[i])
+			|| (modes[i] == 'l' && limit != chset->MODE_LOCK.getLimit()) && hasFlag(modes[i]))))
 				   {
 					   mode[0]=pos?'+':'-';
 					   mode[1]=modes[i];
@@ -1384,11 +1384,11 @@ void chan::checkProtectedChmodes()
 						if(pos == false)
 						    modeQ[PRIO].add(flush_time, mode, key);
 						else
-						    modeQ[PRIO].add(flush_time, mode, chset->PROTECT_CHMODES.getKey());
+						    modeQ[PRIO].add(flush_time, mode, chset->MODE_LOCK.getKey());
 					    }
 					    else if(pos == true && modes[i] == 'l')
 					    {
-						modeQ[PRIO].add(flush_time, mode, itoa(chset->PROTECT_CHMODES.getLimit()));
+						modeQ[PRIO].add(flush_time, mode, itoa(chset->MODE_LOCK.getLimit()));
 					    }
 					    else
 					    {

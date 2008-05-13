@@ -125,7 +125,7 @@ void srand(int a, int b, int c)
 	}
 	else
 	{
-		if(set.PRE_REV124_COMPAT)
+		if(set.PRE_REV127_COMPAT)
 			xsrand.srand(a ? a : nanotime());
 		else
 			xsrand.srand(a ^ b ? a ^ b : nanotime());
