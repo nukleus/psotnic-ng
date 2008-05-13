@@ -38,7 +38,7 @@
 
 struct vctrl_func
 {
-    char *command;
+    const char *command;
     void (*func)(chan *, chanuser *, char *);
 };
 

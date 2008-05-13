@@ -27,7 +27,7 @@
 #define RP_BANTIME 60
 
 // lines that should not be counted (e.x. a line that contains only a smiley)
-char *rp_exceptions[]={
+const char *rp_exceptions[]={
     ":?",       // matches ':)', ':P' etc
     ":-?",      // matches ':-)', ':-P' etc
     ";?",
