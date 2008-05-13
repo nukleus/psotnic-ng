@@ -42,7 +42,7 @@ class pstring
 
     	int diff = l - s;
 
-    	if(diff < 0 || diff > (int) TOLERANCE)
+    	if(diff <= 0 || diff >= (int) TOLERANCE)
     	{
     		if(copy)
     			_data = (char *) realloc(_data, s*ALIGN + ALIGN + 1);
