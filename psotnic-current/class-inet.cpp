@@ -635,9 +635,13 @@ int inetconn::va_send(va_list ap, const char *lst)
 	else
 	{
         if(status & STATUS_SSL)
+		{
 			DEBUG(printf("[S] send[%s]: %s", conn->name, p));
+		}
 		else
+		{
 			DEBUG(printf("[*] send[%s]: %s", conn->name, p));
+		}
 	}
 
 	if(conn->write.buf)
