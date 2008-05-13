@@ -99,7 +99,7 @@ int fifo::wildWisePush(char *lst, ...)
 	return 0;
 }
 
-int fifo::wisePush(char *lst, ...)
+int fifo::wisePush(const char *lst, ...)
 {
 	if(!maxEnt || data.entries() <= maxEnt)
 	{
@@ -132,7 +132,7 @@ int fifo::wisePush(char *lst, ...)
 	return 0;
 }
 
-int fifo::push(char *lst, ...)
+int fifo::push(const char *lst, ...)
 {
 	if(!maxEnt || data.entries() <= maxEnt)
 	{

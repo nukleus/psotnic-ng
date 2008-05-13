@@ -21,7 +21,7 @@
 #include "prots.h"
 #include "global-var.h"
 
-masklist_ent::masklist_ent(char *m, char *w, time_t t)
+masklist_ent::masklist_ent(const char *m, const char *w, time_t t)
 {
 	mem_strcpy(mask, m);
 	mem_strcpy(who, w);
@@ -42,7 +42,7 @@ masklist::masklist()
 	masks.removePtrs();
 }
 
-int masklist::add(char *mask, char *who, time_t t)
+int masklist::add(const char *mask, const char *who, time_t t)
 {
 	if(find(mask)) return 0;
 
@@ -61,7 +61,7 @@ int masklist::remove(char *mask)
 	return 1;
 }
 
-masklist_ent *masklist::find(char *mask)
+masklist_ent *masklist::find(const char *mask)
 {
 	ptrlist<masklist_ent>::iterator m = masks.begin();
 

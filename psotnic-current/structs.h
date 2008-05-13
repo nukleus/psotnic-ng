@@ -43,12 +43,12 @@ struct EXPANDINFO
 
 struct flagTable
 {
-    char letter;
+    const char letter;
     unsigned int flag;
     int level;
     unsigned int enforced;
-    char *desc;
-    char *long_desc;
+    const char *desc;
+    const char *long_desc;
 };
 
 #endif

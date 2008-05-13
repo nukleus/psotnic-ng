@@ -241,7 +241,7 @@ class entHub : public entHPPH
 
 	public:
 	int failures;
-	entHub(char *n="", entHost *host=0, entInt *port=0, entMD5Hash *pass=0, entWord *handle=0) :
+	entHub(const char *n="", entHost *host=0, entInt *port=0, entMD5Hash *pass=0, entWord *handle=0) :
 		entHPPH(n, host, port, pass, handle), failures(0) { };
 	virtual ~entHub() { };
 };
@@ -250,7 +250,7 @@ class entHub : public entHPPH
 class entServer : public entHPPH
 {
 	public:
-	entServer(char *n="", entHost *ip=0, entInt *port=0, entWord *pass=0) :
+	entServer(const char *n="", entHost *ip=0, entInt *port=0, entWord *pass=0) :
 		entHPPH(n, ip, port, pass, 0) { };
 	virtual options::event *set(const char *ip, const char *port, const char *pass="", const bool justTest=0);
 	virtual ~entServer() { };
@@ -282,7 +282,7 @@ class entLoadModules : public ent
 	virtual options::event *_setValue(const char *arg1, const char *arg2, const char *arg3, bool justTest=0);
 
 	public:
-		entLoadModules(char *n="", bool needValidMD5=1) : ent(n), md5(needValidMD5) { };
+		entLoadModules(const char *n="", bool needValidMD5=1) : ent(n), md5(needValidMD5) { };
 	virtual ~entLoadModules() { };
 
 	virtual options::event *setValue(const char *arg1, const char *arg2, bool justTest=0);

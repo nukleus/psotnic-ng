@@ -228,7 +228,7 @@ class comment
 		char *key;
 		char *value;
 
-		entry(char *k, char *v);
+		entry(const char *k, const char *v);
 		~entry();
 
 		int operator==(const entry &ent) const;
@@ -314,8 +314,8 @@ class fifo
 
 	fifo(int size=0, int delay=1);
 	~fifo();
-	int push(char *lst, ...);
-	int wisePush(char *lst, ...);
+	int push(const char *lst, ...);
+	int wisePush(const char *lst, ...);
 	int wildWisePush(char *lst, ...);
 	char *pop();
 	int flush(inetconn *c);
@@ -448,7 +448,7 @@ class masklist_ent
 	char *who;
 	bool sent;
 
-	masklist_ent(char *m, char *w, time_t t);
+	masklist_ent(const char *m, const char *w, time_t t);
 	~masklist_ent();
 };
 
@@ -457,9 +457,9 @@ class masklist
 	public:
 	ptrlist<masklist_ent> masks;
 
-	int add(char *mask, char *who, time_t);
+	int add(const char *mask, const char *who, time_t);
 	int remove(char *mask);
-	masklist_ent *find(char *mask);
+	masklist_ent *find(const char *mask);
 	masklist_ent *wildMatch(char *mask);
 	masklist_ent *matchBan(char *mask, char *ip, char *uid);
 	masklist_ent *match(const char *mask);

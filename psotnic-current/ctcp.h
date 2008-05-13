@@ -3,8 +3,8 @@
 
 struct CTCPREPLY
 {
-	char *query;
-	char *reply;
+	const char *query;
+	const char *reply;
 };
 
 /*

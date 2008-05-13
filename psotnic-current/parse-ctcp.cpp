@@ -22,7 +22,7 @@
 #include "global-var.h"
 #include "ctcp.h"
 
-int querylen(char *str)
+int querylen(const char *str)
 {
 	int len = 0;
 	while(*str)

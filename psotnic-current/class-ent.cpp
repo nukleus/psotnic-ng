@@ -1111,7 +1111,7 @@ int entChattr::checkArg(const char *args)
         char *_l = NULL;
 	char *_k = NULL;
 	
-	char *modes = CHATTR_MODES;
+	const char *modes = CHATTR_MODES;
 
         static char duplicate[32];
 	static char arg[3][CHAN_LEN];

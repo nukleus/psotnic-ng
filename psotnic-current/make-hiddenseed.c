@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "seed.h"
 
-void gen_seed_function(unsigned char *seed, char *name)
+void gen_seed_function(unsigned char *seed, const char *name)
 {
 	unsigned char crc = 0xff;
 	int i=0;

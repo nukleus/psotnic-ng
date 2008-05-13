@@ -199,7 +199,7 @@ int protmodelist::sendShitsToOwner(inetconn *c, const char *name, int i)
 void protmodelist::sendToUserlist(inetconn *c, const char *name)
 {
 	ptrlist<entry>::iterator s = data.begin();
-	char *botnet_cmd;
+	const char *botnet_cmd;
 
 	while(s)
 	{
@@ -286,7 +286,8 @@ int protmodelist::expire(const char *channel)
 	ptrlist<entry>::iterator n, s = data.begin();
 	int i=0;
 	chan *ch;
-	char *botnet_cmd, _mode[3], *type_str;
+	const char *botnet_cmd, *type_str;
+	char _mode[3];
 
 	_mode[0] = '-';
 	_mode[1] = mode;

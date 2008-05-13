@@ -21,7 +21,7 @@
 #include "prots.h"
 #include "global-var.h"
 
-int parse_owner_join(inetconn *c, char *name, char *key, int delay, char *flags, char *bot=NULL)
+int parse_owner_join(inetconn *c, const char *name, const char *key, int delay, const char *flags, const char *bot=NULL)
 {
 	int n;
 	
@@ -161,7 +161,7 @@ int parse_owner_join(inetconn *c, char *name, char *key, int delay, char *flags,
 	}
 }
 
-void parse_owner_sjoin(inetconn *c, char *name, char *key, int delay, char *flags, char *bot)
+void parse_owner_sjoin(inetconn *c, const char *name, const char *key, int delay, const char *flags, const char *bot)
 {
 	if(!c->checkFlag(HAS_S))
 	{
@@ -2267,7 +2267,7 @@ void parse_owner(inetconn *c, char *data)
 		int i;
 		int chanNum = GLOBAL;
 		int type;
-		char *botnet_cmd;
+		const char *botnet_cmd;
 		protmodelist *shit;
 		protmodelist::entry *s;
 		chan *ch;
@@ -2448,7 +2448,8 @@ void parse_owner(inetconn *c, char *data)
 		protmodelist::entry *s;
 		chan *ch;
 		int type = -1;
-		char *botnet_cmd = NULL, mode[3];
+		const char *botnet_cmd = NULL;
+		char mode[3];
 
 		if(!strcmp(arg[0], ".-shit"))
 		{

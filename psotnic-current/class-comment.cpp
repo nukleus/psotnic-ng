@@ -21,7 +21,7 @@
 #include "prots.h"
 #include "global-var.h"
 
-comment::entry::entry(char *k, char *v)
+comment::entry::entry(const char *k, const char *v)
 {
 	mem_strcpy(value, v);
 	mem_strcpy(key, k);

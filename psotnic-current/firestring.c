@@ -45,8 +45,8 @@ const char firestring_version[] = "1.9.9";
 static void (*error_handler)() = firestring_int_errorhandler;
 
 struct xml_encoding {
-	char character;
-	char *entity;
+	const char character;
+	const char *entity;
 };
 
 static const char base64_encode_table[] = {
