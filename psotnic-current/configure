@@ -123,8 +123,6 @@ $filelist =~ tr/\n/ /;
 my $ver = `cat defines.h | egrep S_VERSION | awk '{ print substr(\$3, 2, length(\$3)-2) }'`;
 $ver =~ s/\n//;
 
-#`sh ./framework.sh`;
-
 #
 # Generating makefile
 #
@@ -170,7 +168,6 @@ print $f "\ndistclean:\n";
 print $f "\t\@\$(MAKE) clean\n";
 print $f "\t\@echo [*] Removing seed.h\n";
 print $f "\t\@rm -f seed.h\n";
-print $f "\t\@\$(MAKE) -C framework clean\n";
 print $f "\t\@rm -rf bin/* pid.* *.ul Makefile Makefile.*\n\n";
 
 print $f "current:\n";

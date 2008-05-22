@@ -1,4 +1,6 @@
-#include "includes/psotnic.h"
+#include "../prots.h"
+#include "../global-var.h"
+#include "module.h"
 #include <string.h>
 #include <string>
 
