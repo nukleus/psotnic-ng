@@ -1119,7 +1119,7 @@ bool ul::globalChset(inetconn *c, const char *var, const char *value, int *index
 	return 1;
 }
 
-int ul::rpart(const char *bot, const char *channel)
+int ul::rpart(const char *bot, const char *channel, const char *flags)
 {
 	HANDLE *b = findHandle(bot);
 	if(!b || !isBot(b))
@@ -1133,7 +1133,9 @@ int ul::rpart(const char *bot, const char *channel)
 
 	if(!strcmp(bot, config.handle))
 	{
-		net.send(HAS_N, "[*] Parting from ", channel, NULL);
+		if(!strchr(flags, 'Q'))
+			net.send(HAS_N, "[*] Parting from ", channel, NULL);
+
 		if(ME.findNotSyncedChannel(channel))
 		{
 			net.irc.send("PART ", channel, " :", (const char *) config.partreason, NULL);

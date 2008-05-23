@@ -1018,7 +1018,7 @@ class ul
 	bool globalChset(inetconn *c, const char *var, const char *value, int *index=NULL);
 	int isRjoined(int i, const HANDLE *h=NULL);
 	int rjoin(const char *bot, const char *channel);
-	int rpart(const char *bot, const char *channel);
+	int rpart(const char *bot, const char *channel, const char *flags="");
 	CHANLIST *findChanlist(const char *name);
 
 	/* other */

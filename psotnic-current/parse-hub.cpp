@@ -274,7 +274,7 @@ void parse_hub(char *data)
 	}
 	if(!strcmp(arg[0], S_RPART) && strlen(arg[2]))
 	{
-		userlist.rpart(arg[1], arg[2]);
+		userlist.rpart(arg[1], arg[2], arg[3]);
 		net.propagate(&net.hub, data, NULL);
 		++userlist.SN;
 		return;

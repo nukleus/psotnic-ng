@@ -189,7 +189,7 @@ void parse_owner_sjoin(inetconn *c, const char *name, const char *key, int delay
 	else c->send("Invalid slave", NULL);
 }
 
-int parse_owner_rpart(inetconn *c, char *name, char *bot)
+int parse_owner_rpart(inetconn *c, char *name, char *bot, const char *flags="")
 {
 	if(c && !c->checkFlag(HAS_S))
 	{
@@ -216,7 +216,7 @@ int parse_owner_rpart(inetconn *c, char *name, char *bot)
 	{
 		net.sendCmd(c, "rpart ", bot, " ", name, NULL);
 	}
-	net.send(HAS_B, S_RPART, " ", bot, " ", name, NULL);
+	net.send(HAS_B, S_RPART, " ", bot, " ", name, " ", flags, NULL);
 	++userlist.SN;
 	userlist.nextSave = NOW + SAVEDELAY;
 	return 1;
@@ -241,6 +241,40 @@ void parse_owner_spart(inetconn *c, char *name, char *bot)
 		}
 	}
 	else c->send("Invalid slave", NULL);
+}
+
+void parse_owner_mpart(inetconn *c, char *name)
+{
+	HANDLE *h;
+
+	if(!c->checkFlag(HAS_S))
+	{
+		c->send(S_NOPERM, NULL);
+		return;
+	}
+
+	if(userlist.rpart(config.handle, name, "Q")) // part main bot
+	{
+		net.sendCmd(c, "mpart ", name, NULL);
+		c->send("[*] Parting all bots from ", name, NULL);
+
+		// part slaves, leafs
+
+        	h = userlist.first->next->next;
+
+		while(h)
+		{
+			if(userlist.isBot(h))
+				parse_owner_rpart(NULL, name, h->name, "Q");
+
+			h = h->next;
+		}
+	}
+	else
+	{
+		if(c)
+			c->send("Invalid channel", NULL);
+	}
 }
 
 void parse_owner(inetconn *c, char *data)
@@ -888,8 +922,12 @@ void parse_owner(inetconn *c, char *data)
 		parse_owner_spart(c, arg[2], arg[1]);
 		return;
 	}
-
-	if((!strcmp(arg[0], ".-chan") || !strcmp(arg[0], ".mpart")) && strlen(arg[1]))
+	if(!strcmp(arg[0], ".mpart") && strlen(arg[1]))
+	{
+		parse_owner_mpart(c, arg[1]);
+		return;
+	}
+	if(!strcmp(arg[0], ".-chan") && strlen(arg[1]))
 	{
 		if(!c->checkFlag(HAS_S))
 		{
