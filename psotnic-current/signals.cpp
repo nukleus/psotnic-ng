@@ -46,6 +46,7 @@ void sigInt()
 void sigHup()
 {
 	userlist.save(config.userlist_file);
+	HOOK(receivedSigHup, receivedSigHup());
 }
 
 void sigSegv()

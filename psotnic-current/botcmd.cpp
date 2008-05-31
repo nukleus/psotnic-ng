@@ -101,7 +101,9 @@ void botnetcmd(const char *from, const char *cmd)
 					++num;
 
 				}
+				i++;
 			}
+			HOOK(rehash, rehash());
 		}
 		else
 			net.sendOwner(arg[0], S_NOPERM, NULL);
