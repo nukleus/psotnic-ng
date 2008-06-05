@@ -2,15 +2,6 @@
 * Changes in psotnic 0.2.x (beta)
 *
 * Copyright (c) 2003-2007 Grzegorz Rusin <grusin@gmail.com>
-* Thanks to: - Esio, esio (at) hoth.amu.edu.pl:
-*              ctcp reply msgs, away msgs, tons of ideas, bug
-*              reports and core dumps ;-P
-*            - Pawe³ (Googie) Salawa, boogie@myslenice.one.pl:
-*              tcl hints, .bottree command
-*            - patrick, patrick@psotnic.com:
-*              many patches, modules
-*            - ppl from #psotnic @ IRCnet:
-*              ideas, bug reports, feature requests
 *
 * Here is a full list of changes since the first public release, please
 * read out through this file to get full info about all available

@@ -1,0 +1,56 @@
+Developers:
+----------
+
+pks (Grzegorz Rusin) <grusin@gmail.com>
+ - author
+ - project leader
+
+Esio <esio@hoth.amu.edu.pl>
+ - development
+ - bug reports
+
+patrick <patrick@psotnic.com>
+ - development
+ - modules (vctrl, repeat and more)
+ - psotnic.com website
+
+
+Contributors:
+------------
+
+cgod <c@sii.ath.cx>
+ - modules (date, peak2, words)
+
+dArk
+ - big endian support
+
+Darkman <darkman82@interfree.it>
+ - coder of "EaZy psotnic" (http://www.darkman.it/)
+ - wrote a bigger part of the wiki
+
+Googie (Pawe³ Salawa) <boogie@myslenice.one.pl>
+ - .bottree command
+ - tcl hints
+
+matrix <admin@areaunix.org>
+ - modules (google, peak)
+
+oroblram <stu@wilf.co.uk> 
+ - modules (log, subop and more)
+
+Pirat
+ - many bug reports
+
+UukGoblin
+ - x86 fixes
+
+wilk <wilq.pl@vp.pl>
+ - patches
+ - bug reports
+ - feature requests
+
+[C]167 (Stefan Valouch) <stefanvalouch@googlemail.com>
+ - patches
+
+
+.. and all people from #psotnic @ IRCnet, http://psotnic.sf.net and http://www.psotnic.com
