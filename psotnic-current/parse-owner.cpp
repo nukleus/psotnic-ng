@@ -253,7 +253,7 @@ void parse_owner_mpart(inetconn *c, char *name)
 		return;
 	}
 
-	if(userlist.rpart(config.handle, name, "Q")) // part main bot
+	if(userlist.rpart(config.handle, name, "Q")!=-2) // part main bot
 	{
 		net.sendCmd(c, "mpart ", name, NULL);
 		c->send("[*] Parting all bots from ", name, NULL);
