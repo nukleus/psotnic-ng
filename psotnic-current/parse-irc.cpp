@@ -415,7 +415,7 @@ void parse_irc(char *data)
 		else penalty = 2;
 
 		ME.checkMyHost("*", true);
-
+		ME.ircip.assign(net.irc.getPeerIpName(), strlen(net.irc.getPeerIpName()));
 		net.irc.send("stats L ", (const char *) ME.nick, NULL);
 		penalty += 2;
 
