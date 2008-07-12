@@ -1398,3 +1398,114 @@ void chan::checkProtectedChmodes()
 		}
 	}
 }
+
+/*! Tells the type of a channel mode.
+ *  Available types are: A, B, C, D which are described in chanModeRequiresArgument()
+ *
+ *  \author patrick <patrick@psotnic.com>
+ *  \param mode Can be any channel mode
+ *  \return Type of the channel mode as char or '-' if an error occurred
+ *  \sa getTypeOfChanMode()
+ */
+
+char chan::getTypeOfChanMode(char mode)
+{
+    int i, len, type=0;
+
+    if(!ME.server.chanmodes)
+        return '-';
+
+    len=strlen(ME.server.chanmodes);
+
+    for(i=0; i<len; i++)
+    {
+        if(ME.server.chanmodes[i]==mode)
+        {
+            switch(type)
+            {
+                case 0 : return 'A';
+                case 1 : return 'B';
+                case 2 : return 'C';
+                case 3 : return 'D';
+                default : return '-';
+            }
+        }
+
+        if(ME.server.chanmodes[i]==',')
+            type++;
+    }
+
+    return '-';
+}
+
+/*! Checks if a channel mode requires an argument.
+ *
+ *  \author patrick <patrick@psotnic.com>
+ *  \param sign Can be '+' or '-'
+ *  \param mode Can be any channel mode
+ *  \return true if the channel mode requires an argument, otherwise false
+ */
+
+bool chan::chanModeRequiresArgument(char sign, char mode)
+{
+    char type;
+
+    type=getTypeOfChanMode(mode);
+
+    switch(type)
+    {
+        case '-' : // type not found
+                   return false;
+        case 'A' :
+                   /* "Type A: Modes that add or remove an address to or from a list.
+                               These modes MUST always have a parameter when sent from the server
+                               to a client."
+                   */
+
+                   return true;
+        case 'B' : 
+                   /* "Type B: Modes that change a setting on a channel.  These modes
+                               MUST always have a parameter."
+                   */
+
+                   return true;
+        case 'C' :
+                   /* "Type C: Modes that change a setting on a channel.  These modes
+                               MUST have a parameter when being set, and MUST NOT have a
+                               parameter when being unset."
+                   */
+
+                   if(sign=='+')
+                       return true;
+                   else
+                       return false;
+        case 'D' :
+                   /* "Type D: Modes that change a setting on a channel.  These modes
+                               MUST NOT have a parameter."
+                   */
+
+                   return false;
+    }
+
+    return false;
+}
+
+/*! Checks if a given string is a channel.
+ *
+ *  \author patrick <patrick@psotnic.com>
+ *  \param _name Can be any string
+ *  \return true if it is a channel, otherwise false
+ */
+
+bool chan::isChannel(const char *_name)
+{
+    int i, len=strlen(ME.server.chantypes);
+
+    for(i=0; i<len; i++)
+    {
+        if(ME.server.chantypes[i]==_name[0])
+            return true;
+    }
+
+    return false;
+}

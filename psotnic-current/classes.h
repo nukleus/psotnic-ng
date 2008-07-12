@@ -867,6 +867,11 @@ class chan
 	void checkKeepout();
 	void checkProtectedChmodes();
 	static char valid(const char *str);
+
+	static bool chanModeRequiresArgument(char ,char);
+	static char getTypeOfChanMode(char);
+	static bool isChannel(const char *);
+
 	/* Debug */
 #ifdef HAVE_DEBUG
 	void display();
@@ -886,6 +891,33 @@ class chan
 #endif
 };
 
+/** Stores server information
+ *  * \author patrick <patrick@psotnic.com>
+ */
+
+class _server
+{
+        public:
+        int chanlen; ///< maximum length of a channel name
+        char *chanmodes; ///< indicates the channel modes available and the arguments they take (format: "A,B,C,D")
+        char *chantypes; ///< prefixes of channels (like "#&!+")
+        char excepts; ///< indicates that the server supports ban exceptions (default 'e')
+        char invex; ///< indicates that the server supports invite exceptions (default 'I')
+        int kicklen; ///< maximum length of a kickreason
+        char *name; ///< name of the server
+        char *network; ///< name of the irc network (mainly for informational purposes)
+        int maxlist; ///< limits how many "variable" modes of type A a client may set in total on a channel
+        int modes; ///< limits how many "variable" modes (type A, B, C) may be set on a channel by a single MODE command
+        int nicklen; ///< maximum length of a nickname
+        int topiclen; ///< maximum length of a topic
+        int maxchannels; ///< maximum number of chans a client can join
+        char *usermodes; ///< available user modes
+        char *version; ///< ircd version
+
+        _server() { };
+        ~_server() {}
+};
+
 class client
 {
 	public:
@@ -895,6 +927,7 @@ class client
 	time_t nextNickCheck, startedAt, nextConnToIrc, nextConnToHub;
 	time_t nextRecheck;
 	time_t nextReconnect, ircConnFailDelay;
+	_server server;
 
 	/* Irc channels */
 	chan *createNewChannel(const char *name);

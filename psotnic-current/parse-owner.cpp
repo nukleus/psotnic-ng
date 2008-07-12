@@ -936,7 +936,7 @@ void parse_owner(inetconn *c, char *data)
 		}
 		if(userlist.removeChannel(arg[1], arg[2]))
 		{
-			net.sendCmd(c, "mpart ", arg[2], NULL);
+			net.sendCmd(c, "-chan ", arg[2], NULL);
 			c->send("Removing `\002", arg[2], "\002' from channel list", NULL);
 			net.send(HAS_B, S_RMCHAN, " ", arg[2], NULL);
 			net.irc.send("PART ", arg[2], " :", (const char *) config.partreason, NULL);

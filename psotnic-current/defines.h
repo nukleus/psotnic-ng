@@ -125,6 +125,7 @@
 #define STATUS_SSL_WANT_CONNECT 0x00040000
 #define STATUS_SSL_WANT_ACCEPT  0x00080000
 #define	STATUS_ULCRYPT			0x80000000
+#define STATUS_NEED_WHOIS                  0x00100000
 
 
 //chanlist flags

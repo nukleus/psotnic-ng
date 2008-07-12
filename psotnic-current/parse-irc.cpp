@@ -377,20 +377,32 @@ void parse_irc(char *data)
 			return;
 		}
 
-		if(userlist.me()->flags[GLOBAL] & HAS_P)
-			hostNotify = 1;
-		else
-			hostNotify = 0;
-
 		mem_strcpy(net.irc.name, arg[0]);
 		mem_strcpy(net.irc.origin, arg[0]);
         net.irc.status |= STATUS_REGISTERED;
         net.irc.lastPing = NOW;
-		chanuser u(arg[9], NULL, 0, false);
-		ME.nick = u.nick;
-		ME.ident = u.ident;
-		ME.host = u.host;
-		ME.mask = arg[9];
+
+		if(match("*!*@*", arg[9]))
+		{
+			if(userlist.me()->flags[GLOBAL] & HAS_P)
+				hostNotify = 1;
+			else
+				hostNotify = 0;
+
+			chanuser u(arg[9], NULL, 0, false);
+			ME.nick = u.nick;
+			ME.ident = u.ident;
+			ME.host = u.host;
+			ME.mask = arg[9];
+		}
+		else
+		{
+			hostNotify = 0;
+			ME.nick = arg[9];
+			net.irc.status|=STATUS_NEED_WHOIS;
+			net.irc.send("WHOIS ", (const char*)ME.nick, NULL);
+		}
+
         srand();
 
 		net.propagate(NULL, S_CHNICK, " ", (const char *) ME.nick, " ", net.irc.name, NULL);
@@ -414,7 +426,8 @@ void parse_irc(char *data)
 		}
 		else penalty = 2;
 
-		ME.checkMyHost("*", true);
+		if(!(net.irc.status&STATUS_NEED_WHOIS))
+			ME.checkMyHost("*", true);
 		ME.ircip.assign(net.irc.getPeerIpName(), strlen(net.irc.getPeerIpName()));
 		net.irc.send("stats L ", (const char *) ME.nick, NULL);
 		penalty += 2;
@@ -443,10 +456,101 @@ void parse_irc(char *data)
 
 		return;
 	}
+
+	if(!strcmp(arg[1], "004"))
+	{
+		ME.server.name=strdup(arg[3]);
+		ME.server.version=strdup(arg[4]);
+		ME.server.usermodes=strdup(arg[5]);
+	}
+	if(!strcmp(arg[1], "005"))
+	{
+		char *isupport_str=srewind(data, 3), token[32][MAX_LEN], *ptr;
+
+		str2words(token[0], isupport_str, 32, MAX_LEN, 0);
+
+		for(int i=0; i<32 && *token[i]; i++)
+		{    
+			if(!strncmp(token[i], "CHANNELLEN=", 11))
+				ME.server.chanlen=atoi(token[i]+11);
+
+			else if(!strncmp(token[i], "CHANMODES=", 10))
+				ME.server.chanmodes=strdup(token[i]+10);
+
+			else if(!strncmp(token[i], "CHANTYPES=", 10))
+				ME.server.chantypes=strdup(token[i]+10);
+
+			else if(!strncmp(token[i], "EXCEPTS", 7))
+			{
+				if(token[i][7]=='=')
+					ME.server.excepts=token[i][8];
+				else
+					ME.server.excepts='e';
+			}
+
+			else if(!strncmp(token[i], "INVEX", 5))
+			{
+				if(token[i][5]=='=')
+					ME.server.invex=token[i][6];
+				else
+					ME.server.invex='I';
+			}
+
+			else if(!strncmp(token[i], "KICKLEN=", 8))
+				ME.server.kicklen=atoi(token[i]+8);
+
+			else if(!strncmp(token[i], "NETWORK=", 8))
+				ME.server.network=strdup(token[i]+8);
+
+			else if(!strncmp(token[i], "MAXLIST=", 8))
+			{
+				if((ptr=strchr(token[i], ':')))
+				{
+					*ptr++;
+					ME.server.maxlist=atoi(ptr);
+				}
+			}
+
+			else if(!strncmp(token[i], "MODES=", 6))
+				ME.server.modes=atoi(token[i]+6);
+
+			else if(!strncmp(token[i], "NICKLEN=", 8))
+				ME.server.nicklen=atoi(token[i]+8);
+
+			else if(!strncmp(token[i], "TOPICLEN=", 9))
+				ME.server.topiclen=atoi(token[i]+9);
+			else if(!strncmp(token[i], "CHANLIMIT=", 10))
+			{
+				if((ptr=strchr(token[i], ':')))
+				{
+					*ptr++;
+					ME.server.maxchannels=atoi(ptr);
+				}
+			}
+			else if(!strncmp(token[i], "MAXCHANNELS=", 12))
+				ME.server.maxchannels=atoi(token[i]+12);
+		}
+	}
 	if(!strcmp(arg[1], "042"))
 	{
 		ME.uid = arg[3];
 		return;
+	}
+	if(!strcmp(arg[1], "311") && net.irc.status&STATUS_NEED_WHOIS) // RPL_WHOISUSER
+	{
+		char buffer[MAX_LEN];
+		ME.ident = arg[4];
+		ME.host = arg[5];
+		snprintf(buffer, MAX_LEN, "%s!%s@%s", (const char*)ME.nick, (const char*)ME.ident, (const char*)ME.host);
+		ME.mask = buffer;
+		net.irc.status&= ~STATUS_NEED_WHOIS;
+
+		if(userlist.me()->flags[GLOBAL] & HAS_P)
+			hostNotify = 1;
+		else
+			hostNotify = 0;
+
+		ME.checkMyHost("*", true);
 	}
 	if(!strcmp(arg[1], "332"))
 	{

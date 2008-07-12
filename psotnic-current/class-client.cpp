@@ -1049,4 +1049,52 @@ void client::reset()
 		userlist.chanlist[i].status &= PRIVATE_CHAN;
 		//userlist.chanlist[i].nextjoin = 0;
 	}
+
+	// clear server information
+	server.chanlen=0;
+	server.kicklen=0;
+	server.maxlist=0;
+	server.modes=0;
+	server.nicklen=0;
+	server.topiclen=0;
+	server.maxchannels=0;
+	server.excepts='\0';
+	server.invex='\0';
+
+	if(server.name)
+	{
+		free(server.name);
+		server.name=NULL;
+	}
+
+	if(server.version)
+	{
+		free(server.version);
+		server.version=NULL;
+	}
+
+	if(server.usermodes)
+	{
+		free(server.usermodes);
+		server.usermodes=NULL;
+	}
+
+	if(server.chanmodes)
+	{
+		free(server.chanmodes);
+		server.chanmodes=NULL;
+	}
+
+	if(server.chantypes)
+	{
+		free(server.chantypes);
+		server.chantypes=NULL;
+	}
+
+	if(server.network)
+	{
+		free(server.network);
+		server.network=NULL;
+	}
+
 }
