@@ -1727,11 +1727,26 @@ void parse_owner(inetconn *c, char *data)
 				a = push(a, h->name, " ", NULL);
 				++i;
 			}
-			if((!h->host[0] || !*h->host[0]) && (_test == 0 || _test == 2))
-			{
-			    _a = push(_a, h->name, " ", NULL);
-			    _i++;
-			}
+
+                        if(_test == 0 || _test == 2)
+                        {
+                                int hidx;
+                                bool no_hosts=true;
+
+                                for(hidx=0; hidx<MAX_HOSTS; hidx++)
+                                {
+                                        if(h->host[hidx] && *h->host[hidx])
+                                        {
+                                                no_hosts=false;
+                                                break;
+                                        }
+                                }
+                                if(no_hosts)
+                                {
+                                        _a = push(_a, h->name, " ", NULL);
+                                        _i++;
+                                }
+                        }
 			
 			if(!h->flags[GLOBAL] && (_test == 0 || _test == 3))
 			{
