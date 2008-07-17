@@ -891,31 +891,34 @@ class chan
 #endif
 };
 
-/** Stores server information
- *  * \author patrick <patrick@psotnic.com>
+/** Stores server information.
+ *  \author patrick <patrick@psotnic.com>
+ *  \warning the values are only available when the bot is connected to an ircserver
  */
 
 class _server
 {
         public:
         int chanlen; ///< maximum length of a channel name
-        char *chanmodes; ///< indicates the channel modes available and the arguments they take (format: "A,B,C,D")
-        char *chantypes; ///< prefixes of channels (like "#&!+")
-        char excepts; ///< indicates that the server supports ban exceptions (default 'e')
-        char invex; ///< indicates that the server supports invite exceptions (default 'I')
-        int kicklen; ///< maximum length of a kickreason
-        char *name; ///< name of the server
-        char *network; ///< name of the irc network (mainly for informational purposes)
-        int maxlist; ///< limits how many "variable" modes of type A a client may set in total on a channel
-        int modes; ///< limits how many "variable" modes (type A, B, C) may be set on a channel by a single MODE command
-        int nicklen; ///< maximum length of a nickname
-        int topiclen; ///< maximum length of a topic
-        int maxchannels; ///< maximum number of chans a client can join
-        char *usermodes; ///< available user modes
-        char *version; ///< ircd version
+	char *chan_status_flags; ///< specifies a list of channel status flags (usually: "ov")
+	char *chan_status_prefixes; ///< a mapping to the equivalent channel_status_flags (usually: "@+", so: 'o'=>'@', 'v'=>'+')
+	char *chanmodes; ///< indicates the channel modes available and the arguments they take (format: "A,B,C,D")
+	char *chantypes; ///< prefixes of channels (like "#&!+")
+	char excepts; ///< indicates that the server supports ban exceptions (default 'e')
+	char invex; ///< indicates that the server supports invite exceptions (default 'I')
+	int kicklen; ///< maximum length of a kickreason
+	char *name; ///< name of the server
+	char *network; ///< name of the irc network (mainly for informational purposes)
+	int maxlist; ///< limits how many "variable" modes of type A a client may set in total on a channel
+	int modes; ///< limits how many "variable" modes (type A, B, C) may be set on a channel by a single MODE command
+	int nicklen; ///< maximum length of a nickname
+	int topiclen; ///< maximum length of a topic
+	int maxchannels; ///< maximum number of chans a client can join
+	char *usermodes; ///< available user modes
+	char *version; ///< ircd version
 
-        _server() { };
-        ~_server() {}
+	_server() { };
+	~_server() {}
 };
 
 class client
@@ -963,6 +966,8 @@ class client
 	/* other */
 	void sendStatus(const char *name);
 	void checkMyHost(const char *to, bool justConnected=0);
+	void privmsg(const char *target, const char *lst, ...);
+	void notice(const char *target, const char *lst, ...);
 
 	/* Debug */
 #ifdef HAVE_DEBUG
@@ -975,6 +980,7 @@ class client
 	/* Destruction derby */
 	~client();
 	void reset();
+	void reset_server();
 };
 
 class ul

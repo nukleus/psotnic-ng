@@ -1450,6 +1450,10 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
 {
     char type;
 
+    // 'o', 'v'
+    if(strchr(ME.server.chan_status_flags, mode))
+        return true;
+
     type=getTypeOfChanMode(mode);
 
     switch(type)

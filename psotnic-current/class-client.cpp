@@ -1005,6 +1005,8 @@ client::~client()
 		ch = ch->next;
 		delete p;
 	}
+
+	reset_server();
 }
 
 void client::reset()
@@ -1050,6 +1052,14 @@ void client::reset()
 		//userlist.chanlist[i].nextjoin = 0;
 	}
 
+	reset_server();
+}
+
+/** Clears server information.
+ *  \author patrick <patrick@psotnic.com>
+ */
+void client::reset_server()
+{
 	// clear server information
 	server.chanlen=0;
 	server.kicklen=0;
@@ -1097,4 +1107,61 @@ void client::reset()
 		server.network=NULL;
 	}
 
+	if(server.chan_status_flags)
+	{
+		free(server.chan_status_flags);
+		server.chan_status_flags=NULL;
+	}
+
+	if(server.chan_status_prefixes)
+	{
+		free(server.chan_status_prefixes);
+		server.chan_status_prefixes=NULL;
+	}
+}
+
+/** Sends a privmsg.
+ * \author patrick <patrick@psotnic.com>
+ */
+
+void client::privmsg(const char *target, const char *lst, ...)
+{
+        va_list ap;
+	char *a;
+        int len;
+
+	a = push(NULL, "PRIVMSG ", target, " :", NULL);
+
+        va_start(ap, lst);
+        len = va_getlen(ap, lst);
+        va_end(ap);
+        va_start(ap, lst);
+        a = va_push(a, ap, lst, len + 1);
+        va_end(ap);
+
+	net.irc.send(a, NULL);
+        free(a);
+}
+
+/** Sends a notice.
+  * \author patrick <patrick@psotnic.com>
+  */
+
+void client::notice(const char *target, const char *lst, ...)
+{
+        va_list ap;
+        char *a;
+        int len;
+
+        a = push(NULL, "NOTICE ", target, " :", NULL);
+
+        va_start(ap, lst);
+        len = va_getlen(ap, lst);
+        va_end(ap);
+        va_start(ap, lst);
+        a = va_push(a, ap, lst, len + 1);
+        va_end(ap);
+
+        net.irc.send(a, NULL);
+        free(a);
 }

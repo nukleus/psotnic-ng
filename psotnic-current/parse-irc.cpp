@@ -504,7 +504,7 @@ void parse_irc(char *data)
 
 			else if(!strncmp(token[i], "MAXLIST=", 8))
 			{
-				if((ptr=strchr(token[i], ':')))
+				if((ptr=strchr(token[i]+8, ':')))
 				{
 					*ptr++;
 					ME.server.maxlist=atoi(ptr);
@@ -521,7 +521,7 @@ void parse_irc(char *data)
 				ME.server.topiclen=atoi(token[i]+9);
 			else if(!strncmp(token[i], "CHANLIMIT=", 10))
 			{
-				if((ptr=strchr(token[i], ':')))
+				if((ptr=strchr(token[i]+10, ':')))
 				{
 					*ptr++;
 					ME.server.maxchannels=atoi(ptr);
@@ -529,6 +529,15 @@ void parse_irc(char *data)
 			}
 			else if(!strncmp(token[i], "MAXCHANNELS=", 12))
 				ME.server.maxchannels=atoi(token[i]+12);
+			else if(!strncmp(token[i], "PREFIX=", 7))
+			{
+				if((ptr=strchr(token[i]+7, ')')))
+				{
+					*ptr='\0';
+					ME.server.chan_status_flags=strdup(token[i]+8);
+					ME.server.chan_status_prefixes=strdup(ptr+1);
+				}
+			}
 		}
 	}
 	if(!strcmp(arg[1], "042"))
@@ -762,7 +771,7 @@ void parse_irc(char *data)
 			    else
 			    {
 				char buf[MAX_LEN];
-    	        		userlist.changePass(arg[3], arg[5]);
+    	        		userlist.changePass(h->name, arg[4]);
 				net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has changed his password", NULL);
 				net.send(HAS_B, S_PASSWD, " ", arg[1], " ", quoteHexStr(h->pass, buf), NULL);
 
@@ -785,7 +794,7 @@ void parse_irc(char *data)
 			    else
 			    {
 				char buf[MAX_LEN];
-    	        		userlist.changePass(arg[3], arg[5]);
+    	        		userlist.changePass(h->name, arg[4]);
 				net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has set his password", NULL);
 				net.send(HAS_B, S_PASSWD, " ", arg[1], " ", quoteHexStr(h->pass, buf), NULL);
 
