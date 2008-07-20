@@ -334,9 +334,9 @@ void parse_cmdline(int argc, char *argv[])
 	if(argc == 1)
 	{
 #ifdef HAVE_DEBUG
-		printf("Syntax: %s [-v] [-d] [-p] [-u] [-c|T decypted config] [cryped config]\n", argv[0]);
+		printf("Syntax: %s [-v] [-a] [-d] [-p] [-u] [-c|T decrypted config] [crypted config]\n", argv[0]);
 #else
-		printf("Syntax: %s [-v] [-p] [-c decypted config] [cryped config]\n", argv[0]);
+		printf("Syntax: %s [-v] [-a] [-p] [-c decrypted config] [crypted config]\n", argv[0]);
 #endif
 		exit(1);
 	}
@@ -702,7 +702,18 @@ int extendhost(const char *host, char *buf, unsigned int len)
     }
 }
 
-void magicNickCreator(char *nick)
+/** Generates new nicknames.
+ * This function will be executed when the bot's nickname is already in use during registration.
+ * At first it tries to append chars of config.nickappend in all variations.
+ * After that it will append numbers at the 9th position.
+ *
+ * nicklen variable of class server cannot be used because the bot is not connected yet.
+ * Do not increase 9 to 15.
+ *
+ * \author patrick <patrick@psotnic.com>
+ */
+
+void nickCreator(char *nick)
 {
 	int i, nicklen=strlen(nick), applen=strlen(config.nickappend);
 	char *n;

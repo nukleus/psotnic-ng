@@ -69,7 +69,12 @@ protmodelist::entry *chan::checkShit(const chanuser *u, const char *host)
 		return NULL;
 }
 
-// checks if all sticky bans, invites, exempts and reops are set
+/** Checks if all sticky bans, invites, exempts and reops are set.
+ *
+ * TODO: use invex and excepts of class server
+ *
+ * \author patrick <patrick@psotnic.com>
+ */
 
 void chan::checkList()
 {
@@ -1313,6 +1318,18 @@ int chanuser::updateDNSEntry()
 }
 #endif
 
+/** Searchs for people that are not added with +v or +o and kicks them out.
+ * It makes also sure that the channel is either +k or +i.
+ * If the channel was +k, the bot will set +i so that the guy cannot rejoin.
+ *
+ * FIXME: Isn't it enough to check this when someone is joining?
+ *        This function is executed too often. It can slow down the bot.
+ *        But then we need another way to kick users that lost their flags
+ *        and to kick users when keepout has just been enabled.
+ *
+ * \author patrick <patrick@psotnic.com>
+ */
+
 void chan::checkKeepout()
 {
 	if(synced() < 9)
@@ -1503,7 +1520,12 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
 
 bool chan::isChannel(const char *_name)
 {
-    int i, len=strlen(ME.server.chantypes);
+    int i, len;
+
+    if(!ME.server.chantypes)
+        return false;
+
+    len=strlen(ME.server.chantypes);
 
     for(i=0; i<len; i++)
     {

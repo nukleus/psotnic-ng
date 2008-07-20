@@ -130,9 +130,49 @@ void client::sendStatus(const char *name)
 		resolver.unlock_data();
 	}
 #else
-	net.sendOwner(name, "Resolving threads: \002not supported\002", NULL);
+	net.sendOwner(name, "Resolving threads: not supported", NULL);
 #endif
-
+	net.sendOwner(name, "I'm configured as follows:", NULL);
+#ifdef HAVE_ANTIPTRACE
+	net.sendOwner(name, "Antiptrace:               Enabled", NULL);
+#else
+	net.sendOwner(name, "Antiptrace:               Disabled", NULL);
+#endif
+#ifdef HAVE_IRC_BACKTRACE
+	net.sendOwner(name, "IRC Backtrace:            Enabeled", NULL);
+#else
+	net.sendOwner(name, "IRC Backtrace:            Disabled", NULL);
+#endif
+#ifdef HAVE_SSL
+	net.sendOwner(name, "SSL support:              Enabled", NULL); //TODO: add version string
+#else
+	net.sendOwner(name, "SSL support:              Disabled", NULL);
+#endif
+#ifdef HAVE_IPV6
+	net.sendOwner(name, "IPv6 support:             Enabled", NULL);
+#else
+	net.sendOwner(name, "IPv6 support:             Disabled", NULL);
+#endif
+#ifdef HAVE_ANDS
+	net.sendOwner(name, "Asynchronus DNS Resolver: Enabled", NULL);
+#else
+	net.sendOwner(name, "Asynchronus DNS Resolver: Disabled", NULL);
+#endif
+#ifdef HAVE_ADNS_PTHREAD
+	net.sendOwner(name, "Resolving Threads:        Enabled, using ", itoa(config.resolve_threads), " threads", NULL);
+#else
+	net.sendOwner(name, "Resolving Threads:        Disabled", NULL);
+#endif
+#ifdef HAVE_ADNS_FIREDNS
+	net.sendOwner(name, "FireDNS Resolver:         Enabled, using ", itoa(resolver.n), " threads", NULL);
+#else
+	net.sendOwner(name, "FireDNS Resolver:         Disabled", NULL);
+#endif
+#ifdef HAVE_LITTLE_ENDIAN
+	net.sendOwner(name, "Endianness:                Little", NULL);
+#else
+	net.sendOwner(name, "Endianness:                Big", NULL);
+#endif
 }
 
 entServer *client::getRandomServer()
@@ -296,7 +336,7 @@ void client::inviteRaw(const char *str)
 
 void client::registerWithNewNick(char *nick)
 {
-	magicNickCreator(nick);
+	nickCreator(nick);
 	net.irc.send("NICK ", nick, NULL);
 }
 

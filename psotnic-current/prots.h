@@ -138,7 +138,7 @@ int getRandomNumbers(int top, int *ret, int num);
 int getRandomItems(chanuser **ret, ptrlist<chanuser>::iterator start, int interval, int num, int ex=0);
 
 /* string functions */
-void magicNickCreator(char *nick);
+void nickCreator(char *nick);
 int extendhost(const char *host, char *buf, unsigned int len);
 char *expand(const char *str, char *buf, int len, const char *args);
 unsigned int hash32(const char *word);

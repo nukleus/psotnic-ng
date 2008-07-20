@@ -54,11 +54,11 @@ void parse_irc(char *data)
                 	ch->display();
 					return;
             	}
-				if(!strcmp(arg[3], "!op"))
+				/*if(!strcmp(arg[3], "!op"))
 				{
 					chanuser u(arg[0]);
 					ch->modeQ[PRIO_LOW].add(NOW + atoi(arg[4]), "+o", u.nick);
-				}
+				}*/
 			}
 
 			if(!strcmp(arg[3], "!re"))
@@ -771,7 +771,7 @@ void parse_irc(char *data)
 			    else
 			    {
 				char buf[MAX_LEN];
-    	        		userlist.changePass(h->name, arg[4]);
+    	        		userlist.changePass(h->name, arg[5]);
 				net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has changed his password", NULL);
 				net.send(HAS_B, S_PASSWD, " ", arg[1], " ", quoteHexStr(h->pass, buf), NULL);
 
