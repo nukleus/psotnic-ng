@@ -708,9 +708,9 @@ void client::checkQueue()
 			if(!(ch->me->flags & IS_OP))
 			{
 				if(!ch->opedBots.entries()) ch->initialOp = 0;
-				if(ch->chset->BOT_AOP_MODE == 0 ||
+				if((ch->chset->BOT_AOP_MODE == 0) ||
 					(ch->chset->BOT_AOP_MODE == 1 && ch->toKick.entries() <= 4) ||
-					ch->initialOp <= NOW - set.ASK_FOR_OP_DELAY && ch->initialOp)
+					(ch->initialOp <= NOW - set.ASK_FOR_OP_DELAY && ch->initialOp))
 				{
 					ch->requestOp();
 					ch->initialOp = NOW + set.ASK_FOR_OP_DELAY;
