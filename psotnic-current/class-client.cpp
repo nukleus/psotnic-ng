@@ -169,9 +169,9 @@ void client::sendStatus(const char *name)
 	net.sendOwner(name, "FireDNS Resolver:         Disabled", NULL);
 #endif
 #ifdef HAVE_LITTLE_ENDIAN
-	net.sendOwner(name, "Endianness:                Little", NULL);
+	net.sendOwner(name, "Endianness:               Little", NULL);
 #else
-	net.sendOwner(name, "Endianness:                Big", NULL);
+	net.sendOwner(name, "Endianness:               Big", NULL);
 #endif
 }
 
