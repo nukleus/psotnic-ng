@@ -85,7 +85,7 @@ void hook_kick(chan *ch, chanuser *kicked, chanuser *kicker)
 
 void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin)
 {
-    char kickreason[128];
+    char buffer[MAX_LEN];
     arj_chk::entry *entry;
 
     if(netjoin || !(ch->me->flags&IS_OP))
@@ -93,9 +93,18 @@ void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin)
 	
     if((entry=autorejoincheck.find(ch, u->nick)))
     {
-        snprintf(kickreason, sizeof(kickreason), "disable autorejoin - banned for %d min%s", NOARJ_BAN_TIME, NOARJ_BAN_TIME==1?"":"s");
-        knockout(ch, u, kickreason, NOARJ_BAN_TIME*60); 
-        autorejoincheck.data.remove(entry);
+        snprintf(buffer, MAX_LEN, "*!%s@%s", u->ident, u->host);
+
+        if(set.BOTS_CAN_ADD_SHIT
+           && protmodelist::addShit(ch->name, buffer, "noautorejoin", NOARJ_BAN_TIME*60, "Please disable autorejoin"))
+            return;
+
+        else
+        {
+            snprintf(buffer, MAX_LEN, "Please disable autorejoin - banned for %d min%s", NOARJ_BAN_TIME, NOARJ_BAN_TIME==1?"":"s");
+            knockout(ch, u, buffer, NOARJ_BAN_TIME*60); 
+            autorejoincheck.data.remove(entry);
+        }
     }
 }
 
@@ -119,7 +128,7 @@ void hook_timer()
 
 extern "C" module *init()
 {
-    module *m=new module("noautorejoin", "patrick <patrick@psotnic.com>", "0.1");
+    module *m=new module("noautorejoin", "patrick <patrick@psotnic.com>", "0.2");
     m->hooks->join=hook_join;
     m->hooks->kick=hook_kick;
     m->hooks->timer=hook_timer;

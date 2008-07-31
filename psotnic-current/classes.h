@@ -195,6 +195,7 @@ class protmodelist
 	static protmodelist::entry *findSticky(const char *mask, int type, const chan *ch);
 	static entry *updateLastUsedTime(const char *channel, const char *mask, int type);
 	static entry *findBestByMask(const char *channel, const char *mask, int type);
+	static int addShit(const char *channel, const char *mask, const char *from, int delay, const char *reason, const char *bot=NULL);
 
 	static int expireAll();
 	void clear();
@@ -631,7 +632,7 @@ class settings : public options
     entBool PRE_0211_FINAL_COMPAT;
 	entBool PRE_0214_FINAL_COMPAT;
 	entBool PRE_REV127_COMPAT;
-    
+	entBool BOTS_CAN_ADD_SHIT; 
 	settings();
 };
 

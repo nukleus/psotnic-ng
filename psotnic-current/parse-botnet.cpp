@@ -21,6 +21,8 @@
 #include "prots.h"
 #include "global-var.h"
 
+int requestShit(const char *channel, const char *mask, const char *from, int delay, const char *reason, const char *bot);
+
 static char arg[10][MAX_LEN];
 static chan *ch;
 static chanuser *p;
@@ -329,11 +331,15 @@ int parse_botnet(inetconn *c, char *data)
 			return 1;
 		}
 
-		/* S_REQSHIT <chan> <time> <mask> <reason> */
-		if(!strcmp(arg[0], S_REQSHIT) && strlen(arg[4]))
+		/* S_REQSHIT <chan> <mask> <from> <delay> <reason> */
+		if(!strcmp(arg[0], S_REQSHIT) && strlen(arg[5]))
 		{
-			//CHANLIST *
-			//FIXME: isn't that what's implemented in S_SHITOBSERVED bellow?
+			if(set.BOTS_CAN_ADD_SHIT)
+				protmodelist::addShit(arg[1], arg[2], arg[3], atol(arg[4]), srewind(data, 5), c->name);
+			else
+				net.send(HAS_N, "[?] ", c->name, " requested shit but bots-can-add-shit is OFF", NULL);
+
+			return 1;
 		}
 		/* S_ADDIDIOT <mask> <chan> <number> <reason> */
 		if(!strcmp(arg[0], S_ADDIDIOT) && strlen(arg[4]))

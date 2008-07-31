@@ -430,3 +430,96 @@ protmodelist::entry *protmodelist::updateLastUsedTime(const char *channel, const
 	}
 	return e;
 }
+
+/** Adds shit or tells the main bot to add it.
+ * This function should only be used when a bot adds a shit.
+ * Please check if set.BOTS_CAN_ADD_SHIT is true before you use this function.
+ * It does not check for mask conflicts.
+ *
+ * @param channel channel, can be "*" if you want global shit, cannot contain spaces
+ * @param mask mask, must have format nick!ident@host, cannot contain spaces
+ * @param from name of who set the shit, does not have to be a valid user, cannot contain spaces
+ * @param delay time in seconds how long the shit should last (e.g. 60)
+ * @param reason reason
+ * @param bot optional and should only be used by parse-botnet.cpp
+ * @return 2 if shit has been added (only for main bots)
+ * @return 1 if shit request has been sent (for slaves or leafs)
+ * @return 0 if an error occurred (main bot is down, channel not found) 
+*/
+
+int protmodelist::addShit(const char *channel, const char *mask, const char *from, int delay, const char *reason, const char *bot)
+{
+    int chanNum, i;
+    protmodelist *shit;
+    protmodelist::entry *s;
+    chan *ch;
+
+    if(config.bottype == BOT_MAIN)
+    {
+        if(!strcmp(channel, "*"))
+            shit=userlist.protlist[BAN];
+        else
+        {
+            if((chanNum=userlist.findChannel(channel))==-1)
+                return 0;
+
+            shit=userlist.chanlist[chanNum].protlist[BAN];
+        }
+
+        //if((s=shit->conflicts(mask)))
+        //    return 0;
+
+        s=shit->add(mask, from, NOW, NOW+delay, reason, false);
+        ++userlist.SN;
+        userlist.nextSave = NOW + SAVEDELAY;
+        net.send(HAS_B, S_ADDSHIT , " ", channel, " ", s->mask, " ", s->by, " 0 ", itoa(s->expires), " ", s->reason, NULL);
+
+        if(!strcmp(channel, "*"))
+        {
+            if(bot)
+                net.send(HAS_N, "Added shit `\002", mask, "\002' requested by bot `\002", bot, "\002'", NULL);
+            else
+                net.send(HAS_N, "Added shit `\002", mask, "\002'", NULL);
+
+            foreachSyncedChannel(ch)
+                ch->applyShit(s);
+        }
+
+        else
+        {
+            if(bot)
+                net.send(HAS_N, "Added shit `\002", mask, "\002' on `\002", channel, "\002' requested by bot `\002", bot?bot:(const char*)config.handle, "\002'", NULL);
+            else
+                net.send(HAS_N, "Added shit `\002", mask, "\002' on `\002", channel, "\002'", NULL);
+
+            if((ch=ME.findChannel(channel)))
+                ch->applyShit(s);
+        }
+
+        return 2;
+    }
+
+    else
+    {
+        if(net.hub.fd && net.hub.isMain())
+        {
+            net.hub.send(S_REQSHIT, " ", channel, " ", mask, " ", from, " ", itoa(delay), " ", reason, NULL);
+            return 1;
+        }
+
+        else
+        {
+            for(i=0; i<net.max_conns; ++i)
+            {
+                if(net.conn[i].isMain() && net.conn[i].fd)
+                {
+                    net.conn[i].send(S_REQSHIT, " ", channel, " ", mask, " ", from, " ", itoa(delay), " ", reason, NULL);
+                    return 1;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+

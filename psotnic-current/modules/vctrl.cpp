@@ -43,6 +43,7 @@
 
 extern flagTable FT[];
 
+#define VCTRL_CFG_FILE "vctrl.txt"
 #define VCTRL_USER_NOT_FOUND "Sorry, this user is not on the channel."
 
 // global settings
@@ -53,7 +54,6 @@ class vsettings : public options
     entBool NOTICE;
     entTime MAX_DELAY;
     entString INTRO;
-    entWord CFG_FILE;
     entTime CFG_SAVE_DELAY;
     entWord BAN_TYPE;
     entBool USE_TOPIC_APPENDIX;
@@ -68,7 +68,6 @@ vsettings::vsettings()
     registerObject(NOTICE = entBool("notice", 1));
     registerObject(MAX_DELAY = entTime("max-delay", 0, 60, 0));
     registerObject(INTRO = entString("intro", 1, 255, "Welcome to the control, you can use:"));
-    registerObject(CFG_FILE = entWord("cfg-file", 1, 255, "vctrl.txt"));
     registerObject(CFG_SAVE_DELAY = entTime("cfg-save-delay", 0, 3600, 20));
     registerObject(BAN_TYPE = entWord("ban-type", 1, 255, "*!%i@%h"));
     registerObject(USE_TOPIC_APPENDIX = entBool("use-topic-appendix", 0));
@@ -170,7 +169,7 @@ void vctrl_load()
     options::event *e;
     CHANLIST *cl;
 
-    if(!(fh=fopen(vset.CFG_FILE, "r")))
+    if(!(fh=fopen(VCTRL_CFG_FILE, "r")))
         return;
 
     while(fgets(buffer, MAX_LEN, fh))
@@ -192,7 +191,7 @@ void vctrl_load()
 	// else ..
 
         if(e && !e->ok)
-            printf("[-] %s:%d: %s\n", (const char*)vset.CFG_FILE, line, (const char *) e->reason);
+            printf("[-] %s:%d: %s\n", VCTRL_CFG_FILE, line, (const char *) e->reason);
     }
 
     fclose(fh);
@@ -205,9 +204,9 @@ void vctrl_save()
     ptrlist<ent>::iterator i;
     int j;
 
-    if(!(fh=fopen(vset.CFG_FILE, "w")))
+    if(!(fh=fopen(VCTRL_CFG_FILE, "w")))
     {
-        net.send(HAS_N, "[\002vctrl\002] cannot open ", (const char*)vset.CFG_FILE, " for writing: ", strerror(errno), NULL);
+        net.send(HAS_N, "[\002vctrl\002] cannot open ", VCTRL_CFG_FILE, " for writing: ", strerror(errno), NULL);
         vctrl_setSave(); // try again later
         return;
     }
