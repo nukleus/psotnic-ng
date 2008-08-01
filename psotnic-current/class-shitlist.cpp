@@ -434,17 +434,17 @@ protmodelist::entry *protmodelist::updateLastUsedTime(const char *channel, const
 /** Adds shit or tells the main bot to add it.
  * This function should only be used when a bot adds a shit.
  * Please check if set.BOTS_CAN_ADD_SHIT is true before you use this function.
- * It does not check for mask conflicts.
  *
- * @param channel channel, can be "*" if you want global shit, cannot contain spaces
- * @param mask mask, must have format nick!ident@host, cannot contain spaces
- * @param from name of who set the shit, does not have to be a valid user, cannot contain spaces
- * @param delay time in seconds how long the shit should last (e.g. 60)
- * @param reason reason
- * @param bot optional and should only be used by parse-botnet.cpp
- * @return 2 if shit has been added (only for main bots)
- * @return 1 if shit request has been sent (for slaves or leafs)
- * @return 0 if an error occurred (main bot is down, channel not found) 
+ * \author patrick <patrick@psotnic.com>
+ * \param channel channel, can be "*" if you want global shit, cannot contain spaces
+ * \param mask mask, must have format nick!ident@host, cannot contain spaces
+ * \param from name of who set the shit, does not have to be a valid user, cannot contain spaces
+ * \param delay time in seconds how long the shit should last (e.g. 60)
+ * \param reason reason
+ * \param bot optional and should only be used by parse-botnet.cpp
+ * \return 2 if shit has been added (only for main bots)
+ *         1 if shit request has been sent (for slaves or leafs)
+ *         0 if an error occurred (main bot is down, mask conflict, channel not found) 
 */
 
 int protmodelist::addShit(const char *channel, const char *mask, const char *from, int delay, const char *reason, const char *bot)
@@ -466,8 +466,8 @@ int protmodelist::addShit(const char *channel, const char *mask, const char *fro
             shit=userlist.chanlist[chanNum].protlist[BAN];
         }
 
-        //if((s=shit->conflicts(mask)))
-        //    return 0;
+        if((s=shit->conflicts(mask)))
+            return 0;
 
         s=shit->add(mask, from, NOW, NOW+delay, reason, false);
         ++userlist.SN;

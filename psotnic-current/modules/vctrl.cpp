@@ -294,7 +294,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     }
 }
 
-void hook_modeWho(chan *ch, const char (*mode)[MODES_PER_LINE], const char **user, const char *mask)
+void hook_mode(chan *ch, const char (*mode)[MODES_PER_LINE], const char **user, const char *mask)
 {
     CHANLIST *cl;
     chanuser *u;
@@ -799,7 +799,7 @@ extern "C" module *init()
 
     module_info->hooks->userlistLoaded=hook_userlistLoaded;
     module_info->hooks->privmsg=hook_privmsg;
-    module_info->hooks->modeWho=hook_modeWho;
+    module_info->hooks->mode=hook_mode;
     module_info->hooks->botnetcmd=hook_botnetcmd;
     module_info->hooks->timer=hook_timer;
 

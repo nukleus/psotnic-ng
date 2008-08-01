@@ -875,20 +875,15 @@ void client::gotUserQuit(const char *mask, const char *reason)
 
 	while(ch)
 	{
-                if (ch->synced()) {
-                  HOOK(pre_part, pre_part(mask, ch->name));
-                  stopParsing=false;
+		if (ch->synced())
+		{
+			HOOK(pre_part, pre_part(mask, ch->name, reason, true));
+			stopParsing=false;
 
-                  HOOK(pre_partMsg, pre_partMsg(mask, ch->name, reason, true));
-                  stopParsing=false;
-
-		  ch->gotPart(nick, netsplit);
-                  HOOK(post_part, post_part(mask, ch->name));
-                  stopParsing=false;
-
-                  HOOK(post_partMsg, post_partMsg(mask, ch->name, reason, true));
-                  stopParsing=false;
-                }
+			ch->gotPart(nick, netsplit);
+			HOOK(post_part, post_part(mask, ch->name, reason, true));
+			stopParsing=false;
+		}
 		ch = ch->next;
 	}
 

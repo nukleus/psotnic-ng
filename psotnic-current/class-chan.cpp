@@ -708,7 +708,7 @@ void chan::gotKick(const char *victim, const char *offender)
 	}
 
 
-	HOOK(kick, kick(this, kicked, kicker));
+	HOOK(kick, kick(this, kicked, kicker, ""));
 	stopParsing=false;
 
 	if((limit <= users.entries() - 1 || (flags & FLAG_I)) && (kicked->flags & HAS_I) &&

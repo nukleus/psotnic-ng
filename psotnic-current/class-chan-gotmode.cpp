@@ -860,10 +860,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 	}
 
 
-	HOOK(mode, mode(this, mode, const_cast<const char**> (arg)));
-	stopParsing=false;
-
-	HOOK(modeWho, modeWho(this, mode, const_cast<const char**> (arg), mask));
+	HOOK(mode, mode(this, mode, const_cast<const char**> (arg), mask));
 	stopParsing=false;
 
 	for(i=0; i<MODES_PER_LINE; ++i)

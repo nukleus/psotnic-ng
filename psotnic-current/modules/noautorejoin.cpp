@@ -93,6 +93,7 @@ void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin)
 	
     if((entry=autorejoincheck.find(ch, u->nick)))
     {
+        autorejoincheck.data.remove(entry);
         snprintf(buffer, MAX_LEN, "*!%s@%s", u->ident, u->host);
 
         if(set.BOTS_CAN_ADD_SHIT
@@ -103,7 +104,6 @@ void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin)
         {
             snprintf(buffer, MAX_LEN, "Please disable autorejoin - banned for %d min%s", NOARJ_BAN_TIME, NOARJ_BAN_TIME==1?"":"s");
             knockout(ch, u, buffer, NOARJ_BAN_TIME*60); 
-            autorejoincheck.data.remove(entry);
         }
     }
 }

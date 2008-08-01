@@ -218,7 +218,7 @@ void hook_topicChange(chan *ch, const char *topic, chanuser *u, const char *oldt
 	}
 }
 
-void hook_post_part(const char *mask, const char *channel) {
+void hook_post_part(const char *mask, const char *channel, const char*, bool) {
 	logLine(getNick(mask) + " (" + getRest(mask) + ") left " + string(channel),string(channel));
 }
 

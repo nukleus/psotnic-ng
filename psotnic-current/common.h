@@ -23,11 +23,9 @@ class Hooks
 	void (*connected)();
 	void (*disconnected)(const char *reason);
 	void (*klined)(const char *reason);
-	void (*mode)(chan *ch, const char mode[2][MODES_PER_LINE], const char *arg[MODES_PER_LINE]);
-	void (*modeWho)(chan *ch, const char mode[2][MODES_PER_LINE], const char *arg[MODES_PER_LINE], const char *mask);
+	void (*mode)(chan *ch, const char mode[2][MODES_PER_LINE], const char *arg[MODES_PER_LINE], const char *mask);
 	void (*crap)(const char *data);
-	void (*kick)(chan *ch, chanuser *kicked, chanuser *kicker);
-	void (*kickMsg)(chan *ch, const char *kicked, const char *kicker, const char *msg);
+	void (*kick)(chan *ch, chanuser *kicked, chanuser *kicker, const char *msg);
 	void (*nick)(const char *from, const char *to);
 	void (*invite)(const char *who, const char *channame, chan *chan, CHANLIST *chLst);
 	void (*rawirc)(const char *data);
@@ -35,10 +33,8 @@ class Hooks
 	void (*justSynced)(chan *ch);
 	void (*partylineCmd)(const char *from, int flags, const char *cmd, const char *args);
 	void (*topicChange)(chan *ch, const char *topic, chanuser *u, const char *oldtopic);
-	void (*pre_part)(const char *mask, const char *channel);
-	void (*post_part)(const char *mask, const char *channel);
-	void (*pre_partMsg)(const char *mask, const char *channel, const char *msg, bool quit);
-	void (*post_partMsg)(const char *mask, const char *channel, const char *msg, bool quit);
+	void (*pre_part)(const char *mask, const char *channel, const char *msg, bool quit);
+	void (*post_part)(const char *mask, const char *channel, const char *msg, bool quit);
 	void (*userlistLoaded)();
 	void (*chanuserConstructor)(const chan *ch, chanuser *cu);
 	void (*receivedSigHup)();

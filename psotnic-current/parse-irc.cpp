@@ -164,7 +164,7 @@ void parse_irc(char *data)
         {
             ch = ME.findChannel(arg[2]);
             if(ch) {
-                HOOK(kickMsg, kickMsg(ch, arg[3], arg[0], srewind(data, 4)));
+                HOOK(kick, kick(ch, new chanuser(arg[3]), new chanuser(arg[0]), srewind(data, 4)));
 		stopParsing=false;
                 ch->gotKick(arg[3], arg[0]);
             }
@@ -173,10 +173,7 @@ void parse_irc(char *data)
     }
     if(!strcmp(arg[1], "PART"))
     {
-		HOOK(pre_part, pre_part(arg[0], arg[2]));
-		stopParsing=false;
-
-		HOOK(pre_partMsg, pre_partMsg(arg[0], arg[2], srewind(data,3), false));
+		HOOK(pre_part, pre_part(arg[0], arg[2], srewind(data,3), false));
 		stopParsing=false;
 		
         if(!strcasecmp(ME.mask, arg[0]))
@@ -195,10 +192,7 @@ void parse_irc(char *data)
             }
 
         }
-		HOOK(post_part, post_part(arg[0], arg[2]));
-		stopParsing=false;
-
-		HOOK(post_partMsg, post_partMsg(arg[0], arg[2], srewind(data,3), false));
+		HOOK(post_part, post_part(arg[0], arg[2], srewind(data,3), false));
 		stopParsing=false;
         return;
     }
