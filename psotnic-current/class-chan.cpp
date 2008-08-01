@@ -660,13 +660,20 @@ chanuser *chan::getUser(const char *nick)
 	return (bool) ret ? &ret : NULL;
 }
 
-void chan::gotKick(const char *victim, const char *offender)
+void chan::gotKick(const char *victim, const char *offender, const char *reason)
 {
 	chanuser *kicked, *kicker;
 	int inv = 0;
 
 	kicked = getUser(victim);
 	kicker = getUser(offender);
+
+        HOOK(kick, kick(this, kicked, kicker, reason));
+        if(stopParsing)
+        {
+            stopParsing=false;
+            return;
+        }
 
 	if(kicker)
 	{
@@ -706,10 +713,6 @@ void chan::gotKick(const char *victim, const char *offender)
 			}
 		}
 	}
-
-
-	HOOK(kick, kick(this, kicked, kicker, ""));
-	stopParsing=false;
 
 	if((limit <= users.entries() - 1 || (flags & FLAG_I)) && (kicked->flags & HAS_I) &&
 		myTurn(chset->INVITE_BOTS, kicker->hash32()))

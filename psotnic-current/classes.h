@@ -830,7 +830,7 @@ class chan
 	/* Got something */
 	void gotNickChange(const char *from, const char *to);
 	void gotMode(const char *args, const char *modes, const char *mask);
-	void gotKick(const char *victim, const char *offender);
+	void gotKick(const char *victim, const char *offender, const char *reason);
 	void gotPart(const char *nick, int netsplit=0);
 	int gotBan(const char *ban, chanuser *caster);
 	bool checkClone(chanuser *u);

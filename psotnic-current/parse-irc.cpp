@@ -163,11 +163,8 @@ void parse_irc(char *data)
         else
         {
             ch = ME.findChannel(arg[2]);
-            if(ch) {
-                HOOK(kick, kick(ch, new chanuser(arg[3]), new chanuser(arg[0]), srewind(data, 4)));
-		stopParsing=false;
-                ch->gotKick(arg[3], arg[0]);
-            }
+            if(ch)
+                ch->gotKick(arg[3], arg[0], srewind(data, 4)+1);
         }
         return;
     }
