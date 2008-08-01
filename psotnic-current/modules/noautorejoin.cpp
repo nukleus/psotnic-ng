@@ -75,7 +75,7 @@ arj_chk::entry *arj_chk::find(chan *channel, char *nick)
 
 arj_chk autorejoincheck;
 
-void hook_kick(chan *ch, chanuser *kicked, chanuser *kicker)
+void hook_kick(chan *ch, chanuser *kicked, chanuser *kicker, const char *reason)
 {
     if(!(ch->me->flags&IS_OP) || kicked->flags & (IS_OP | HAS_O | HAS_V | HAS_F))
         return;
