@@ -6,7 +6,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 {
     if(match("!op*", msg))
     {
-	chan *ch = findChannel(to);
+	chan *ch = ME.findChannel(to);
 	if(ch)
 	{
 	    printf("found channel: %s\n", to);
@@ -14,7 +14,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 	    if(ch->me->flags & IS_OP)
 	    {
 		printf("i have op\n");
-		chanuser *u = findUser(from, ch);
+		chanuser *u = ch->getUser(from);
     		if(u)
 		{
 		    printf("got user %s\n", u->nick);
@@ -23,14 +23,14 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 		    {
 			printf("sending +o\n");
 			//if so, add +o to mode queue
-			addMode(ch, "+o", u->nick, PRIO_LOW, 0);
+			ch->modeQ[PRIO_LOW].add(NOW, "+o", u->nick);
 		    }
 		}
 	    }
 	    else
-		notice(from, "Sorry, but I am not oped");
+		ME.notice(from, "Sorry, but I am not oped", NULL);
 	}
-	else notice(from, "I am not on that channel ;/");
+	else ME.notice(from, "I am not on that channel ;/", NULL);
     }
 }
 

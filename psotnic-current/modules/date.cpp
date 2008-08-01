@@ -86,11 +86,11 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 {
   using namespace Date;
 
-  chan *ch = findChannel(to);
+  chan *ch = ME.findChannel(to);
   
   if (!ch) return; //message is not sent to channel
 
-  chanuser *u = findUser(from, ch);
+  chanuser *u = ch->getUser(from);
 
   if (!u) return; //user is not on channel
 
@@ -123,7 +123,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 			 timedat.tm_mday,
 			 timedat.tm_hour,timedat.tm_min,timedat.tm_sec,
 			 sdy,sd,it);
-		       privmsg(ch->name,buf);
+		       ME.privmsg(ch->name,buf,NULL);
 	               break;
         case CMD_GDATE: if (msg[1+strlen(CMDS[CMD_GDATE])]!=0) break; //not exactly !gdate
 	                time(&t);
@@ -136,7 +136,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 			  timedat.tm_mon,DATE_SEP,
 			  timedat.tm_mday,
 			  timedat.tm_hour,timedat.tm_min,timedat.tm_sec);
-                        privmsg(ch->name,buf);
+                        ME.privmsg(ch->name,buf,NULL);
 		        break;
         case CMD_DAY : if (msg[1+strlen(CMDS[CMD_DAY])]!=' ') break;
 
@@ -156,7 +156,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 			   if (a>31)
 			     {
 			       sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
-                               privmsg(ch->name,buf);
+                               ME.privmsg(ch->name,buf,NULL);
 			       break;
 			     }
 		           
@@ -174,7 +174,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
                                if (a>12 || b>31)
                  	         {
 		                   sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
-                                   privmsg(ch->name,buf);
+                                   ME.privmsg(ch->name,buf,NULL);
 				   break;
 				 }
 			       
@@ -190,7 +190,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
                                if (b>12 || c>31)
 			         {
 		                   sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
-                                   privmsg(ch->name,buf);
+                                   ME.privmsg(ch->name,buf,NULL);
 				   break;
 				 }
 			
@@ -201,12 +201,12 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 		       if (sdy==-1)
 			 {
 		           sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
-                           privmsg(ch->name,buf);
+                           ME.privmsg(ch->name,buf,NULL);
 			   break;
 			 }
 		       
 		       sprintf(buf,"%s",DAYS[sdy]);
-		       privmsg(ch->name,buf);
+		       ME.privmsg(ch->name,buf,NULL);
 	               break;
       }
 }

@@ -27,10 +27,10 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     chanuser *u;
     struct utsname un;
 
-    if(!(ch=findChannel(to)))
+    if(!(ch=ME.findChannel(to)))
 	return;
 
-    if(!(u=findUser(from, ch)))
+    if(!(u=ch->getUser(from)))
 	return;
 
     if(!has_global_flag(u, HAS_M))
@@ -40,19 +40,19 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     {
         if(gethostname(hostname, MAXHOSTNAMELEN)==-1)
         {
-            privmsg(to, "error: cannot get hostname");
+            ME.privmsg(to, "error: cannot get hostname", NULL);
             return;
         }
 
         if(uname(&un)==-1)
         {
-            privmsg(to, "error: cannot get uname");
+            ME.privmsg(to, "error: cannot get uname", NULL);
             return;
         }
 
         if((uptime=get_uptime())==-1)
         {
-            privmsg(to, "error: cannot get uptime");
+            ME.privmsg(to, "error: cannot get uptime", NULL);
             return;
         }
 
@@ -64,7 +64,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
         snprintf(buffer, MAX_LEN, "uptime of `%s' (running on %s): %d day%s %d hour%s %d min%s %d sec%s",
                  hostname, un.sysname, days, days==1?"":"s", hours, hours==1?"":"s", mins,
                  mins==1?"":"s", secs, secs==1?"":"s");
-        privmsg(to, buffer);
+        ME.privmsg(to, buffer, NULL);
     }
 }
 

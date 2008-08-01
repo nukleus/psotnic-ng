@@ -185,7 +185,7 @@ void vctrl_load()
             e=vset.setVariable(arg[1], rtrim(srewind(buffer, 2)));
         else if(!strcmp(arg[0], "vchanset"))
         {
-            if((cl=findChanlist(arg[1])))
+            if((cl=userlist.findChanlist(arg[1])))
                 e=((vchanset *)cl->customData)->setVariable(arg[2], rtrim(srewind(buffer, 3)));
         }
 	// else ..
@@ -195,7 +195,7 @@ void vctrl_load()
     }
 
     fclose(fh);
-    //sendToOwners("[*] Loading voicecontrol config");
+    //net.send(HAS_N, "[*] Loading voicecontrol config", NULL);
 }
 
 void vctrl_save()
@@ -231,7 +231,7 @@ void vctrl_save()
 
     fclose(fh);
     vctrl_next_save=0;
-    sendToOwners("[\002vctrl\002] Autosaving voicecontrol config");
+    net.send(HAS_N, "[\002vctrl\002] Autosaving voicecontrol config", NULL);
 }
 
 void hook_privmsg(const char *from, const char *to, const char *msg)
@@ -243,19 +243,19 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     chanuser *u;
     struct vctrl_func *fptr;
 
-    if(!(cl=findChanlist(to)))
+    if(!(cl=userlist.findChanlist(to)))
         return;
 
     if(!((vchanset *)cl->customData)->VOICE_CONTROL) // vctrl is not enabled for this channel
         return;
 
-    if(!(ch=findChannel(to)))       // bot received the msg but is not on channel
+    if(!(ch=ME.findChannel(to)))       // bot received the msg but is not on channel
         return;
 
     if(!(ch->me->flags & IS_OP))    // bot is not opped
         return;
 
-    if(!(u=findUser(from, ch)))     // user is not on channel
+    if(!(u=ch->getUser(from)))     // user is not on channel
         return;
 
     if(!(u->flags & IS_VOICE))      // user is not voiced
@@ -303,7 +303,7 @@ void hook_mode(chan *ch, const char (*mode)[MODES_PER_LINE], const char **user, 
     int i;
     struct vctrl_func *fptr;
 
-    if(!(cl=findChanlist(ch->name)))
+    if(!(cl=userlist.findChanlist(ch->name)))
         return;
 
     if(!((vchanset *)cl->customData)->VOICE_CONTROL)
@@ -315,14 +315,14 @@ void hook_mode(chan *ch, const char (*mode)[MODES_PER_LINE], const char **user, 
     if(!(ch->me->flags & IS_OP))
         return;
 
-    if(!findUser(mask, ch)) // could be a servermode
+    if(!ch->getUser(mask)) // could be a servermode
         return;
 
     for(i=0; i<MODES_PER_LINE; i++, *user++)
     {
         if(mode[0][i]=='+' && mode[1][i]=='v')
         {
-            if(!(u=findUser(*user, ch)))
+            if(!(u=ch->getUser(*user)))
                 continue;
 
             if(!vctrl_check_flag(cl, u, "required-flag"))
@@ -342,7 +342,7 @@ void hook_mode(chan *ch, const char (*mode)[MODES_PER_LINE], const char **user, 
                 strncat(buf, fptr->command, MAX_LEN-strlen(buf)-1);
             }
 
-            notice(*user, buf);
+            ME.notice(*user, buf, NULL);
         }
     }
 }
@@ -357,7 +357,7 @@ void vctrl_voice(chan *ch, chanuser *from, char *text)
         return;
     }
 
-    if(!(u=findUser(text, ch)))
+    if(!(u=ch->getUser(text)))
     {
         vctrl_notice(from->nick, VCTRL_USER_NOT_FOUND);
         return;
@@ -375,7 +375,7 @@ void vctrl_voice(chan *ch, chanuser *from, char *text)
         return;
     }
 
-    addMode(ch, "+v", u->nick, PRIO_LOW, vctrl_get_delay());
+    ch->modeQ[PRIO_LOW].add(NOW+vctrl_get_delay(), "+v", u->nick);
 }
 
 void vctrl_devoice(chan *ch, chanuser *from, char *text)
@@ -388,7 +388,7 @@ void vctrl_devoice(chan *ch, chanuser *from, char *text)
         return;
     }
 
-    if(!(u=findUser(text, ch)))
+    if(!(u=ch->getUser(text)))
     {
         vctrl_notice(from->nick, VCTRL_USER_NOT_FOUND);
         return;
@@ -406,7 +406,7 @@ void vctrl_devoice(chan *ch, chanuser *from, char *text)
         return;
     }
 
-    addMode(ch, "-v", u->nick, PRIO_LOW, vctrl_get_delay());
+    ch->modeQ[PRIO_LOW].add(NOW+vctrl_get_delay(), "-v", u->nick);
 }
 
 void vctrl_kick(chan *ch, chanuser *from, char *text)
@@ -422,7 +422,7 @@ void vctrl_kick(chan *ch, chanuser *from, char *text)
 
     str2words(arg[0], text, 2, MAX_LEN, 0);
 
-    if(!(u=findUser(arg[0], ch)))
+    if(!(u=ch->getUser(arg[0])))
     {
         vctrl_notice(from->nick, VCTRL_USER_NOT_FOUND);
         return;
@@ -441,7 +441,8 @@ void vctrl_kick(chan *ch, chanuser *from, char *text)
     }
 
     snprintf(kickreason, sizeof(kickreason), "kicked by %s: %s", from->nick, *arg[1]?srewind(text, 1):"requested");
-    addKick(ch, u, kickreason);
+    u->setReason(kickreason);
+    ch->toKick.sortAdd(u);
 }
 
 void vctrl_ban(chan *ch, chanuser *from, char *text)
@@ -458,7 +459,7 @@ void vctrl_ban(chan *ch, chanuser *from, char *text)
 
     str2words(arg[0], text, 2, MAX_LEN, 0);
 
-    if(!(u=findUser(arg[0], ch)))
+    if(!(u=ch->getUser(arg[0])))
     {
         vctrl_notice(from->nick, VCTRL_USER_NOT_FOUND);
         return;
@@ -477,11 +478,12 @@ void vctrl_ban(chan *ch, chanuser *from, char *text)
     }
 
     vctrl_format(banmask, MAX_LEN, vset.BAN_TYPE, u);
-    addMode(ch, "+b", banmask, PRIO_HIGH, 0);
-    flushModeQueue(ch, PRIO_HIGH);
+    ch->modeQ[PRIO_HIGH].add(NOW, "+b", banmask);
+    ch->modeQ[PRIO_HIGH].flush(PRIO_HIGH);
 
     snprintf(buf, MAX_LEN, "banned by %s: %s", from->nick, *arg[1]?srewind(text, 1):"requested");
-    addKick(ch, u, buf);
+    u->setReason(buf);
+    ch->toKick.sortAdd(u);
 }
 
 void vctrl_banmask(chan *ch, chanuser *from, char *text)
@@ -491,7 +493,7 @@ void vctrl_banmask(chan *ch, chanuser *from, char *text)
     ptrlist<chanuser>::iterator u;
     CHANLIST *cl;
 
-    if(!(cl=findChanlist(ch->name)))
+    if(!(cl=userlist.findChanlist(ch->name)))
         return;
 
 
@@ -532,7 +534,7 @@ void vctrl_banmask(chan *ch, chanuser *from, char *text)
         }
     }
 
-    addMode(ch, "+b", banmask, PRIO_LOW, 0);
+    ch->modeQ[PRIO_LOW].add(NOW, "+b", banmask);
     free(banmask);
 }
 
@@ -544,7 +546,7 @@ void vctrl_unban(chan *ch, chanuser *from, char *text)
         return;
     }
 
-    addMode(ch, "-b", text, PRIO_LOW, vctrl_get_delay());
+    ch->modeQ[PRIO_LOW].add(NOW+vctrl_get_delay(), "-b", text);
 }
 
 void vctrl_topic(chan *ch, chanuser *from, char *text)
@@ -657,7 +659,7 @@ void vctrl_notice(const char *to, const char *msg, ...)
     va_start(list, msg);
     vsnprintf(buffer, MAX_LEN, msg, list);
     va_end(list);
-    notice(to, buffer);
+    ME.notice(to, buffer, NULL);
 }
 
 bool vctrl_check_flag(CHANLIST *cl, chanuser *u, const char *var)
@@ -739,9 +741,9 @@ void hook_botnetcmd(const char *from, const char *cmd)
 
         else
         {
-            if(!(cl=findChanlist(arg[2])))
+            if(!(cl=userlist.findChanlist(arg[2])))
             {
-                sendToOwner(arg[0], "unknown channel");
+                net.sendOwner(arg[0], "unknown channel", NULL);
                 return;
             }
 

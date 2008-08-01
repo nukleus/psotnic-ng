@@ -375,12 +375,12 @@ bool Words::print(const chanuser *u)
       str+=DELIM;
       if (str.size()+it->size()>SIZE)
         {
-          privmsg(u->nick,str.c_str());
+          ME.privmsg(u->nick,str.c_str(),NULL);
 	  str.clear();
         }
       str+=*it;
     }
-  privmsg(u->nick,str.c_str());
+  ME.privmsg(u->nick,str.c_str(),NULL);
   return true;
 }
 
@@ -471,13 +471,13 @@ bool BlackList::print(const chan *ch)
       
       if (str.size()+buf.size()>SIZE)
         {
-          privmsg(ch->name,str.c_str());
+          ME.privmsg(ch->name,str.c_str(),NULL);
 	  str.clear();
         }
 	
       str+=buf;
     }
-  privmsg(ch->name,str.c_str());
+  ME.privmsg(ch->name,str.c_str(),NULL);
   return true;
 }
 
@@ -494,7 +494,7 @@ void AntiWords::print(const chan *ch,const char *str,...)
   
   snprintf(msg,255,"\x02%s:\x02 %s",NAME,buf);
   
-  privmsg(ch->name,msg);
+  ME.privmsg(ch->name,msg,NULL);
 }
 
 
@@ -507,7 +507,7 @@ void AntiWords::print(const chanuser *u,const char *str,...)
   vsnprintf(buf,256,str,args);
   va_end(args);
   
-  privmsg(u->nick,buf);
+  ME.privmsg(u->nick,buf,NULL);
 }
 
 void AntiWords::print_help(const chanuser *u)
@@ -522,7 +522,7 @@ void AntiWords::print_about(const chan *ch)
   static char buf[256];
   
   snprintf(buf,256,"\x02%s\x02 module, version %s, programmed by %s",NAME,VERSION,AUTHOR);
-  privmsg(ch->name,buf);
+  ME.privmsg(ch->name,buf,NULL);
 }
 
 void AntiWords::parsecmd(const chan *ch,const chanuser *u,const char *line)
@@ -689,19 +689,21 @@ void AntiWords::check_word(const Word &msg,chan *ch,chanuser *u)
   int t;
   switch (bi->num())
   {
-    case 0 : addKick(ch,u,"Watch what are you typing!");
-             kick(ch,u,"Watch what are you typing!");
+    case 0 : u->setReason("Watch what are you typing!");
+             ch->toKick.sortAdd(u);
+             ch->kick(u,"Watch what are you typing!");
              break;
-    case 1 : addKick(ch,u,"Watch what are you typing! (one more time and ban)");
-             kick(ch,u,"Watch what are you typing! (one more time and ban)");
+    case 1 : u->setReason("Watch what are you typing! (one more time and ban)");
+             ch->toKick.sortAdd(u);
+             ch->kick(u,"Watch what are you typing! (one more time and ban)");
              break;
-    case 2 : knockout(ch, u,
+    case 2 : ch->knockout(u,
               "You have been warned to avoid some words - expires in 5 mins",
               5*60);
              break;
     default: t=(bi->num()-1)*5;
              snprintf(buf,MAX_LEN,"Get out of here! (ban for %d mins)",t);
-             knockout(ch,u,buf,t*60);
+             ch->knockout(u,buf,t*60);
              break;
   }
   (*bi)=bi->num()+1;
@@ -735,13 +737,13 @@ void hook_notice(const char *from,const char *to, const char *msg)
 {
   using namespace AntiWords;
 
-  chan *ch = findChannel(to);
+  chan *ch = ME.findChannel(to);
     
   if(!ch) return;
 
   if (chans->match((const char *)ch->name)==Words::NO_MATCH) return;
 
-  chanuser *u = findUser(from, ch);
+  chanuser *u = ch->getUser(from);
 	
   if (u->flags & (HAS_V | HAS_O | IS_OP | IS_VOICE)) return;
 
@@ -752,13 +754,13 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
 {
   using namespace AntiWords;
   
-  chan *ch = findChannel(to);
+  chan *ch = ME.findChannel(to);
     
   if(!ch) return;
 
   if (chans->match((const char *)ch->name)==Words::NO_MATCH) return;
 
-  chanuser *u = findUser(from, ch);
+  chanuser *u = ch->getUser(from);
 	
   if (u->flags & (HAS_V | HAS_O | IS_OP | IS_VOICE)) return;
 
@@ -773,11 +775,11 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 
     static char buf[MAX_LEN];
     
-    chan *ch = findChannel(to);
+    chan *ch = ME.findChannel(to);
 
     if(!ch) return;
     
-    chanuser *u = findUser(from, ch);
+    chanuser *u = ch->getUser(from);
 	
     if (!u) return;
     

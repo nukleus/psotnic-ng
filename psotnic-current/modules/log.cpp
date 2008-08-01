@@ -175,7 +175,7 @@ string getRest(const char *from) {
 }
 
 void hook_privmsg(const char *from, const char *to, const char *msg) {
-	chan *ch = findChannel(to);// channel we are acting in
+	chan *ch = ME.findChannel(to);// channel we are acting in
 	string line = "<" + getNick(from) + "> " + msg;
 	// check if we have a channel
 	if(ch) {
@@ -186,7 +186,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg) {
 } // end of function
 
 void hook_ctcp(const char *from, const char *to, const char *msg) {
-	chan *ch = findChannel(to);// channel we are acting in
+	chan *ch = ME.findChannel(to);// channel we are acting in
 	string line = "Action: " + getNick(from);
 	string action = msg;
 	line = line + action.substr(6);

@@ -317,12 +317,12 @@ bool Chans::print(const chanuser *u)
       str+=DELIM;
       if (str.size()+it->size()>SIZE)
         {
-          privmsg(u->nick,str.c_str());
+          ME.privmsg(u->nick,str.c_str(),NULL);
 	  str.clear();
         }
       str+=*it;
     }
-  privmsg(u->nick,str.c_str());
+  ME.privmsg(u->nick,str.c_str(),NULL);
   return true;
 }
 
@@ -411,7 +411,7 @@ void Peak::print(const chan *ch,const char *str,...)
   
   snprintf(msg,255,"\x02%s:\x02 %s",NAME,buf);
   
-  privmsg(ch->name,msg);
+  ME.privmsg(ch->name,msg,NULL);
 }
 
 
@@ -424,7 +424,7 @@ void Peak::print(const chanuser *u,const char *str,...)
   vsnprintf(buf,256,str,args);
   va_end(args);
   
-  privmsg(u->nick,buf);
+  ME.privmsg(u->nick,buf,NULL);
 }
 
 void Peak::print_help(const chanuser *u)
@@ -439,7 +439,7 @@ void Peak::print_about(const chan *ch)
   static char buf[256];
   
   snprintf(buf,256,"\x02%s\x02 module, version %s, programmed by %s",NAME,VERSION,AUTHOR);
-  privmsg(ch->name,buf);
+  ME.privmsg(ch->name,buf,NULL);
 }
 
 void Peak::parsecmd(const chan *ch,const chanuser *u,const char *line,int gflag)
@@ -608,11 +608,11 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 
     static char buf[MAX_LEN];
     
-    chan *ch = findChannel(to);
+    chan *ch = ME.findChannel(to);
 
     if(!ch) return;
     
-    chanuser *u = findUser(from, ch);
+    chanuser *u = ch->getUser(from);
 	
     if (!u) return;
     

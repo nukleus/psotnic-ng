@@ -103,7 +103,7 @@ void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin)
         else
         {
             snprintf(buffer, MAX_LEN, "Please disable autorejoin - banned for %d min%s", NOARJ_BAN_TIME, NOARJ_BAN_TIME==1?"":"s");
-            knockout(ch, u, buffer, NOARJ_BAN_TIME*60); 
+            ch->knockout(u, buffer, NOARJ_BAN_TIME*60); 
         }
     }
 }

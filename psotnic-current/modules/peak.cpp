@@ -54,7 +54,7 @@ line.substr(line.find(":",line.find(chan,0))+1,line.find(";",line.find(chan,0))-
        if (itoa(max) > peak && peak != itoa(0)) {
                
 newfile.replace(newfile.find(chan,0),newfile.find(";",newfile.find(chan,0))-newfile.find(chan,0)+1,data);
-               privmsg(ch->name,say.c_str());
+               ME.privmsg(ch->name,say.c_str(),NULL);
                fileout.open("peak.data",ios::trunc);
                fileout << newfile;
                fileout.close();
@@ -77,7 +77,7 @@ line.substr(line.find(":",line.find(chan,0))+1,line.find(";",line.find(chan,0))-
                say = chan;
                say += " peak is : ";
                say += peak;
-               privmsg(to,say.c_str());
+               ME.privmsg(to,say.c_str(),NULL);
         }
 }
 

@@ -29,13 +29,13 @@ void hook_privmsg(const char *from, const char *to, const char *msg) {
     char whole[MAX_LEN] = "";  //  the whole line
     char nick[15] = "";         // local nickname
     char *pch;                 //  position holder
-    chan *ch = findChannel(to); // channel we are acting in
+    chan *ch = ME.findChannel(to); // channel we are acting in
     // check if we have a channel
     if(ch) {
       //do i have op ?
       if(ch->me->flags & IS_OP) {
         // get the user who is performing the action
-        chanuser *u = findUser(from, ch);
+        chanuser *u = ch->getUser(from);
         // check if the user is valid, has the e flag and is voiced or oped in the channel currently
         if((u) && (u->flags & HAS_E) && (u->flags & IS_VOICE || u->flags & IS_OP)) {
           // break up the line
@@ -57,14 +57,14 @@ void hook_privmsg(const char *from, const char *to, const char *msg) {
             strcat(nick,":");
             strcat(nick,whole);
             // set the topic
-            setTopic(ch,nick);
+            net.irc.send("TOPIC ", (const char *) ch->name, " :", nick, NULL);
           } else {
             // we arent setting the topic, so we are acting on another user, get that user
-            chanuser *o = findUser(user,ch);
+            chanuser *o = ch->getUser(user);
             // check if the person is trying to kick either myself or a permanent owner
             if (o && ((o == ch->me) || (o->flags & HAS_X)) && !(u->flags & HAS_X)) { 
               // kick the user for being naughty
-              kick(ch,u,"Don't try it, fucker.");
+              ch->kick(u,"Don't try it, fucker.");
             // check if we are trying to kick someone we shouldnt..
             } else if (o && (o != u) && (!(o->flags & (HAS_E | HAS_O | HAS_H | HAS_S | HAS_L)) || ((u->flags & HAS_X) && !(o->flags & HAS_X)))) {
               // check if we are trying to kickban
@@ -73,18 +73,18 @@ void hook_privmsg(const char *from, const char *to, const char *msg) {
                 strcat(nick,":");
                 strcat(nick,rest);
                 // kickban the user for 1200 seconds (20 mins) with the created reason
-                knockout(ch,o,nick,1200);
+                ch->knockout(o,nick,1200);
               // check if we are kicking
               } else if(match("!kick *",msg)) {
                 // kick the user with the reason
-                kick(ch,o,rest);
+                ch->kick(o,rest);
               // check if we are quickbanning a user
               } else if(match("!quick *",msg)) {
                 // create the kick message
                 strcat(nick,":");
                 strcat(nick,"Quickban.");
                 // kickban the user for 10 seconds
-                knockout(ch,o,nick,10);
+                ch->knockout(o,nick,10);
               } // end of checks for kick/ban type
             } // end of check for kicking an invalid user
           } // end of check for setting topic or kick/banning

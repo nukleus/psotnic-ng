@@ -53,23 +53,23 @@ int countCrap(const char *str)
  */
 void hook_ctcp(const char *from, const char *to, const char *msg)
 {
-    chan *ch = findChannel(to);
+    chan *ch = ME.findChannel(to);
     
     if(ch)
     {
-	chanuser *u = findUser(from, ch);
+	chanuser *u = ch->getUser(from);
 	
 	if(u && !(u->flags & (HAS_V | HAS_O | IS_OP | IS_VOICE)))
 	{
 	    if(match("ACTION *", msg))
 	    {
 		if(match("*away*", msg) || match("*gone*", msg))
-		    knockout(ch, u, "public away - expires in 30 minutes", 60*30);
+		    ch->knockout(u, "public away - expires in 30 minutes", 60*30);
 		else if(match("*back*", msg))
-		    knockout(ch, u, "public back from away - expires in 5 minutes", 60*5);
+		    ch->knockout(u, "public back from away - expires in 5 minutes", 60*5);
 	    }
 	    else if(match("DCC SEND *", msg))
-		knockout(ch, u, "Dcc spam - expires in 30 minutes", 60*30);
+		ch->knockout(u, "Dcc spam - expires in 30 minutes", 60*30);
 	}
     }
 }
@@ -77,10 +77,10 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
 void hook_privmsg(const char *from, const char *to, const char *msg)
 {
     static char buf[MAX_LEN];
-    chan *ch = findChannel(to);
+    chan *ch = ME.findChannel(to);
     if(ch)
     {
-	chanuser *u = findUser(from, ch);
+	chanuser *u = ch->getUser(from);
 	
 	
 	if(u && !(u->flags & (HAS_V | HAS_O | IS_OP | IS_VOICE)))
@@ -92,34 +92,35 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 	    {
 		int t = (crap - 3) * 5;
 		snprintf(buf, MAX_LEN, "more then 3 crap chars in a line - expires in %d minutes", t);
-		knockout(ch, u, buf, t*60);
+		ch->knockout(u, buf, t*60);
 	    }
 	    //op
 	    else if(!regexec(&spamOp, msg, 1, &spamMatch, 0))
 	    {
-		knockout(ch, u, "dont ask for op - expires in 5 minutes", 60*5);
+		ch->knockout(u, "dont ask for op - expires in 5 minutes", 60*5);
 	    }
 	    //www
 	    else if(((repeat *) u->customData)->creation + 60 >= NOW &&
 		!regexec(&spamWWW, msg, 1, &spamMatch, 0))
 	    {
-		knockout(ch, u, "http://spam.com - expires in 5 minutes", 60*5);
+		ch->knockout(u, "http://spam.com - expires in 5 minutes", 60*5);
 	    }
 	    //#channel spam
 	    if(!regexec(&spamChannel, msg, 1, &spamMatch, 0))
 	    {
-		knockout(ch, u, "#channel spam - expires in 1 minute", 60);
+		ch->knockout(u, "#channel spam - expires in 1 minute", 60);
 	    }
 	    //crap
 	    else if(crap == 3)
 	    {
-		knockout(ch, u, "more then 3 crap chars in a line - expires in 1 minute", 60);
+		ch->knockout(u, "more then 3 crap chars in a line - expires in 1 minute", 60);
 	    }
 	    //repeat
 	    else if(((repeat *) u->customData)->hit(msg))
 	    {
-		addKick(ch, u, "Do not repeat yourself!");
-		kick(ch,u, "Do not repeat yourself!");
+		u->setReason("Do not repeat yourself!");
+		ch->toKick.sortAdd(u);
+		ch->kick(u, "Do not repeat yourself!");
 	    }
 	    
 	    

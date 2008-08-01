@@ -10,41 +10,41 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     
     if(!strcmp("!topic", msg))
     {
-	chan *ch = findChannel(to);
+	chan *ch = ME.findChannel(to);
 	if(ch)
 	{
-	    chanuser *u = findUser(from, ch);
+	    chanuser *u = ch->getUser(from);
     	    if(u && u->flags & HAS_N)
 	    {
 		snprintf(buf, MAX_LEN, "%s: topic: %s\n", u->nick, (const char *) ch->topic);
-		privmsg(ch->name, buf);
+		ME.privmsg(ch->name, buf, NULL);
 	    }
 	}
     }
     else if(!strcmp("!retopic", msg))
     {
-	chan *ch = findChannel(to);
+	chan *ch = ME.findChannel(to);
         if(ch)
         {
-	    chanuser *u = findUser(from, ch);
+	    chanuser *u = ch->getUser(from);
 	    if(u && (u->flags & HAS_N) && (ch->me->flags & IS_OP))
 	    {
 		if(*ch->topic)
-		    setTopic(ch, ch->topic);
+		    net.irc.send("TOPIC ", (const char *) ch->name, " :", (const char*) ch->topic, NULL);
 		else
 		{
 		    snprintf(buf, MAX_LEN, "%s: topic is not set", u->nick);
-	    	    privmsg(ch->name, buf);
+	    	    ME.privmsg(ch->name, buf, NULL);
 		}
 	    }
 	}
     }
     else if(!strcmp("!ub", msg))
     {
-	chan *ch = findChannel(to);
+	chan *ch = ME.findChannel(to);
         if(ch)
         {
-	    chanuser *u = findUser(from, ch);
+	    chanuser *u = ch->getUser(from);
 	    if(u && (u->flags & HAS_N) && (ch->me->flags & IS_OP))
 	    {
 		int i;
@@ -52,8 +52,8 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 		
 		while(m)
 		{
-		    if(!isSticky(m->mask, ch))
-			addMode(ch, "-b", m->mask, PRIO_LOW, 0);
+		    if(!protmodelist::isSticky(m->mask, BAN, ch))
+			ch->modeQ[PRIO_LOW].add(NOW, "-b", m->mask);
 		    m++;
 		}
 	    }
@@ -61,11 +61,11 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     }
     else if(!strcmp("!massvoice", arg[0]) || !strcmp("!mv", arg[0]))
     {
-        chan *ch = findChannel(to);
+        chan *ch = ME.findChannel(to);
 
 	if(ch && ch->me->flags & IS_OP)
 	{
-	    chanuser *f = findUser(from, ch);
+	    chanuser *f = ch->getUser(from);
 	    if(f && f->flags & HAS_N)
 	    {
 		ptrlist<chanuser>::iterator i = ch->users.begin();
@@ -73,7 +73,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 	        while(i)
 	        {
 	            if(&i && !(i->flags & (IS_VOICE | VOICE_SENT | IS_OP | OP_SENT)) && !(i->flags & HAS_Q))
-	        	addMode(ch, "+v", i->nick, PRIO_LOW, 0);
+			ch->modeQ[PRIO_LOW].add(NOW, "+v", i->nick);
 		    
 		    i++;
 		}
@@ -82,11 +82,11 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     }
     else if(!strcmp("!masskickallnonvoicedusersonthischannel", arg[0]))
     {
-        chan *ch = findChannel(to);
+        chan *ch = ME.findChannel(to);
 
 	if(ch && ch->me->flags & IS_OP)
 	{
-	    chanuser *f = findUser(from, ch);
+	    chanuser *f = ch->getUser(from);
 	    if(f && f->flags & HAS_N)
 	    {
 		ptrlist<chanuser>::iterator i = ch->users.begin();
@@ -94,7 +94,10 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 	        while(i)
 	        {
 	            if(&i && !(i->flags & (IS_VOICE | VOICE_SENT | IS_OP | OP_SENT | HAS_V)))
-			addKick(ch, i, "cleaning up");
+	            {
+			i->setReason("cleaning up");
+			ch->toKick.sortAdd(i);
+	            }
 		    i++;
 		}
 	    }
@@ -113,22 +116,23 @@ void hook_botnetcmd(const char *from, const char *cmd)
     if(!strcmp(arg[1], "rkick"))
     {
         if(!strlen(arg[3]))
-	    sendToOwner(arg[0], "Syntax: rkick <chan> <nick> [reason]");
+	    net.sendOwner(arg[0], "Syntax: rkick <chan> <nick> [reason]", NULL);
 	else
 	{
-	    chan *ch = findChannel(arg[2]);
+	    chan *ch = ME.findChannel(arg[2]);
 	    if(ch)
 	    {
-	        chanuser *u = findUser(arg[3], ch);
+	        chanuser *u = ch->getUser(arg[3]);
 	        if(u)
 	        {
-			addKick(ch, u, srewind(cmd, 4));
+			u->setReason(srewind(cmd, 4));
+			ch->toKick.sortAdd(u);
 		}
 		else
-		    sendToOwner(arg[0], "Invalid nick");
+		    net.sendOwner(arg[0], "Invalid nick", NULL);
 	    }
 	    else
-	        sendToOwner(arg[0], "Invalid channel");
+	        net.sendOwner(arg[0], "Invalid channel", NULL);
 	}
     }
 }

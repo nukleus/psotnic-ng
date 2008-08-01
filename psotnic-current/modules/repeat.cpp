@@ -2,8 +2,6 @@
 
    Detects users who repeat or flood and kicks/bans them.
    It has also a lagcheck.
-
-   TODO: -testing ;-)
 */
 
 #include "../prots.h"
@@ -73,9 +71,6 @@ const char *rp_exceptions[]={
 // end of configuration
 
 
-
-#define RP_BUFSIZE 512
-
 #ifdef USE_LAGCHECK
 struct _lagcheck
 {
@@ -98,99 +93,73 @@ public:
     public:
         line(const char *content)
         {
-            strncpy(this->content, content, RP_BUFSIZE-1);
-            this->content[RP_BUFSIZE-1]='\0';
+            this->content=strdup(content);
             count=1;
             timestamp=NOW;
-            next=NULL;
         }
 
-        char content[RP_BUFSIZE];
+        char *content;
         int count;
         time_t timestamp;
-        line *next;
     };
 
     repeatcheck()
     {
-        firstLine=NULL;
+        lines.removePtrs();
     }
 
     int addLine(const char *content)
     {
-        line *node, *ptr;
+        line *l;
 
-        if((node=findLine(content)))
+        if((l=findLine(content)))
         {
-            node->count++;
-            return node->count;
+            l->count++;
+            return l->count;
         }
 
-        node=new line(content);
+        l=new line(content);
 
-        if(!firstLine)
-            firstLine=node;
-        else
-        {
-            for(ptr=firstLine; ptr->next; ptr=ptr->next) ;
-            ptr->next=node;
-        }
-
+        lines.add(l);
         return 1;
     }
 
     line *findLine(const char *content)
     {
-        for(line *ptr=firstLine; ptr; ptr=ptr->next)
-            if(!strcmp(ptr->content, content))
-                return ptr;
+        ptrlist<line>::iterator i;
+
+        for(i=lines.begin(); i; i++)
+            if(!strcmp(i->content, content))
+                return i;
+
         return NULL;
-    }
-
-    void delLine(const char *content)
-    {
-        line *ptr, *ptr2;
-
-        if(!strcmp(firstLine->content, content))
-        {
-            ptr=firstLine;
-            firstLine=firstLine->next;
-            delete ptr;
-        }
-
-        else
-        {
-            for(ptr=firstLine; ptr && ptr->next; ptr=ptr->next)
-            {
-                if(!strcmp(ptr->next->content, content))
-                {
-                    ptr2=ptr->next;
-                    ptr->next=ptr2->next;
-                    delete ptr2;
-                    return;
-                }
-            }
-        }
     }
 
     void delExpiredLines()
     {
-        line *ptr=firstLine, *help;
+        ptrlist<line>::iterator i, j;
+        
+        i=lines.begin();
 
-        while(ptr)
+        while(i)
         {
-            help=ptr->next;
+            j=i;
+            j++;
 
-            if(NOW>ptr->timestamp+RP_SECONDS)
-                delLine(ptr->content);
+            if(NOW>i->timestamp+RP_SECONDS)
+            {
+                free(i->content);
+                lines.remove(i);
+            }
 
-            ptr=help;
+            i=j;
         }
     }
 
 private:
-    line *firstLine;
+    ptrlist<line> lines;
 };
+
 #ifdef USE_FLOOD_PROT
 class floodcheck
 {
@@ -257,95 +226,71 @@ public:
 class cache 
 {
 public:
-    class user
+    class entry
     {
-        public:
-        user(char *ident, char *host)
+    public:
+        entry(char *ident, char *host)
         {
-            strncpy(this->ident, ident, sizeof(this->ident)-1);
-            this->ident[sizeof(this->ident)-1]='\0';
-            strncpy(this->host, host, sizeof(this->host)-1);
-            this->host[sizeof(this->host)-1]='\0';
+            this->ident=strdup(ident);
+            this->host=strdup(host);
             timestamp=NOW;
-            next=NULL;
         }
 
-        char ident[16];
-        char host[256];
+        char *ident;
+        char *host;
         time_t timestamp;
-        user *next;
     };
 
+    
     cache()
     {
-        firstUser=NULL;
+        data.removePtrs();
     }
 
     void add(char *ident, char *host)
     {
-        user *node=new user(ident, host), *ptr;
-
-        if(!firstUser)
-            firstUser=node;
-        else
-        {
-            for(ptr=firstUser; ptr->next; ptr=ptr->next) ;
-            ptr->next=node;
-        }
+        entry *e=new entry(ident, host);
+        data.add(e);
     }
 
-    bool find(char *ident, char *host)
+    entry *find(char *ident, char *host)
     {
-        for(user *ptr=firstUser; ptr; ptr=ptr->next)
-            if(!strcmp(ptr->ident, ident) && !strcmp(ptr->host, host))
-                return true;
+        ptrlist<entry>::iterator i;
 
-        return false;
+        for(i=data.begin(); i; i++)
+            if(!strcmp(i->ident, ident) && !strcmp(i->host, host))
+                return i;
+
+        return NULL;
     }
 
-    void del(char *ident, char *host)
+    void del(entry *e)
     {
-        user *ptr, *ptr2;
-
-        if(!strcmp(firstUser->ident, ident) && !strcmp(firstUser->host, host))
-        {
-            ptr=firstUser;
-            firstUser=firstUser->next;
-            delete ptr;
-        }
-
-        else
-        {
-            for(ptr=firstUser; ptr && ptr->next; ptr=ptr->next)
-            {
-                if(!strcmp(ptr->next->ident, ident) && !strcmp(ptr->next->host, host))
-                {
-                    ptr2=ptr->next;
-                    ptr->next=ptr2->next;
-                    delete ptr2;
-                    return;
-                }
-            }
-        }
+        free(e->ident);
+        free(e->host);
+        data.remove(e);
     }
 
     void delExpiredUsers()
     {
-        user *ptr=firstUser, *help;
+        ptrlist<entry>::iterator i, j;
 
-        while(ptr)
+        i=data.begin();
+
+        while(i)
         {
-            help=ptr->next;
+            j=i;
+            j++;
 
-            if(NOW>ptr->timestamp+RP_FORGET_DELAY*60)
-                del(ptr->ident, ptr->host);
+            if(NOW>i->timestamp+RP_FORGET_DELAY*60)
+                del(i);
 
-            ptr=help;
+            i=j;
         }
     }
 
 private:
-    user *firstUser;
+    ptrlist<entry> data;
 };
 #endif
 
@@ -371,10 +316,10 @@ void hook_privmsg_notice(const char *from, const char *to, const char *msg)
     if(lagcheck.current_lag>MAX_LAG)
         return;
 #endif
-    if(!(ch=findChannel(to)))
+    if(!(ch=ME.findChannel(to)))
         return;
 
-    if(!(cu=findUser(from, ch)))
+    if(!(cu=ch->getUser(from)))
         return;
 
     if(((info*)cu->customData)->wait || cu->flags & (HAS_V | HAS_O | IS_OP))
@@ -395,13 +340,13 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
     if(lagcheck.current_lag>MAX_LAG)
         return;
 #endif 
-    if(!(ch=findChannel(to)))
+    if(!(ch=ME.findChannel(to)))
         return;
     
     if(!(ch->me->flags&IS_OP))
         return;
     
-    if(!(cu=findUser(from, ch)))
+    if(!(cu=ch->getUser(from)))
         return;
     
     if(((info*)cu->customData)->wait || cu->flags & (HAS_V | HAS_O | IS_OP))
@@ -421,21 +366,14 @@ void hook_timer()
 {
     chan *ch;
     ptrlist<chanuser>::iterator u;
-    chanuser *cu;
 
-    for(int i=0; i<MAX_CHANNELS; i++)
+    for(ch=ME.first; ch; ch=ch->next)
     {
-        if((ch=findChannel(userlist.chanlist[i].name)))
-        {
-            for(u=ch->users.begin(); u; u++)
-            {
-                if((cu=findUser(u->nick, ch)))
-                    ((info*)cu->customData)->repeat->delExpiredLines();
-            }
+        for(u=ch->users.begin(); u; u++)
+            ((info*)u->customData)->repeat->delExpiredLines();
 #ifndef BAN_DIRECTLY
-            ((cache*)ch->customData)->delExpiredUsers();
+        ((cache*)ch->customData)->delExpiredUsers();
 #endif
-        }
     }
 #ifdef USE_LAGCHECK
     if(lagcheck.in_progress)
@@ -443,7 +381,7 @@ void hook_timer()
 
     else if(lagcheck.next && NOW>=lagcheck.next)
     {
-        privmsg(ME.nick, "RP_LAGCHECK");
+        ME.privmsg(ME.nick, "RP_LAGCHECK", NULL);
         lagcheck.sent=NOW;
         lagcheck.in_progress=true;
     }
@@ -468,23 +406,28 @@ void hook_disconnected(const char *reason)
 #ifdef USE_FLOOD_PROT
 void detect_flood(chanuser *cu, chan *ch)
 {
+    char buffer[MAX_LEN];
+    cache::entry *e;
     ((info*)cu->customData)->flood->increase();
 
     if(((info*)cu->customData)->flood->getCount()>=FL_LINES)
     {
 #ifndef BAN_DIRECTLY
-        if(((cache*)ch->customData)->find(cu->ident, cu->host))
+        if((e=((cache*)ch->customData)->find(cu->ident, cu->host)))
         {
-            ((cache*)ch->customData)->del(cu->ident, cu->host);
+            ((cache*)ch->customData)->del(e);
 #endif
-            knockout(ch, cu, FL_BANREASON, FL_BANTIME*60);
+            if(!set.BOTS_CAN_ADD_SHIT
+                 || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
+                ch->knockout(cu, FL_BANREASON, FL_BANTIME*60);
 #ifndef BAN_DIRECTLY
         }
 
         else
         {
             ((cache*)ch->customData)->add(cu->ident, cu->host);
-            addKick(ch, cu, FL_KICKREASON);
+            cu->setReason(FL_KICKREASON);
+            ch->toKick.sortAdd(cu);
         }
 #endif
         ((info*)cu->customData)->wait=true;
@@ -493,25 +436,31 @@ void detect_flood(chanuser *cu, chan *ch)
 #endif
 void detect_repeat(chanuser *cu, chan *ch, const char *msg)
 {
-    for(unsigned int i=0; i<sizeof(rp_exceptions)/sizeof(rp_exceptions[0]); i++)
+    char buffer[MAX_LEN];
+    cache::entry *e;
+
+    for(unsigned int i=0, size=sizeof(rp_exceptions)/sizeof(rp_exceptions[0]); i<size; i++)
         if(match(rp_exceptions[i], msg))
             return;
 
     if(((info*)cu->customData)->repeat->addLine(msg)>=RP_REPEATS)
     {
 #ifndef BAN_DIRECTLY
-        if(((cache*)ch->customData)->find(cu->ident, cu->host))
+        if((e=((cache*)ch->customData)->find(cu->ident, cu->host)))
         {
-            ((cache*)ch->customData)->del(cu->ident, cu->host);
+            ((cache*)ch->customData)->del(e);
 #endif
-            knockout(ch, cu, RP_BANREASON, RP_BANTIME*60);
+            if(!set.BOTS_CAN_ADD_SHIT
+                 || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
+                ch->knockout(cu, RP_BANREASON, RP_BANTIME*60);
 #ifndef BAN_DIRECTLY
         }
 
         else
         {
             ((cache*)ch->customData)->add(cu->ident, cu->host);
-            addKick(ch, cu, RP_KICKREASON);
+            cu->setReason(RP_KICKREASON);
+            ch->toKick.sortAdd(cu);
         }
 #endif
         ((info*)cu->customData)->wait=true;
@@ -553,25 +502,20 @@ void prepareCustomData()
 {
     chan *ch;
     ptrlist<chanuser>::iterator u;
-    chanuser *cu;
  
-    for(int i=0; i<MAX_CHANNELS; i++)
+    for(ch=ME.first; ch; ch=ch->next)
     {
-        if((ch=findChannel(userlist.chanlist[i].name)))
-        {
-            for(u=ch->users.begin(); u; u++)
-                if((cu=findUser(u->nick, ch)))
-                    chanuserConstructor(cu);
+        for(u=ch->users.begin(); u; u++)
+            chanuserConstructor(u);
 #ifndef BAN_DIRECTLY
-            chanConstructor(ch);
+        chanConstructor(ch);
 #endif
-        }
     }
 }
 
 extern "C" module *init()
 {
-    module *m=new module("repeat", "patrick <patrick@psotnic.com>", "0.1");
+    module *m=new module("repeat", "patrick <patrick@psotnic.com>", "0.2");
     initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
 #ifndef BAN_DIRECTLY
     initCustomData("chan", (FUNCTION) chanConstructor, (FUNCTION) chanDestructor);
