@@ -331,3 +331,16 @@ void chan::punishClones(const char *mask, bool isMyTurn)
 			modeQ[PRIO_HIGH].flush(PRIO_HIGH);
 	}
 }
+
+void chan::knockout(chanuser *u, const char *reason, int delay)
+{
+	static char buf[MAX_LEN];
+
+	snprintf(buf, MAX_LEN, "*!%s@%s", u->ident, u->host);
+	modeQ[PRIO_HIGH].add(NOW, "+b", buf);
+	modeQ[PRIO_LOW].add(NOW+delay, "-b", buf)->backupmode = true;
+	modeQ[PRIO_HIGH].flush(PRIO_HIGH);
+
+	kick(u, reason);
+	u->setReason(reason);
+}

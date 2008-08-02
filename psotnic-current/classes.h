@@ -823,7 +823,8 @@ class chan
 	void enforceBan(const char *ban, chanuser *u, const char *reason=NULL, const bool autoKick=true);
 	int flushKickQueue();
 	void punishClones(const char *mask, bool isMyTurn);
-	
+	void knockout(chanuser *u, const char *reason, int delay=60);
+
 	/* Probabilistics */
 	int myTurn(int num, int hash=0);
 

@@ -147,3 +147,7 @@ extern "C" module *init()
     
     return m;
 }
+
+extern "C" void destroy()
+{
+}
