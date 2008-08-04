@@ -345,6 +345,9 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				//////////////////
 				case 'R':
 				{
+					if(chan::getTypeOfChanMode('R')!='A')
+						return;
+
 					protmodelist::entry *global=userlist.protlist[REOP]->find(arg[i]), *local=protlist[REOP]->find(arg[i]);
 
 					if(chset->USER_REOPS==1 && !(nickHandle->flags & (HAS_N | HAS_B)) && *nickHandle->nick)
@@ -645,6 +648,9 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'R':
+				if(chan::getTypeOfChanMode('R')!='A')
+					return;
+
 				if(list[REOP].remove(arg[i]) &&	chset->USER_REOPS!=0)
 				{
 					protmodelist::entry *global=userlist.protlist[REOP]->find(arg[i]), *local=protlist[REOP]->find(arg[i]);

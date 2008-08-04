@@ -79,64 +79,65 @@ void parse_irc(char *data)
     /* reaction */
     if(!strcmp(arg[1], "JOIN"))
     {
+	chanuser u(arg[0], NULL, 0, false);
         int netjoin = arg[2][0] != ':';
         if(netjoin)
             a = arg[2];
         else
             a = arg[2] + 1;
 
-		if(!strcasecmp(ME.mask, arg[0]))
+	if(!strcasecmp(ME.nick, u.nick))
         {
-			if(!ME.findNotSyncedChannel(a))
+		if(!ME.findNotSyncedChannel(a))
+		{
+			if((i = userlist.findChannel(a)) != -1)
 			{
-            	if((i = userlist.findChannel(a)) != -1)
-            	{
-                	ME.createNewChannel(a);
-                	if(!(userlist.chanlist[i].status & WHO_SENT))
+				ME.createNewChannel(a);
+				if(!(userlist.chanlist[i].status & WHO_SENT))
+				{
+					net.irc.send("WHO ", a, NULL);
+					penalty++;
+				}
+			}
+			//if thats !channel maybe we have to change its name
+			//to !0WN3Dchannel
+			//FIXME: is that necessary?
+			else if(*a == '!' && strlen(a) > 6)
+			{
+				buf[0] = '!';
+				strcpy(buf+1, a + 6);
+				if((i = userlist.findChannel(buf)) != -1)
+				{
+					userlist.chanlist[i].name = a;
+					ME.createNewChannel(a);
+					if(!(userlist.chanlist[i].status & WHO_SENT))
 					{
 						net.irc.send("WHO ", a, NULL);
-                		penalty++;
+       		        			penalty++;
 					}
-            	}
-				//if thats !channel maybe we have to change its name
-				//to !0WN3Dchannel
-				//fixme: is that necessary?
-				else if(*a == '!' && strlen(a) > 6)
-				{
-					buf[0] = '!';
-					strcpy(buf+1, a + 6);
-					if((i = userlist.findChannel(buf)) != -1)
-					{
-						userlist.chanlist[i].name = a;
-						ME.createNewChannel(a);
-						if(!(userlist.chanlist[i].status & WHO_SENT))
-						{
-							net.irc.send("WHO ", a, NULL);
-                			penalty++;
-						}
-					}
-				}
-				else
-				{
-					net.irc.send("PART ", a, " :wtf?", NULL);
-					penalty += 3;
 				}
 			}
 			else
 			{
-				net.send(HAS_N, "\0039 >> Double join to ", a, " <<\003", NULL);
+				net.irc.send("PART ", a, " :wtf?", NULL);
+				penalty += 3;
 			}
+		}
+		else
+		{
+			net.send(HAS_N, "\0039 >> Double join to ", a, " <<\003", NULL);
+		}
         }
         else
         {
-            ch = ME.findChannel(a);
-            if(ch)
-                ch->gotJoin(arg[0], netjoin ? NET_JOINED : 0);
+		ch = ME.findChannel(a);
+		if(ch)
+			ch->gotJoin(arg[0], netjoin ? NET_JOINED : 0);
 #ifdef HAVE_DEBUG
-			else if(!ME.findNotSyncedChannel(a))
-				net.send(HAS_N, "\0039 >>> Join observed to non exitsing channel ", a, "<<\003", NULL);
+		else if(!ME.findNotSyncedChannel(a))
+			net.send(HAS_N, "\0039 >>> Join observed to non exitsing channel ", a, "<<\003", NULL);
 #endif
-		}
+	}
         return;
     }
     if(!strcmp(arg[1], "MODE"))
@@ -360,7 +361,7 @@ void parse_irc(char *data)
 	}
 
 	if(!strcmp(arg[1], "001") && !(net.irc.status & STATUS_REGISTERED))
-    {
+	{
 		if(!match("*!*@*", arg[9]))
 		{
 			net.send(HAS_N, "[-] ", arg[0], " is not an ircnet like server !!!", NULL);
@@ -370,8 +371,8 @@ void parse_irc(char *data)
 
 		mem_strcpy(net.irc.name, arg[0]);
 		mem_strcpy(net.irc.origin, arg[0]);
-        net.irc.status |= STATUS_REGISTERED;
-        net.irc.lastPing = NOW;
+		net.irc.status |= STATUS_REGISTERED;
+		net.irc.lastPing = NOW;
 
 		if(match("*!*@*", arg[9]))
 		{
@@ -388,25 +389,31 @@ void parse_irc(char *data)
 		}
 		else
 		{
+			/* if it does not tell us the hostmask, we catch only
+			 * the nickname and do WHOIS.
+			 * arg[9] should not be used as nickname because the 001
+			 * lines can be very different - patrick
+			 */
+
 			hostNotify = 0;
-			ME.nick = arg[9];
+			ME.nick = arg[2];
 			net.irc.status|=STATUS_NEED_WHOIS;
 			net.irc.send("WHOIS ", (const char*)ME.nick, NULL);
 		}
 
-        srand();
+		srand();
 
 		net.propagate(NULL, S_CHNICK, " ", (const char *) ME.nick, " ", net.irc.name, NULL);
-        if(strcmp(ME.nick, config.nick))
-            ME.nextNickCheck = NOW + set.KEEP_NICK_CHECK_DELAY;
-        else
-            ME.nextNickCheck = 0;
+		if(strcmp(ME.nick, config.nick))
+			ME.nextNickCheck = NOW + set.KEEP_NICK_CHECK_DELAY;
+		else
+			ME.nextNickCheck = 0;
 
 		if(creation)
-        {
+		{
 			printf("[*] Please do `/msg %s mainowner <handle> <password>'\n", (const char *) ME.nick);
 			printf("[*] eg. `/msg %s mainowner %s foobar'\n", (const char *) ME.nick, getenv("USER"));
-        }
+		}
 		else
 			net.send(HAS_N, "[*] Connected to ", net.irc.name, " as ", (const char *) ME.nick, NULL);
 
@@ -430,7 +437,7 @@ void parse_irc(char *data)
 		}
 
 		return;
-    }
+	}
 	if(!strcmp(arg[1], "211") && strlen(arg[3]))
 	{
 		char *at = strchr(arg[3], '@');
