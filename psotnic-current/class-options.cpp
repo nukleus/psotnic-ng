@@ -310,6 +310,7 @@ chanset::chanset()
 	registerObject(USER_INVITES = entInt("user-invites", 0, 2, 1));
 	registerObject(USER_EXEMPTS = entInt("user-exempts", 0, 2, 1));
 	registerObject(USER_REOPS = entInt("user-reops", 0, 2, 1));
+        registerObject(CYCLE = entBool("cycle", 1));
 }
 
 chanset &chanset::operator=(const chanset &chset)

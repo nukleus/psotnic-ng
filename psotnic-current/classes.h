@@ -678,6 +678,7 @@ class chanset : public options
 	entInt USER_INVITES;
 	entInt USER_EXEMPTS;
 	entInt USER_REOPS;
+	entBool CYCLE;
 	
 	chanset();
 	chanset &operator=(const chanset &chset);

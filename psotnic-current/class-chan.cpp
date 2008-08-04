@@ -756,7 +756,7 @@ void chan::gotPart(const char *nick, int netsplit)
 
 		users.remove(p);
 
-		if(synced() && users.entries() == 1 && !(me->flags & IS_OP))
+		if(chset->CYCLE && synced() && users.entries() == 1 && !(me->flags & IS_OP))
 		{
 			net.irc.send("PART ", (const char *) name, " :regaining op... duuuh", NULL);
 			penalty += 2;
@@ -1075,7 +1075,7 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 			if(!initialOp) initialOp = NOW;
 		}
 	}
-	if(botsToOp.entries() == users.entries() && config.listenport && synced())
+	if(chset->CYCLE && botsToOp.entries() == users.entries() && config.listenport && synced())
 		reOp();
 
 	//if(!(def_flags & NET_JOINED))
