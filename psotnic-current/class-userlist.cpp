@@ -172,12 +172,12 @@ HANDLE *ul::me()
 
 int ul::isLeaf(const HANDLE *h)
 {
-	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H + HAS_L)) == HAS_L);
+	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == HAS_L);
 }
 
 int ul::isSlave(const HANDLE *h)
 {
-	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H + HAS_L)) == (HAS_H + HAS_L));
+	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == (HAS_H | HAS_L));
 }
 
 int ul::isMain(const HANDLE *h)

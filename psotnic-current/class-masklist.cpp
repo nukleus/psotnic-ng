@@ -40,6 +40,7 @@ masklist_ent::~masklist_ent()
 masklist::masklist()
 {
 	masks.removePtrs();
+	received=false;
 }
 
 int masklist::add(const char *mask, const char *who, time_t t)

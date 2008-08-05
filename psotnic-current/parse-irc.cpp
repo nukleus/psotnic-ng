@@ -864,53 +864,57 @@ void parse_irc(char *data)
         ch = ME.findChannel(arg[3]);
         if(ch)
         {
-			protmodelist::entry *global, *local;
+		protmodelist::entry *global, *local;
 
             switch(i)
             {
             	case RPL_BANLIST:
 					ch->list[BAN].add(arg[4], "", protmodelist::isSticky(arg[4], BAN, ch) ? 0 : set.BIE_MODE_BOUNCE_TIME);
-    	            return;
-				case RPL_ENDOFBANLIST:
-            	    ++ch->synlevel;
-                	return;
+					return;
+		case RPL_ENDOFBANLIST:
+					++ch->synlevel;
+					ch->list[BAN].received=true;
+					return;
             	case RPL_EXCEPTLIST:
 					local=ch->protlist[EXEMPT]->find(arg[4]);
 					global=userlist.protlist[EXEMPT]->find(arg[4]);
 					ch->list[EXEMPT].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					if(ch->chset->USER_EXEMPTS==2 && !local && !global)
 						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-e", arg[4]);
-                	return;
+					return;
             	case RPL_ENDOFEXCEPTLIST:
-                	++ch->synlevel;
-                	return;
+                			++ch->synlevel;
+					ch->list[EXEMPT].received=true;
+                			return;
             	case RPL_INVITELIST:
 					local=ch->protlist[INVITE]->find(arg[4]);
 					global=userlist.protlist[INVITE]->find(arg[4]);
 					ch->list[INVITE].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					if(ch->chset->USER_INVITES==2 && !local && !global)
 						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-I", arg[4]);
-                	return;
+					return;
             	case RPL_ENDOFINVITELIST:
-                	++ch->synlevel;
-                	return;
-				case RPL_REOPLIST:
+					++ch->synlevel;
+					ch->list[INVITE].received=true;
+					return;
+		case RPL_REOPLIST:
 					local=ch->protlist[REOP]->find(arg[4]);
 					global=userlist.protlist[REOP]->find(arg[4]);
 					ch->list[REOP].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					if(ch->chset->USER_REOPS==2 && !local && !global)
 						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-R", arg[4]);
-                	return;
-				case RPL_ENDOFREOPLIST:
+					return;
+		case RPL_ENDOFREOPLIST:
 					++ch->synlevel;
-                	return;
-				case ERR_NOSUCHNICK:
+					ch->list[REOP].received=true;
+					return;
+		case ERR_NOSUCHNICK:
 					penalty -= 2;
 					return;
-				case ERR_NOSUCHCHANNEL:
+		case ERR_NOSUCHCHANNEL:
 					penalty--;
 					return;
-				default:
+		default:
 					break;
 			}
 		}

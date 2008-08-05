@@ -282,7 +282,7 @@ int parse_botnet(inetconn *c, char *data)
 		return 1;
 	}
 
-	/* S_COMEONE <channel> */
+	/* S_COMEON <channel> */
 	if(!strcmp(arg[0], S_COMEON) && strlen(arg[1]))
 	{
 		int i;
@@ -351,7 +351,7 @@ int parse_botnet(inetconn *c, char *data)
 		}
 
 		/* S_SHITOBSERVED <#channel> <ban_mask> <nick!user@host> */
-		if(!strcmp(arg[0], S_ADDIDIOT) && *arg[3])
+		if(!strcmp(arg[0], S_SHITOBSERVED) && strlen(arg[3]))
 		{
 			protmodelist::updateLastUsedTime(arg[1], arg[2], BAN);
 		}

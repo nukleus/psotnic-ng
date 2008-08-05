@@ -457,6 +457,7 @@ class masklist
 {
 	public:
 	ptrlist<masklist_ent> masks;
+	bool received;
 
 	int add(const char *mask, const char *who, time_t);
 	int remove(char *mask);
