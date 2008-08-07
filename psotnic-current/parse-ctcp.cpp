@@ -106,9 +106,9 @@ void parse_ctcp(char *mask, char *data, char *to)
 
 	if(!strlen(data)) return;
 
-    a = strchr(mask, '!');
-    memset(who, 0, MAX_LEN);
-    strncpy(who, mask, abs(a-mask));
+	a = strchr(mask, '!');
+	memset(who, 0, MAX_LEN);
+	strncpy(who, mask, abs(a-mask));
 	str2words(arg[0], data, 10, MAX_LEN);
 
 	/* dcc chat */
@@ -120,7 +120,7 @@ void parse_ctcp(char *mask, char *data, char *to)
 			sprintf(buf, "%s", inet2char(htonl(strtoul(arg[3], NULL, 10))));
 
 		if(config.bottype == BOT_MAIN && (p = userlist.hasPartylineAccess(mask)))
-  		{
+		{
 			switch(isValidIp(buf))
 			{
 				#ifdef HAVE_IPV6
@@ -205,7 +205,7 @@ void parse_ctcp(char *mask, char *data, char *to)
 		}
 
 #ifdef HAVE_TCL
-        snprintf(buf, MAX_LEN, "on_ctcp %s %s %s", mask, to, data);
+		snprintf(buf, MAX_LEN, "on_ctcp %s %s %s", mask, to, data);
 		tclparser.eval(buf);
 #endif
 	}

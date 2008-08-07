@@ -29,13 +29,13 @@ adns::~adns()
 
 adns::host2ip *adns::__getIp(const char *host)
 {
-    host2ip tmp(host);
-    ptrlist<host2ip>::iterator h = cache->find(tmp);
+	host2ip tmp(host);
+	ptrlist<host2ip>::iterator h = cache->find(tmp);
 
-    if(h)
-        return &h;
-    else
-        return NULL;
+	if(h)
+		return &h;
+	else
+		return NULL;
 }
 
 int adns::host2ip::operator==(const host2ip &h) const

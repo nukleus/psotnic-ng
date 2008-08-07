@@ -67,12 +67,12 @@ void parse_hub(char *data)
 				{
 					if(MD5HexValidate(arg[3], net.hub.tmpstr, strlen(net.hub.tmpstr), ((entMD5Hash *) &config.hub.getPass())->getHash(), 16))
 					{
-                    				char buf[MAX_LEN];
+						char buf[MAX_LEN];
 
-                    				++net.hub.tmpint;
+						++net.hub.tmpint;
 						userlist.addHandle(arg[0], 0, B_FLAGS | HAS_H | HAS_L, arg[1], arg[2], 0);
-                    				net.hub.handle = userlist.findHandle(arg[0]);
-  						DEBUG(printf("[D] hub handle: %s\n", net.hub.handle->name));
+						net.hub.handle = userlist.findHandle(arg[0]);
+						DEBUG(printf("[D] hub handle: %s\n", net.hub.handle->name));
 						free(net.hub.tmpstr);
 						net.hub.tmpstr = NULL;
 
@@ -142,7 +142,7 @@ void parse_hub(char *data)
 			hostNotify = 1;
 		else
 			hostNotify = 0;
-												
+
 		userlist.sendToAll();
 		return;
 	}
@@ -292,8 +292,8 @@ void parse_hub(char *data)
 
 	if(parse_botnet(&net.hub, data)) return;
 
-    if(userlist.parse(data))
-    {
+	if(userlist.parse(data))
+	{
 		++userlist.SN;
 
 		//some things should not be propagated
@@ -315,10 +315,10 @@ void parse_hub(char *data)
 				return;
 			}
 			if(!strcmp(S_ADDOFFENCE, arg[0])) // leaf dont need infos about offence-history
-			    return;
+				return;
 
 		}
 		net.propagate(&net.hub, data, NULL);
-        return;
+		return;
 	}
 }

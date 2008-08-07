@@ -240,13 +240,13 @@ int http::processHeader()
 	while(1)
 	{
 		len = www.readln(buf, MAX_LEN, &ok);
-						
+
 		if(len == -1)
 		{
 			www.close();
 			return ERR_READ;
 		}
-		
+
 		if(ok)
 		{
 			if(len)
@@ -261,7 +261,7 @@ int http::processHeader()
 					if(ret != 200) return -ret;
 				}
 			}
-			else 
+			else
 				return -200;
 		}
 	}

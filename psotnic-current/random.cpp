@@ -65,25 +65,25 @@ int getRandomItems(chanuser **ret, ptrlist<chanuser>::iterator p, int interval, 
 
 int getRandomNumbers_safe(int top, int *ret, int num)
 {
-    int tmp, n, i, *array = new int[top];
+	int tmp, n, i, *array = new int[top];
 
-    for(i=0; i<top; ++i)
-        array[i] = i;
+	for(i=0; i<top; ++i)
+		array[i] = i;
 
-    for(i=0; i<top; ++i)
-    {
-        n = rand() % top;
-        tmp = array[n];
-        array[n] = array[i];
-        array[i] = tmp;
-    }
+	for(i=0; i<top; ++i)
+	{
+		n = rand() % top;
+		tmp = array[n];
+		array[n] = array[i];
+		array[i] = tmp;
+	}
 
-    num = MIN(num, top);
+	num = MIN(num, top);
 
-    memcpy(ret, array, sizeof(int)*num);
-    delete [] array;
+	memcpy(ret, array, sizeof(int)*num);
+	delete [] array;
 
-    return num;
+	return num;
 
 }
 
@@ -92,19 +92,19 @@ int getRandomNumbers(int top, int *ret, int num)
 	if(!set.PRE_0214_FINAL_COMPAT)
 		return getRandomNumbers_safe(top, ret, num);
 
-    int i, k;
+	int i, k;
 	char *t = new char[top];
 
 	memset(t, 0, top);
 
-    if(num > top) num = top;
-    for(i=0; i<num; )
-    {
-        k = rand() % top;
-   		if(t[k]) continue;
+	if(num > top) num = top;
+	for(i=0; i<num; )
+	{
+		k = rand() % top;
+		if(t[k]) continue;
 		t[k] = 1;
 		++i;
-    }
+	}
 
 	for(i=k=0; k<top; ++k)
 		if(t[k]) ret[i++] = k;
@@ -156,7 +156,7 @@ void XSRand::srand(unsigned int seed)
 unsigned int XSRand::rand()
 {
 	x ^= x << a;
-    x ^= x >> b;
-    x ^= x << c;
+	x ^= x >> b;
+	x ^= x << c;
 	return x;
 }

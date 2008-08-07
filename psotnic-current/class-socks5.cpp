@@ -64,13 +64,13 @@ int asyn_socks5::work(char byte)
 		{
 			//printf("step %d\n", step);
 			buf[0] = 0x05;
-    		buf[1] = 0x01;
-    		if(username && password)
-        		buf[2] = 0x02;
-    		else
+			buf[1] = 0x01;
+			if(username && password)
+				buf[2] = 0x02;
+			else
 				buf[2] = 0x00;
 
-    		send(fd, buf, 3, 0);
+			send(fd, buf, 3, 0);
 			++step;
 			break;
 		}
@@ -105,16 +105,16 @@ int asyn_socks5::work(char byte)
 			//printf("step %d\n", step);
 			unsigned char tmplen;
 
-        	buf[0] = 0x01;
-        	len = (strlen(username) > 255) ? 255 : strlen(username);
-        	buf[1] = len;
-        	memcpy(buf + 2, username, len);
+			buf[0] = 0x01;
+			len = (strlen(username) > 255) ? 255 : strlen(username);
+			buf[1] = len;
+			memcpy(buf + 2, username, len);
 
-        	tmplen = (strlen(password) > 255) ? 255 : strlen(password);
-        	buf[2 + len] = tmplen;
-        	memcpy(buf + 3 + len, password, tmplen);
+			tmplen = (strlen(password) > 255) ? 255 : strlen(password);
+			buf[2 + len] = tmplen;
+			memcpy(buf + 3 + len, password, tmplen);
 
-        	send(fd, buf, (3 + len + tmplen), 0);
+			send(fd, buf, (3 + len + tmplen), 0);
 			++step;
 			break;
 		}
@@ -147,15 +147,15 @@ int asyn_socks5::work(char byte)
 			net.send(HAS_N, "[+] Connected to SOCKS5 server ", proxyip, ":", itoa(proxyport), NULL);
 			//printf("step %d\n", step);
 			buf[0] = 0x05;
-    		buf[1] = 0x01;
-    		buf[2] = 0x00;
-    		buf[3] = 0x03;
-    		len = (strlen(remotehost) > 255) ? 255 : strlen(remotehost);
-    		buf[4] = (len & 0xff);
-    		memcpy(buf + 5, remotehost, len);
-    		buf[5 + len] = (remoteport >> 8);
-    		buf[6 + len] = (remoteport & 0xff);
-    		send(fd, buf, (7 + len), 0);
+			buf[1] = 0x01;
+			buf[2] = 0x00;
+			buf[3] = 0x03;
+			len = (strlen(remotehost) > 255) ? 255 : strlen(remotehost);
+			buf[4] = (len & 0xff);
+			memcpy(buf + 5, remotehost, len);
+			buf[5 + len] = (remoteport >> 8);
+			buf[6 + len] = (remoteport & 0xff);
+			send(fd, buf, (7 + len), 0);
 			++step;
 			break;
 		}

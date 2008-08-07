@@ -131,7 +131,7 @@ int parse_botnet(inetconn *c, char *data)
 
 					mem_strcpy(from->name, arg[4]);
 					mem_strcpy(from->origin, arg[5]);
-                	from->status = STATUS_CONNECTED + STATUS_REGISTERED + STATUS_BOT + STATUS_REDIR;
+					from->status = STATUS_CONNECTED + STATUS_REGISTERED + STATUS_BOT + STATUS_REDIR;
 					from->handle = h;
 
 					if(from->isMain())

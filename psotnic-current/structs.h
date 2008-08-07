@@ -13,8 +13,8 @@ struct psotnicHeader
 
 struct unit_table
 {
-    char unit;
-    int  ratio;
+	char unit;
+	int  ratio;
 };
 
 struct IOBUF
@@ -26,10 +26,10 @@ struct IOBUF
 
 struct SOCKBUF
 {
-    int fd;
-    char *buf;
-    int len;
-    int pos;
+	int fd;
+	char *buf;
+	int len;
+	int pos;
 };
 
 struct EXPANDINFO
@@ -43,12 +43,12 @@ struct EXPANDINFO
 
 struct flagTable
 {
-    const char letter;
-    unsigned int flag;
-    int level;
-    unsigned int enforced;
-    const char *desc;
-    const char *long_desc;
+	const char letter;
+	unsigned int flag;
+	int level;
+	unsigned int enforced;
+	const char *desc;
+	const char *long_desc;
 };
 
 #endif

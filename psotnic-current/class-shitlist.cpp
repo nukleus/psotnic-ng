@@ -392,25 +392,25 @@ protmodelist::entry *protmodelist::findByMask(const char *mask)
 {
 	ptrlist<entry>::iterator i = data.begin();
 
-    while(i)
-    {
-        if(!strcmp(i->mask, mask))
-            return i;
-        i++;
-    }
-    return NULL;
+	while(i)
+	{
+		if(!strcmp(i->mask, mask))
+			return i;
+		i++;
+	}
+	return NULL;
 }
 
 protmodelist::entry *protmodelist::findBestByMask(const char *channel, const char *mask, int type)
 {
-    protmodelist *s;
+	protmodelist *s;
 	entry *e;
 
 	int chanNum;
 
 	if((chanNum = userlist.findChannel(channel)) != -1)
 	{
-    	s = userlist.chanlist[chanNum].protlist[type];
+		s = userlist.chanlist[chanNum].protlist[type];
 		e = s->findByMask(mask);
 		if(e)
 			return e;

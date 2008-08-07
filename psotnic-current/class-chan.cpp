@@ -220,30 +220,30 @@ void chan::cwho(const char *owner, const char *arg)
 	ptrlist<chanuser>::iterator p = users.begin();
 	if(arg && *arg)
 	{
-	    if(strchr(arg, 'v')) f |= IS_VOICE;
-	    if(strchr(arg, 'o')) f |= IS_OP;
-	    if(strchr(arg, 'l')) f |= IS_LUSER;
-	    if(strchr(arg, 'b')) f |= HAS_B;
+		if(strchr(arg, 'v')) f |= IS_VOICE;
+		if(strchr(arg, 'o')) f |= IS_OP;
+		if(strchr(arg, 'l')) f |= IS_LUSER;
+		if(strchr(arg, 'b')) f |= HAS_B;
 	}
 
 	while(p)
 	{
-	    if(f)
-	    {
-		if(((f & IS_VOICE) && (p->flags & IS_VOICE)) || ((f & IS_OP) && (p->flags & IS_OP)) || ((f & HAS_B) && (p->flags & HAS_B)) || ((f & IS_LUSER) && !(p->flags & IS_VOICE || p->flags & IS_OP)))
+		if(f)
 		{
-		    memset(buf, 0, sizeof(buf));
-		    snprintf(buf, 512, "[%3d] [%c%-12s] [%12s\002@\002%-40s]", ++i, p->flags & IS_OP ? '@' : p->flags & IS_VOICE ? '+' : ' ', (const char *) p->nick, (const char *) p->ident, (const char *) p->host);
-		    net.sendOwner(owner, buf, NULL);
+			if(((f & IS_VOICE) && (p->flags & IS_VOICE)) || ((f & IS_OP) && (p->flags & IS_OP)) || ((f & HAS_B) && (p->flags & HAS_B)) || ((f & IS_LUSER) && !(p->flags & IS_VOICE || p->flags & IS_OP)))
+			{
+				memset(buf, 0, sizeof(buf));
+				snprintf(buf, 512, "[%3d] [%c%-12s] [%12s\002@\002%-40s]", ++i, p->flags & IS_OP ? '@' : p->flags & IS_VOICE ? '+' : ' ', (const char *) p->nick, (const char *) p->ident, (const char *) p->host);
+				net.sendOwner(owner, buf, NULL);
+			}
 		}
-	    }
-	    else
-	    {
-		memset(buf, 0, sizeof(buf));
-		snprintf(buf, 512, "[%3d] [%c%-12s] [%12s\002@\002%-40s]", ++i, p->flags & IS_OP ? '@' : p->flags & IS_VOICE ? '+' : ' ', (const char *) p->nick, (const char *) p->ident, (const char *) p->host);
-		net.sendOwner(owner, buf, NULL);
-	    }
-	    p++;
+		else
+		{
+			memset(buf, 0, sizeof(buf));
+			snprintf(buf, 512, "[%3d] [%c%-12s] [%12s\002@\002%-40s]", ++i, p->flags & IS_OP ? '@' : p->flags & IS_VOICE ? '+' : ' ', (const char *) p->nick, (const char *) p->ident, (const char *) p->host);
+			net.sendOwner(owner, buf, NULL);
+		}
+		p++;
 	}
 
 	if(!i) net.sendOwner(owner, "[*] Psotnic: No matches found", NULL);
@@ -435,7 +435,7 @@ void chan::updateKey(const char *newkey)
 
 	if(set.REMEMBER_OLD_KEYS ? *newkey : 1)
 	{
-  		userlist.chanlist[channum].pass = newkey;
+		userlist.chanlist[channum].pass = newkey;
 		userlist.nextSave = NOW + SAVEDELAY;
 	}
 }
@@ -486,13 +486,13 @@ int chan::gotBan(const char *ban, chanuser *caster)
 		return 0;
 
 	if(config.bottype == BOT_MAIN)
-        protmodelist::updateLastUsedTime(name, ban, BAN);
-    else if(caster == me)
-    {
-        inetconn *c = net.findMainBot();
-        if(c)
-            c->send(S_SHITOBSERVED, " ", (const char *) name, " ", ban, " ", caster->nick, "!", caster->ident, "@", caster->host, NULL);
-    }
+		protmodelist::updateLastUsedTime(name, ban, BAN);
+	else if(caster == me)
+	{
+		inetconn *c = net.findMainBot();
+		if(c)
+			c->send(S_SHITOBSERVED, " ", (const char *) name, " ", ban, " ", caster->nick, "!", caster->ident, "@", caster->host, NULL);
+	}
 
 	HANDLE *h = userlist.first;
 	ptrlist<chanuser>::iterator u;
@@ -687,28 +687,28 @@ void chan::gotKick(const char *victim, const char *offender, const char *reason)
 				/* idiots code */
 				if((int) chset->IDIOTS)
 				{
-				    char *b = push(NULL, (const char *) "kick ", victim, NULL);
+					char *b = push(NULL, (const char *) "kick ", victim, NULL);
+					
+					/* should we remove spaces from end of reason? */
+					//b = rtrim(b);
 
-				    /* should we remove spaces from end of reason? */
-				    //b = rtrim(b);
-
-				    if(userlist.isMain(userlist.me()))
-		    			userlist.addIdiot(offender, (const char *) name, b, 1);
-	    			    else
-        			    {
-            				if(net.hub.fd && net.hub.isMain())
-                			    net.hub.send(S_ADDIDIOT, " ", offender, " ", (const char *) name, " 1 ", b, NULL);
-            				else
+					if(userlist.isMain(userlist.me()))
+						userlist.addIdiot(offender, (const char *) name, b, 1);
+					else
 					{
-                			    for(int i=0; i<net.max_conns; ++i)
-                				if(net.conn[i].isMain() && net.conn[i].fd)
-                    				{
-                        			    net.conn[i].send(S_ADDIDIOT, " ", offender, " ", (const char *) name, " 1 ", b, NULL);
-                        			    break;
-                    				}
-                			}
-        			    }
-				    free(b);
+						if(net.hub.fd && net.hub.isMain())
+							net.hub.send(S_ADDIDIOT, " ", offender, " ", (const char *) name, " 1 ", b, NULL);
+						else
+						{
+							for(int i=0; i<net.max_conns; ++i)
+								if(net.conn[i].isMain() && net.conn[i].fd)
+								{
+									net.conn[i].send(S_ADDIDIOT, " ", offender, " ", (const char *) name, " 1 ", b, NULL);
+									break;
+								}
+						}
+					}
+					free(b);
 				}
 			}
 		}
@@ -764,18 +764,18 @@ void chan::gotPart(const char *nick, int netsplit)
 		}
 	}
 
-    if(!set.PRE_0211_FINAL_COMPAT && synced() && nextlimit > NOW + chset->LIMIT_TIME_DOWN)
-    {
-        int tolerance;
+	if(!set.PRE_0211_FINAL_COMPAT && synced() && nextlimit > NOW + chset->LIMIT_TIME_DOWN)
+	{
+		int tolerance;
 
-        if(chset->LIMIT_TOLERANCE > 0)
-            tolerance = chset->LIMIT_TOLERANCE;
-        else
-            tolerance = (chset->LIMIT_TOLERANCE * chset->LIMIT_OFFSET)/(-100);
+		if(chset->LIMIT_TOLERANCE > 0)
+			tolerance = chset->LIMIT_TOLERANCE;
+		else
+			tolerance = (chset->LIMIT_TOLERANCE * chset->LIMIT_OFFSET)/(-100);
 
-        if(limit > users.entries() + chset->LIMIT_OFFSET + tolerance)
-            nextlimit = NOW + chset->LIMIT_TIME_DOWN;
-    }
+		if(limit > users.entries() + chset->LIMIT_OFFSET + tolerance)
+			nextlimit = NOW + chset->LIMIT_TIME_DOWN;
+	}
 }
 
 #ifdef HAVE_DEBUG
@@ -898,7 +898,7 @@ bool chan::checkClone(chanuser *p)
 chanuser *chan::gotJoin(const char *mask, int def_flags)
 {
 	static char buf[MAX_LEN];
-    chanuser *p  = new chanuser(mask, this, def_flags, 1);
+	chanuser *p  = new chanuser(mask, this, def_flags, 1);
 	protmodelist::entry *s;
 	bool badBoy;
 
@@ -939,28 +939,28 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 
 			if(badBoy == true && (int) chset->IDIOTS)
 			{
-			    char *a = push(NULL, (const char*) "invite ", mask, NULL);
+				char *a = push(NULL, (const char*) "invite ", mask, NULL);
 
-		    	    if(myTurn(chset->PUNISH_BOTS, p->hash32()))
-			    {
-				if(userlist.isMain(userlist.me()))
-				    userlist.addIdiot((const char *) ME.overrider, (const char *) name, a, 1);
-				else
-            			{
-                		    if(net.hub.fd && net.hub.isMain())
-                    			net.hub.send(S_ADDIDIOT, " ", (const char *) ME.overrider, " ", (const char *) name, " 1 ", a, NULL);
-                		    else
-                    			for(int i=0; i<net.max_conns; ++i)
-                    			{
-                        		    if(net.conn[i].isMain() && net.conn[i].fd)
-                        		    {
-                            			net.conn[i].send(S_ADDIDIOT, " ", (const char *) ME.overrider, " ", (const char *) name, " 1 ", a, NULL);
-                            			break;
-                        		    }
-                    			}
-            			}
-			    }
-			    free(a);
+				if(myTurn(chset->PUNISH_BOTS, p->hash32()))
+				{
+					if(userlist.isMain(userlist.me()))
+						userlist.addIdiot((const char *) ME.overrider, (const char *) name, a, 1);
+					else
+					{
+						if(net.hub.fd && net.hub.isMain())
+							net.hub.send(S_ADDIDIOT, " ", (const char *) ME.overrider, " ", (const char *) name, " 1 ", a, NULL);
+						else
+							for(int i=0; i<net.max_conns; ++i)
+							{
+								if(net.conn[i].isMain() && net.conn[i].fd)
+								{
+									net.conn[i].send(S_ADDIDIOT, " ", (const char *) ME.overrider, " ", (const char *) name, " 1 ", a, NULL);
+									break;
+								}
+							}
+					}
+				}
+				free(a);
 			}
 		}
 		ME.overrider = "";
@@ -973,24 +973,24 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 		badBoy = true;
 
 		if(synced() && myTurn(chset->PUNISH_BOTS, p->hash32()))
-				kick(p, config.kickreason);
+			kick(p, config.kickreason);
 	}
-    else if(!(p->flags & (HAS_V | HAS_O)) && chset->KEEPOUT)
-    {
-        if(synced())
-        {
-            if(!hasFlag('i') && myTurn(chset->GUARDIAN_BOTS, p->hash32()))
-            {
-                modeQ[PRIO_HIGH].add(NOW, "+i");
-                modeQ[PRIO_HIGH].flush(PRIO_HIGH);
-            }
+	else if(!(p->flags & (HAS_V | HAS_O)) && chset->KEEPOUT)
+	{
+		if(synced())
+		{
+			if(!hasFlag('i') && myTurn(chset->GUARDIAN_BOTS, p->hash32()))
+			{
+				modeQ[PRIO_HIGH].add(NOW, "+i");
+				modeQ[PRIO_HIGH].flush(PRIO_HIGH);
+			}
 
-            if(myTurn(chset->PUNISH_BOTS, p->hash32()))
-                kick(p, config.keepoutreason);
+			if(myTurn(chset->PUNISH_BOTS, p->hash32()))
+				kick(p, config.keepoutreason);
 
-            badBoy = true;
-        }
-    }
+			badBoy = true;
+		}
+	}
 	else if(((chset->TAKEOVER ? 1 : !(def_flags & NET_JOINED)) && chset->ENFORCE_LIMITS
 		&& limit && users.entries() > limit && !(p->flags & HAS_F)))
 	{
@@ -1106,7 +1106,7 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 /* Constructor */
 chan::chan()
 {
-    sentKicks = flags = limit = status = synlevel = 0;
+	sentKicks = flags = limit = status = synlevel = 0;
 	me = NULL;
 	initialOp = 0;
 	since = NOW;
@@ -1167,8 +1167,8 @@ chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
 	}
 
 	mem_strncpy(nick, m, (int) abs(m - a) +1);
-    mem_strncpy(ident, a+1, (int) abs(a - b));
-    mem_strcpy(host, b+1);
+	mem_strncpy(ident, a+1, (int) abs(a - b));
+	mem_strcpy(host, b+1);
 	flags = f;
 	if(scan)
 		flags |= userlist.getFlags(m, ch);
@@ -1391,30 +1391,31 @@ void chan::checkProtectedChmodes()
 		{
 			case '+' : pos=true; break;
 			case '-' : pos=false; break;
-			default  : if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])) ||
-			(pos && (modes[i] == 'k' && strcmp((const char *) key, chset->MODE_LOCK.getKey()) && hasFlag(modes[i])
-			|| (modes[i] == 'l' && limit != chset->MODE_LOCK.getLimit()) && hasFlag(modes[i]))))
-				   {
-					   mode[0]=pos?'+':'-';
-					   mode[1]=modes[i];
-					   mode[2]='\0';
+			default  :
+				if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])) ||
+						(pos && (modes[i] == 'k' && strcmp((const char *) key, chset->MODE_LOCK.getKey()) && hasFlag(modes[i])
+							 || (modes[i] == 'l' && limit != chset->MODE_LOCK.getLimit()) && hasFlag(modes[i]))))
+				{
+					mode[0]=pos?'+':'-';
+					mode[1]=modes[i];
+					mode[2]='\0';
 
-					    if(modes[i] == 'k')
-					    {
+					if(modes[i] == 'k')
+					{
 						if(pos == false)
-						    modeQ[PRIO].add(flush_time, mode, key);
+							modeQ[PRIO].add(flush_time, mode, key);
 						else
-						    modeQ[PRIO].add(flush_time, mode, chset->MODE_LOCK.getKey());
-					    }
-					    else if(pos == true && modes[i] == 'l')
-					    {
+							modeQ[PRIO].add(flush_time, mode, chset->MODE_LOCK.getKey());
+					}
+					else if(pos == true && modes[i] == 'l')
+					{
 						modeQ[PRIO].add(flush_time, mode, itoa(chset->MODE_LOCK.getLimit()));
-					    }
-					    else
-					    {
-					   	modeQ[PRIO].add(flush_time, mode);
-					    }
-				   }
+					}
+					else
+					{
+						modeQ[PRIO].add(flush_time, mode);
+					}
+				}
 		}
 	}
 }

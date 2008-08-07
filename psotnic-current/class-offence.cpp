@@ -41,25 +41,25 @@ offence::entry::~entry()
 
 int offence::entry::operator==(const entry &ent) const
 {
-    if(strlen(ent.mode) && ent.count && ent.time)
-    {
-	if(!strcmp(ent.chan, chan) && !strcmp(ent.mode, mode) && count == ent.count && abs(ent.time - time) < OFFENCE_DUPLICATE_TIME)
-//	if(!strcmp(ent.chan, chan) && !strcmp(ent.mode, mode) && count == ent.count && ent.time == time)
+	if(strlen(ent.mode) && ent.count && ent.time)
+	{
+		if(!strcmp(ent.chan, chan) && !strcmp(ent.mode, mode) && count == ent.count && abs(ent.time - time) < OFFENCE_DUPLICATE_TIME)
+//		if(!strcmp(ent.chan, chan) && !strcmp(ent.mode, mode) && count == ent.count && ent.time == time)
 		return 1;
-    }
-    else
-    {
-	if(!strcmp(ent.chan, chan))
-	    return 1;
-    }
-    return 0;
+	}
+	else
+	{
+		if(!strcmp(ent.chan, chan))
+			return 1;
+	}
+	return 0;
 }
 
 int offence::entry::operator<(const entry &e) const
 {
-    // zrobmy na odwrot to bedzie sortowac od najmlodszych do najstarszych
-    //return time < e.time ? 1 : 0;
-    return time > e.time ? 1 : 0;
+	// zrobmy na odwrot to bedzie sortowac od najmlodszych do najstarszych
+	//return time < e.time ? 1 : 0;
+	return time > e.time ? 1 : 0;
 }
 
 offence::offence()
@@ -81,9 +81,9 @@ int offence::add(const char *_chan, const char *_mode, time_t _time, unsigned in
 
 	if(data.entries() >= MAX_OFFENCES) 
 	{
-	    ptrlist<offence::entry>::iterator ret = data.getItem(data.entries() -1);
-	    if(ret)
-		data.remove(ret);
+		ptrlist<offence::entry>::iterator ret = data.getItem(data.entries() -1);
+		if(ret)
+			data.remove(ret);
 	}
 	data.sortAdd(e);
 	return 1;
@@ -100,12 +100,12 @@ int offence::del(const char *_chan, const char *_mode, time_t _time, unsigned in
 #ifdef HAVE_DEBUG
 void offence::entry::display()
 {
-        printf("offence->chan: %s\n", chan);
-        printf("offence->mode: %s\n", mode);
-        printf("offence->time: %ld\n", time);
-        printf("offence->count: %d\n", count);
-        printf("offence->fromFlags: %d\n", fromFlags);
-        printf("offence->toFlags: %d\n", toFlags);
+	printf("offence->chan: %s\n", chan);
+	printf("offence->mode: %s\n", mode);
+	printf("offence->time: %ld\n", time);
+	printf("offence->count: %d\n", count);
+	printf("offence->fromFlags: %d\n", fromFlags);
+	printf("offence->toFlags: %d\n", toFlags);
 
 }
 #endif

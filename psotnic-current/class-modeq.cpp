@@ -44,11 +44,11 @@ void modeq::setChannel(chan *channel)
 	ch = channel;
 }
 
-#define	isModeNonArgModeValid(flag)	\
+#define	isModeNonArgModeValid(flag)		\
 		if(ch->flags & flag)		\
-			return 0;				\
-		++n;						\
-		ch->flags |= flag;			\
+			return 0;		\
+		++n;				\
+		ch->flags |= flag;		\
 		return 1;
 
 int modeq::validate(modeq_ent *e, int &a, int &n)
@@ -411,23 +411,23 @@ void modeq::removeBackupModesFor(const char *mode, const char *arg)
 
 modeq::modeq_ent *modeq::find(const char *mode, const char *arg)
 {
-    grouplist<modeq_ent>::iterator g = data.begin();
-    ptrlist<modeq_ent>::iterator e;
+	grouplist<modeq_ent>::iterator g = data.begin();
+	ptrlist<modeq_ent>::iterator e;
 
-    while(g)
-    {
-        e = g->begin();
+	while(g)
+	{
+		e = g->begin();
 
-        while(e)
-        {
-            if(!strncmp(e->mode, mode, 2) && !strcmp(e->arg, arg))
-                return e;
+		while(e)
+		{
+			if(!strncmp(e->mode, mode, 2) && !strcmp(e->arg, arg))
+				return e;
 
-            e++;
-        }
+			e++;
+		}
 
-        g++;
-    }
+		g++;
+	}
 
-   return 0;
+	return 0;
 }

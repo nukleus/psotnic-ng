@@ -699,13 +699,13 @@ entHPPH &entHPPH::operator=(const entHPPH &e)
 	readOnly = e.readOnly;
 
 	if(_host)
-        delete _host;
-    if(_port)
-        delete _port;
-    if(_pass)
-        delete _pass;
-    if(_handle)
-        delete _handle;
+		delete _host;
+	if(_port)
+		delete _port;
+	if(_pass)
+		delete _pass;
+	if(_handle)
+		delete _handle;
 
 	if(e._host)
 	{
@@ -1105,15 +1105,15 @@ bool entLoadModules::rehash(const char *str)
 
 int entChattr::checkArg(const char *args)
 {
-        int i, j, k, c;
+	int i, j, k, c;
 	size_t s;
 	int star;
-        char *_l = NULL;
+	char *_l = NULL;
 	char *_k = NULL;
-	
+
 	const char *modes = CHATTR_MODES;
 
-        static char duplicate[32];
+	static char duplicate[32];
 	static char arg[3][CHAN_LEN];
 
 	memset(gpFlags, 0, sizeof(gpFlags));
@@ -1121,120 +1121,120 @@ int entChattr::checkArg(const char *args)
 	memset(gKey, 0, sizeof(gKey));
 	gLimit = 0;
 
-        memset(duplicate, 0, sizeof(duplicate));
-	
+	memset(duplicate, 0, sizeof(duplicate));
+
 	str2words(arg[0], args, 3, CHAN_LEN);
-	
-        for(k = 0, c = 0, i = 0, j = strlen(arg[0]), s = sizeof(duplicate); i < j && (unsigned) i < s-1; i++)
-        {
-                if(arg[0][i] == '-' || arg[0][i] == '+')
-                        continue;
+
+	for(k = 0, c = 0, i = 0, j = strlen(arg[0]), s = sizeof(duplicate); i < j && (unsigned) i < s-1; i++)
+	{
+		if(arg[0][i] == '-' || arg[0][i] == '+')
+			continue;
 		if(arg[0][i] == '*') 
 		{
-		    if(!k)
-		    {
-			k = 1;
-			continue;
-		    }    
-		    return -7;
+			if(!k)
+			{
+				k = 1;
+				continue;
+			}
+			return -7;
 		}
-                if(strchr(modes, arg[0][i]) == NULL)
-                        return i;
-                else // duplicated modes check
-                {
-                        if(strchr(duplicate, arg[0][i]) != NULL)
-                                return -1;
-                        duplicate[c++] = arg[0][i];
-                }
-        }
+		if(strchr(modes, arg[0][i]) == NULL)
+			return i;
+		else // duplicated modes check
+		{
+			if(strchr(duplicate, arg[0][i]) != NULL)
+				return -1;
+			duplicate[c++] = arg[0][i];
+		}
+	}
 
-        for(star = -1, i = 0, c = 1, j = strlen(arg[0]), s = 1; i < j; i++)
-        {
-                switch(arg[0][i])
-                {
-                        case '-':
-                                c = 0;
-                                break;
-                        case '+':
-                                c = 1;
-                                break;
+	for(star = -1, i = 0, c = 1, j = strlen(arg[0]), s = 1; i < j; i++)
+	{
+		switch(arg[0][i])
+		{
+			case '-':
+				c = 0;
+				break;
+			case '+':
+				c = 1;
+				break;
 			case '*':
 				star = c;
 				break;
-                        default:
-                                setFlag(c, arg[0][i]);
+			default:
+				setFlag(c, arg[0][i]);
 				if(c && (arg[0][i] == 'l' || arg[0][i] == 'k') && s < 3) 
 				{
-				    switch(arg[0][i])
-				    {
-					case 'l':    
-					    if(!strlen(arg[s])) return -3;
-					    if(!_isnumber(arg[s])) return -4;
-					    gLimit = atol(arg[s++]);
-					    break;		
-					case 'k':
-					    k = strlen(arg[s]);
-					    if(!k) return -5;
-					    if(k > CHAN_LEN) return -6;
-					    
-					    strcpy(gKey, arg[s++]);
-					    break;			
-				    }
+					switch(arg[0][i])
+					{
+						case 'l':
+							if(!strlen(arg[s])) return -3;
+							if(!_isnumber(arg[s])) return -4;
+							gLimit = atol(arg[s++]);
+							break;
+						case 'k':
+							k = strlen(arg[s]);
+							if(!k) return -5;
+							if(k > CHAN_LEN) return -6;
+
+							strcpy(gKey, arg[s++]);
+							break;
+					}
 				}
-                }
-        }
+		}
+	}
 
 	if(star != -1)
-	{    
-	    for(i = 0, s = 1,j = strlen(modes); i < j; i++)
-	    {
-		if(strchr(duplicate, modes[i]) == NULL)
+	{
+		for(i = 0, s = 1,j = strlen(modes); i < j; i++)
 		{
-		    setFlag(star, modes[i]);
-		    if(star && (modes[i] == 'l' || modes[i] == 'k') && s < 3) 
-		    {
-			switch(modes[i])
+			if(strchr(duplicate, modes[i]) == NULL)
 			{
-			    case 'l':    
-			        if(!strlen(arg[s])) return -3;
-			        if(!_isnumber(arg[s])) return -4;
-			        gLimit = atol(arg[s++]);
-			        break;		
-			    case 'k':
-			        k = strlen(arg[s]);
-			        if(!k) return -5;
-			        if(k > CHAN_LEN) return -6;
-					    
-			        strcpy(gKey, arg[s++]);
-			        break;			
+				setFlag(star, modes[i]);
+				if(star && (modes[i] == 'l' || modes[i] == 'k') && s < 3) 
+				{
+					switch(modes[i])
+					{
+						case 'l':
+							if(!strlen(arg[s])) return -3;
+							if(!_isnumber(arg[s])) return -4;
+							gLimit = atol(arg[s++]);
+							break;
+						case 'k':
+							k = strlen(arg[s]);
+							if(!k) return -5;
+							if(k > CHAN_LEN) return -6;
+
+							strcpy(gKey, arg[s++]);
+							break;
+					}
+				}
 			}
-		    }
 		}
-	    }
 	}
-	
-        if(*gpFlags)
-        {
-    	    // +s and +p cannot exist bothly
-            if(hasFlag(0, 'p', 1) && hasFlag(0, 's', 1))
-                return -2;
-	    // darkman req. swaping limit with key when key isnt before limit			
-	    if(hasFlag(0, 'l', 1) && hasFlag(0, 'k', 1))
-	    {
-		_l = strchr(gpFlags, 'l');
-		_k = strchr(gpFlags, 'k');
-		if(_k != NULL && _l != NULL) 
+
+	if(*gpFlags)
+	{
+		// +s and +p cannot exist bothly
+		if(hasFlag(0, 'p', 1) && hasFlag(0, 's', 1))
+			return -2;
+		// darkman req. swaping limit with key when key isnt before limit
+		if(hasFlag(0, 'l', 1) && hasFlag(0, 'k', 1))
 		{
-		    if(_l - _k > 0) // we need to swap those chars
-		    {
-			i = (int) *_k;
-			*_k = *_l;
-			*_l = (char) i;
-		    }
+			_l = strchr(gpFlags, 'l');
+			_k = strchr(gpFlags, 'k');
+			if(_k != NULL && _l != NULL) 
+			{
+				if(_l - _k > 0) // we need to swap those chars
+				{
+					i = (int) *_k;
+					*_k = *_l;
+					*_l = (char) i;
+				}
+			}
 		}
-	    }	
-        }
-        return -8;
+	}
+	return -8;
 }
 
 void entChattr::setFlags()
@@ -1247,128 +1247,128 @@ void entChattr::setFlags()
 
 bool entChattr::hasFlag(int minusFlag, const char flag, int Gen) const
 {
-        if(minusFlag)
+	if(minusFlag)
 		return strchr(Gen ? gmFlags : mFlags, flag)==NULL ? false : true;
         else
 		return strchr(Gen ? gpFlags : pFlags, flag)==NULL ? false : true;
 
-        return false;
+	return false;
 }
 
 void entChattr::setFlag(int plusFlag, const char flag)
 {
 	int len;
-	
-        if(plusFlag)
-        {
+
+	if(plusFlag)
+	{
 		if(strchr(CHATTR_MODES, flag))
 		{
 			len=strlen(gpFlags);
 			gpFlags[len]=flag;
 			gpFlags[len+1]='\0';
 		}
-		
+
 		else
 			memset(gpFlags, 0, sizeof(gpFlags));
 	}
 
-        else
-        {
+	else
+	{
 		if(strchr(CHATTR_MODES, flag))
 		{
 			len=strlen(gmFlags);
-               		gmFlags[len]=flag;
-                	gmFlags[len+1]='\0';
+			gmFlags[len]=flag;
+			gmFlags[len+1]='\0';
 		}
 
 		else
 			memset(gmFlags, 0, sizeof(gmFlags));
-        }
+	}
 }
 
 const char *entChattr::getKey() const
 {
-    return Key;
+	return Key;
 }
 
 long int entChattr::getLimit() const
 {
-    return Limit;
+	return Limit;
 }
 
 const char *entChattr::getValue() const
 {
-        static char modes[128];
+	static char modes[128];
 	int _l, _k;
 	char *l = NULL;
 	char *k = NULL;
 
-        memset(modes, 0, sizeof(modes));
+	memset(modes, 0, sizeof(modes));
 
-        if(*pFlags || *mFlags)
-        {
-                if(*pFlags)
+	if(*pFlags || *mFlags)
+	{
+		if(*pFlags)
 		{
 			snprintf(modes, sizeof(modes), "+%s", pFlags);
 			k = strchr(pFlags, 'k');
 			l = strchr(pFlags, 'l');
 		}
 		if(*mFlags)
-                {
+		{
 			strncat(modes, "-", sizeof(modes)-strlen(modes)-1);
 			strncat(modes, mFlags, sizeof(modes)-strlen(modes)-1);
-                }
-		
+		}
+
 		// FIXME: we should use ltoa() instead of itoa()
 		if(k != NULL || l != NULL)
 		{
-		    strncat(modes, " ", sizeof(modes)-strlen(modes)-1);
-		    if(k != NULL && l != NULL)
-		    {
-			_l = strlen(l);
-			_k = strlen(k);
-
-			if((_k - _l) > 0)
+			strncat(modes, " ", sizeof(modes)-strlen(modes)-1);
+			if(k != NULL && l != NULL)
 			{
-			    strncat(modes, Key, sizeof(modes)-strlen(modes)-1);
-			    strncat(modes, " ", sizeof(modes)-strlen(modes)-1);
-			    strncat(modes, itoa(Limit), sizeof(modes)-strlen(modes)-1);
+				_l = strlen(l);
+				_k = strlen(k);
+
+				if((_k - _l) > 0)
+				{
+					strncat(modes, Key, sizeof(modes)-strlen(modes)-1);
+					strncat(modes, " ", sizeof(modes)-strlen(modes)-1);
+					strncat(modes, itoa(Limit), sizeof(modes)-strlen(modes)-1);
+				}
+				else
+				{
+					strncat(modes, itoa(Limit), sizeof(modes)-strlen(modes)-1);
+					strncat(modes, " ", sizeof(modes)-strlen(modes)-1);
+					strncat(modes, Key, sizeof(modes)-strlen(modes)-1);
+				}
 			}
 			else
 			{
-			    strncat(modes, itoa(Limit), sizeof(modes)-strlen(modes)-1);
-			    strncat(modes, " ", sizeof(modes)-strlen(modes)-1);
-			    strncat(modes, Key, sizeof(modes)-strlen(modes)-1);			
+				if(k != NULL)
+					strncat(modes, Key, sizeof(modes)-strlen(modes)-1);
+				if(l != NULL)
+					strncat(modes, itoa(Limit), sizeof(modes)-strlen(modes)-1);
 			}
-		    }
-		    else
-		    {
-			if(k != NULL)
-			    strncat(modes, Key, sizeof(modes)-strlen(modes)-1);
-			if(l != NULL)
-			    strncat(modes, itoa(Limit), sizeof(modes)-strlen(modes)-1);		    
-		    }    
 		}
-        }
-        else
-                strncpy(modes, "-", sizeof(modes)-1);
+	}
+	else
+		strncpy(modes, "-", sizeof(modes)-1);
 
 	return modes;
 }
 
 options::event *entChattr::setValue(const char *arg1, const char *arg2, const bool justTest)
 {
-        if(!strcmp(arg1, name))
-        {
-                if(isReadOnly())
-                {
-                        _event.setError(this, "entry %s is read-only", name);
-                        return &_event;
-                }
+	if(!strcmp(arg1, name))
+	{
+		if(isReadOnly())
+		{
+			_event.setError(this, "entry %s is read-only", name);
+			return &_event;
+		}
 
 		int i = checkArg(arg2);
-                switch(i)
-                {
+		switch(i)
+		{
 			case -8: // all is ok
 				break;
 			case -7:
@@ -1380,41 +1380,41 @@ options::event *entChattr::setValue(const char *arg1, const char *arg2, const bo
 			case -5:
 				_event.setError(this, "argument for key has no length");
 				return &_event;
-                        case -4: 
+			case -4: 
 				_event.setError(this, "argument for limit is not a number");
-                                return &_event;
+				return &_event;
 			case -3:
 				_event.setError(this, "argument for limit has no lenght");
 				return &_event;
-                        case -2: //
-                                _event.setError(this, "conflict in argument: +s cannot exist with +p");
-                                return &_event;
-                        case -1:
-                                _event.setError(this, "argument contain dulicated modes");
-                                return &_event;
-                        default:
-                                _event.setError(this, "argument contain incorrect char at position %d", i+1);
-                                return &_event;
-                }
+			case -2: //
+				_event.setError(this, "conflict in argument: +s cannot exist with +p");
+				return &_event;
+			case -1:
+				_event.setError(this, "argument contain dulicated modes");
+				return &_event;
+			default:
+				_event.setError(this, "argument contain incorrect char at position %d", i+1);
+				return &_event;
+		}
 
 
-                setFlags();
+		setFlags();
 
-                if(!justTest)
-                {
+		if(!justTest)
+		{
 			// FIXME: should we set it twice?
-                        setFlags();
-                }
+			setFlags();
+		}
 
-                _event.setOk(this, "%s has been set to %s", name, getValue());
+		_event.setOk(this, "%s has been set to %s", name, getValue());
 
-                return &_event;
-        }
-        else
-        {
-                _event.setError(this);
-                return NULL;
-        }
+		return &_event;
+	}
+	else
+	{
+		_event.setError(this);
+		return NULL;
+	}
 }
 
 void entChattr::reset()
@@ -1427,7 +1427,7 @@ void entChattr::reset()
 
 bool entChattr::isDefault() const
 {
-        if(!strcmp(dmFlags, mFlags) && !strcmp(dpFlags, pFlags) && !strcmp(dKey, Key) && dLimit == Limit)
-	    return 1;
-        return 0;
+	if(!strcmp(dmFlags, mFlags) && !strcmp(dpFlags, pFlags) && !strcmp(dKey, Key) && dLimit == Limit)
+		return 1;
+	return 0;
 }

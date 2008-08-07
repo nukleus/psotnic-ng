@@ -165,8 +165,8 @@ adns_pthread::adns_pthread(int n)
 	die = false;
 
 	pthread_mutex_init(&data_mutex, NULL);
-    pthread_mutex_init(&condition_mutex, NULL);
-    pthread_cond_init(&condition, NULL);
+	pthread_mutex_init(&condition_mutex, NULL);
+	pthread_cond_init(&condition, NULL);
 
 	todo = NULL;
 	cache = NULL;

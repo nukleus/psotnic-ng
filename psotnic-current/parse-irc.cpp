@@ -29,7 +29,7 @@ static int i;
 void parse_irc(char *data)
 {
 	if(!strlen(data))
-        return;
+		return;
 
 	net.irc.killTime = NOW + set.CONN_TIMEOUT;
 
@@ -213,19 +213,19 @@ void parse_irc(char *data)
 			}
 
 			a = push(NULL, arg[7], "!", arg[4], "@", arg[5], NULL);
-            p = ch->gotJoin(a, (strchr(arg[8], '@') ? IS_OP : 0) | (strchr(arg[8], '+') ? IS_VOICE : 0));
+			p = ch->gotJoin(a, (strchr(arg[8], '@') ? IS_OP : 0) | (strchr(arg[8], '+') ? IS_VOICE : 0));
 
 			if(!strcasecmp(arg[7], ME.nick))
-            	ch->me = p;
+				ch->me = p;
 
 			free(a);
-        }
-        return;
-    }
-    if(!strcmp(arg[1], "315"))
-    {
-        ch = ME.findNotSyncedChannel(arg[3]);
-        if(ch)
+		}
+		return;
+	}
+	if(!strcmp(arg[1], "315"))
+	{
+		ch = ME.findNotSyncedChannel(arg[3]);
+		if(ch)
 		{
 			if(ch->synced())
 			{
@@ -253,16 +253,16 @@ void parse_irc(char *data)
 			HOOK(justSynced, justSynced(ch));
 			stopParsing=false;
 		}
-        return;
-    }
-    if(!strcmp(arg[1], "324"))
-    {
-        ch = ME.findChannel(arg[3]);
-        if(ch)
-        {
+		return;
+	}
+	if(!strcmp(arg[1], "324"))
+	{
+		ch = ME.findChannel(arg[3]);
+		if(ch)
+		{
 			ch->limit = 0;
 			ch->updateKey("");
-            ch->setFlags(arg[4]);
+			ch->setFlags(arg[4]);
 
 			a = arg[4];
 
@@ -280,11 +280,11 @@ void parse_irc(char *data)
 				}
 			}
 
-            ++ch->synlevel;
-        	if(ch->limit == -1)
-                ch->nextlimit = -1;
+			++ch->synlevel;
+			if(ch->limit == -1)
+				ch->nextlimit = -1;
 			else
-                ch->nextlimit = NOW + set.ASK_FOR_OP_DELAY;
+				ch->nextlimit = NOW + set.ASK_FOR_OP_DELAY;
 
 			/*
 			if(!ch->toKick.entries() && ch->opedBots.entries() + ch->botsToOp.entries() == 1 &&
@@ -297,53 +297,53 @@ void parse_irc(char *data)
 			*/
 		}
 		else DEBUG(printf("unknown 324 for %s\n", arg[3]));
-        return;
-    }
-    if(!strcmp(arg[1], "QUIT"))
-    {
-		ME.gotUserQuit(arg[0], srewind(data, 2));
-        return;
-    }
-    if(!strcmp(arg[0], "PING"))
-    {
-        net.irc.send("PONG ", arg[1], NULL);
-        return;
-    }
-    if(!strcmp(arg[1], "433"))
-    {
-        if(net.irc.status & STATUS_REGISTERED)
-            ME.nextNickCheck = NOW + set.KEEP_NICK_CHECK_DELAY;
-        else
-        {
-            if(config.altnick.getLen() && !strcmp(arg[3], config.nick) && strcmp(arg[3], config.altnick))
-                net.irc.send("NICK ", (const char*) config.altnick, NULL);
-            else
-                ME.registerWithNewNick(arg[3]);
-           sleep(1);
-        }
-        return;
-    }
-    if(!strcmp(arg[1], "437"))
-    {
-        if(net.irc.status & STATUS_REGISTERED)
-        {
-            i = userlist.findChannel(arg[3]);
-            if(i == -1)
-            {
-                /* Nick is temp...*/
-                ME.nextNickCheck = NOW + set.KEEP_NICK_CHECK_DELAY;
-            }
-            else
-            {
-                /* Channel is temp... */
-                ME.rejoin(arg[3], set.REJOIN_FAIL_DELAY);
-            }
-        }
-        else
-			ME.registerWithNewNick(arg[3]);
-		
 		return;
-    }
+	}
+	if(!strcmp(arg[1], "QUIT"))
+	{
+		ME.gotUserQuit(arg[0], srewind(data, 2));
+		return;
+	}
+	if(!strcmp(arg[0], "PING"))
+	{
+		net.irc.send("PONG ", arg[1], NULL);
+		return;
+	}
+	if(!strcmp(arg[1], "433"))
+	{
+		if(net.irc.status & STATUS_REGISTERED)
+			ME.nextNickCheck = NOW + set.KEEP_NICK_CHECK_DELAY;
+		else
+		{
+			if(config.altnick.getLen() && !strcmp(arg[3], config.nick) && strcmp(arg[3], config.altnick))
+				net.irc.send("NICK ", (const char*) config.altnick, NULL);
+			else
+				ME.registerWithNewNick(arg[3]);
+			sleep(1);
+		}
+		return;
+	}
+	if(!strcmp(arg[1], "437"))
+	{
+		if(net.irc.status & STATUS_REGISTERED)
+		{
+			i = userlist.findChannel(arg[3]);
+			if(i == -1)
+			{
+				/* Nick is temp...*/
+				ME.nextNickCheck = NOW + set.KEEP_NICK_CHECK_DELAY;
+			}
+			else
+			{
+				/* Channel is temp... */
+				ME.rejoin(arg[3], set.REJOIN_FAIL_DELAY);
+			}
+		}
+		else
+			ME.registerWithNewNick(arg[3]);
+
+		return;
+	}
 	if(!strcmp(arg[1], "432"))
 	{
 		if(!(net.irc.status & STATUS_REGISTERED))
@@ -585,22 +585,22 @@ void parse_irc(char *data)
 		}
 	}
 
-    if(!strcmp(arg[1], "INVITE"))
-    {
+	if(!strcmp(arg[1], "INVITE"))
+	{
 		chan *ch = NULL;
-        if((i = userlist.findChannel(arg[3])) != -1 && !(ch = ME.findChannel(arg[3])))
-        {
-            if(!(userlist.chanlist[i].status & JOIN_SENT) && userlist.isRjoined(i))
-            {
+		if((i = userlist.findChannel(arg[3])) != -1 && !(ch = ME.findChannel(arg[3])))
+		{
+			if(!(userlist.chanlist[i].status & JOIN_SENT) && userlist.isRjoined(i))
+			{
 				net.irc.send("JOIN ", arg[3], " ", (const char *) userlist.chanlist[i].pass, NULL);
-                userlist.chanlist[i].status |= JOIN_SENT;
-            }
-        }
+				userlist.chanlist[i].status |= JOIN_SENT;
+			}
+		}
 
 		HOOK(invite, invite(arg[0], arg[3], ch, i == -1 ? NULL : &userlist.chanlist[i]));
 		stopParsing=false;
-        return;
-    }
+		return;
+	}
 
 	if(!strcmp(arg[1], "NOTICE"))
 	{
@@ -633,45 +633,45 @@ void parse_irc(char *data)
 		return;
 	}
 
-    if(!strcmp(arg[1], "PRIVMSG"))
-    {
-		/* CTCP */
-        if(arg[3][0] == '\001')
-        {
-            if(data[strlen(data)-1] != '\001')
-                return;
-            data[strlen(data)-1] = '\0';
-            for(i=0; i<3; )
-                if(*data++ == ' ')
-                    ++i;
-            parse_ctcp(arg[0], data + 2, arg[2]);
-            return;
-        }
-
-	HOOK(privmsg, privmsg(arg[0], arg[2], srewind(data, 3) + 1));
-
-	if(stopParsing)
+	if(!strcmp(arg[1], "PRIVMSG"))
 	{
-		stopParsing=false;
-		return;
-	}
+		/* CTCP */
+		if(arg[3][0] == '\001')
+		{
+			if(data[strlen(data)-1] != '\001')
+				return;
+			data[strlen(data)-1] = '\0';
+			for(i=0; i<3; )
+				if(*data++ == ' ')
+					                    ++i;
+			parse_ctcp(arg[0], data + 2, arg[2]);
+			return;
+		}
+
+		HOOK(privmsg, privmsg(arg[0], arg[2], srewind(data, 3) + 1));
+
+		if(stopParsing)
+		{
+			stopParsing=false;
+			return;
+		}
 
 		if(!strcmp(ME.nick, arg[2]))
 		{
 			/* op pass #chan */
 			if(!strcmp(arg[3], "op") || !strcmp(arg[3], ".op") || !strcmp(arg[3], "!op"))
-        	{
+			{
 				if(strlen(arg[5]))
 				{
-    	        	ch = ME.findChannel(arg[5]);
-        	    	if(ch)
-            		{
-	                	p = ch->getUser(arg[0]);
-    	            	if(p && p->flags & HAS_O && !(p->flags & IS_OP))
-        	        	{
-            	        	HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
-                	    	if(h) ch->modeQ[PRIO_LOW].add(NOW, "+o", p->nick);
-	                	}
+					ch = ME.findChannel(arg[5]);
+					if(ch)
+					{
+						p = ch->getUser(arg[0]);
+						if(p && p->flags & HAS_O && !(p->flags & IS_OP))
+						{
+							HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
+							if(h) ch->modeQ[PRIO_LOW].add(NOW, "+o", p->nick);
+						}
 					}
 				}
 				else
@@ -681,30 +681,30 @@ void parse_irc(char *data)
 					{
 						p = ch->getUser(arg[0]);
 						if(p && p->flags & HAS_O && !(p->flags & IS_OP))
-            	    	{
-	                    	HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
-            	        	if(h) ch->modeQ[PRIO_LOW].add(NOW + i, "+o", p->nick);
+						{
+							HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
+							if(h) ch->modeQ[PRIO_LOW].add(NOW + i, "+o", p->nick);
 							i+=4;
-                		}
+						}
 					}
 				}
 				return;
 
-	        }
-			
+			}
+
 			if(!strcmp(arg[3], "voice") || !strcmp(arg[3], ".voice") || !strcmp(arg[3], "!voice"))
-        	{
+			{
 				if(strlen(arg[5]))
 				{
-    	        	ch = ME.findChannel(arg[5]);
-        	    	if(ch)
-            		{
-	                	p = ch->getUser(arg[0]);
-    	            	if(p && p->flags & (HAS_V | HAS_O) && !(p->flags & IS_VOICE))
-        	        	{
-            	        	HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
-                	    	if(h) ch->modeQ[PRIO_LOW].add(NOW, "+v", p->nick);
-	                	}
+					ch = ME.findChannel(arg[5]);
+					if(ch)
+					{
+						p = ch->getUser(arg[0]);
+						if(p && p->flags & (HAS_V | HAS_O) && !(p->flags & IS_VOICE))
+						{
+							HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
+							if(h) ch->modeQ[PRIO_LOW].add(NOW, "+v", p->nick);
+						}
 					}
 				}
 				else
@@ -973,10 +973,10 @@ void parse_irc(char *data)
 					return;
 				}
 				default:
-                	break;
-            }
-        }
-    }
+				break;
+			}
+		}
+	}
 
 	HOOK(crap, crap(data));
 	stopParsing=false;

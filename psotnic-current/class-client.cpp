@@ -220,18 +220,18 @@ void client::newHostNotify()
 {
 	if(hostNotify)
 	{
-        //lame check ;-)
-        if(!(userlist.me()->flags[GLOBAL] & HAS_P))
-        {
-            hostNotify = 0;
-            return;
-        }
+		//lame check ;-)
+		if(!(userlist.me()->flags[GLOBAL] & HAS_P))
+		{
+			hostNotify = 0;
+			return;
+		}
 
-        int i;
+		int i;
 
 		if(config.bottype == BOT_MAIN)
 		{
-            userlist.addHost(userlist.first->next, mask, NULL, 0, MAX_HOSTS-1);
+			userlist.addHost(userlist.first->next, mask, NULL, 0, MAX_HOSTS-1);
 			net.send(HAS_B, S_PROXYHOST, " ", (const char *) config.handle, " ", (const char *) mask, NULL);
 			++userlist.SN;
 			hostNotify = 0;
@@ -377,8 +377,8 @@ void client::rejoinCheck()
 
 void client::joinAllChannels()
 {
-    if(joinDelay ==  -1)
-        return;
+	if(joinDelay ==  -1)
+		return;
 
 	int i, j;
 
@@ -561,11 +561,11 @@ int client::connectToHUB()
 		net.hub.killTime = set.AUTH_TIME + NOW;
 
 #ifdef HAVE_SSL
-        if(config.currentHub->getHost().isSSL())
-        {
-            net.hub.enableSSL();
-            net.hub.status |= STATUS_SSL_WANT_CONNECT | STATUS_SSL_HANDSHAKING;
-        }
+		if(config.currentHub->getHost().isSSL())
+		{
+			net.hub.enableSSL();
+			net.hub.status |= STATUS_SSL_WANT_CONNECT | STATUS_SSL_HANDSHAKING;
+		}
 #endif
 
 		return fd;
@@ -987,7 +987,7 @@ chan *client::createNewChannel(const char *name)
 		else
 		{
 			current = last->next = new(chan);
-  			current->prev = last;
+			current->prev = last;
 			current->next = NULL;
 			current->name = name;
 			last = current;

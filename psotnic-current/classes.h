@@ -18,15 +18,15 @@ struct HANDLE;
 
 class XSRand
 {
-    private:
-    unsigned int x;
+	private:
+	unsigned int x;
 	static unsigned int a, b, c;
 
-    public:
-    XSRand() { };
+	public:
+	XSRand() { };
 
-    void srand(unsigned int seed);
-    unsigned int rand();
+	void srand(unsigned int seed);
+	unsigned int rand();
 
 };
 
@@ -255,10 +255,10 @@ class asyn_socks5
 
 	int i;
 	int toRead;
-    int fd;
-    char buf[515];
-    unsigned char len;
-    unsigned char atyp;
+	int fd;
+	char buf[515];
+	unsigned char len;
+	unsigned char atyp;
 
 	public:
 	asyn_socks5();
@@ -302,7 +302,7 @@ class modeq
 	modeq(chan *channel=NULL);
 	void setChannel(chan *channel);
 	void removeBackupModesFor(const char *mode, const char *arg);
-    modeq_ent *find(const char *mode, const char *arg);
+	modeq_ent *find(const char *mode, const char *arg);
 };
 
 class fifo
@@ -327,10 +327,10 @@ class chanuser
 {
 	public:
 	char *nick;
-   	char *ident;
-   	char *host;
+	char *ident;
+	char *host;
 	char *reason;
-   	unsigned int flags;
+	unsigned int flags;
 	HANDLE *handle;
 	unsigned int hash;
 	char *ip4;
@@ -482,8 +482,8 @@ class inetconn
 	void unlock();
 
 	public:
-    int fd;
-    int status;
+	int fd;
+	int status;
 	char *name;
 	char *pass;
 	char *tmpstr;
@@ -513,7 +513,7 @@ class inetconn
 	int send(const char *lst, ...);
 	int va_send(va_list ap, const char *lst);
 	int readln(char *buf, int len, int *ok=NULL);
-    int open(const char *pathname, int flags, mode_t mode=0);
+	int open(const char *pathname, int flags, mode_t mode=0);
 	void close(const char *reason=NULL);
 
 	int checkFlag(int flag, int where=GLOBAL);
@@ -557,7 +557,7 @@ class inet
 #ifdef HAVE_SSL
 	int ssl_listenfd;
 	static SSL_CTX *server_ctx;
-#endif		
+#endif
 
 	inetconn *addConn(int fd);
 	inetconn *findConn(const char *name);
@@ -630,7 +630,7 @@ class settings : public options
 	entInt DONT_TRUST_OPS;
 	entTime SERVER_LIMIT_TIME;
 	entBool PRE_023_FINAL_COMPAT;
-    entBool PRE_0211_FINAL_COMPAT;
+	entBool PRE_0211_FINAL_COMPAT;
 	entBool PRE_0214_FINAL_COMPAT;
 	entBool PRE_REV127_COMPAT;
 	entBool BOTS_CAN_ADD_SHIT; 
@@ -791,7 +791,7 @@ class CHANLIST
 
 class chan
 {
-   	public:
+	public:
 	fastptrlist<chanuser> users, toOp, botsToOp, opedBots, toKick;
 	grouplist<clone_host> hostClones;
 	grouplist<clone_ident> identClones;
@@ -958,7 +958,7 @@ class client
 	void newHostNotify();
 
 	/* Nick stuff */
- 	void registerWithNewNick(char *nick);
+	void registerWithNewNick(char *nick);
 
 	/* Net */
 	int connectToIRC(entServer *s=NULL);
@@ -1035,7 +1035,7 @@ class ul
 	HANDLE *matchMaskToHandle(const char *mask) const;
 
 	/* Flags */
-   	int changeFlags(const char *name, const char *flags, const char *channel, inetconn *c=NULL);
+	int changeFlags(const char *name, const char *flags, const char *channel, inetconn *c=NULL);
 	int changeFlags(HANDLE *p, const char *flags, int channum, inetconn *c=NULL);
 	flagTable *findFlagByLetter(char letter, flagTable *ft);
 	bool mergeFlags(unsigned int &flags, const char *str);    
@@ -1103,9 +1103,9 @@ class ul
 
 class ptime
 {
-    public:
+	public:
 	struct timeval tv;
-    ptime();
+	ptime();
 	ptime(const char *s, const char *n);
 	ptime(time_t s, time_t n);
 	char *print();
@@ -1116,25 +1116,25 @@ class ptime
 #ifdef HAVE_TCL
 class tcl
 {
-    Tcl_Interp *tcl_int;
-    char *setGlobalVar(char *name, char *value);
-    void addCommands();
+	Tcl_Interp *tcl_int;
+	char *setGlobalVar(char *name, char *value);
+	void addCommands();
 
-    public:
+	public:
 
-    int curid;
-    struct timer_t
-    {
+	int curid;
+	struct timer_t
+	{
 		char *nick;
 		time_t exp;
 		int id;
 	};
 
-    ptrlist<timer_t> timer;
+	ptrlist<timer_t> timer;
 
 	int load(char *script);
-    Tcl_Interp *getInt();
-    int eval(char *cmd);
+	Tcl_Interp *getInt();
+	int eval(char *cmd);
 
 	void expireTimers();
 
@@ -1253,14 +1253,14 @@ class http
 	};
 
 	enum errorTypes {
-		ERR_OK = 0,
-		ERR_EOF = -1,
-		ERR_URL = -2,
-		ERR_DST = -3,
-		ERR_CONN = -4,
-		ERR_HEADER = -5,
+		ERR_OK        =  0,
+		ERR_EOF       = -1,
+		ERR_URL       = -2,
+		ERR_DST       = -3,
+		ERR_CONN      = -4,
+		ERR_HEADER    = -5,
 		ERR_DST_WRITE = -6,
-		ERR_READ = -7
+		ERR_READ      = -7
 	};
 
 	inetconn www;

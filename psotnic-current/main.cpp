@@ -63,9 +63,9 @@ adns *resolver;
 unit_table ut_time[] = {
 	{'w', 7*24*3600 },
 	{'d', 24*3600 },
-    {'h', 3600 },
-    {'m', 60 },
-    {'s', 1 },
+	{'h', 3600 },
+	{'m', 60 },
+	{'s', 1 },
 	{ 0 , 0 }
 };
 
@@ -85,15 +85,15 @@ extern char **environ;
 void md5_test()
 {
 	CUSTOM_MD5_CTX ctx;
-    unsigned char dig[16];
+	unsigned char dig[16];
 	int i;
-				
-    unsigned char dupa[] = "dupa";
-			
+
+	unsigned char dupa[] = "dupa";
+
 	MD5Init(&ctx);
 	MD5Update(&ctx, dupa, 4);
 	MD5Final(dig, &ctx);
-								
+
 	for(i=0; i<16; ++i)
 		printf("%02x", dig[i]);
 	printf("\n");
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 
 		if(!n)
 		{
-        	if(config.bottype == BOT_MAIN)
+			if(config.bottype == BOT_MAIN)
 			{
 				userlist.first->next->flags[MAX_CHANNELS] |= HAS_H;
 				printf("[*] Userlist not found, running in owner creation mode\n");
@@ -202,14 +202,14 @@ int main(int argc, char *argv[])
 		FD_ZERO(&wfd);
 		net.maxFd = 0;
 
-	   	if(net.irc.fd && !net.irc.timedOut())
+		if(net.irc.fd && !net.irc.timedOut())
 		{
 			if(net.irc.status & STATUS_SYNSENT) FD_SET(net.irc.fd, &wfd);
 			FD_SET(net.irc.fd, &rfd);
 			net.bidMaxFd(net.irc.fd);
 		}
-	    if(net.hub.fd && !net.hub.timedOut())
-	    {
+		if(net.hub.fd && !net.hub.timedOut())
+		{
 			if(net.hub.status & STATUS_SYNSENT) FD_SET(net.hub.fd, &wfd);
 			FD_SET(net.hub.fd, &rfd);
 			net.bidMaxFd(net.hub.fd);
@@ -231,9 +231,9 @@ int main(int argc, char *argv[])
 		
 			for(i=0; i<net.max_conns; ++i)
 			{
-                if(net.conn[i].fd && !(net.conn[i].status & STATUS_REDIR) && !net.conn[i].timedOut())
+				if(net.conn[i].fd && !(net.conn[i].status & STATUS_REDIR) && !net.conn[i].timedOut())
 				{
-                    if(net.conn[i].status & STATUS_SYNSENT) FD_SET(net.conn[i].fd, &wfd);
+					if(net.conn[i].status & STATUS_SYNSENT) FD_SET(net.conn[i].fd, &wfd);
 					FD_SET(net.conn[i].fd, &rfd);
 					net.bidMaxFd(net.conn[i].fd);
 				}
@@ -413,8 +413,8 @@ int main(int argc, char *argv[])
 			else if(net.irc.isConnected())
 			{
 #ifdef HAVE_SSL
-                do
-                {
+				do
+				{
 #endif
 
 #ifdef HAVE_IRC_BACKTRACE			
@@ -513,7 +513,7 @@ int main(int argc, char *argv[])
 #ifdef HAVE_SSL
 						} while(c->ssl && SSL_pending(c->ssl));
 #endif
-                	}
+					}
 //#ifdef HAVE_SSL
 //					else if(c->status & STATUS_SSL_HANDSHAKING && (FD_ISSET(c->fd, &rfd) || FD_ISSET(c->fd, &wfd)))
 //						c->SSLHandshake();
@@ -522,7 +522,7 @@ int main(int argc, char *argv[])
                	//OWNER SYN/ACT
 				if(c->fd && ((c->status & (STATUS_SYNSENT | STATUS_PARTY)) == (STATUS_SYNSENT | STATUS_PARTY)) && FD_ISSET(c->fd, &wfd))
 				{
-                   	c->status = STATUS_CONNECTED | STATUS_PARTY;
+					c->status = STATUS_CONNECTED | STATUS_PARTY;
 					c->tmpint = 1;
 					c->send("Enter owner password: ", NULL);
 					if(!(c->status & STATUS_SILENT))
@@ -564,8 +564,8 @@ int main(int argc, char *argv[])
 			{
 				net.hub.status &= ~STATUS_SSL_HANDSHAKING;
 				net.hub.tmpint = 1;
-                net.hub.killTime = NOW + set.AUTH_TIME;
-                net.hub.send(config.botnetword, NULL);
+				net.hub.killTime = NOW + set.AUTH_TIME;
+				net.hub.send(config.botnetword, NULL);
 			}
 		}
 #endif
@@ -585,7 +585,7 @@ int main(int argc, char *argv[])
 				net.hub.send(config.botnetword, NULL);
 				net.hub.enableCrypt((const char *) config.botnetword, strlen(config.botnetword));
 			}
-        }
+		}
 #ifdef HAVE_SSL
 //		DEBUG(printf("[D] net.irc.fd: %d, STATUS_SSL: %u, STATUS_SSL_HANDSHAKING: %u\n", 
 //			net.irc.fd, net.irc.status & STATUS_SSL, net.irc.status & STATUS_SSL_HANDSHAKING));
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
 			if(net.irc.status & STATUS_CONNECTED)
 			{
 				net.irc.send("NICK ", (const char *) config.nick, NULL);
-	            net.irc.send("USER ", (const char *) config.ident, " 8 * :", (const char *) config.realname, NULL);
+				net.irc.send("USER ", (const char *) config.ident, " 8 * :", (const char *) config.realname, NULL);
 				
 				net.irc.status &= ~STATUS_SSL_HANDSHAKING;
 			}
@@ -659,10 +659,10 @@ int main(int argc, char *argv[])
 						net.irc.killTime = NOW + set.AUTH_TIME;
 						net.irc.send((const char *) config.router.getPass(), NULL);
 						net.irc.send("telnet ", (const char *) srv->getHost().ip, " ", itoa(srv->getPort()), NULL);
-						
-                        if(net.irc.pass)
-                            net.irc.send("PASS ", (const char *) net.irc.pass, NULL);
-                        net.irc.send("NICK ", (const char *) config.nick, NULL);
+
+						if(net.irc.pass)
+							net.irc.send("PASS ", (const char *) net.irc.pass, NULL);
+						net.irc.send("NICK ", (const char *) config.nick, NULL);
 						net.irc.send("USER ", (const char *) config.ident, " 8 * :", (const char *) config.realname, NULL);
                     }
 					else
@@ -677,14 +677,14 @@ int main(int argc, char *argv[])
 					net.irc.status = STATUS_CONNECTED;
 					registration:
 					net.irc.killTime = NOW + set.AUTH_TIME;
-					
-                    if(net.irc.pass)
-                        net.irc.send("PASS ", (const char *) net.irc.pass, NULL);
-                    net.irc.send("NICK ", (const char *) config.nick, NULL);
+
+					if(net.irc.pass)
+						net.irc.send("PASS ", (const char *) net.irc.pass, NULL);
+					net.irc.send("NICK ", (const char *) config.nick, NULL);
 					net.irc.send("USER ", (const char *) config.ident, " 8 * :", (const char *) config.realname, NULL);
-	        }
+				}
 			}
-        }
+		}
 	}
 
 	return 0;

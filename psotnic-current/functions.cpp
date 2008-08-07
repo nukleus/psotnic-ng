@@ -164,11 +164,11 @@ int imUp()
 	//read pid
 	snprintf(pid, MAX_LEN, "pid.%s", (const char *) config.handle);
 	if((fd = open(pid, O_RDONLY)) < 1)
-        return 0;
+		return 0;
 	memset(pid, 0, MAX_LEN);
 	if(read(fd, pid, MAX_LEN) < 1)
-        return 0;
-    
+		return 0;
+
 	close(fd);
 
 	/*
@@ -196,53 +196,53 @@ int imUp()
 #ifdef HAVE_ANTIPTRACE
 void antiptrace_lurk()
 {
-    pid_t pid;
-    int status;
+	pid_t pid;
+	int status;
 
-    pid = fork();
-    switch(pid)
-    {
-        case -1:
-        printf("[-] Fork failed (antiptrace): %s\n", strerror(errno));
-        exit(1);
+	pid = fork();
+	switch(pid)
+	{
+		case -1:
+			printf("[-] Fork failed (antiptrace): %s\n", strerror(errno));
+			exit(1);
 
-        case 0:
-        if(ptrace(PTRACE_TRACEME, 0, 0, 0) == -1)
-        {
-            printf("[-] Ptrace failed: %s\n", strerror(errno));
-            exit(1);
-        }
-		break;
+		case 0:
+			if(ptrace(PTRACE_TRACEME, 0, 0, 0) == -1)
+			{
+				printf("[-] Ptrace failed: %s\n", strerror(errno));
+				exit(1);
+			}
+			break;
 
-        default:
-		printf("[+] Antiptrace loaded [pid: %d]\n", pid);
-        while(1)
-        {
-            waitpid(pid, &status, 0);
-            if(!WIFSTOPPED(status))
-            {
-                printf("[!] Antiptrace: child died, terminating\n");
-                exit(0);
-            }
-            else
-            {
-                //printf("[CHILD] SIGNAL from child: %d\n", WSTOPSIG(status));
-                ptrace(PTRACE_CONT, pid, status, 0, 0);
-            }
-        }
-    }
+		default:
+			printf("[+] Antiptrace loaded [pid: %d]\n", pid);
+			while(1)
+			{
+				waitpid(pid, &status, 0);
+				if(!WIFSTOPPED(status))
+				{
+					printf("[!] Antiptrace: child died, terminating\n");
+					exit(0);
+				}
+				else
+				{
+					//printf("[CHILD] SIGNAL from child: %d\n", WSTOPSIG(status));
+					ptrace(PTRACE_CONT, pid, status, 0, 0);
+				}
+			}
+	}
 }
 #endif
 
 void lurk()
 {
-    if(!config.dontfork)
-    {
+	if(!config.dontfork)
+	{
 		pid_t pid = fork();
 
 		if(pid == -1)
 		{
-	    	printf("[-] Fork failed: %s\n", strerror(errno));
+			printf("[-] Fork failed: %s\n", strerror(errno));
 			_exit(1);
 		}
 		else if(!pid)
@@ -251,9 +251,9 @@ void lurk()
 			if(setsid() == -1)
 				perror("[!] Cannot create new session: setsid()");
 			freopen("/dev/null", "r", stdin);
-    		freopen("/dev/null", "w", stdout);
+			freopen("/dev/null", "w", stdout);
 			freopen("/dev/null", "w", stderr);
-			
+
 			inetconn p;
 			char buf[MAX_LEN];
 			snprintf(buf, MAX_LEN, "pid.%s", (const char *) config.handle);
@@ -313,11 +313,11 @@ int rmdirext(const char *dir)
 			}
 		}
 	}
-	
+
 	closedir(d);
-	
+
 	DEBUG(printf("[D] rmdir: cwd: %s\n", getcwd(buf, MAX_LEN)));
-	
+
 	if(chdir("..") || rmdir(dir))
 		return -1;
 	
@@ -411,7 +411,7 @@ char *memmem(void *vsp, size_t len1, void *vpp, size_t len2)
 		if (memcmp(sp, pp, len2) == 0) return sp;
 		sp++;
 	}
-    return NULL;
+	return NULL;
 }
 
 long int nanotime()
@@ -450,22 +450,22 @@ char *srewind(const char *str, int word)
 
 void str2args(char *word, const char *str, int x, int y)
 {
-    int i, j, c;
-    
-    for(i = 0; i < x; i++)
-    {
-	*word = '\0';
-	while(*str && isspace(*str))
-	    str++;
-	    
-	if(*str == '\0') break;
-	
-	for(j = 0, c = 0; (*str != '\0') && (j < (y - 1)) && 
-	((!c && !isspace(*str)) || (c) )
-	; str++)
+	int i, j, c;
+
+	for(i = 0; i < x; i++)
 	{
+		*word = '\0';
+		while(*str && isspace(*str))
+			str++;
+
+		if(*str == '\0') break;
+
+		for(j = 0, c = 0; (*str != '\0') && (j < (y - 1)) && 
+				((!c && !isspace(*str)) || (c) )
+				; str++)
+		{
 	    /*  --- zabezpieczenie przed obcinaniem slow po srodku ---
-	    
+
 		jezeli slowo nie zaczyna sie od BEGIN_ARG_CHAR to znak BEGIN_CHAR_ARG 
 		wystepujacy w tym slowie zostanie z ignorowany. podobnie dla znaku
 		END_CHAR_ARG. jezeli znak za nim nie istnieje, lub nie jest to spacja to
@@ -475,32 +475,32 @@ void str2args(char *word, const char *str, int x, int y)
 	        str2args('cos 1" 2"') = 'cos', '1"', '2"'
 		str2args('cos c"o"s" dupa') = 'cos', 'c"o"s"', 'dupa'
 	    */
-	    if(!c && !j && *str == BEGIN_ARG_CHAR) 
-	    {
-		c = 1;
-		continue;	
-	    }
-	    
-	    if(c && *str == END_ARG_CHAR && (*(str+1) == '\0' || isspace(*(str+1))) )
-		break;
-	    else
-	    {
-		*(word++) = *str;
-		j++;
-	    }
+			if(!c && !j && *str == BEGIN_ARG_CHAR) 
+			{
+				c = 1;
+				continue;	
+			}
+
+			if(c && *str == END_ARG_CHAR && (*(str+1) == '\0' || isspace(*(str+1))) )
+				break;
+			else
+			{
+				*(word++) = *str;
+				j++;
+			}
+		}
+
+		memset(word, 0, y - j - 1);
+		word += y - j;
+
+		if(c && *str == END_ARG_CHAR) str++;
+		if(*str == '\0') break;
 	}
-	
-	memset(word, 0, y - j - 1);
-	word += y - j;
-	
-	if(c && *str == END_ARG_CHAR) str++;
-	if(*str == '\0') break;
-    }
-    for(++i; i < x; i++)
-    {
-	memset(word, 0, y - 1);
-	word += y;
-    }
+	for(++i; i < x; i++)
+	{
+		memset(word, 0, y - 1);
+		word += y;
+	}
 }
 
 void str2words(char *word, const char *str, int x, int y, int ircstrip)
@@ -595,7 +595,7 @@ void sendLogo(inetconn *c)
 #ifdef HAVE_IPV6
 int doConnect6(const char *server, int port, const char *vhost, int noblock)
 {
-    struct sockaddr_in6 sin6;
+	struct sockaddr_in6 sin6;
 	int s;
 
 	s = socket(AF_INET6, SOCK_STREAM, 0);
@@ -626,7 +626,7 @@ int doConnect6(const char *server, int port, const char *vhost, int noblock)
 		return -1;
 	}
 	
-    if(connect(s, (struct sockaddr *) &sin6, sizeof(sin6)) == -1)
+	if(connect(s, (struct sockaddr *) &sin6, sizeof(sin6)) == -1)
 	{
 		if(noblock == -1 && errno == EINPROGRESS)
 			return s;
@@ -659,47 +659,47 @@ void propaganda()
 
 int extendhost(const char *host, char *buf, unsigned int len)
 {
-    char *ex, *at;
+	char *ex, *at;
 
-    if(strlen(host) + 10 > len || !isRealStr(host) || *host == '#')
+	if(strlen(host) + 10 > len || !isRealStr(host) || *host == '#')
 		return 0;
 
-    ex = strchr(host, '!');
-    at = strchr(host, '@');
+	ex = strchr(host, '!');
+	at = strchr(host, '@');
 
-    if(ex != strrchr(host, '!') || at != strrchr(host, '@')) return 0;
-
-    if(at)
-    {
-        if(!ex)
-        {
-            if(at == host) strcpy(buf, "*!*");
-            else strcpy(buf, "*!");
-            strcat(buf, host);
-        }
-        else if(ex == host)
-        {
-            strcpy(buf, "*");
-            strcat(buf, host);
-        }
-        else strcpy(buf, host);
-        if(*(at + 1) == '\0') strcat(buf, "*");
-        return 1;
-    }
-    else
-    {
-        if(ex) return 0;
-        if(strchr(host, '.') || strchr(host, ':'))
-        {
-            strcpy(buf, "*!*@");
-            strcat(buf, host);
-            return 1;
-        }
-        strcpy(buf, "*!");
-        strcat(buf, host);
-        strcat(buf, "@*");
-        return 1;
-    }
+	if(ex != strrchr(host, '!') || at != strrchr(host, '@')) return 0;
+	
+	if(at)
+	{
+		if(!ex)
+		{
+			if(at == host) strcpy(buf, "*!*");
+			else strcpy(buf, "*!");
+			strcat(buf, host);
+		}
+		else if(ex == host)
+		{
+			strcpy(buf, "*");
+			strcat(buf, host);
+		}
+		else strcpy(buf, host);
+		if(*(at + 1) == '\0') strcat(buf, "*");
+		return 1;
+	}
+	else
+	{
+		if(ex) return 0;
+		if(strchr(host, '.') || strchr(host, ':'))
+		{
+			strcpy(buf, "*!*@");
+			strcat(buf, host);
+			return 1;
+		}
+		strcpy(buf, "*!");
+		strcat(buf, host);
+		strcat(buf, "@*");
+		return 1;
+	}
 }
 
 /** Generates new nicknames.
@@ -793,16 +793,16 @@ int acceptConnection(int fd, bool ssl)
 	{
 		ign::entry *e = ignore.hit(ntohl(from.sin_addr.s_addr));
 
-        if(e->nextConn >= NOW || ignore.nextConn >= NOW)
-        {
-            killSocket(n);
-            return -1;
-        }
-        
-        silent = e->count > set.PERIP_MAX_SHOWN_CONNS;
+		if(e->nextConn >= NOW || ignore.nextConn >= NOW)
+		{
+			killSocket(n);
+			return -1;
+		}
+
+		silent = e->count > set.PERIP_MAX_SHOWN_CONNS;
 
 		if(userlist.isSlave(userlist.first->next) || userlist.isMain(userlist.first->next) || config.bottype == BOT_MAIN)
-        {
+		{
         	if(userlist.isBot(from.sin_addr.s_addr) || set.TELNET_OWNERS)
 			{
 				fcntl(n, F_SETFL, O_NONBLOCK);
@@ -865,9 +865,9 @@ int acceptConnection(int fd, bool ssl)
 				c = new inetconn;
 				c->fd = n;
 				if(!silent)
-                    net.send(HAS_N, "[!] Rejecting connection: ", c->getPeerIpName(), " / ", c->getPeerPortName(), NULL);
-               	
-                killSocket(n);
+					net.send(HAS_N, "[!] Rejecting connection: ", c->getPeerIpName(), " / ", c->getPeerPortName(), NULL);
+
+				killSocket(n);
 				delete c;
 				return -1;
 			}
@@ -951,9 +951,9 @@ int getport(int fd, int (*fun)(int s, struct sockaddr *name, socklen_t *namelen)
 
 int startListening(const char *ip, int port)
 {
-    struct sockaddr_in sin;
-    int s;
-    const int one = 1;
+	struct sockaddr_in sin;
+	int s;
+	const int one = 1;
 
 	if((s = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
@@ -961,31 +961,31 @@ int startListening(const char *ip, int port)
 		return -1;
 	}
 
-    if(setsockopt(s , SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) != 0)
+	if(setsockopt(s , SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)) != 0)
 	{
 		killSocket(s);
 		return -1;
 	}
 
-    memset (&sin, 0, sizeof (struct sockaddr_in));
+	memset (&sin, 0, sizeof (struct sockaddr_in));
 	sin.sin_family = AF_INET;
-    if(strlen(ip)) sin.sin_addr.s_addr = inet_addr(ip);
-    else sin.sin_addr.s_addr = INADDR_ANY;
-    sin.sin_port = htons(port);
+	if(strlen(ip)) sin.sin_addr.s_addr = inet_addr(ip);
+	else sin.sin_addr.s_addr = INADDR_ANY;
+	sin.sin_port = htons(port);
 
-    if(bind (s, (struct sockaddr *) &sin, sizeof (struct sockaddr_in)) == -1)
+	if(bind (s, (struct sockaddr *) &sin, sizeof (struct sockaddr_in)) == -1)
 	{
 		killSocket(s);
 		return -1;
 	}
 
-    if(listen(s, SOMAXCONN) == -1)
+	if(listen(s, SOMAXCONN) == -1)
 	{
 		killSocket(s);
 		return -1;
 	}
 
-    return s;
+	return s;
 }
 
 void precache()
@@ -1052,23 +1052,23 @@ void divide(int *ret, int value, int parts, int part_size)
 	}
 
 	if(value > part_size*2)
-    {
-        ret[0] = value / parts;
-        ret[1] = (value - ret[0]) / (parts-1);
-        if(parts == 3) ret[2] = value - ret[0] - ret[1];
-        else ret[2] = 0;
-    }
-    else if(value > part_size)
-    {
-        ret[0] = part_size;
-        ret[1] = value - ret[0];
-        ret[2] = 0;
-    }
-    else
-    {
-        ret[0] = value;
-        ret[1] = ret[2] = 0;
-    }
+	{
+		ret[0] = value / parts;
+		ret[1] = (value - ret[0]) / (parts-1);
+		if(parts == 3) ret[2] = value - ret[0] - ret[1];
+		else ret[2] = 0;
+	}
+	else if(value > part_size)
+	{
+		ret[0] = part_size;
+		ret[1] = value - ret[0];
+		ret[2] = 0;
+	}
+	else
+	{
+		ret[0] = value;
+		ret[1] = ret[2] = 0;
+	}
 }
 
 void killSocket(int fd)
@@ -1086,32 +1086,32 @@ void killSocket(int fd)
 int doConnect(unsigned int server, int port, unsigned int vhost, int noblock)
 {
 	struct sockaddr_in sin;
-    int s;
+	int s;
 
 	s = socket(AF_INET, SOCK_STREAM, 0);
-    if(s == -1) return -1;
+	if(s == -1) return -1;
 
 	memset (&sin, 0, sizeof (sin));
 	sin.sin_family = AF_INET;
-    if(vhost) sin.sin_addr.s_addr = vhost;
+	if(vhost) sin.sin_addr.s_addr = vhost;
 	else sin.sin_addr.s_addr = INADDR_ANY;
-    if(bind (s, (struct sockaddr *) &sin, sizeof (sin)) == -1)
+	if(bind (s, (struct sockaddr *) &sin, sizeof (sin)) == -1)
 	{
 		killSocket(s);
 		return -1;
 	}
 
-    memset (&sin, 0, sizeof (sin));
-    sin.sin_family = AF_INET;
-    sin.sin_port = port;
-    sin.sin_addr.s_addr = server;
+	memset (&sin, 0, sizeof (sin));
+	sin.sin_family = AF_INET;
+	sin.sin_port = port;
+	sin.sin_addr.s_addr = server;
 
 	if(noblock == -1 && fcntl(s, F_SETFL, O_NONBLOCK) == -1)
 	{
 		killSocket(s);
 		return -1;
 	}
-    if(connect(s, (struct sockaddr *) &sin, sizeof(sin)) == -1)
+	if(connect(s, (struct sockaddr *) &sin, sizeof(sin)) == -1)
 	{
 		if(noblock == -1 && errno == EINPROGRESS)
 			return s;
@@ -1128,27 +1128,27 @@ int doConnect(unsigned int server, int port, unsigned int vhost, int noblock)
 
 int doConnect(const char *server, int port, const char *vhost, int noblock)
 {
-    return doConnect(inet_addr(server), htons(port), (vhost && *vhost) ? inet_addr(vhost) : 0, noblock);
+	return doConnect(inet_addr(server), htons(port), (vhost && *vhost) ? inet_addr(vhost) : 0, noblock);
 }
 
 unsigned int hash32(const char *word)
 {
 	if(!word) return 0;
-    char c;
-    unsigned bit_hi = 0;
-    int bit_low = 0;
-    int len = strlen(word);
+	char c;
+	unsigned bit_hi = 0;
+	int bit_low = 0;
+	int len = strlen(word);
 
-    if(len > 64) len = 63;
+	if(len > 64) len = 63;
 
 	/* i barrowed this code from epic ;-) */
-    for(; *word && len; ++word, --len)
-    {
-        c = ircd_tolower(*word);
-        bit_hi = (bit_hi << 1) + c;
-        bit_low = (bit_low >> 1) + c;
-    }
-    return ((bit_hi & 8191) << 3) + (bit_low & 0x7);
+	for(; *word && len; ++word, --len)
+	{
+		c = ircd_tolower(*word);
+		bit_hi = (bit_hi << 1) + c;
+		bit_low = (bit_low >> 1) + c;
+	}
+	return ((bit_hi & 8191) << 3) + (bit_low & 0x7);
 }
 
 int va_getlen(va_list ap, const char *lst)
@@ -1172,10 +1172,10 @@ char *push(char *ptr, const char *lst, ...)
 	va_end(ap);
 
 	va_start(ap, lst);
-    ptr = va_push(ptr, ap, lst, len + 1);
+	ptr = va_push(ptr, ap, lst, len + 1);
 	va_end(ap);
 
-    return ptr;
+	return ptr;
 }
 
 char *va_push(char *ptr, va_list ap, const char *lst, int size)
@@ -1184,17 +1184,17 @@ char *va_push(char *ptr, va_list ap, const char *lst, int size)
 
 	if(ptr)
 	{
-        size += strlen(ptr);
-        ptr = (char *) realloc(ptr, size*sizeof(char));
-        strcat(ptr, lst);
-    }
-    else
-    {
-        ptr = (char *) malloc(size*sizeof(char));
-        strcpy(ptr, lst);
-    }
+		size += strlen(ptr);
+		ptr = (char *) realloc(ptr, size*sizeof(char));
+		strcat(ptr, lst);
+	}
+	else
+	{
+		ptr = (char *) malloc(size*sizeof(char));
+		strcpy(ptr, lst);
+	}
 
-    /* strcat rest */
+	/* strcat rest */
 	while((p = va_arg(ap, char *)))
 	{
 		strcat(ptr, p);
@@ -1216,21 +1216,21 @@ char *expand(const char *str, char *buf, int len, const char *args)
 {
 	int i, j;
 
-    memset(buf, 0, len--);
+	memset(buf, 0, len--);
 
-    for(i=j=0; ; ++i, ++str)
-    {
-        if(*str == '\0') break;
-        if(*str == '%')
-        {
-            ++str;
-            if(*str == '\0') break;
-            switch(*str)
-            {
-                case 'V': strncat(buf, expandinfo.version, len - j); j += strlen(expandinfo.version); break;
-                case 'O': strncat(buf, expandinfo.system, len - j); j += strlen(expandinfo.system); break;
+	for(i=j=0; ; ++i, ++str)
+	{
+		if(*str == '\0') break;
+		if(*str == '%')
+		{
+			++str;
+			if(*str == '\0') break;
+			switch(*str)
+			{
+				case 'V': strncat(buf, expandinfo.version, len - j); j += strlen(expandinfo.version); break;
+				case 'O': strncat(buf, expandinfo.system, len - j); j += strlen(expandinfo.system); break;
 				case 'R': strncat(buf, expandinfo.release, len - j); j += strlen(expandinfo.release); break;
-                case 'A': strncat(buf, expandinfo.arch, len - j); j += strlen(expandinfo.arch); break;
+				case 'A': strncat(buf, expandinfo.arch, len - j); j += strlen(expandinfo.arch); break;
 				case 'N': strncat(buf, ME.nick, len - j); j += strlen(ME.nick); break;
 				case 'I': strncat(buf, ME.ident, len - j); j += strlen(ME.ident); break;
 				case 'H': strncat(buf, ME.host, len - j); j += strlen(ME.host); break;
@@ -1239,7 +1239,7 @@ char *expand(const char *str, char *buf, int len, const char *args)
 				case 'T':
 				{
 					char *t = ctime(&NOW);
-                    t[strlen(t) - 1] = '\0';
+					t[strlen(t) - 1] = '\0';
 					strncat(buf, t, len - j); j += strlen(t);
 					break;
 				}
@@ -1250,15 +1250,15 @@ char *expand(const char *str, char *buf, int len, const char *args)
 					break;
 				}
 				default: break;
-            }
-        }
-        else
-        {
-            if(j++ < len - 1) strncat(buf, str, 1);
-            else return buf;
-        }
-    }
-    return buf;
+			}
+		}
+		else
+		{
+			if(j++ < len - 1) strncat(buf, str, 1);
+			else return buf;
+		}
+	}
+	return buf;
 }
 
 const char *getFileName(const char *path)
@@ -1282,8 +1282,8 @@ int sign(int n)
 
 char *int2units(char *buf, int len, int val, unit_table *ut)
 {
-    char tmp[32];
-    int i, k, v = val;
+	char tmp[32];
+	int i, k, v = val;
 
 	if(!ut)
 	{
@@ -1306,14 +1306,14 @@ char *int2units(char *buf, int len, int val, unit_table *ut)
 	buf[0] = '\0';
 
 	for(i=0; ut[i].unit; i++)
-    {
-        if(sign(val) == sign(ut[i].ratio) && (k = v/ut[i].ratio))
-        {
-            strcpy(tmp, itoa(k));
-            len -= strlen(tmp) + 3;
+	{
+		if(sign(val) == sign(ut[i].ratio) && (k = v/ut[i].ratio))
+		{
+			strcpy(tmp, itoa(k));
+			len -= strlen(tmp) + 3;
 			if(len <= 0) return NULL;
 			v -= k * ut[i].ratio;
-            strcat(buf, tmp);
+			strcat(buf, tmp);
 			tmp[0] = ut[i].unit;
 			if(v)
 			{
@@ -1323,7 +1323,7 @@ char *int2units(char *buf, int len, int val, unit_table *ut)
 			else tmp[1] = '\0';
 			strcat(buf, tmp);
 		}
-    }
+	}
 	if(!strlen(buf)) goto plain;
 	return buf;
 }
@@ -1460,7 +1460,7 @@ char read_byte(int fd)
 {
 	char c;
 	if(read(fd, &c, 1) != -1)
-    	return c;
+		return c;
 
 	return -1;
 }
@@ -1551,19 +1551,19 @@ int ipcmp(const char *s1, const char *s2, char sep, int count)
 
 char *nindex(const char *str, int count, char sep)
 {
-    int i;
-    for(i=0; i<count;)
-    {
-        if(!*str) return 0;
-        if(*str == sep)
-        {
-            ++i;
-            if(i == count)
+	int i;
+	for(i=0; i<count;)
+	{
+		if(!*str) return 0;
+		if(*str == sep)
+		{
+			++i;
+			if(i == count)
 				return const_cast<char*>(str);
-        }
-        ++str;
-    }
-    return NULL;
+		}
+		++str;
+	}
+	return NULL;
 }
 
 void error(const char *type, const char *str)
@@ -1668,12 +1668,12 @@ char *rtrim(char *str)
 
 int _isnumber(const char *str)
 {
-    int i = (str[0] == '-') ? 1 : 0;
-    
-    for( ; str[i]; i++)
-	if(!isdigit((int) str[i]))
-	    return 0;
-    return 1;
+	int i = (str[0] == '-') ? 1 : 0;
+
+	for( ; str[i]; i++)
+		if(!isdigit((int) str[i]))
+			return 0;
+	return 1;
 }
 
 

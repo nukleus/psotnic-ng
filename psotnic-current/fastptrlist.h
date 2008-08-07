@@ -44,10 +44,10 @@ class fastptrlist
 		n = num;
 	}
 
-	~fastptrlist()							{ delete [] c; };
-	void removePtrs()						{ pl.removePtrs(); }
-	int entries() const						{ return pl.entries(); };
-	iterator begin() const					{ return pl.begin(); };
+	~fastptrlist()				{ delete [] c; };
+	void removePtrs()			{ pl.removePtrs(); }
+	int entries() const			{ return pl.entries(); };
+	iterator begin() const			{ return pl.begin(); };
 	iterator getItem(const int num) const	{ return pl.getItem(num); };
 	iterator find(const T &obj) const
 	{

@@ -62,17 +62,17 @@ void adns_firedns::processResultSET(fd_set *set)
 	last_check = NOW;
 
 	ptrlist<host2resolv> *cont = resolving->getContainer();
-    int n = resolving->getContainerSize();
+	int n = resolving->getContainerSize();
 
 	struct in_addr addr4;
 	struct in6_addr addr6;
 	char *m;
 
-    for(int i=0; i<n; ++i)
-    {
-        ptrlist<host2resolv>::iterator q, p = cont[i].begin();
+	for(int i=0; i<n; ++i)
+	{
+		ptrlist<host2resolv>::iterator q, p = cont[i].begin();
 
-        while(p)
+		while(p)
 		{
 			q = p;
 			p++;
@@ -126,7 +126,7 @@ void adns_firedns::resolv(const char *host)
 	if(!__getIp(host))
 	{
 		host2resolv *h = new host2resolv(host);
-        if(resolving->find(*h))
+		if(resolving->find(*h))
 		{
 			DEBUG(printf(">>> %s is already RESOLVING\n", host));
 			delete h;
@@ -154,10 +154,10 @@ void adns_firedns::resolv(const char *host)
 
 adns_firedns::adns_firedns()
 {
-    cache = new hashlist<host2ip>(4096);
-    cache->removePtrs();
-    resolving = new hashlist<host2resolv>(4096);
-    resolving->removePtrs();
+	cache = new hashlist<host2ip>(4096);
+	cache->removePtrs();
+	resolving = new hashlist<host2resolv>(4096);
+	resolving->removePtrs();
 
 	last_check = NOW;
 }

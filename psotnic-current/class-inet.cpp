@@ -44,7 +44,7 @@ SSL_CTX *inet::server_ctx = NULL;
 inetconn *inet::findMainBot()
 {
 	for(int i=0; i<max_conns; ++i)
-    	if(net.conn[i].isMain() && net.conn[i].fd)
+		if(net.conn[i].isMain() && net.conn[i].fd)
 			return &net.conn[i];
 
 	return NULL;
@@ -131,10 +131,10 @@ inetconn *inet::addConn(int fd)
 			conn[i].fd = fd;
 			conn[i].status = STATUS_CONNECTED;
 			++conns;
-	        if(fd > maxFd) maxFd = fd;
-            return &conn[i];
-        }
-    }
+			if(fd > maxFd) maxFd = fd;
+			return &conn[i];
+		}
+	}
 	return NULL;
 }
 
@@ -155,7 +155,7 @@ inetconn *inet::findConn(const char *name)
 inetconn *inet::findConn(const HANDLE *h)
 {
 	int i;
-    if(!conn || !h) return NULL;
+	if(!conn || !h) return NULL;
 
 	if(hub.handle == h && h) return &hub;
 	for(i=0; i<max_conns; ++i)
@@ -287,11 +287,11 @@ void inet::sendOwner(const char *who, const char *lst, ...)
 	{
 		HANDLE *h = userlist.first->next->next;
 
-        while(h)
-        {
+		while(h)
+		{
 			if(userlist.isMain(h))
-            {
-                inetconn *c = findConn(h);
+			{
+				inetconn *c = findConn(h);
 				if(c)
 				{
 					int len;
@@ -308,9 +308,9 @@ void inet::sendOwner(const char *who, const char *lst, ...)
 					c->send(S_OREDIR, " ", userlist.first->next->name, " ", who, " ", str, NULL);
 					free(str);
 				}
-    		}
-      		h = h->next;
-    	}
+			}
+			h = h->next;
+		}
 	}
 	else
 	{
@@ -449,7 +449,7 @@ void inetconn::close(const char *reason)
 	if(fd > 0)
 	{
 		if(!net.closeConn(this, reason)) _close(reason);
-  	}
+	}
 	if(blowfish)
 	{
 		delete blowfish;
@@ -634,7 +634,7 @@ int inetconn::va_send(va_list ap, const char *lst)
 	}
 	else
 	{
-        if(status & STATUS_SSL)
+		if(status & STATUS_SSL)
 		{
 			DEBUG(printf("[S] send[%s]: %s", conn->name, p));
 		}
@@ -691,7 +691,7 @@ int inetconn::va_send(va_list ap, const char *lst)
 
 int inetconn::send(const char *lst, ...)
 {
-    va_list ap;
+	va_list ap;
 	int n;
 
 	va_start(ap, lst);
@@ -711,7 +711,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 	if((ret = ::read(fd, buf, 1)) > 0)
 #endif
 	{
-        //printf("--- read: 0x%x %c\n", buf[0], buf[0]);
+		//printf("--- read: 0x%x %c\n", buf[0], buf[0]);
 		if(blowfish && !blowfish->smartDecode(buf[0], buf))
 			return 0;
 
@@ -881,7 +881,7 @@ int inetconn::enableCrypt(const unsigned char *key, int len)
 	{
 		unsigned char digest[16];
 		MD5Hash(digest, (char *) key, len);
-    	blowfish->Initialize(digest, len);
+		blowfish->Initialize(digest, len);
 	}
 	return 1;
 }
@@ -889,15 +889,15 @@ int inetconn::enableCrypt(const unsigned char *key, int len)
 int inetconn::disableCrypt()
 {
 #ifdef HAVE_SSL
-    if(status & STATUS_SSL)
-        return 0;
+	if(status & STATUS_SSL)
+		return 0;
 #endif
 	
 	if(blowfish)
 	{
 		delete blowfish;
 		blowfish = NULL;
-    	return 1;
+		return 1;
 	}
 	else return 0;
 }
@@ -950,8 +950,8 @@ int inetconn::open(const char *pathname, int flags, mode_t mode)
 
 /*
 	version == 0					- 0.2.2rciles
-    version == 1					- 0.2.2rciles
-    version == 2					- 0.2.2rc13 (config file)
+	version == 1					- 0.2.2rciles
+	version == 2					- 0.2.2rc13 (config file)
 	version == 2 + STATUS_ULCRYPT	- 0.2.2rc13 (userfile)
 */
 int inetconn::enableLameCrypt()
@@ -1115,7 +1115,7 @@ int inetconn::isBot()
 void inetconn::writeBufferedData()
 {
 	if(write.buf && !(status & STATUS_REDIR) && fd > 0)
-    {
+	{
 		//FIXME: we should write more then 1 byte at a time
 #ifdef HAVE_SSL
 		int n;
@@ -1124,13 +1124,13 @@ void inetconn::writeBufferedData()
 			if((n = SSL_write(ssl, write.buf + write.pos, 1)) == 1)
 				++write.pos;
 			else if(n < 0)
-            {
-                int ret = SSL_get_error(ssl, n);
-                if(ret == SSL_ERROR_WANT_READ || ret == SSL_ERROR_WANT_WRITE)
-                {
-                    DEBUG(printf("[D] SSL: write error (from buffer): want read/write\n"));
-                }
-            }
+			{
+				int ret = SSL_get_error(ssl, n);
+				if(ret == SSL_ERROR_WANT_READ || ret == SSL_ERROR_WANT_WRITE)
+				{
+					DEBUG(printf("[D] SSL: write error (from buffer): want read/write\n"));
+				}
+			}
 		}
 		else
 #endif
@@ -1152,19 +1152,19 @@ bool inetconn::enableSSL()
 		return false;
 
 	status |= STATUS_SSL;
-    ssl_ctx = SSL_CTX_new(SSLv23_method());
+	ssl_ctx = SSL_CTX_new(SSLv23_method());
 	if(!ssl_ctx)
 		return false;
 		
-    DEBUG(printf("[D] ssl_ctx: %p\n", (void *) ssl_ctx));
+	DEBUG(printf("[D] ssl_ctx: %p\n", (void *) ssl_ctx));
 	SSL_CTX_set_mode(ssl_ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
 	ssl = SSL_new(ssl_ctx);
 	if(!ssl_ctx)
 		return false;
-		
+
 	DEBUG(printf("[D] net.irc.ssl: %p\n", (void *) ssl));
 	SSL_set_fd(ssl, fd);
-						
+
 	return true;
 }
 
@@ -1176,48 +1176,48 @@ int inetconn::isSSL()
 void inetconn::SSLHandshake()
 {
 	if(status & STATUS_SSL_HANDSHAKING)
-    {
+	{
 		DEBUG(printf("[D] SSL: %s\n", SSL_state_string_long(ssl)));
 		int ret;
 
 		if(status & STATUS_SSL_WANT_CONNECT)
-            ret = SSL_connect(ssl);
-        else if(status & STATUS_SSL_WANT_ACCEPT)
-            ret = SSL_accept(ssl);
+			ret = SSL_connect(ssl);
+		else if(status & STATUS_SSL_WANT_ACCEPT)
+			ret = SSL_accept(ssl);
 
-        DEBUG(printf("[D] SSL connect: %d\n", ret));
-        DEBUG(printf("[D] SSL cipher: %s\n", SSL_get_cipher_name(ssl)));
-        DEBUG(printf("[D] SSL state string: %s\n", SSL_state_string_long(ssl)));
-        
+		DEBUG(printf("[D] SSL connect: %d\n", ret));
+		DEBUG(printf("[D] SSL cipher: %s\n", SSL_get_cipher_name(ssl)));
+		DEBUG(printf("[D] SSL state string: %s\n", SSL_state_string_long(ssl)));
+
 		switch(ret)
-        {
-        	case 1:
-            	killTime = NOW + set.AUTH_TIME;
-                status |= STATUS_CONNECTED;
-                status &= ~(STATUS_SSL_HANDSHAKING | STATUS_SSL_WANT_ACCEPT | STATUS_SSL_WANT_CONNECT);
+		{
+			case 1:
+				killTime = NOW + set.AUTH_TIME;
+				status |= STATUS_CONNECTED;
+				status &= ~(STATUS_SSL_HANDSHAKING | STATUS_SSL_WANT_ACCEPT | STATUS_SSL_WANT_CONNECT);
 				DEBUG(printf("[D] SSL: CONNECTED ;-))))\n"));
-                break;
+				break;
 			case 0:
-                //ssl conn was closed
+				//ssl conn was closed
 				DEBUG(printf("[D] SSL: Other end closed connection\n"));
-                close("[D] SSL: handshake terminated");
-                break;
-            default:
-                //check for non blocking specinfig errors;
-                switch(SSL_get_error(ssl, ret))
-                {
+				close("[D] SSL: handshake terminated");
+				break;
+			default:
+				//check for non blocking specinfig errors;
+				switch(SSL_get_error(ssl, ret))
+				{
 					case SSL_ERROR_WANT_READ:
-                    case SSL_ERROR_WANT_WRITE:
-                    	//we will read/write later on...
+					case SSL_ERROR_WANT_WRITE:
+						//we will read/write later on...
 						DEBUG(printf("[D] SSL: want someting\n"));
-                    	break;
-                    default:
-                        //error
+						break;
+					default:
+						//error
 						DEBUG(printf("[D] SSL: something is wrong... ;/\n"));
-                        close("SSL handshake error");
-             	}
-       	}
-   	}
+						close("SSL handshake error");
+				}
+		}
+	}
 }
 
 

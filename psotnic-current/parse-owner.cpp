@@ -57,7 +57,7 @@ int parse_owner_join(inetconn *c, const char *name, const char *key, int delay, 
 			}
 
 			if(!alreadyAdded)
-			{			
+			{
 				*userlist.chanlist[n].chset = *userlist.dset;
 				sendDset = true;
 			}
@@ -260,7 +260,7 @@ void parse_owner_mpart(inetconn *c, char *name)
 
 		// part slaves, leafs
 
-        	h = userlist.first->next->next;
+		h = userlist.first->next->next;
 
 		while(h)
 		{
@@ -336,8 +336,8 @@ void parse_owner(inetconn *c, char *data)
 				}
 				default: break;
 			}
-	       	free(c->tmpstr);
-	        c->tmpstr = NULL;
+			free(c->tmpstr);
+			c->tmpstr = NULL;
 		}
 		else
 		{
@@ -383,17 +383,17 @@ void parse_owner(inetconn *c, char *data)
 							if(h)
 							{
 								userlist.changePass(c->name, arg[0]);
-                						userlist.changeFlags(c->name, "tpx", "");
+								userlist.changeFlags(c->name, "tpx", "");
 								c->send("Account created", NULL);
 								printf("[*] Account created\n");
 
-                						userlist.save(config.userlist_file);
+								userlist.save(config.userlist_file);
 #ifdef HAVE_DEBUG
 								if(!debug)
 #endif
-                    						    lurk();
-                						creation = 0;
-                						++userlist.SN;
+									lurk();
+								creation = 0;
+								++userlist.SN;
 							}
 						}
 					}
@@ -446,16 +446,16 @@ void parse_owner(inetconn *c, char *data)
 	}
 	/* REGISTERED OWNER */
 
-        if(arg[0][0] == '.')
-        {
+	if(arg[0][0] == '.')
+	{
 		HOOK(partylineCmd, partylineCmd(c->name, c->handle->flags[GLOBAL], arg[0], srewind(data, 1)));
 
 		if(stopParsing)
 		{
 			stopParsing=false;
-                	return;
+			return;
 		}
-        }
+	}
 
 	if(!strcmp(arg[0], ".bye") || !strcmp(arg[0], ".exit") || !strcmp(arg[0], ".quit"))
 	{
@@ -482,36 +482,36 @@ void parse_owner(inetconn *c, char *data)
 		}
 		if(strlen(arg[2]))
 		{
-		    if(!extendhost(arg[2], buf, MAX_LEN))
-		    {
-			c->send("Invalid hostname", NULL);
-			return;
-		    }
-		    
-		    if((h = userlist.addHandle(arg[1], 0, 0, 0, 0, c->name)))
-		    {
-			userlist.addHost(h, buf, c->name, NOW);
-			net.sendCmd(c, "+user ", arg[1], " ", buf, NULL);
-			c->send("Adding user `\002", arg[1], "\002' with host `\002", buf, "\002'", NULL);
-			net.send(HAS_B, S_ADDUSER, " ", arg[1], " ", h->creation->print(), NULL);
-			net.send(HAS_B, S_ADDHOST, " ", arg[1], " ", buf, NULL);
-			//ME.recheckFlags();
-			userlist.SN += 2;
-			userlist.nextSave = NOW + SAVEDELAY;			
-		    }
-		    else c->send("Handle exists", NULL);		
+			if(!extendhost(arg[2], buf, MAX_LEN))
+			{
+				c->send("Invalid hostname", NULL);
+				return;
+			}
+
+			if((h = userlist.addHandle(arg[1], 0, 0, 0, 0, c->name)))
+			{
+				userlist.addHost(h, buf, c->name, NOW);
+				net.sendCmd(c, "+user ", arg[1], " ", buf, NULL);
+				c->send("Adding user `\002", arg[1], "\002' with host `\002", buf, "\002'", NULL);
+				net.send(HAS_B, S_ADDUSER, " ", arg[1], " ", h->creation->print(), NULL);
+				net.send(HAS_B, S_ADDHOST, " ", arg[1], " ", buf, NULL);
+				//ME.recheckFlags();
+				userlist.SN += 2;
+				userlist.nextSave = NOW + SAVEDELAY;
+			}
+			else c->send("Handle exists", NULL);
 		}
 		else
 		{
-		    if((h = userlist.addHandle(arg[1], 0, 0, 0, 0, c->name)))
-		    {
-			c->send("Adding user `\002", arg[1], "\002'", NULL);
-			net.sendCmd(c, "+user ", arg[1], NULL);
-			net.send(HAS_B, S_ADDUSER, " ", arg[1], " ", h->creation->print(), NULL);
-			++userlist.SN;
-			userlist.nextSave = NOW + SAVEDELAY;
-		    }
-		    else c->send("Handle exists", NULL);
+			if((h = userlist.addHandle(arg[1], 0, 0, 0, 0, c->name)))
+			{
+				c->send("Adding user `\002", arg[1], "\002'", NULL);
+				net.sendCmd(c, "+user ", arg[1], NULL);
+				net.send(HAS_B, S_ADDUSER, " ", arg[1], " ", h->creation->print(), NULL);
+				++userlist.SN;
+				userlist.nextSave = NOW + SAVEDELAY;
+			}
+			else c->send("Handle exists", NULL);
 		}
 		return;
 	}
@@ -707,22 +707,22 @@ void parse_owner(inetconn *c, char *data)
 		i = 0;
 		int flags = userlist.str2userFlags(arg[2]);
 		int num = GLOBAL;
-    		bool req = false;
-        
-    		if(*arg[3])
-        	    num = userlist.findChannel(arg[3]);
-		    if(num == -1)
-		    {
+		bool req = false;
+
+		if(*arg[3])
+			num = userlist.findChannel(arg[3]);
+		if(num == -1)
+		{
 			c->send("Invalid channel", NULL);
 			return;
-		    }
+		}
 
-    		if(!strcmp(arg[2], "*"))
-        	    *arg[3] = '\0';
-        
-    		if(!strcmp(arg[2], "-"))
-        	    req = true;
-    		net.sendCmd(c, "match ", arg[1], " ", arg[2], " ", arg[3], NULL);
+		if(!strcmp(arg[2], "*"))
+			*arg[3] = '\0';
+
+		if(!strcmp(arg[2], "-"))
+			req = true;
+		net.sendCmd(c, "match ", arg[1], " ", arg[2], " ", arg[3], NULL);
 
 		while(h)
 		{
@@ -748,8 +748,8 @@ void parse_owner(inetconn *c, char *data)
 			if(match(arg[1], h->name) || userlist.wildFindHostExt(h, arg[1]) != -1)
 			{
 				if(i < set.MAX_MATCHES || !set.MAX_MATCHES)
-            			{
-                			if(i) c->send("---", NULL);
+				{
+					if(i) c->send("---", NULL);
 					userlist.sendHandleInfo(c, h, arg[1]);
 				}
 				++i;
@@ -761,7 +761,7 @@ void parse_owner(inetconn *c, char *data)
 
 		if(!i) c->send("No matches has been found", NULL);
 		else c->send("--- Found ", itoa(i), " match", i == 1 ? "" : "es", " for '", arg[1], "'", NULL);
-    		return;
+		return;
 	}
 	if(!strcmp(arg[0], ".bots") && strlen(arg[1]))
 	{
@@ -782,8 +782,8 @@ void parse_owner(inetconn *c, char *data)
 				|| userlist.wildFindHostExt(h, arg[1]) != -1 || match(arg[1], inet2char(h->ip))))
 			{
 				if(i < set.MAX_MATCHES || !set.MAX_MATCHES)
-                {
-                	if(i) c->send("---", NULL);
+				{
+					if(i) c->send("---", NULL);
 					userlist.sendHandleInfo(c, h, arg[1]);
 				}
 				++i;
@@ -794,10 +794,10 @@ void parse_owner(inetconn *c, char *data)
         	c->send("(more than ", itoa(set.MAX_MATCHES), " matches, list truncated)", NULL);
 
 		if(!i)
-        	    c->send("No matches found", NULL);
+			c->send("No matches found", NULL);
 		else
-        	    c->send("--- Found ", itoa(i), " match", i == 1 ? "" : "es", " for '", arg[1], "'", NULL);
-    		return;
+			c->send("--- Found ", itoa(i), " match", i == 1 ? "" : "es", " for '", arg[1], "'", NULL);
+		return;
 	}
 
 	if(!strcmp(arg[0], ".chattr") && strlen(arg[2]))
@@ -833,15 +833,15 @@ void parse_owner(inetconn *c, char *data)
 		if(strlen(arg[3]))
 		{
 			c->send("Changing \002", arg[3], "\002 flags for `\002", arg[1], "\002' to `\002", buf, "\002'", NULL);
-			
+
 			if(set.PRE_0211_FINAL_COMPAT)
 			{
-			    net.send(HAS_B, S_CHATTR, " ", arg[1], " - ", arg[3], NULL);
-			    net.send(HAS_B, S_CHATTR, " ", arg[1], " ", buf, " ", arg[3], NULL);
-			    ++userlist.SN;
+				net.send(HAS_B, S_CHATTR, " ", arg[1], " - ", arg[3], NULL);
+				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", buf, " ", arg[3], NULL);
+				++userlist.SN;
 			}
 			else
-			    net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], " ", arg[3], NULL);
+				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], " ", arg[3], NULL);
 			//ME.recheckFlags(arg[3]);
 		}
 		else
@@ -858,15 +858,15 @@ void parse_owner(inetconn *c, char *data)
 				}
 			}
 			else c->send("Changing botnet flags for `\002", arg[1], "\002' to `\002", buf, "\002'", NULL);
-			
+
 			if(set.PRE_0211_FINAL_COMPAT)
 			{
-			    net.send(HAS_B, S_CHATTR, " ", arg[1], " -", NULL);
-			    net.send(HAS_B, S_CHATTR, " ", arg[1], " ", buf, NULL);
-			    ++userlist.SN;
+				net.send(HAS_B, S_CHATTR, " ", arg[1], " -", NULL);
+				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", buf, NULL);
+				++userlist.SN;
 			}
 			else
-			    net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], NULL);
+				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], NULL);
 
 
 			//ME.recheckFlags();
@@ -884,22 +884,22 @@ void parse_owner(inetconn *c, char *data)
 	}
 	if(!strcmp(arg[0], ".mjoin") && strlen(arg[1]))
 	{
-     	parse_owner_join(c, arg[1], arg[2], atoi(arg[3]), "*");
+		parse_owner_join(c, arg[1], arg[2], atoi(arg[3]), "*");
 		return;
 	}
 	if(!strcmp(arg[0], ".tkmjoin") && strlen(arg[1]))
 	{
-     	parse_owner_join(c, arg[1], arg[2], atoi(arg[3]), "T");
+		parse_owner_join(c, arg[1], arg[2], atoi(arg[3]), "T");
 		return;
 	}
 	if(!strcmp(arg[0], ".rjoin") && strlen(arg[2]))
 	{
-     	parse_owner_join(c, arg[2], arg[3], 0, "P", arg[1]);
+		parse_owner_join(c, arg[2], arg[3], 0, "P", arg[1]);
 		return;
 	}
 	if(!strcmp(arg[0], ".tkrjoin") && strlen(arg[2]))
 	{
-     	parse_owner_join(c, arg[2], arg[3], 0, "TP", arg[1]);
+		parse_owner_join(c, arg[2], arg[3], 0, "TP", arg[1]);
 		return;
 	}
 	if(!strcmp(arg[0], ".sjoin") && strlen(arg[2]))
@@ -1150,12 +1150,12 @@ void parse_owner(inetconn *c, char *data)
 		{
 			if(strlen(arg[2]))
 			{
-		 		n = userlist.save(arg[1], 1, arg[2]);
+				n = userlist.save(arg[1], 1, arg[2]);
 				net.sendCmd(c, "export ", arg[1], " [something]", NULL);
 			}
 			else
 			{
-		 		n = userlist.save(arg[1], 0);
+				n = userlist.save(arg[1], 0);
 				net.sendCmd(c, "export ", arg[1], NULL);
 			}
 			if(n) c->send("[+] Exported", NULL);
@@ -1174,12 +1174,12 @@ void parse_owner(inetconn *c, char *data)
 
 			if(strlen(arg[2]))
 			{
-		 		net.sendCmd(c, "import ", arg[1], " [something]", NULL);
+				net.sendCmd(c, "import ", arg[1], " [something]", NULL);
 				n = userlist.load(arg[1], 1, arg[2]);
 			}
 			else
 			{
-		 		net.sendCmd(c, "import ", arg[1], NULL);
+				net.sendCmd(c, "import ", arg[1], NULL);
 				n = userlist.load(arg[1], 0);
 			}
 
@@ -1226,7 +1226,7 @@ void parse_owner(inetconn *c, char *data)
 				}
 				h = h->next;
 			}
-		   	c->send("Bots(", itoa(i), "): ", a, NULL);
+			c->send("Bots(", itoa(i), "): ", a, NULL);
 			if(a) free(a);
 		}
 		else c->send("No bot handles present", NULL);
@@ -1261,10 +1261,10 @@ void parse_owner(inetconn *c, char *data)
 		if(userlist.bots)
 		{
 			h = userlist.first->next->next;
-        		a = NULL;
-        		i = 0;
-        		while(h)
-        		{
+			a = NULL;
+			i = 0;
+			while(h)
+			{
 				if(userlist.isBot(h) && net.findConn(h) && net.findConn(h)->isRegBot())
 				{
 					a = push(a, a ? (char *) "\002,\002 " : (char *) " ", h->name, NULL);
@@ -1278,7 +1278,7 @@ void parse_owner(inetconn *c, char *data)
 				c->send("Bots on-line(\002", buf, "\002)\002:\002", a, NULL);
 			}
 			else c->send("All bots are down", NULL);
-        	if(a) free(a);
+			if(a) free(a);
 		}
 		else c->send("No bot handles present", NULL);
 		return;
@@ -1294,11 +1294,11 @@ void parse_owner(inetconn *c, char *data)
 		if(userlist.bots)
 		{
 			h = userlist.first->next->next;
-        		a = NULL;
-        		i = 0;
+			a = NULL;
+			i = 0;
 
-        		while(h)
-        		{
+			while(h)
+			{
 				if(userlist.isBot(h) && (!net.findConn(h) || !net.findConn(h)->isRegBot()))
 				{
 					a = push(a, a ? (char *) "\002,\002 " : (char *) " " , h->name, NULL);
@@ -1538,8 +1538,8 @@ void parse_owner(inetconn *c, char *data)
 	}
 	if(!strcmp(arg[0], ".chpass") && strlen(arg[2]))
 	{
-        if((n = userlist.hasWriteAccess(c, arg[1])) == 1)
-        {
+		if((n = userlist.hasWriteAccess(c, arg[1])) == 1)
+		{
 			if(strlen(arg[2]) < 8)
 			{
 				c->send("Password must be at least 8 charactes long", NULL);
@@ -1553,16 +1553,16 @@ void parse_owner(inetconn *c, char *data)
 				net.send(HAS_B, S_PASSWD, " ", arg[1], " ", quoteHexStr(h->pass, buf), NULL);
 				++userlist.SN;
 				userlist.nextSave = NOW + SAVEDELAY;
-            }
-    	}
+			}
+		}
 		else if(n == -1) c->send("Invalid handle", NULL);
 		else c->send(S_NOPERM, NULL);
 		return;
 	}
 	if(!strcmp(arg[0], ".chaddr") && strlen(arg[2]))
 	{
-    		if(userlist.hasWriteAccess(c, arg[1]) == 1)
-    		{
+		if(userlist.hasWriteAccess(c, arg[1]) == 1)
+		{
 			if(!(h = userlist.changeIp(arg[1], arg[2]))) c->send("Invalid handle or ip", NULL);
 			else
 			{
@@ -1571,8 +1571,8 @@ void parse_owner(inetconn *c, char *data)
 				net.send(HAS_B, S_ADDR, " ", arg[1], " ", arg[2], NULL);
 				++userlist.SN;
 				userlist.nextSave = NOW + SAVEDELAY;
-        		}
-    		}
+			}
+		}
 		else c->send(S_NOPERM, NULL);
 		return;
 	}
@@ -1750,15 +1750,15 @@ void parse_owner(inetconn *c, char *data)
 			
 			if(!h->flags[GLOBAL] && (_test == 0 || _test == 3))
 			{
-			    for(j = 0, _j = -1; _j == -1 && j < MAX_CHANNELS; j++)
-				if(h->flags[j] && userlist.chanlist[j].name)
-				    _j = j;
-			    
-			    if(_j == -1)
-			    {
-				__a = push(__a, h->name, " ", NULL);
-				__i++;
-			    }
+				for(j = 0, _j = -1; _j == -1 && j < MAX_CHANNELS; j++)
+					if(h->flags[j] && userlist.chanlist[j].name)
+						_j = j;
+
+				if(_j == -1)
+				{
+					__a = push(__a, h->name, " ", NULL);
+					__i++;
+				}
 			}
 			h = h->next;
 		}
@@ -1781,7 +1781,7 @@ void parse_owner(inetconn *c, char *data)
 			c->send("Found ", buf, " handle", __i == 1 ? "" : "s", " with no flags set: ", __a, NULL);
 			free(__a);
 		}
-    		return;
+		return;
 	}
 
 	if(!strcmp(arg[0], ".bottree") || !strcmp(arg[0], ".bt"))
@@ -1803,8 +1803,8 @@ void parse_owner(inetconn *c, char *data)
 			return;
 		}
 		h = userlist.findHandle(arg[1]);
-    		if(h)
-    		{
+		if(h)
+		{
 			if(userlist.isSlave(h) || userlist.isLeaf(h))
 			{
 				inetconn *bot = net.findConn(h);
@@ -1819,12 +1819,12 @@ void parse_owner(inetconn *c, char *data)
 					else bot->close("Forced unlink");
 				}
 				else c->send("Bot is down", NULL);
-    			}
-      			else c->send("Invalid bot", NULL);
+			}
+			else c->send("Invalid bot", NULL);
 			return;
 		}
 		else c->send("No such handle", NULL);
-    		return;
+		return;
 	}
 	if(!strcmp(arg[0], ".boot") && strlen(arg[2]))
 	{
@@ -1918,22 +1918,22 @@ void parse_owner(inetconn *c, char *data)
 			c->send(S_NOPERM, NULL);
 			return;
 		}
-		
+
 		if(!strcmp(arg[1], "*")) // .mupdate
 		{
-		    net.sendCmd(c, "update * ", arg[2], NULL);
-		    // hub shouldnt be updated with the rest of bnet 
-		    //psotget.forkAndGo(arg[2]);
-		    
-                    for(int i=0; i<net.max_conns; ++i)
-                    {
-                        if(net.conn[i].fd > 0 && net.conn[i].isRegBot())
-                        {
-                            net.conn[i].send(S_PSOTUPDATE, " ", arg[2], NULL);
-                        }
-                    }		    
-		    
-		    return;
+			net.sendCmd(c, "update * ", arg[2], NULL);
+			// hub shouldnt be updated with the rest of bnet 
+			//psotget.forkAndGo(arg[2]);
+
+			for(int i=0; i<net.max_conns; ++i)
+			{
+				if(net.conn[i].fd > 0 && net.conn[i].isRegBot())
+				{
+					net.conn[i].send(S_PSOTUPDATE, " ", arg[2], NULL);
+				}
+			}
+
+			return;
 		}
 
 		if(!strcmp(arg[1], config.handle))
@@ -1962,18 +1962,18 @@ void parse_owner(inetconn *c, char *data)
 
 		if(!strcmp(arg[1], "*")) // .mupdate
 		{
-		    net.sendCmd(c, "stopupdate *", NULL);
-		    psotget.end();
-		    
-                    for(int i=0; i<net.max_conns; ++i)
-                    {
-                        if(net.conn[i].fd > 0 && net.conn[i].isRegBot())
-                        {
-                            net.conn[i].send(S_STOPUPDATE, " ", arg[2], NULL);
-                        }
-                    }		    
-		    
-		    return;
+			net.sendCmd(c, "stopupdate *", NULL);
+			psotget.end();
+
+			for(int i=0; i<net.max_conns; ++i)
+			{
+				if(net.conn[i].fd > 0 && net.conn[i].isRegBot())
+				{
+					net.conn[i].send(S_STOPUPDATE, " ", arg[2], NULL);
+				}
+			}
+
+			return;
 		}
 
 
@@ -2483,17 +2483,17 @@ void parse_owner(inetconn *c, char *data)
 		return;
 	}
 	if(!strcmp(arg[0], ".exempts"))
-	{ 
+	{
 		net.sendCmd(c, data+1, NULL);
 		protmodelist::sendShitsToOwner(c, EXEMPT, arg[1], arg[2]);
 		return;
 	}
 	if(!strcmp(arg[0], ".reops"))
-	{ 
+	{
 		net.sendCmd(c, data+1, NULL);
 		protmodelist::sendShitsToOwner(c, REOP, arg[1], arg[2]);
 		return;
-	} 
+	}
 
 	if((!strcmp(arg[0], ".-shit") || !strcmp(arg[0], ".-invite") || !strcmp(arg[0], ".-exempt") || !strcmp(arg[0], ".-reop")) && strlen(arg[1]))
 	{
@@ -2625,13 +2625,13 @@ void parse_owner(inetconn *c, char *data)
 		c->send(".mpart   <chan>                   .rpart    <bot>    <chan>", NULL);
 		c->send(".+chan   <chan>   [key]           .spart    <slave>  <chan>", NULL);
 		c->send(".chattr  <handle> <flags> [chan]  .chpass   <handle> <pass>", NULL);
-    		c->send(".chaddr  <handle> <ip>            .chhandle <handle> <new handle>", NULL);
-    		c->send(".match   <expr>   [flags] [chan]  .whois    <handle>", NULL);
+		c->send(".chaddr  <handle> <ip>            .chhandle <handle> <new handle>", NULL);
+		c->send(".match   <expr>   [flags] [chan]  .whois    <handle>", NULL);
 		c->send(".set     [var]    [value]         .gset     [var]    [value]", NULL);
 		c->send(".chset   <chan>   [var]   [value] .chnick   <bot>    <nick>", NULL);
 		c->send(".mcycle  <chan>                   .rcycle   <bot>    <chan>", NULL);
 		c->send(".mk      <o|n|a>  <chan>  [lock]  .bye      [reason]", NULL);
-    		c->send(".export  <file>   [pass]          .import   <file>   [pass]", NULL);
+		c->send(".export  <file>   [pass]          .import   <file>   [pass]", NULL);
 		c->send(".rjump   <bot>    <host>  [port]  .boot     <handle> <reason>", NULL);
 		c->send(".rjump6  <bot>    <host>  [port]  .rflags   <handle> <chan>", NULL);
 		c->send(".rjumps5 <bot>    <proxy> <port>  <server>  <port>", NULL);
@@ -2655,8 +2655,8 @@ void parse_owner(inetconn *c, char *data)
 		c->send(".upbots  .downbots  .bottree  .who    .whom  .whob", NULL);
 		c->send(".owners  .users     .save     .abuse  .me    .echo", NULL);
 		c->send("allowed global flags: -aofmnxstrickedvqp (flag `d' overrides `aofm' flags)", NULL);
-    		c->send("not allowed channel flags: -sxtp", NULL);
-    		c->send("allowed bot flags: -lshp", NULL);
+		c->send("not allowed channel flags: -sxtp", NULL);
+		c->send("allowed bot flags: -lshp", NULL);
 		c->send("Built-in handles: idiots", NULL);
 		c->send("Read CHANGELOG for more details", NULL);
 		return;
@@ -2665,211 +2665,211 @@ void parse_owner(inetconn *c, char *data)
 	/* FIXME: Add support for restoring global flags */
 	if((!strcmp(arg[0], ".rflags") || !strcmp(arg[0], ".rchattr")) && strlen(arg[2]))
 	{
-	    h = userlist.findHandle(arg[1]);
-	    if(h && h != userlist.first)
-	    {	    
-		    if(!userlist.hasReadAccess(c, h))
-		    {
-			c->send(S_NOPERM, NULL);
-			return;
-		    }
-		    if(!h->history || !h->history->data.entries())
-		    {
-			c->send("No offence history found; flags not restored", NULL);
-			return;
-		    }
-		    
-		    if(strlen(arg[2]))
-		    {
-			n = userlist.findChannel(arg[2]);
-			if(n == -1)
+		h = userlist.findHandle(arg[1]);
+		if(h && h != userlist.first)
+		{
+			if(!userlist.hasReadAccess(c, h))
 			{
-			    c->send("Channel not found; flags not restored", NULL);
-			    return;
+				c->send(S_NOPERM, NULL);
+				return;
 			}
-		        
-			ptrlist<offence::entry>::iterator o = h->history->data.begin();
+			if(!h->history || !h->history->data.entries())
+			{
+				c->send("No offence history found; flags not restored", NULL);
+				return;
+			}
 
-			while(o)
+			if(strlen(arg[2]))
 			{
-			    if(!strcmp(o->chan, arg[2]))
-				break;
-			    o++;
-			}
-			
-			if(!o)
-			{
-			    c->send("No offence history found for ", arg[2], "; flags not restored", NULL);
-			    return; 
-			}
-		    
-			if((unsigned) h->flags[n] == (unsigned) o->fromFlags)
-			{
-			    c->send("Flags are already the same; not changed", NULL);
-			    return;
-			}
-			char flags1[32], flags2[32];
-			
-			userlist.flags2str(o->fromFlags, flags1);
-			userlist.flags2str(h->flags[n], flags2);
-		    
-			h->flags[n] = o->fromFlags;
+				n = userlist.findChannel(arg[2]);
+				if(n == -1)
+				{
+					c->send("Channel not found; flags not restored", NULL);
+					return;
+				}
 
-			net.sendCmd(c, "rflags ", arg[1], " ", arg[2],  NULL);
-			c->send("Restoring \002", arg[1], "\002 flags for `\002", arg[2], "\002' to `\002", flags1, "\002'", NULL);
-			
-			if(set.PRE_0211_FINAL_COMPAT)
-			{
-		    	    net.send(HAS_B, S_CHATTR, " ", arg[1], " - ", arg[2], NULL);
-		    	    net.send(HAS_B, S_CHATTR, " ", arg[1], " ", flags2, " ", arg[2], NULL);
-		    	    ++userlist.SN;
+				ptrlist<offence::entry>::iterator o = h->history->data.begin();
+
+				while(o)
+				{
+					if(!strcmp(o->chan, arg[2]))
+						break;
+					o++;
+				}
+
+				if(!o)
+				{
+					c->send("No offence history found for ", arg[2], "; flags not restored", NULL);
+					return; 
+				}
+
+				if((unsigned) h->flags[n] == (unsigned) o->fromFlags)
+				{
+					c->send("Flags are already the same; not changed", NULL);
+					return;
+				}
+				char flags1[32], flags2[32];
+
+				userlist.flags2str(o->fromFlags, flags1);
+				userlist.flags2str(h->flags[n], flags2);
+
+				h->flags[n] = o->fromFlags;
+
+				net.sendCmd(c, "rflags ", arg[1], " ", arg[2],  NULL);
+				c->send("Restoring \002", arg[1], "\002 flags for `\002", arg[2], "\002' to `\002", flags1, "\002'", NULL);
+
+				if(set.PRE_0211_FINAL_COMPAT)
+				{
+					net.send(HAS_B, S_CHATTR, " ", arg[1], " - ", arg[2], NULL);
+					net.send(HAS_B, S_CHATTR, " ", arg[1], " ", flags2, " ", arg[2], NULL);
+					++userlist.SN;
+				}
+				else
+					net.send(HAS_B, S_CHATTR, " ", arg[1], " -", flags2, "+", flags1, " ", arg[2], NULL);
+				++userlist.SN;
+				userlist.nextSave = NOW + SAVEDELAY;
+				return;
 			}
-			else
-			    net.send(HAS_B, S_CHATTR, " ", arg[1], " -", flags2, "+", flags1, " ", arg[2], NULL);
-		    	++userlist.SN;
-			userlist.nextSave = NOW + SAVEDELAY;
-			return;		    
 		}
-	    }
 	}
 	
 	if(!strcmp(arg[0], ".offences"))
 	{
-	    if(strlen(arg[1]))
-	    {
-		h = userlist.findHandle(arg[1]);
-	    
-		if(h)
-		{	
-			if(!userlist.hasReadAccess(c, h))
-			{
-				c->send(S_NOPERM, NULL);
-				return;
-			}
-			if(!h->history || !h->history->data.entries())
-			{
-				c->send("No offence history available", NULL);
-				return;
-			}
+		if(strlen(arg[1]))
+		{
+			h = userlist.findHandle(arg[1]);
 
-			ptrlist<offence::entry>::iterator e = h->history->data.begin();
-			char flags1[32], flags2[32];
-			
-			i = 1;
-			net.sendCmd(c, "offences ", arg[1], NULL);
-			c->send(h->name, "'s offence history: ", NULL);
-			while(e)
+			if(h)
+			{	
+				if(!userlist.hasReadAccess(c, h))
+				{
+					c->send(S_NOPERM, NULL);
+					return;
+				}
+				if(!h->history || !h->history->data.entries())
+				{
+					c->send("No offence history available", NULL);
+					return;
+				}
+
+				ptrlist<offence::entry>::iterator e = h->history->data.begin();
+				char flags1[32], flags2[32];
+
+				i = 1;
+				net.sendCmd(c, "offences ", arg[1], NULL);
+				c->send(h->name, "'s offence history: ", NULL);
+				while(e)
+				{
+					userlist.flags2str(e->fromFlags, flags1);
+					userlist.flags2str(e->toFlags, flags2);
+					snprintf(buf, MAX_LEN, "[%3d]: %s(%d): %s\n       %s flags decreased from `%s' to `%s'\n       Created: %s", 
+							i++, e->chan, e->count, e->mode, e->global ? "Global" : "Channel", flags1, flags2, timestr("%d/%m/%Y %T", e->time));
+					c->send(buf, NULL); 
+					e++;
+				}
+			}
+			else
 			{
-				userlist.flags2str(e->fromFlags, flags1);
-				userlist.flags2str(e->toFlags, flags2);
-				snprintf(buf, MAX_LEN, "[%3d]: %s(%d): %s\n       %s flags decreased from `%s' to `%s'\n       Created: %s", 
-				i++, e->chan, e->count, e->mode, e->global ? "Global" : "Channel", flags1, flags2, timestr("%d/%m/%Y %T", e->time));
-				c->send(buf, NULL);				
-				e++;
+				c->send("Invalid handle", NULL);
 			}
 		}
 		else
 		{
-		    c->send("Invalid handle", NULL);
+			userlist.reportNewOffences(c, true);
 		}
-	    }
-	    else
-	    {
-		userlist.reportNewOffences(c, true);
-	    }
-	    return;
+		return;
 	}
 
 	if(!strcmp(arg[0], ".clearoffences"))
 	{
-	    if(strlen(arg[1]))
-	    {
-		h = userlist.findHandle(arg[1]);
-	    
-		if(h)
-		{	
-			if(!userlist.hasReadAccess(c, h))
-			{
-				c->send(S_NOPERM, NULL);
+		if(strlen(arg[1]))
+		{
+			h = userlist.findHandle(arg[1]);
+
+			if(h)
+			{	
+				if(!userlist.hasReadAccess(c, h))
+				{
+					c->send(S_NOPERM, NULL);
+					return;
+				}
+				if(!h->history || !h->history->data.entries())
+				{
+					c->send("No offences history available", NULL);
+					return;
+				}
+				net.sendCmd(c, "clearoffences ", arg[1], NULL);
+				h->history->data.clear();
+
+				c->send("Offences history removed", NULL);
+				//++userlist.SN;
+				userlist.nextSave = NOW + SAVEDELAY;
+
+				delete h->history; // we should free unused memory ;)
+				h->history = NULL;
 				return;
 			}
-			if(!h->history || !h->history->data.entries())
+			else
+			{
+				c->send("Invalid handle", NULL);
+			}
+		}
+		else
+		{
+			i = n = 0;
+			h = userlist.first;
+			a = NULL;
+			while(h)
+			{
+				if(h->history && h->history->data.entries())
+				{
+					if(userlist.hasReadAccess(c, h))
+					{
+						h->history->data.clear();
+						i++;
+						a = push(a ? a : NULL, a ? (const char *) "\002,\002 " : (const char *) "", (const char *) h->name, NULL);
+
+						delete h->history;
+						h->history = NULL;
+					}
+					n++;
+				}
+				h = h->next;
+			}
+			if(n)
+			{
+				net.sendCmd(c, "clearoffences", NULL);
+				if(n == i) // all cleared
+				{
+					c->send("Offences history removed", NULL);
+				}
+				else
+				{
+					c->send("Offences history removed for handles(\002", itoa(i), "\002)\002:\002 ", a, NULL);
+				}
+				//++userlist.SN;
+				userlist.nextSave = NOW + SAVEDELAY;
+
+				if(a) free(a);
+			}
+			else
 			{
 				c->send("No offences history available", NULL);
-				return;
 			}
-			net.sendCmd(c, "clearoffences ", arg[1], NULL);
-			h->history->data.clear();
-			
-			c->send("Offences history removed", NULL);
-			//++userlist.SN;
-			userlist.nextSave = NOW + SAVEDELAY;
-			
-			delete h->history; // we should free unused memory ;)
-			h->history = NULL;			
-			return;
 		}
-		else
-		{
-		    c->send("Invalid handle", NULL);
-		}
-	    }
-	    else
-	    {
-		i = n = 0;
-		h = userlist.first;
-		a = NULL;
-		while(h)
-		{
-		    if(h->history && h->history->data.entries())
-		    {
-			if(userlist.hasReadAccess(c, h))
-			{
-			    h->history->data.clear();
-			    i++;
-			    a = push(a ? a : NULL, a ? (const char *) "\002,\002 " : (const char *) "", (const char *) h->name, NULL);
-			    
-			    delete h->history;
-			    h->history = NULL;			    
-			}
-			n++;
-		    }
-		    h = h->next;
-		}
-		if(n)
-		{
-		    net.sendCmd(c, "clearoffences", NULL);
-		    if(n == i) // all cleared
-		    {
-			c->send("Offences history removed", NULL);
-		    }
-		    else
-		    {
-			c->send("Offences history removed for handles(\002", itoa(i), "\002)\002:\002 ", a, NULL);
-		    }
-		    //++userlist.SN;
-		    userlist.nextSave = NOW + SAVEDELAY;
-		    
-		    if(a) free(a);
-		}
-		else
-		{
-		    c->send("No offences history available", NULL);
-		}
-	    }
-	    return;
+		return;
 	}
 
 	if(!strcmp(arg[0], ".me") && strlen(arg[1]))
 	{
-	    a = srewind(data, 1);
-	    if(a)
-	    {
-		for(i=0; i<net.max_conns; ++i)
-		    if(net.conn[i].fd && net.conn[i].isRegUser())
-			net.conn[i].send("\002* ", c->name, "\002 ", a, NULL);
-	    }    
-	    return;
+		a = srewind(data, 1);
+		if(a)
+		{
+			for(i=0; i<net.max_conns; ++i)
+				if(net.conn[i].fd && net.conn[i].isRegUser())
+					net.conn[i].send("\002* ", c->name, "\002 ", a, NULL);
+		}
+		return;
 	}
 
 	if(arg[0][0] == '.')

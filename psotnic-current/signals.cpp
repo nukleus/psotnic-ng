@@ -57,36 +57,36 @@ void sigSegv()
 	net.irc.send("QUIT :Got segmentation fault signal; please report this crash", NULL);
 	
 #ifdef HAVE_DEBUG
-    char gdb[MAX_LEN], cmdlist[256], btfile[256];
-    int bt = 0;
-    unsigned int core = 0;
+	char gdb[MAX_LEN], cmdlist[256], btfile[256];
+	int bt = 0;
+	unsigned int core = 0;
 
-    snprintf(cmdlist, 256, "/tmp/.psotnic-%d", (int) getpid());
-    FILE *f = fopen(cmdlist, "w");
+	snprintf(cmdlist, 256, "/tmp/.psotnic-%d", (int) getpid());
+	FILE *f = fopen(cmdlist, "w");
 
-    if(f)
-    {
-        fprintf(f, "attach %d\n", getpid());
-        fprintf(f, "bt 100\n");
-        fprintf(f, "detach\n");
-        fprintf(f, "q\n");
-        fclose(f);
+	if(f)
+	{
+		fprintf(f, "attach %d\n", getpid());
+		fprintf(f, "bt 100\n");
+		fprintf(f, "detach\n");
+		fprintf(f, "q\n");
+		fclose(f);
 
-        snprintf(btfile, 256, ".gdb-backtrace-%d", (int) getpid());
-        snprintf(gdb, MAX_LEN, "gdb -q -x %s > %s 2>&1", cmdlist, btfile);
-        if(!system(gdb))
-            bt = 1;
-        unlink(cmdlist);
-    }
+		snprintf(btfile, 256, ".gdb-backtrace-%d", (int) getpid());
+		snprintf(gdb, MAX_LEN, "gdb -q -x %s > %s 2>&1", cmdlist, btfile);
+		if(!system(gdb))
+			bt = 1;
+		unlink(cmdlist);
+	}
 
-    //enabling core dumps
-    struct rlimit limit;
-    if(!getrlimit(RLIMIT_CORE, &limit))
-    {
-        limit.rlim_cur = limit.rlim_max;
-        if(!setrlimit(RLIMIT_CORE, &limit))
+	//enabling core dumps
+	struct rlimit limit;
+	if(!getrlimit(RLIMIT_CORE, &limit))
+	{
+		limit.rlim_cur = limit.rlim_max;
+		if(!setrlimit(RLIMIT_CORE, &limit))
 			core = limit.rlim_cur;
-    }
+	}
 
 #endif
 	dumpIrcBacktrace();

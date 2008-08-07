@@ -52,7 +52,7 @@ void parse_bot(inetconn *c, char *data)
 				/* maybe that's owner */
 				if(config.bottype == BOT_MAIN && set.TELNET_OWNERS && MD5Validate(config.ownerpass, arg[0], strlen(arg[0])))
 				{
-                    c->status |= STATUS_CONNECTED | STATUS_PARTY | STATUS_TELNET;
+					c->status |= STATUS_CONNECTED | STATUS_PARTY | STATUS_TELNET;
 					c->status &= ~STATUS_BOT;
 					c->tmpint = 1;
 					c->killTime = NOW + set.AUTH_TIME;
@@ -94,7 +94,7 @@ void parse_bot(inetconn *c, char *data)
 
 					if(h && net.findConn(h))
 					{
-                    				reason = push(NULL,  arg[0], ": duplicate connection",NULL);
+						reason = push(NULL,  arg[0], ": duplicate connection",NULL);
 						break;
 					}
 					if(h && config.bottype == BOT_MAIN && !userlist.isSlave(h))
@@ -110,19 +110,19 @@ void parse_bot(inetconn *c, char *data)
 					}
 
 					socklen_t peersize = sizeof(struct sockaddr_in);
-                    getpeername(c->fd, (sockaddr *) &peer, &peersize);
+					getpeername(c->fd, (sockaddr *) &peer, &peersize);
 
-                    if(!h)
-                    {
+					if(!h)
+					{
 						if(isRealStr(arg[0]) && strlen(arg[0]) <= MAX_HANDLE_LEN)
 							reason = push(NULL, arg[0], ": not a bot", NULL);
-                    	else
+						else
 							reason = push(NULL, "(crap here): not a bot", NULL);
 
 						break;
 					}
-                    if(!h->pass)
-                    {
+					if(!h->pass)
+					{
 						reason = push(NULL, arg[0], ": no password set", NULL);
 
 						break;
@@ -140,13 +140,13 @@ void parse_bot(inetconn *c, char *data)
 						else
 						{
 							reason = push(NULL, arg[0], ": wrong botpass", NULL);
-                        	break;
+							break;
 						}
 					}
 					else
 					{
 						reason = push(NULL, arg[0], ": invalid botip", NULL);
-                    	break;
+						break;
 					}
 				}
 				reason = push(NULL, "This should not happen (1)", NULL);
@@ -207,14 +207,15 @@ void parse_bot(inetconn *c, char *data)
 					ignore.removeHit(c->getPeerIp4());
 					return;
 				}
-                
-                if(!strcmp(arg[0], S_IUSEMODULES))
-                    return;
+
+				if(!strcmp(arg[0], S_IUSEMODULES))
+					return;
 
 				reason = push(NULL, "This should not happen (3)", NULL);
 				break;
 			}
-			default: break;
+			default:
+			break;
 		}
 		/* HUH */
 		if(!reason)

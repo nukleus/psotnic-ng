@@ -14,8 +14,8 @@
 
 CBlowFish::CBlowFish ()
 {
- 	PArray = new DWORD [18] ;
- 	SBoxes = new DWORD [4][256] ;
+	PArray = new DWORD [18] ;
+	SBoxes = new DWORD [4][256] ;
 	pos = 0;
 }
 
@@ -51,25 +51,25 @@ void CBlowFish::Blowfish_encipher (DWORD *xl, DWORD *xr)
 // the low level (private) decryption function
 void CBlowFish::Blowfish_decipher (DWORD *xl, DWORD *xr)
 {
-   union aword  Xl ;
-   union aword  Xr ;
+	union aword  Xl ;
+	union aword  Xr ;
 
-   Xl.dword = *xl ;
-   Xr.dword = *xr ;
+	Xl.dword = *xl ;
+	Xr.dword = *xr ;
 
-   Xl.dword ^= PArray [17] ;
-   ROUND (Xr, Xl, 16) ;  ROUND (Xl, Xr, 15) ;
-   ROUND (Xr, Xl, 14) ;  ROUND (Xl, Xr, 13) ;
-   ROUND (Xr, Xl, 12) ;  ROUND (Xl, Xr, 11) ;
-   ROUND (Xr, Xl, 10) ;  ROUND (Xl, Xr, 9) ;
-   ROUND (Xr, Xl, 8) ;   ROUND (Xl, Xr, 7) ;
-   ROUND (Xr, Xl, 6) ;   ROUND (Xl, Xr, 5) ;
-   ROUND (Xr, Xl, 4) ;   ROUND (Xl, Xr, 3) ;
-   ROUND (Xr, Xl, 2) ;   ROUND (Xl, Xr, 1) ;
-   Xr.dword ^= PArray[0];
+	Xl.dword ^= PArray [17] ;
+	ROUND (Xr, Xl, 16) ;  ROUND (Xl, Xr, 15) ;
+	ROUND (Xr, Xl, 14) ;  ROUND (Xl, Xr, 13) ;
+	ROUND (Xr, Xl, 12) ;  ROUND (Xl, Xr, 11) ;
+	ROUND (Xr, Xl, 10) ;  ROUND (Xl, Xr, 9) ;
+	ROUND (Xr, Xl, 8) ;   ROUND (Xl, Xr, 7) ;
+	ROUND (Xr, Xl, 6) ;   ROUND (Xl, Xr, 5) ;
+	ROUND (Xr, Xl, 4) ;   ROUND (Xl, Xr, 3) ;
+	ROUND (Xr, Xl, 2) ;   ROUND (Xl, Xr, 1) ;
+	Xr.dword ^= PArray[0];
 
-   *xl = Xr.dword;
-   *xr = Xl.dword;
+	*xl = Xr.dword;
+	*xr = Xl.dword;
 }
 
 //constructs the enctryption sieve
@@ -85,8 +85,8 @@ void CBlowFish::Initialize (BYTE key[], int keybytes)
 
 	for (i = 0 ; i < 4 ; i++)
 	{
-	 	for (j = 0 ; j < 256 ; j++)
-	 		SBoxes [i][j] = bf_S [i][j] ;
+		for (j = 0 ; j < 256 ; j++)
+			SBoxes [i][j] = bf_S [i][j] ;
 	}
 
 
@@ -125,19 +125,21 @@ void CBlowFish::Initialize (BYTE key[], int keybytes)
 }
 
 #ifdef HAVE_BIG_ENDIAN
-void CBlowFish::mix(BYTE *str, unsigned long lSize) {
-  unsigned int dx;
-  BYTE d0,d1,d2,d3;
-  for (dx=0;dx<lSize;dx+=4) {
-    d0=str[dx];
-    d1=str[dx+1];
-    d2=str[dx+2];
-    d3=str[dx+3];
-    str[dx]=d3;
-    str[dx+1]=d2;
-    str[dx+2]=d1;
-    str[dx+3]=d0;
-  }
+void CBlowFish::mix(BYTE *str, unsigned long lSize)
+{
+	unsigned int dx;
+	BYTE d0,d1,d2,d3;
+	for (dx=0;dx<lSize;dx+=4)
+	{
+		d0=str[dx];
+		d1=str[dx+1];
+		d2=str[dx+2];
+		d3=str[dx+3];
+		str[dx]=d3;
+		str[dx+1]=d2;
+		str[dx+2]=d1;
+		str[dx+3]=d0;
+	}
 }
 #endif
 
@@ -146,51 +148,55 @@ void CBlowFish::mix(BYTE *str, unsigned long lSize) {
 // output buffer can be the same, but be sure buffer length is even MOD 8.
 DWORD CBlowFish::Encode (BYTE * pInput, BYTE * pOutput, DWORD lSize)
 {
-  DWORD lCount, lOutSize, dx;
-  int SameDest=(pInput==pOutput ? 1 : 0);
+	DWORD lCount, lOutSize, dx;
+	int SameDest=(pInput==pOutput ? 1 : 0);
 
-  // if input differs from output copy input to output
-  if (!SameDest) for (dx=0;dx<lSize;dx++) pOutput[dx]=pInput[dx];
-  // if the size isn't dividable by 8 pad the end of output with zeros
-  if (lSize%8) {
-    for (dx=0;dx<8-lSize%8;dx++) pOutput[lSize+dx]=0;
-    lOutSize=lSize+dx;
-  } else lOutSize=lSize;
-  // big endian hotfix, reverse the byte order of every 4 byte block
+	// if input differs from output copy input to output
+	if (!SameDest) for (dx=0;dx<lSize;dx++) pOutput[dx]=pInput[dx];
+	// if the size isn't dividable by 8 pad the end of output with zeros
+	if (lSize%8)
+	{
+		for (dx=0;dx<8-lSize%8;dx++) pOutput[lSize+dx]=0;
+		lOutSize=lSize+dx;
+	}
+	else lOutSize=lSize;
+	// big endian hotfix, reverse the byte order of every 4 byte block
 #ifdef HAVE_BIG_ENDIAN
-  BYTE *temp=pOutput;
-  mix(pOutput,lOutSize);
+	BYTE *temp=pOutput;
+	mix(pOutput,lOutSize);
 #endif
-  // now we have the correct thing to encode
-  for (lCount=0;lCount<lOutSize;lCount+=8) {
-    Blowfish_encipher((DWORD *)pOutput, (DWORD *)(pOutput+4));
-    pOutput+=8;
-  }
-  // change the order back
+	// now we have the correct thing to encode
+	for (lCount=0;lCount<lOutSize;lCount+=8)
+	{
+		Blowfish_encipher((DWORD *)pOutput, (DWORD *)(pOutput+4));
+		pOutput+=8;
+	}
+	// change the order back
 #ifdef HAVE_BIG_ENDIAN
-  mix(temp,lOutSize);
+	mix(temp,lOutSize);
 #endif
-  return lOutSize ;
- }
+	return lOutSize ;
+}
 
 // Decode pIntput into pOutput.  Input length in lSize.  Input buffer and
 // output buffer can be the same, but be sure buffer length is even MOD 8.
 void CBlowFish::Decode (BYTE * pInput, BYTE * pOutput, DWORD lSize)
 {
-  DWORD lCount,dx;
-  int SameDest=(pInput==pOutput ? 1 : 0);
+	DWORD lCount,dx;
+	int SameDest=(pInput==pOutput ? 1 : 0);
 
-  if (!SameDest) for (dx=0;dx<lSize;dx++) pOutput[dx]=pInput[dx];
+	if (!SameDest) for (dx=0;dx<lSize;dx++) pOutput[dx]=pInput[dx];
 #ifdef HAVE_BIG_ENDIAN
-  BYTE *temp=pOutput;
-  mix(pOutput,lSize);
+	BYTE *temp=pOutput;
+	mix(pOutput,lSize);
 #endif
-  for (lCount=0;lCount<lSize;lCount+=8) {
-    Blowfish_decipher((DWORD *)pOutput, (DWORD *)(pOutput+4));
-    pOutput+=8;
-  }
+	for (lCount=0;lCount<lSize;lCount+=8)
+	{
+		Blowfish_decipher((DWORD *)pOutput, (DWORD *)(pOutput+4));
+		pOutput+=8;
+	}
 #ifdef HAVE_BIG_ENDIAN
-  mix(temp,lSize);
+	mix(temp,lSize);
 #endif
 }
 

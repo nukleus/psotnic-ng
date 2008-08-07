@@ -189,7 +189,7 @@ bool update::doUpdate(const char *site)
 #endif
 
 #ifdef HAVE_ADNS_FIREDNS
-      				strcat(buf, " --with-firedns");
+				strcat(buf, " --with-firedns");
 #endif
 
 				if(system(buf))

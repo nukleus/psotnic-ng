@@ -54,7 +54,7 @@ int tcl_timer(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 	if(argc < 3) return TCL_ERROR;
 
 	tcl::timer_t *t = new tcl::timer_t;
-    int i, len = 1;
+	int i, len = 1;
 
 	t->exp = NOW + (atoi(argv[1]) * *((int *) foo));
 	t->id = ++tclparser.curid;
@@ -81,29 +81,29 @@ int tcl_putserv(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 
 	if(argc == 1) return TCL_ERROR;
 
-    for(i=1; i<argc; ++i) len += strlen(argv[1]);
+	for(i=1; i<argc; ++i) len += strlen(argv[1]);
 
-    char *buf = (char *) malloc(len);
-    strcpy(buf, argv[1]);
+	char *buf = (char *) malloc(len);
+	strcpy(buf, argv[1]);
 	for(i=2; i<argc; ++i)
 	{
 		strcat(buf, " ");
 		strcat(buf, argv[i]);
 	}
 	net.irc.send(buf, NULL);
-    free(buf);
+	free(buf);
 	return TCL_OK;
 }
 
 int tcl_channels(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 {
 	int len = 1;
-    chan *ch = ME.first;
+	chan *ch = ME.first;
 
-    if(argc != 1) return TCL_ERROR;
+	if(argc != 1) return TCL_ERROR;
 
-    while(ch)
-    {
+	while(ch)
+	{
 		len += strlen(ch->name) + 1;
 		ch = ch->next;
 	}
@@ -205,7 +205,7 @@ int tcl::eval(char *cmd)
 tcl::tcl()
 {
 	tcl_int = Tcl_CreateInterp();
-    curid = 0;
+	curid = 0;
 
 	Tcl_Init(tcl_int);
 	Tcl_SetVar(tcl_int, "argv0", "psotnic", TCL_GLOBAL_ONLY);
@@ -221,8 +221,8 @@ tcl::~tcl()
 
 int tcl::load(char *script)
 {
-    int status = Tcl_EvalFile(tcl_int, script);
-    if(status == TCL_ERROR)	return 0;
+	int status = Tcl_EvalFile(tcl_int, script);
+	if(status == TCL_ERROR)	return 0;
 	return 1;
 }
 

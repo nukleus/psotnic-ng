@@ -37,7 +37,7 @@ class tiny_ptrlist
 	public:
 	////////////////////////////////////////
 	// return interator
-    iterator begin() const { return iterator(first); };
+	iterator begin() const { return iterator(first); };
 
 	//////////////////////////////////
 	// remove link
@@ -82,7 +82,7 @@ class tiny_ptrlist
 	// constructor
 	tiny_ptrlist() : first(NULL) { }
 
-    //////////////////////
+	//////////////////////
 	// destructor
 	~tiny_ptrlist()
 	{

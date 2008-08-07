@@ -261,7 +261,7 @@ settings::settings()
 	registerObject(SERVER_LIMIT_TIME = entTime("server-limit-time", 0, MAX_INT, 5));
 	registerObject(BOTS_CAN_ADD_SHIT = entBool("bots-can-add-shit", 0));
 	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 0));
-    registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
+	registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
 	registerObject(PRE_0214_FINAL_COMPAT = entBool("pre-0.2.14-final-compat", 1));
 	registerObject(PRE_REV127_COMPAT = entBool("pre-rev127-compat", 1));
 }
@@ -284,10 +284,10 @@ chanset::chanset()
 	registerObject(ENFORCE_LIMITS = entBool("enforce-limits", 0));
 	registerObject(STOP_NETHACK = entBool("stop-nethack", 1));
 	registerObject(LIMIT = entBool("limit", 1));
-    registerObject(LIMIT_TIME = entTime("limit-time", 1, MAX_INT, 120));
+	registerObject(LIMIT_TIME = entTime("limit-time", 1, MAX_INT, 120));
 	registerObject(LIMIT_TIME_UP = entTime("limit-time-up", 1, MAX_INT, 120));
-    registerObject(LIMIT_TIME_DOWN = entTime("limit-time-down", 1, MAX_INT, 30));
-    registerObject(LIMIT_OFFSET = entInt("limit-offset", 1, MAX_INT, 5));
+	registerObject(LIMIT_TIME_DOWN = entTime("limit-time-down", 1, MAX_INT, 30));
+	registerObject(LIMIT_OFFSET = entInt("limit-offset", 1, MAX_INT, 5));
 	registerObject(LIMIT_BOTS = entInt("limit-bots", 1, 2, 1));
 	registerObject(LIMIT_TOLERANCE = entPerc("limit-tolerance", -100, MAX_INT, -50));
 	registerObject(OWNER_LIMIT_TIME = entTime("owner-limit-time", 0, MAX_INT, 15));
@@ -296,8 +296,8 @@ chanset::chanset()
 	registerObject(WASOPTEST = entBool("wasoptest", 1));
 	registerObject(CLONECHECK = entInt("clonecheck", 0, 2, 1));
 	registerObject(DYNAMIC_BANS = entBool("dynamic-bans", 1));
-	registerObject(DYNAMIC_INVITES = entBool("dynamic-invites", 1));
-	registerObject(DYNAMIC_EXEMPTS = entBool("dynamic-exempts", 1));
+	registerObject(DYNAMIC_INVITES = entBool("dynamic-invites", 0));
+	registerObject(DYNAMIC_EXEMPTS = entBool("dynamic-exempts", 0));
 	registerObject(LOCKDOWN = entBool("lockdown", 0));
 	registerObject(LOCKDOWN_TIME = entTime("lockdown-time", 0, MAX_INT, 180));
 	registerObject(PROTECT_CHMODES = entInt("protect-chmodes", 0, 2, 2));
@@ -399,11 +399,11 @@ CONFIG::CONFIG()
 		registerObject(server[i] = entServer("server",
 						new entHost("host", entHost::ipv4 | entHost::ipv6 | entHost::domain
 #ifdef HAVE_SSL
-																			| entHost::use_ssl
+							| entHost::use_ssl
 #endif
-						),
-					  	new entInt("port", 1, 65535, 0),
-					  	new entWord("pass", 0, 256)));
+							),
+						new entInt("port", 1, 65535, 0),
+						new entWord("pass", 0, 256)));
 		server[i].setDontPrintIfDefault(true);
 		server_storage.add(&server[i]);
 	}

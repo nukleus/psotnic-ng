@@ -32,123 +32,123 @@ class pstring
 	/**
 	 * nubmer of allocated bytes - 1 (one is left for NULL string terminator)
 	 */
-    unsigned int _len;
-    char *_data;
+		unsigned int _len;
+		char *_data;
 
-    void resize(unsigned int size, bool copy)
-    {
-    	unsigned int s = size / ALIGN;
-    	unsigned int l = _len / ALIGN;
+		void resize(unsigned int size, bool copy)
+		{
+			unsigned int s = size / ALIGN;
+			unsigned int l = _len / ALIGN;
 
-    	int diff = l - s;
+			int diff = l - s;
 
-    	if(diff <= 0 || diff >= (int) TOLERANCE)
-    	{
-    		if(copy)
-    			_data = (char *) realloc(_data, s*ALIGN + ALIGN + 1);
-    		else
-    		{
-    			free(_data);
-    			_data = (char *) malloc(s*ALIGN + ALIGN + 1);
-    		}
-    	}
-	}
+			if(diff <= 0 || diff >= (int) TOLERANCE)
+			{
+				if(copy)
+					_data = (char *) realloc(_data, s*ALIGN + ALIGN + 1);
+				else
+				{
+					free(_data);
+					_data = (char *) malloc(s*ALIGN + ALIGN + 1);
+				}
+			}
+		}
 
 	public:
-    pstring() : _len(0), _data((char *) malloc(ALIGN+1))
-    {
-        *_data = '\0';
-    }
+	pstring() : _len(0), _data((char *) malloc(ALIGN+1))
+	{
+		*_data = '\0';
+	}
 
-    ~pstring()
-    {
-        free(_data);
-    }
+	~pstring()
+	{
+		free(_data);
+	}
 
-    pstring(const char *str) : _len(strlen(str)),
-    	_data((char *) malloc((_len/ALIGN)*ALIGN + ALIGN + 1))
-    {
-        strcpy(_data, str);
-    }
+	pstring(const char *str) : _len(strlen(str)),
+	_data((char *) malloc((_len/ALIGN)*ALIGN + ALIGN + 1))
+	{
+		strcpy(_data, str);
+	}
 
-    pstring(const pstring &s) : _len(s._len)
-    {
-        _data = (char *) malloc(_len + 1);
-        strcpy(_data, s._data);
-    };
+	pstring(const pstring &s) : _len(s._len)
+	{
+		_data = (char *) malloc(_len + 1);
+		strcpy(_data, s._data);
+	};
 
-    void assign(const char *str, const unsigned int len)
-    {
-        resize(len, false);
-        strncpy(_data, str, len);
-        _data[len] = '\0';
-        _len = len;
-    }
+	void assign(const char *str, const unsigned int len)
+	{
+		resize(len, false);
+		strncpy(_data, str, len);
+		_data[len] = '\0';
+		_len = len;
+	}
 
-    void append(const char *str, const unsigned int len)
-    {
-        int n = len + _len;
-        resize(n, true);
-        strcpy(_data + _len, str);
-        _len = n;
-    }
+	void append(const char *str, const unsigned int len)
+	{
+		int n = len + _len;
+		resize(n, true);
+		strcpy(_data + _len, str);
+		_len = n;
+	}
 
-    pstring &operator=(const pstring &s)
-    {
-        assign(s);
-        return *this;
-    };
+	pstring &operator=(const pstring &s)
+	{
+		        assign(s);
+			return *this;
+	};
 
-    pstring &operator=(const char *str)
-    {
-        assign(str);
-        return *this;
-    }
+	pstring &operator=(const char *str)
+	{
+		assign(str);
+		return *this;
+	}
 
-    pstring &operator+=(const pstring &s)
-    {
-        append(s._data, s._len);
-        return *this;
-    }
+	pstring &operator+=(const pstring &s)
+	{
+		append(s._data, s._len);
+		return *this;
+	}
 
-    pstring &operator+=(const char *str)
-    {
-        append(str);
-        return *this;
-    }
+	pstring &operator+=(const char *str)
+	{
+		append(str);
+		return *this;
+	}
 
-    operator const char*() const
-    {
-        return _data;
-    }
+	operator const char*() const
+	{
+		return _data;
+	}
 	operator bool() const
 	{
 		return _len != 0;
 	}
-    void assign(const char *str)
-    {
-        assign(str, strlen(str));
-    };
-    void assign(const pstring &s)
-    {
-        assign(s._data, s._len);
-    };
-    void append(const char *str)
-    {
-        append(str, strlen(str));
-    };
-    unsigned int len() const
-    {
-        return _len;
-    };
-    char *getCString()
-    {
-        char *str = _data;
-        _len = 0;
-        _data = (char *) malloc(1);
-        *_data ='\0';
-        return str;
-    };
+	void assign(const char *str)
+	{
+		assign(str, strlen(str));
+	};
+	void assign(const pstring &s)
+	{
+		assign(s._data, s._len);
+	};
+	void append(const char *str)
+	{
+		append(str, strlen(str));
+	};
+	unsigned int len() const
+	{
+		return _len;
+	};
+	char *getCString()
+	{
+		char *str = _data;
+		_len = 0;
+		_data = (char *) malloc(1);
+		*_data ='\0';
+		return str;
+	};
 
 };
 

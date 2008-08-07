@@ -61,7 +61,7 @@ class ptrlist
 
 	////////////////////////////////////////
 	// return interator
-    iterator begin() const { return iterator(first); };
+	iterator begin() const { return iterator(first); };
 
 	////////////////////////////////////////
 	// enable deletion of ptr() on removal
@@ -194,7 +194,7 @@ class ptrlist
 		{
 			//if(strcmp(ptr->nick, first->ptr->nick) < 0)
 			if(*ptr < *first->_ptr)
-  			{
+			{
 				q = new link(ptr);
 				first->_prev = q;
 				q->_prev = NULL;
