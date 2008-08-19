@@ -503,9 +503,9 @@ void str2args(char *word, const char *str, int x, int y)
 	}
 }
 
-void str2words(char *word, const char *str, int x, int y, int ircstrip)
+int str2words(char *word, const char *str, int x, int y, int ircstrip)
 {
-	int i, j, strip = 1;
+	int cnt=0, i, j, strip = 1;
 
 	for(i=0; i<x; ++i)
 	{
@@ -535,6 +535,7 @@ void str2words(char *word, const char *str, int x, int y, int ircstrip)
 			strip = 0;
 
 		word += y - j;
+		cnt++;
 		if(*str == '\0') break;
 	}
 
@@ -543,6 +544,8 @@ void str2words(char *word, const char *str, int x, int y, int ircstrip)
 		memset(word, 0, y - 1);
 		word += y;
 	}
+
+	return cnt;
 }
 
 void sendLogo(inetconn *c)
@@ -1676,4 +1679,34 @@ int _isnumber(const char *str)
 	return 1;
 }
 
+/* from: IRC - Internet Relay Chat, common/support.c
+ *       Copyright (C) 1990, 1991 Armin Gruner
+ */
 
+char *strtoken(char **save, char *str, const char *fs)
+{
+    char *pos = *save;  /* keep last position across calls */
+    register char *tmp;
+
+    if (str)
+        pos = str;              /* new string scan */
+
+    while (pos && *pos && index(fs, *pos) != NULL)
+        pos++;                  /* skip leading separators */
+
+    if (!pos || !*pos)
+        return (pos = *save = NULL);    /* string contains only sep's */
+
+    tmp = pos;                  /* now, keep position of the token */
+
+    while (*pos && index(fs, *pos) == NULL)
+        pos++;                  /* skip content of the token */
+
+    if (*pos)
+        *pos++ = '\0';          /* remove first sep after the token */
+    else
+        pos = NULL;             /* end of string */
+
+    *save = pos;
+    return(tmp);
+}

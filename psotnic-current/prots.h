@@ -142,7 +142,7 @@ void nickCreator(char *nick);
 int extendhost(const char *host, char *buf, unsigned int len);
 char *expand(const char *str, char *buf, int len, const char *args);
 unsigned int hash32(const char *word);
-void str2words(char *word, const char *str, int x, int y, int ircstrip=0);
+int str2words(char *word, const char *str, int x, int y, int ircstrip=0);
 void str2args(char *word, const char *str, int x, int y);
 char *srewind(const char *str, int word);
 char *memmem(void *vsp, size_t len1, void *vpp, size_t len2);
@@ -163,6 +163,7 @@ char *getFullVersionString();
 void hexDump(const char *str, int len);
 int countWords(const char *str);
 char *rtrim(char *str);
+char *strtoken(char **save, char *str, const char *fs);
 
 void mem_strncpy(char *&dest, const char *src, int n);
 void mem_strcpy(char *&dest, const char *src);

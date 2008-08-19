@@ -34,11 +34,12 @@ static int i, j, just_opped, oped, mypos, n[6], hash, ops, mq, tmp;
 static unsigned int number; // offence counter
 
 /* function shourtcuts :) */
-/* has minus flag x = 1, y = 0*/
-/* has plus flag x = 1, y = 1*/
-#define __hasFlag(x, letter, y) chset->MODE_LOCK.hasFlag(x, letter, y)
-/* has minus or plus flag .. x =1, y = 0  z = 1*/
-#define __hasFlags(x, letter, y, z) (chset->MODE_LOCK.hasFlag(x, letter, y) || chset->MODE_LOCK.hasFlag(x, letter, z))
+/* has plus flag */
+#define __hasPFlag(flag) chset->MODE_LOCK.hasFlag(0, flag, 1)
+/* has minus flag */
+#define __hasMFlag(flag) chset->MODE_LOCK.hasFlag(1, flag, 1)
+/* has plus or minus flag */
+#define __hasFlag(flag) (__hasPFlag(flag) || __hasMFlag(flag))
 /* getKey */
 #define __getKey() chset->MODE_LOCK.getKey()
 /* getLimit */
@@ -194,13 +195,13 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				///////////////////
 				case 'k':
 				updateKey(arg[i]);
-				if((chset->PROTECT_CHMODES && nickHandle != &serverHandle) || __hasFlags(1, 'k', 0, 1)) 
+				if((chset->PROTECT_CHMODES && nickHandle != &serverHandle) || __hasFlag('k')) 
 				{
 				    if(!(nickHandle->flags & (HAS_N | HAS_B)))
 				    {
-					if(__hasFlag(1, 'k', 1))
+					if(__hasPFlag('k'))
 					    mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+k", __getKey());
-					if(__hasFlag(1, 'k', 0))
+					if(__hasMFlag('k'))
 					    mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-k", arg[i]);
 				    
 					if(nickHandle != &serverHandle)
@@ -226,7 +227,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				if((nickHandle->flags & (HAS_N | HAS_B)) || nickHandle == &serverHandle)
 				{
 					/* are we in control of the limit? */
-					if(chset->LIMIT || __hasFlag(1, 'l', 1))
+					if(chset->LIMIT || __hasPFlag('l'))
 					{
 						/* bot has changed the limit */
 						if(nickHandle->flags & HAS_B)
@@ -263,16 +264,16 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 					}
 				}
 				/* some lame has changed the limit */
-				else if(chset->PROTECT_CHMODES || __hasFlags(1, 'l', 0, 1))
+				else if(chset->PROTECT_CHMODES || __hasFlag('l'))
 				{
-					if(__hasFlag(1, 'l', 1))
+					if(__hasPFlag('l'))
 					    mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+l", itoa(__getLimit()));
-					if(__hasFlag(1, 'l', 0))
+					if(__hasMFlag('l'))
 					    mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-l");
 					toKick.sortAdd(nickHandle);
 					number++;	
 				}
-				else if(chset->LIMIT && !__hasFlags(1, 'l',0, 1))
+				else if(chset->LIMIT && !__hasFlag('l'))
 				{
 					mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+l", itoa(j));
 					toKick.sortAdd(nickHandle);
@@ -378,7 +379,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'i':
-				if(((chset->PROTECT_CHMODES && *nickHandle->nick) || __hasFlag(1, 'i', 0)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES && *nickHandle->nick) || __hasMFlag('i')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_HIGH].add(0, "-i");
 					if(*nickHandle->nick)
@@ -393,7 +394,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'n':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasFlag(1, 'n', 0)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasMFlag('n')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "-n");
 					if(*nickHandle->nick)
@@ -408,7 +409,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 't':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasFlag(1, 't', 0)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasMFlag('t')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "-t");
 					if(*nickHandle->nick)
@@ -423,7 +424,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 's':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick)|| __hasFlag(1, 's', 0)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick)|| __hasMFlag('s')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "-s");
 					if(*nickHandle->nick)
@@ -438,7 +439,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'p':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasFlag(1, 'p', 0)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasMFlag('p')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "-p");
 					if(*nickHandle->nick)
@@ -453,7 +454,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'm':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick)|| __hasFlag(1, 'm', 0)) && !(nickHandle->flags & (HAS_M | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick)|| __hasMFlag('m')) && !(nickHandle->flags & (HAS_M | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "-m");
 					if(*nickHandle->nick)
@@ -533,7 +534,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				//////////////////
 				case 'k':
 				updateKey("");
-				if(((chset->PROTECT_CHMODES && *nickHandle->nick) || __hasFlag(1, 'k', 1)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES && *nickHandle->nick) || __hasPFlag('k')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+k", __getKey());
 					if(*nickHandle->nick)
@@ -551,13 +552,13 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				if(!(nickHandle->flags & (HAS_N | HAS_B)))
 				{
-					if(chset->PROTECT_CHMODES || __hasFlag(1, 'l', 1))
+					if(chset->PROTECT_CHMODES || __hasPFlag('l'))
 					{
 						mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+l", itoa(__getLimit()));	
 						toKick.sortAdd(nickHandle);
 						number++;
 					}
-					else if(__hasFlag(1, 'l', 0)); // allready got -l, so do nothing
+					else if(__hasMFlag('l')); // allready got -l, so do nothing
 					else 
 					{
 					    if(chset->LIMIT)
@@ -570,7 +571,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 				}
 				else
 				{
-					if(chset->LIMIT || __hasFlag(1, 'l', 1))
+					if(chset->LIMIT || __hasPFlag('l'))
 					{
 						if(nickHandle->flags & HAS_N) nextlimit = NOW + chset->OWNER_LIMIT_TIME;
 						else if(nickHandle->flags & HAS_B) nextlimit = NOW + (rand() % 5) + 1;
@@ -676,7 +677,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'i':
-				if(((chset->PROTECT_CHMODES && *nickHandle->nick) || __hasFlag(1, 'i', 1)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES && *nickHandle->nick) || __hasPFlag('i')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_HIGH].add(0, "+i");
 					if(*nickHandle->nick)
@@ -691,7 +692,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'n':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasFlag(1, 'n', 1)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasPFlag('n')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "+n");
 					if(*nickHandle->nick)
@@ -706,7 +707,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 't':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasFlag(1, 't', 1)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasPFlag('t')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "+t");
 					if(*nickHandle->nick)
@@ -721,7 +722,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 's':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasFlag(1, 's', 1)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasPFlag('s')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "+s");
 					if(*nickHandle->nick)
@@ -736,7 +737,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'p':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasFlag(1, 'p', 1)) && !(nickHandle->flags & (HAS_N | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick) || __hasPFlag('p')) && !(nickHandle->flags & (HAS_N | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "+p");
 					if(*nickHandle->nick)
@@ -751,7 +752,7 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 
 				//////////////////
 				case 'm':
-				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick)|| __hasFlag(1, 'm', 1)) && !(nickHandle->flags & (HAS_M | HAS_B)))
+				if(((chset->PROTECT_CHMODES == 2 && *nickHandle->nick)|| __hasPFlag('m')) && !(nickHandle->flags & (HAS_M | HAS_B)))
 				{
 					mqc[mq++] = modeQ[PRIO_LOW].add(0, "+m");
 					if(*nickHandle->nick)
