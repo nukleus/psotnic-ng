@@ -152,6 +152,8 @@
 #define SAVEDELAY				10
 #define MAX_ALTS				16
 #define MAX_MODULES				16
+#define MAX_ALIASES				32
+
 //#define RESOLV_TH				4
 #define MAX_OFFENCES				16
 #define OFFENCE_DUPLICATE_TIME			10 /* secs */

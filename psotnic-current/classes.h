@@ -749,6 +749,9 @@ class CONFIG : public options
 	entMult module_debugLoad_storage;
 	entLoadModules module_debugLoad[MAX_MODULES];
 
+	entString alias[MAX_ALIASES];
+	entMult alias_storage;
+
 #ifdef HAVE_ADNS
 	entInt resolve_threads;
 	entTime domain_ttl;

@@ -163,7 +163,6 @@ char *getFullVersionString();
 void hexDump(const char *str, int len);
 int countWords(const char *str);
 char *rtrim(char *str);
-char *strtoken(char **save, char *str, const char *fs);
 
 void mem_strncpy(char *&dest, const char *src, int n);
 void mem_strcpy(char *&dest, const char *src);

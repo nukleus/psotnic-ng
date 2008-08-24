@@ -1679,34 +1679,3 @@ int _isnumber(const char *str)
 	return 1;
 }
 
-/* from: IRC - Internet Relay Chat, common/support.c
- *       Copyright (C) 1990, 1991 Armin Gruner
- */
-
-char *strtoken(char **save, char *str, const char *fs)
-{
-    char *pos = *save;  /* keep last position across calls */
-    register char *tmp;
-
-    if (str)
-        pos = str;              /* new string scan */
-
-    while (pos && *pos && index(fs, *pos) != NULL)
-        pos++;                  /* skip leading separators */
-
-    if (!pos || !*pos)
-        return (pos = *save = NULL);    /* string contains only sep's */
-
-    tmp = pos;                  /* now, keep position of the token */
-
-    while (*pos && index(fs, *pos) == NULL)
-        pos++;                  /* skip content of the token */
-
-    if (*pos)
-        *pos++ = '\0';          /* remove first sep after the token */
-    else
-        pos = NULL;             /* end of string */
-
-    *save = pos;
-    return(tmp);
-}

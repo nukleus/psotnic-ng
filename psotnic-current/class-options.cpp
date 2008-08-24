@@ -424,6 +424,14 @@ CONFIG::CONFIG()
 		module_debugLoad_storage.add(&module_debugLoad[i]);
 	}
 
+	registerObject(alias_storage = entMult("alias"));
+	for(i=0; i<MAX_ALIASES; ++i)
+	{
+		registerObject(alias[i] = entString("alias", 1, 255));
+		alias[i].setDontPrintIfDefault(true);
+		alias_storage.add(&alias[i]);
+	}
+
 	registerObject(myipv4 = entHost("myipv4", entHost::ipv4 | entHost::bindCheck));
 	registerObject(vhost = entHost("vhost", entHost::ipv4 | entHost::ipv6 | entHost::bindCheck));
 	registerObject(logfile = entWord("logfile", 1, 16));

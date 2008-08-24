@@ -20,6 +20,9 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include <string>
+
+char *find_alias(const char *cmd);
 
 int parse_owner_join(inetconn *c, const char *name, const char *key, int delay, const char *flags, const char *bot=NULL)
 {
@@ -448,6 +451,15 @@ void parse_owner(inetconn *c, char *data)
 
 	if(arg[0][0] == '.')
 	{
+		char *alias;
+
+		if((alias=find_alias(data+1)))
+		{
+			strncpy(data, alias, MAX_LEN);
+			str2words(arg[0], data, 10, MAX_LEN);
+			free(alias);
+		}
+
 		HOOK(partylineCmd, partylineCmd(c->name, c->handle->flags[GLOBAL], arg[0], srewind(data, 1)));
 
 		if(stopParsing)
@@ -2888,4 +2900,80 @@ void parse_owner(inetconn *c, char *data)
 
 	//for sake of compiler warnings
 	n = 0;
+}
+
+/** finds an alias and returns the real command.
+ *
+ * \author patrick <patrick@psotnic.com>
+ * \param cmd a command, the first word should be an alias (not starting with '.')
+ * \return the real command
+ */
+
+char *find_alias(const char *cmd)
+{
+    char alias_name[MAX_LEN], cmd_argv[10][MAX_LEN], *p=NULL, *end;
+    int idx, cmd_argc;
+    std::string str;
+
+    cmd_argc=str2words(cmd_argv[0], cmd, 10, MAX_LEN, 0);
+
+    // look if the command is an alias
+    for(idx=0; idx < MAX_ALIASES; idx++)
+    {
+        str2words(alias_name, config.alias[idx], 1, MAX_LEN, 0);
+
+        if(!strcasecmp(alias_name, cmd_argv[0]))
+        {
+            p=srewind(config.alias[idx], 1);
+            break;
+        }
+    }
+
+    if(!p)
+        return NULL;
+
+    str=".";
+
+    while(*p)
+    {
+        /* replace $n by the n'th word of the command
+         * and $n- by the n'th and all following words.
+         */
+
+        if(*p=='$')
+        {
+            *p++;
+            idx=strtoul(p, &end, 10);
+            idx++;
+
+            if(*end=='-')
+            {
+                if(idx < cmd_argc)
+                    str+=srewind(cmd, idx);
+
+                *end++;
+            }
+
+            else if(idx < cmd_argc)
+                str+=cmd_argv[idx];
+
+            p=end;
+        }
+
+        else
+        {
+            str+=*p+std::string();
+            *p++;
+        }
+    }
+
+   p=NULL;
+
+   if(str.length() > 0)
+   {
+       p=(char *) malloc(str.length()+1);
+       strcpy(p, str.c_str());
+   }
+
+   return p;
 }

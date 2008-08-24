@@ -35,30 +35,25 @@ void parse_irc(char *data)
 
 	str2words(arg[0], data, 11, MAX_LEN, 1);
 
-    /* debug */
+	/* debug */
 #ifdef HAVE_DEBUG
 
-    if(debug)
+	if(debug)
 	{
 		if(!strcmp(arg[1], "PRIVMSG"))
-    	{
-        	ch = ME.findChannel(arg[2]);
+		{
+			ch = ME.findChannel(arg[2]);
 
 			if(ch)
-        	{
-            	if(!strcasecmp(arg[3], "!debug"))
-            	{
-                	printf("### DEBUG ###\n");
-                	printf("CHANNELS: %d\n", ME.channels);
-                	ME.display();
-                	ch->display();
-					return;
-            	}
-				/*if(!strcmp(arg[3], "!op"))
+			{
+				if(!strcasecmp(arg[3], "!debug"))
 				{
-					chanuser u(arg[0]);
-					ch->modeQ[PRIO_LOW].add(NOW + atoi(arg[4]), "+o", u.nick);
-				}*/
+					printf("### DEBUG ###\n");
+					printf("CHANNELS: %d\n", ME.channels);
+					ME.display();
+					ch->display();
+					return;
+				}
 			}
 
 			if(!strcmp(arg[3], "!re"))
@@ -67,11 +62,11 @@ void parse_irc(char *data)
 				return;
 			}
 			
-			if(!strcmp(arg[3], "!crash"))
+			/*if(!strcmp(arg[3], "!crash"))
 			{
-			//	char *buf = NULL;
-			//	*buf = 9;
-			}
+				char *buf = NULL;
+				*buf = 9;
+			}*/
 		}
 	}
 #endif
