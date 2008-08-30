@@ -15,6 +15,8 @@ struct HANDLE;
 
 #include "pstring.h"
 #include "class-ent.h"
+#include <string>
+#include <map>
 
 class XSRand
 {
@@ -878,6 +880,7 @@ class chan
 	static bool chanModeRequiresArgument(char ,char);
 	static char getTypeOfChanMode(char);
 	static bool isChannel(const char *);
+	static bool isChanStatusFlag(char flag);
 
 	/* Debug */
 #ifdef HAVE_DEBUG
@@ -906,23 +909,48 @@ class chan
 class _server
 {
         public:
-        int chanlen; ///< maximum length of a channel name
-	char *chan_status_flags; ///< specifies a list of channel status flags (usually: "ov")
-	char *chan_status_prefixes; ///< a mapping to the equivalent channel_status_flags (usually: "@+", so: 'o'=>'@', 'v'=>'+')
-	char *chanmodes; ///< indicates the channel modes available and the arguments they take (format: "A,B,C,D")
-	char *chantypes; ///< prefixes of channels (like "#&!+")
-	char excepts; ///< indicates that the server supports ban exceptions (default 'e')
-	char invex; ///< indicates that the server supports invite exceptions (default 'I')
-	int kicklen; ///< maximum length of a kickreason
+	// from 004
 	char *name; ///< name of the server
-	char *network; ///< name of the irc network (mainly for informational purposes)
-	int maxlist; ///< limits how many "variable" modes of type A a client may set in total on a channel
-	int modes; ///< limits how many "variable" modes (type A, B, C) may be set on a channel by a single MODE command
-	int nicklen; ///< maximum length of a nickname
-	int topiclen; ///< maximum length of a topic
-	int maxchannels; ///< maximum number of chans a client can join
+        char *version; ///< ircd version
 	char *usermodes; ///< available user modes
-	char *version; ///< ircd version
+	char *chanmodes; ///< available channel modes
+
+	// from 005
+        class _isupport
+        {
+            public:
+            typedef std::map<std::string, std::string> isupportType;
+            isupportType isupport_map;
+
+            const char *find(const char *key)
+            {
+                isupportType::const_iterator it=isupport_map.find(key);
+
+                if(it != isupport_map.end())
+                {
+                    if(it->second.length() > 0)
+                        return it->second.c_str();
+                    else
+                        return "";
+                }
+
+                else
+                    return NULL;
+            }
+
+            void insert(const char *key, const char *value)
+            {
+                if(!key)
+                    return;
+
+                isupport_map.insert(std::pair<std::string, std::string>(key, value?value:""));
+            }
+
+            void clear()
+            {
+                isupport_map.clear();
+            }
+        } isupport;
 
 	_server() { };
 	~_server() {}

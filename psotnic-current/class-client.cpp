@@ -1096,15 +1096,6 @@ void client::reset()
 void client::reset_server()
 {
 	// clear server information
-	server.chanlen=0;
-	server.kicklen=0;
-	server.maxlist=0;
-	server.modes=0;
-	server.nicklen=0;
-	server.topiclen=0;
-	server.maxchannels=0;
-	server.excepts='\0';
-	server.invex='\0';
 
 	if(server.name)
 	{
@@ -1130,29 +1121,7 @@ void client::reset_server()
 		server.chanmodes=NULL;
 	}
 
-	if(server.chantypes)
-	{
-		free(server.chantypes);
-		server.chantypes=NULL;
-	}
-
-	if(server.network)
-	{
-		free(server.network);
-		server.network=NULL;
-	}
-
-	if(server.chan_status_flags)
-	{
-		free(server.chan_status_flags);
-		server.chan_status_flags=NULL;
-	}
-
-	if(server.chan_status_prefixes)
-	{
-		free(server.chan_status_prefixes);
-		server.chan_status_prefixes=NULL;
-	}
+	server.isupport.clear();
 }
 
 /** Sends a privmsg.

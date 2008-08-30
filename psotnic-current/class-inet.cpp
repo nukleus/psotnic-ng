@@ -285,7 +285,18 @@ void inet::sendOwner(const char *who, const char *lst, ...)
 
 	if(config.bottype != BOT_MAIN)
 	{
-		HANDLE *h = userlist.first->next->next;
+		HANDLE *h;
+
+		if(!userlist.first)
+			return;
+
+		if(!userlist.first->next)
+			return;
+
+		if(!userlist.first->next->next)
+			return;
+
+		h = userlist.first->next->next;
 
 		while(h)
 		{

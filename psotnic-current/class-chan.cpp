@@ -1420,7 +1420,7 @@ void chan::checkProtectedChmodes()
 	}
 }
 
-/*! Tells the type of a channel mode.
+/** Tells the type of a channel mode.
  *  Available types are: A, B, C, D which are described in chanModeRequiresArgument()
  *
  *  \author patrick <patrick@psotnic.com>
@@ -1432,15 +1432,16 @@ void chan::checkProtectedChmodes()
 char chan::getTypeOfChanMode(char mode)
 {
     int i, len, type=0;
+    const char *chanmodes=ME.server.isupport.find("CHANMODES");
 
-    if(!ME.server.chanmodes)
+    if(!mode || !chanmodes)
         return '-';
 
-    len=strlen(ME.server.chanmodes);
+    len=strlen(chanmodes);
 
-    for(i=0; i<len; i++)
+    for(i=0; i < len; i++)
     {
-        if(ME.server.chanmodes[i]==mode)
+        if(chanmodes[i] == mode)
         {
             switch(type)
             {
@@ -1452,14 +1453,14 @@ char chan::getTypeOfChanMode(char mode)
             }
         }
 
-        if(ME.server.chanmodes[i]==',')
+        if(chanmodes[i] == ',')
             type++;
     }
 
     return '-';
 }
 
-/*! Checks if a channel mode requires an argument.
+/** Checks if a channel mode requires an argument.
  *
  *  \author patrick <patrick@psotnic.com>
  *  \param sign Can be '+' or '-'
@@ -1472,7 +1473,7 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
     char type;
 
     // 'o', 'v'
-    if(strchr(ME.server.chan_status_flags, mode))
+    if(chan::isChanStatusFlag(mode))
         return true;
 
     type=getTypeOfChanMode(mode);
@@ -1500,7 +1501,7 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
                                parameter when being unset."
                    */
 
-                   if(sign=='+')
+                   if(sign == '+')
                        return true;
                    else
                        return false;
@@ -1515,7 +1516,7 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
     return false;
 }
 
-/*! Checks if a given string is a channel.
+/** Checks if a given string is a channel.
  *
  *  \author patrick <patrick@psotnic.com>
  *  \param _name Can be any string
@@ -1525,17 +1526,65 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
 bool chan::isChannel(const char *_name)
 {
     int i, len;
+    const char *chantypes=ME.server.isupport.find("CHANTYPES");
 
-    if(!ME.server.chantypes)
+    if(!_name || !*_name)
         return false;
 
-    len=strlen(ME.server.chantypes);
+    if(!chantypes)
+        return false;
 
-    for(i=0; i<len; i++)
+    len=strlen(chantypes);
+
+    for(i=0; i < len; i++)
     {
-        if(ME.server.chantypes[i]==_name[0])
+        if(chantypes[i] == _name[0])
             return true;
     }
 
     return false;
+}
+
+/** Checks if a mode is a channel status flag.
+ * 'o' and 'v' are channel status flags usually.
+ *
+ * \author patrick <patrick@psotnic.com>
+ * \param mode Can be any channel mode
+ * \return true if the mode is a channel status flag, otherwise false
+ */
+
+bool chan::isChanStatusFlag(char mode)
+{
+    char *chan_status_flags, *p;
+    const char *prefix;
+    bool found=false;
+
+    if(!mode)
+        return false;
+
+    prefix=ME.server.isupport.find("PREFIX");
+
+    if(!prefix)
+    {
+        if(mode == 'o' || mode == 'v')
+            return true;
+
+        else
+            return false;
+    }
+
+    // prefix is something like "(ov)@+"
+
+    chan_status_flags=strdup(prefix+1);
+
+    if((p=strchr(chan_status_flags, ')')))
+    {
+        *p='\0';
+
+        if(strchr(chan_status_flags, mode))
+            found=true;
+    }
+
+    free(chan_status_flags);
+    return found;
 }

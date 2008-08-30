@@ -16,11 +16,12 @@
 * svn log https://psotnic.svn.sourceforge.net/svnroot/psotnic                         *
 ***************************************************************************************
 
-Psotnic 0.2.14-pre1 (2008/08/07) most important changes:
+Psotnic 0.2.14-pre1 (2008/08/30) most important changes:
+- aliases for partyline commands, .bc <bot> cfg +/-alias .. (patrick)
 - bots can add/request shit, to enable it: .set bots-can-add-shit ON (patrick)
 - .status shows configure options (patch by [C]167)
 - 004 and 005 numeric support (patrick)
-- fixed: "/msg <mainbot> pass <pw>" which was never working (patch by AnGelZ)
+- fixed "/msg <mainbot> pass <pw>" which was never working (patch by AnGelZ)
 - .mpart does not delete the channel structure anymore as .-chan does (patrick)
 - renamed protect-chmodes to mode-lock and brought old protect-chmodes back (patrick)
 - replaced altuidnick by altnick (patrick)

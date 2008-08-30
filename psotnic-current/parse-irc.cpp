@@ -365,6 +365,7 @@ void parse_irc(char *data)
 		}
 
 		mem_strcpy(net.irc.name, arg[0]);
+		ME.server.name=strdup(arg[0]);
 		mem_strcpy(net.irc.origin, arg[0]);
 		net.irc.status |= STATUS_REGISTERED;
 		net.irc.lastPing = NOW;
@@ -452,87 +453,40 @@ void parse_irc(char *data)
 
 	if(!strcmp(arg[1], "004"))
 	{
-		ME.server.name=strdup(arg[3]);
 		ME.server.version=strdup(arg[4]);
 		ME.server.usermodes=strdup(arg[5]);
+		ME.server.chanmodes=strdup(arg[6]);
+		return;
 	}
+
 	if(!strcmp(arg[1], "005"))
 	{
-		char *isupport_str=srewind(data, 3), token[32][MAX_LEN], *ptr;
+		// fill isupport with 005 tokens -- patrick
 
-		str2words(token[0], isupport_str, 32, MAX_LEN, 0);
+		char *isupport_str, *key, *value, *p;
 
-		for(int i=0; i<32 && *token[i]; i++)
-		{    
-			if(!strncmp(token[i], "CHANNELLEN=", 11))
-				ME.server.chanlen=atoi(token[i]+11);
+		isupport_str=srewind(data, 3);
 
-			else if(!strncmp(token[i], "CHANMODES=", 10))
-				ME.server.chanmodes=strdup(token[i]+10);
+		if(!isupport_str)
+			return;
 
-			else if(!strncmp(token[i], "CHANTYPES=", 10))
-				ME.server.chantypes=strdup(token[i]+10);
+		for(key=strtok_r(isupport_str, " ", &p); key; key=strtok_r(NULL, " ", &p))
+		{
+			if(*key == ':')
+				break;
 
-			else if(!strncmp(token[i], "EXCEPTS", 7))
+			if((value=strchr(key, '=')))
 			{
-				if(token[i][7]=='=')
-					ME.server.excepts=token[i][8];
-				else
-					ME.server.excepts='e';
+				*value='\0';
+				value++;
 			}
 
-			else if(!strncmp(token[i], "INVEX", 5))
-			{
-				if(token[i][5]=='=')
-					ME.server.invex=token[i][6];
-				else
-					ME.server.invex='I';
-			}
-
-			else if(!strncmp(token[i], "KICKLEN=", 8))
-				ME.server.kicklen=atoi(token[i]+8);
-
-			else if(!strncmp(token[i], "NETWORK=", 8))
-				ME.server.network=strdup(token[i]+8);
-
-			else if(!strncmp(token[i], "MAXLIST=", 8))
-			{
-				if((ptr=strchr(token[i]+8, ':')))
-				{
-					*ptr++;
-					ME.server.maxlist=atoi(ptr);
-				}
-			}
-
-			else if(!strncmp(token[i], "MODES=", 6))
-				ME.server.modes=atoi(token[i]+6);
-
-			else if(!strncmp(token[i], "NICKLEN=", 8))
-				ME.server.nicklen=atoi(token[i]+8);
-
-			else if(!strncmp(token[i], "TOPICLEN=", 9))
-				ME.server.topiclen=atoi(token[i]+9);
-			else if(!strncmp(token[i], "CHANLIMIT=", 10))
-			{
-				if((ptr=strchr(token[i]+10, ':')))
-				{
-					*ptr++;
-					ME.server.maxchannels=atoi(ptr);
-				}
-			}
-			else if(!strncmp(token[i], "MAXCHANNELS=", 12))
-				ME.server.maxchannels=atoi(token[i]+12);
-			else if(!strncmp(token[i], "PREFIX=", 7))
-			{
-				if((ptr=strchr(token[i]+7, ')')))
-				{
-					*ptr='\0';
-					ME.server.chan_status_flags=strdup(token[i]+8);
-					ME.server.chan_status_prefixes=strdup(ptr+1);
-				}
-			}
+			ME.server.isupport.insert(key, value);
 		}
+
+		return;
 	}
+
 	if(!strcmp(arg[1], "042"))
 	{
 		ME.uid = arg[3];
@@ -766,7 +720,7 @@ void parse_irc(char *data)
 				char buf[MAX_LEN];
     	        		userlist.changePass(h->name, arg[5]);
 				net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has changed his password", NULL);
-				net.send(HAS_B, S_PASSWD, " ", arg[1], " ", quoteHexStr(h->pass, buf), NULL);
+				net.send(HAS_B, S_PASSWD, " ", h->name, " ", quoteHexStr(h->pass, buf), NULL);
 
 				ctcp.push("NOTICE ", arg[0], " :Password changed", NULL);
                      		++userlist.SN;
@@ -789,7 +743,7 @@ void parse_irc(char *data)
 				char buf[MAX_LEN];
     	        		userlist.changePass(h->name, arg[4]);
 				net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has set his password", NULL);
-				net.send(HAS_B, S_PASSWD, " ", arg[1], " ", quoteHexStr(h->pass, buf), NULL);
+				net.send(HAS_B, S_PASSWD, " ", h->name, " ", quoteHexStr(h->pass, buf), NULL);
 
 				ctcp.push("NOTICE ", arg[0], " :Password set", NULL);
                      		++userlist.SN;

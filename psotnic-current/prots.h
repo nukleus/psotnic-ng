@@ -47,6 +47,10 @@ void srand(int a=0, int b=0, int c=0);
 #include <sys/types.h>
 //#include <sys/dir.h>
 
+#include <iostream>
+#include <string>
+#include <map>
+
 #ifdef HAVE_ADNS_PTHREAD
     #include <resolv.h>
 #endif
@@ -226,6 +230,5 @@ void gen_cfg_seed(unsigned char *);
 DLSYM_FUNCTION dlsym_cast(void *handle, const char *symbol);
 DLSYM_FUNCTION obj2fun(DLSYM_OBJECT o);
 DLSYM_OBJECT fun2obj(DLSYM_FUNCTION f);
-
 
 #endif
