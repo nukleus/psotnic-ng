@@ -16,8 +16,10 @@
 * svn log https://psotnic.svn.sourceforge.net/svnroot/psotnic                         *
 ***************************************************************************************
 
-Psotnic 0.2.14-pre1 (2008/08/30) most important changes:
+Psotnic 0.2.14-pre1 (2008/08/31) most important changes:
+- config file generator, see ./psotnic -n (coded by [C]167)
 - aliases for partyline commands, .bc <bot> cfg +/-alias .. (patrick)
+- more mode-lock/protect-chmodes fixes (patch by wilk)
 - bots can add/request shit, to enable it: .set bots-can-add-shit ON (patrick)
 - .status shows configure options (patch by [C]167)
 - 004 and 005 numeric support (patrick)
@@ -33,7 +35,7 @@ Psotnic 0.2.14-pre1 (2008/08/30) most important changes:
 - added firedns resolver, it is disabled by default, to enable do ./configure --with-firedns (grusin)
 - fixed module compilation problems brought in 0.2.13 (grusin)
 - fixed problem with compiling and detecting processor architecture as UNKNOWN on FreeBSD 4.7 and maybe other OSes (Esio)
-- fixed protect-chmodes compatybility and flood problem (Esio)
+- fixed protect-chmodes compatibility and flood problem (Esio)
 
 Psotnic 0.2.13 (2007/10/10) changes:
 - fixed: #1745405: added SSL_pending (patch by zerg2012)

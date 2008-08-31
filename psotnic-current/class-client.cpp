@@ -1041,7 +1041,7 @@ client::~client()
 		delete p;
 	}
 
-	reset_server();
+	server.reset();
 }
 
 void client::reset()
@@ -1087,41 +1087,7 @@ void client::reset()
 		//userlist.chanlist[i].nextjoin = 0;
 	}
 
-	reset_server();
-}
-
-/** Clears server information.
- *  \author patrick <patrick@psotnic.com>
- */
-void client::reset_server()
-{
-	// clear server information
-
-	if(server.name)
-	{
-		free(server.name);
-		server.name=NULL;
-	}
-
-	if(server.version)
-	{
-		free(server.version);
-		server.version=NULL;
-	}
-
-	if(server.usermodes)
-	{
-		free(server.usermodes);
-		server.usermodes=NULL;
-	}
-
-	if(server.chanmodes)
-	{
-		free(server.chanmodes);
-		server.chanmodes=NULL;
-	}
-
-	server.isupport.clear();
+	server.reset();
 }
 
 /** Sends a privmsg.

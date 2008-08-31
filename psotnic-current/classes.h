@@ -880,7 +880,6 @@ class chan
 	static bool chanModeRequiresArgument(char ,char);
 	static char getTypeOfChanMode(char);
 	static bool isChannel(const char *);
-	static bool isChanStatusFlag(char flag);
 
 	/* Debug */
 #ifdef HAVE_DEBUG
@@ -906,14 +905,14 @@ class chan
  *  \warning the values are only available when the bot is connected to an ircserver
  */
 
-class _server
+class Server
 {
         public:
 	// from 004
 	char *name; ///< name of the server
         char *version; ///< ircd version
 	char *usermodes; ///< available user modes
-	char *chanmodes; ///< available channel modes
+	char *chanmodes; ///< available channel modes (please prefer isupport.chanmodes)
 
 	// from 005
         class _isupport
@@ -922,38 +921,25 @@ class _server
             typedef std::map<std::string, std::string> isupportType;
             isupportType isupport_map;
 
-            const char *find(const char *key)
-            {
-                isupportType::const_iterator it=isupport_map.find(key);
+            void insert(const char *key, const char *value);
+            const char *find(const char *key);
+            void clear();
+            void init();
 
-                if(it != isupport_map.end())
-                {
-                    if(it->second.length() > 0)
-                        return it->second.c_str();
-                    else
-                        return "";
-                }
+            /* the following variables are in the map too,
+             * but they are used very often, so the bot should not search
+             * for them in map and do further parsing everytime.
+             */
 
-                else
-                    return NULL;
-            }
-
-            void insert(const char *key, const char *value)
-            {
-                if(!key)
-                    return;
-
-                isupport_map.insert(std::pair<std::string, std::string>(key, value?value:""));
-            }
-
-            void clear()
-            {
-                isupport_map.clear();
-            }
+            char *chan_status_flags; // a part of PREFIX (usually "ov")
+            char *chanmodes; // the same as CHANMODES
         } isupport;
 
-	_server() { };
-	~_server() {}
+	Server() { };
+	~Server() {}
+	void reset();
+	int maxchannels();
+	int maxlist();
 };
 
 class client
@@ -965,7 +951,7 @@ class client
 	time_t nextNickCheck, startedAt, nextConnToIrc, nextConnToHub;
 	time_t nextRecheck;
 	time_t nextReconnect, ircConnFailDelay;
-	_server server;
+	Server server;
 
 	/* Irc channels */
 	chan *createNewChannel(const char *name);
@@ -1015,7 +1001,6 @@ class client
 	/* Destruction derby */
 	~client();
 	void reset();
-	void reset_server();
 };
 
 class ul

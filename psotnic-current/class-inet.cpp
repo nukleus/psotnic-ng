@@ -293,9 +293,6 @@ void inet::sendOwner(const char *who, const char *lst, ...)
 		if(!userlist.first->next)
 			return;
 
-		if(!userlist.first->next->next)
-			return;
-
 		h = userlist.first->next->next;
 
 		while(h)

@@ -334,9 +334,9 @@ void parse_cmdline(int argc, char *argv[])
 	if(argc == 1)
 	{
 #ifdef HAVE_DEBUG
-		printf("Syntax: %s [-v] [-a] [-d] [-p] [-u] [-c|T decrypted config] [crypted config]\n", argv[0]);
+		printf("Syntax: %s [-v] [-a] [-d] [-p] [-u] [-n] [-c|T decrypted config] [crypted config]\n", argv[0]);
 #else
-		printf("Syntax: %s [-v] [-a] [-p] [-c decrypted config] [crypted config]\n", argv[0]);
+		printf("Syntax: %s [-v] [-a] [-p] [-n] [-c decrypted config] [crypted config]\n", argv[0]);
 #endif
 		exit(1);
 	}
@@ -384,6 +384,9 @@ void parse_cmdline(int argc, char *argv[])
 
 		else if(!strcmp(argv[i], "-v")) exit(0);
 		else if(!strcmp(argv[i], "-c")) creation = 1;
+		else if(!strcmp(argv[i], "-n"))
+			createInitialConfig();
+
 #ifdef HAVE_DEBUG
 		else if(!strcmp(argv[i], "-T")) decrypted = true;
 		else if(i == argc - 1) config.load(argv[i], decrypted);
@@ -396,6 +399,73 @@ void parse_cmdline(int argc, char *argv[])
 			exit(1);
 		}
 	}
+}
+
+/*! Prints out a formatted error message.
+ * \param format The format string.
+ * \param ... Variable list of paramaters.
+ * \author Stefan Valouch <stefanvalouch@googlemail.com>
+ */
+void printError( const char *format, ... )
+{
+	char str[MAX_LEN];
+	strcpy( str, "\033[1m\033[34m[\033[31m!\033[34m]\033[39m\033[22m " );
+	strncat( str, format, MAX_LEN-34 );
+	strcat( str, "\n" );
+	va_list va;
+	va_start( va, format );
+	vprintf( str, va );
+	va_end( va );
+}
+
+/*! Prints out a formatted item string.
+ * \param format The format string.
+ * \param ... Variable list of parameters.
+ * \author Stefan Valouch <stefanvalouch@googlemail.com>
+ */
+void printItem( const char *format, ... )
+{
+	char str[MAX_LEN];
+	strcpy( str, "\033[1m\033[34m[\033[31m>\033[34m]\033[39m\033[22m " );
+	strncat( str, format, MAX_LEN-34 );
+	strcat( str, "\n" );
+	va_list va;
+	va_start( va, format );
+	vprintf( str, va );
+	va_end( va );
+}
+
+/*! Prints out a formatted message.
+ * \param format The format string.
+ * \param ... Variable parameter list.
+ * \author Stefan Valouch <stefanvalouch@googlemail.com>
+ */
+void printMessage( const char *format, ... )
+{
+	char str[MAX_LEN];
+	strcpy( str, "\033[1m\033[34m[\033[33m*\033[34m]\033[39m\033[22m " );
+	strncat( str, format, MAX_LEN-34 );
+	strcat( str, "\n" );
+	va_list va;
+	va_start( va, format );
+	vprintf( str, va );
+	va_end( va );
+}
+
+/*! Prints out a formatted prompt to stdout.
+ * \param format The format string.
+ * \param ...
+ * \author Stefan Valouch <stefanvalouch@googlemail.com>
+ */
+void printPrompt( const char *format, ... )
+{
+	char str[MAX_LEN];
+	strcpy( str, "\033[1m\033[34m[\033[33m?\033[34m]\033[39m\033[22m " );
+	strncat( str, format, MAX_LEN-33 );
+	va_list va;
+	va_start( va, format );
+	vprintf( str, va );
+	va_end( va );
 }
 
 char *memmem(void *vsp, size_t len1, void *vpp, size_t len2)

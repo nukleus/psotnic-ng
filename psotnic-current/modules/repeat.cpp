@@ -24,7 +24,7 @@
 // ban time (in minutes)
 #define RP_BANTIME 60
 
-// lines that should not be counted (e.x. a line that contains only a smiley)
+// lines that should not be counted (e.g. a line that contains only a smiley)
 const char *rp_exceptions[]={
     ":?",       // matches ':)', ':P' etc
     ":-?",      // matches ':-)', ':-P' etc

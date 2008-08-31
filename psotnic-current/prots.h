@@ -51,6 +51,11 @@ void srand(int a=0, int b=0, int c=0);
 #include <string>
 #include <map>
 
+using std::cin;
+using std::cout;
+using std::endl;
+using std::string;
+
 #ifdef HAVE_ADNS_PTHREAD
     #include <resolv.h>
 #endif
@@ -102,6 +107,36 @@ void srand(int a=0, int b=0, int c=0);
 
 typedef void (*sighandler_t)(int);
 typedef void (*sig_t)(int);
+
+/*! Formatted output.
+ * \{
+ * */
+void printError( const char *format, ... );
+void printItem( const char *format, ... );
+void printMessage( const char *format, ... );
+void printPrompt( const char *format, ... );
+//! \}
+
+/*! Read stuff from users.
+ * \{
+ * */
+bool readUserInput( const char *prompt, pstring<>  &var,    bool force=false, const char *defaultValue="" );
+void readUserInput( const char *prompt, entBool    &entity, bool force=false);
+void readUserInput( const char *prompt, entInt     &entity, bool force=false);
+//entTime
+//entPerc
+void readUserInput( const char *prompt, entHost   &entity);
+void readUserInput( const char *prompt, entString &entity);
+//entWord
+void readUserInput( const char *prompt, entMD5Hash &entity );
+//entHPPH
+void readUserInput( const char *prompt, entHub     &entity );
+void readUserInput( const char *prompt, entServer  &entity );
+int readUserMC( const char *prompt, const char *choices[], unsigned int defChoice );
+bool readUserYesNo( const char *prompt, bool defaultValue );
+//! \}
+
+void createInitialConfig();
 
 /* parse functions */
 void parse_irc(char *data);

@@ -484,6 +484,7 @@ void parse_irc(char *data)
 			ME.server.isupport.insert(key, value);
 		}
 
+		ME.server.isupport.init();
 		return;
 	}
 

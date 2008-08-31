@@ -57,8 +57,10 @@ class-userlist.o
 class-wasop.o
 class-update.o
 class-options.o
+class-server.o
 class-shitlist.o
 class-socks5.o
+config-create.o
 config-load.o
 dlsym_cast.o
 firedns.o

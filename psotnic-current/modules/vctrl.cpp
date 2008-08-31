@@ -31,7 +31,7 @@
  * .bc <bot> vchanset <channel> voicecontrol OFF
  *
  * If you are going to use this module on more than one bot, you
- * should disable 'notice' and set 'max-delay' (e.x. to 10)
+ * should disable 'notice' and set 'max-delay' (e.g. to 10)
  *
  * Thanks to the following people for testing: AnGelZ, Aretino, Lu[4, MnEm0nIc
  *

@@ -1432,16 +1432,15 @@ void chan::checkProtectedChmodes()
 char chan::getTypeOfChanMode(char mode)
 {
     int i, len, type=0;
-    const char *chanmodes=ME.server.isupport.find("CHANMODES");
 
-    if(!mode || !chanmodes)
+    if(!mode || !ME.server.isupport.chanmodes)
         return '-';
 
-    len=strlen(chanmodes);
+    len=strlen(ME.server.isupport.chanmodes);
 
     for(i=0; i < len; i++)
     {
-        if(chanmodes[i] == mode)
+        if(ME.server.isupport.chanmodes[i] == mode)
         {
             switch(type)
             {
@@ -1453,7 +1452,7 @@ char chan::getTypeOfChanMode(char mode)
             }
         }
 
-        if(chanmodes[i] == ',')
+        if(ME.server.isupport.chanmodes[i] == ',')
             type++;
     }
 
@@ -1472,8 +1471,11 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
 {
     char type;
 
+    if(!mode)
+        return false;
+
     // 'o', 'v'
-    if(chan::isChanStatusFlag(mode))
+    if(strchr(ME.server.isupport.chan_status_flags, mode))
         return true;
 
     type=getTypeOfChanMode(mode);
@@ -1543,48 +1545,4 @@ bool chan::isChannel(const char *_name)
     }
 
     return false;
-}
-
-/** Checks if a mode is a channel status flag.
- * 'o' and 'v' are channel status flags usually.
- *
- * \author patrick <patrick@psotnic.com>
- * \param mode Can be any channel mode
- * \return true if the mode is a channel status flag, otherwise false
- */
-
-bool chan::isChanStatusFlag(char mode)
-{
-    char *chan_status_flags, *p;
-    const char *prefix;
-    bool found=false;
-
-    if(!mode)
-        return false;
-
-    prefix=ME.server.isupport.find("PREFIX");
-
-    if(!prefix)
-    {
-        if(mode == 'o' || mode == 'v')
-            return true;
-
-        else
-            return false;
-    }
-
-    // prefix is something like "(ov)@+"
-
-    chan_status_flags=strdup(prefix+1);
-
-    if((p=strchr(chan_status_flags, ')')))
-    {
-        *p='\0';
-
-        if(strchr(chan_status_flags, mode))
-            found=true;
-    }
-
-    free(chan_status_flags);
-    return found;
 }
