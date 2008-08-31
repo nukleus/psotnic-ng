@@ -21,7 +21,7 @@
 #include "prots.h"
 #include "global-var.h"
 
-void Server::_isupport::insert(const char *key, const char *value)
+void Server::Isupport::insert(const char *key, const char *value)
 {
     if(!key || !*key)
         return;
@@ -29,7 +29,7 @@ void Server::_isupport::insert(const char *key, const char *value)
     isupport_map.insert(std::pair<std::string, std::string>(key, value?value:""));
 }
 
-const char *Server::_isupport::find(const char *key)
+const char *Server::Isupport::find(const char *key)
 {
     isupportType::const_iterator it=isupport_map.find(key);
 
@@ -46,7 +46,7 @@ const char *Server::_isupport::find(const char *key)
         return NULL;
 }
 
-void Server::_isupport::clear()
+void Server::Isupport::clear()
 {
     if(chan_status_flags)
     {
@@ -60,6 +60,9 @@ void Server::_isupport::clear()
         chanmodes=NULL;
     }
 
+    maxchannels=0;
+    maxlist=0;
+
     isupport_map.clear();
 }
 
@@ -67,22 +70,12 @@ void Server::_isupport::clear()
  * \author patrick <patrick@psotnic.com>
  */
 
-void Server::_isupport::init()
+void Server::Isupport::init()
 {
     const char *p1;
     char *p2;
 
-    // get channel status flags from PREFIX which looks like "(ov)@+"
-
-    if(chan_status_flags)
-        free(chan_status_flags);
-
-    p1=find("PREFIX");
-
-    if(!p1)
-        chan_status_flags=strdup("ov");
-
-    else
+    if(!chan_status_flags && (p1=find("PREFIX")))
     {
         chan_status_flags=strdup(p1+1);
 
@@ -90,18 +83,42 @@ void Server::_isupport::init()
             *p2='\0';
     }
 
-    // CHANMODES
-
-    if(chanmodes)
-        free(chanmodes);
-
-    p1=find("CHANMODES");
-
-    if(!p1)
-        chanmodes=strdup("beIR,k,l,imnpstaqr");
-
-    else
+    if(!chanmodes && (p1=find("CHANMODES")))
         chanmodes=strdup(p1);
+
+    if(!maxchannels)
+    {
+        if((p1=find("CHANLIMIT")))
+        {
+            if((p2=strchr(p1, ':')))
+            {
+                *p2++;
+
+                if(p2)
+                    maxchannels=atoi(p2);
+            }
+        }
+
+        else if((p1=find("MAXCHANNELS")))
+            maxchannels=atoi(p1);
+    }
+
+    if(!maxlist)
+    {
+        if((p1=find("MAXLIST")))
+        {
+            if((p2=strchr(p1, ':')))
+            {
+                *p2++;
+
+                if(p2)
+                    maxlist=atoi(p2);
+            }
+        }
+
+        else if((p1=find("MAXBANS")))
+            maxlist=atoi(p1);
+    }
 }
 
 /** Clears server information.
@@ -135,58 +152,3 @@ void Server::reset()
 
         isupport.clear();
 }
-
-/** Tells the maximum number of channels a client can join.
- *
- * \author patrick <patrick@psotnic.com>
- * \return see above
- */
-
-int Server::maxchannels()
-{
-    const char *p1, *p2;
-
-    if((p1=isupport.find("CHANLIMIT")))
-    {
-        if((p2=strchr(p1, ':')))
-        {
-            *p2++;
-
-            if(p2)
-                return atoi(p2);
-        }
-    }
-
-    else if((p1=isupport.find("MAXCHANNELS")))
-        return atoi(p1);
-
-    return 21;
-}
-
-/** Tells the limit of how many "variable" modes of type A a client may set in total on a channel.
- *
- * \author patrick <patrick@psotnic.com>
- * \return see above
- */
-
-int Server::maxlist()
-{
-    const char *p1, *p2;
-
-    if((p1=isupport.find("MAXLIST")))
-    {
-        if((p2=strchr(p1, ':')))
-        {
-            *p2++;
-
-            if(p2)
-                return atoi(p2);
-        }
-    }
-
-    else if((p1=isupport.find("MAXBANS")))
-        return atoi(p1);
-
-    return 42;
-}
-

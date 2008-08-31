@@ -915,31 +915,31 @@ class Server
 	char *chanmodes; ///< available channel modes (please prefer isupport.chanmodes)
 
 	// from 005
-        class _isupport
+        class Isupport
         {
             public:
             typedef std::map<std::string, std::string> isupportType;
-            isupportType isupport_map;
+            isupportType isupport_map; ///< contains all 005 tokens
+
+            /* the following variables are in the map too,
+             * but either they are used very often, so the bot should not search
+             * for them in map everytime or the value is not accessable without further parsing.
+             */
+
+            char *chan_status_flags; ///< specifies a list of channel status flags (usually: "ov")
+            char *chanmodes; ///< indicates the channel modes available and the arguments they take (format: "A,B,C,D")
+            int maxchannels; ///< maximum number of chans a client can join
+            int maxlist; ///< limits how many "variable" modes of type A a client may set in total on a channel
 
             void insert(const char *key, const char *value);
             const char *find(const char *key);
             void clear();
             void init();
-
-            /* the following variables are in the map too,
-             * but they are used very often, so the bot should not search
-             * for them in map and do further parsing everytime.
-             */
-
-            char *chan_status_flags; // a part of PREFIX (usually "ov")
-            char *chanmodes; // the same as CHANMODES
         } isupport;
 
 	Server() { };
 	~Server() {}
 	void reset();
-	int maxchannels();
-	int maxlist();
 };
 
 class client
