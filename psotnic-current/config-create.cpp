@@ -93,7 +93,7 @@ void readUserInput( const char *prompt, entBool &entity, bool force )
 			}
 			else if(!force)
 			{
-				entity.setValue(entity.name, (const char*)entity.defaultValue);
+				entity.setValue(entity.name, itoa(entity.defaultValue));
 				break;
 			}
 			else
@@ -142,7 +142,7 @@ void readUserInput( const char *prompt, entInt &entity, bool force )
 		}
 		else if(!force)
 		{
-			entity.setValue(entity.name, (const char*)entity.defaultValue);
+			entity.setValue(entity.name, itoa(entity.defaultValue));
 			return;
 		}
 		else
