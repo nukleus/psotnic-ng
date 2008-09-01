@@ -357,13 +357,6 @@ void parse_irc(char *data)
 
 	if(!strcmp(arg[1], "001") && !(net.irc.status & STATUS_REGISTERED))
 	{
-		if(!match("*!*@*", arg[9]))
-		{
-			net.send(HAS_N, "[-] ", arg[0], " is not an ircnet like server !!!", NULL);
-			net.irc.close("Only ircnet like servers are supported");
-			return;
-		}
-
 		mem_strcpy(net.irc.name, arg[0]);
 		ME.server.name=strdup(arg[0]);
 		mem_strcpy(net.irc.origin, arg[0]);

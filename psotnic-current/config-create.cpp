@@ -138,15 +138,23 @@ void readUserInput( const char *prompt, entInt &entity, bool force )
 			cout << endl;
 			exit(1);
 		}
+		if(buf.size() < 1)
+		{
+			if(force)
+			{
+				printError( "You have to enter something here" );
+				continue;
+			}
+			else
+			{
+				entity.setValue(entity.name, itoa(entity.defaultValue));
+				break;
+			}
+		}
 		e = entity.setValue(entity.name, buf.c_str());
 		if(e->ok)
 		{
 			break;
-		}
-		else if(!force)
-		{
-			entity.setValue(entity.name, itoa(entity.defaultValue));
-			return;
 		}
 		else
 		{
@@ -242,6 +250,7 @@ void readUserInput( const char *prompt, entHub &entity )
 void readUserInput( const char *prompt, entMD5Hash &entity )
 {
 	string buf;
+	options::event *e;
 	do
 	{
 		printPrompt( "%s: ", prompt );
@@ -255,13 +264,18 @@ void readUserInput( const char *prompt, entMD5Hash &entity )
 		if(buf.size() < 8) // password length okay?
 		{
 			printError( "Passwords should have a length of at least 8 characters!" );
-			//cin.clear();
-			//cin.get();
 		}
 		else // okay, throw it in
 		{
-			entity.setValue(entity.name, buf.c_str());
-			break;
+			e = entity.setValue(entity.name, buf.c_str());
+			if(e->ok)
+			{
+				break;
+			}
+			else
+			{
+				printError( (const char*)e->reason );
+			}
 		}
 	}
 	while( true );
@@ -312,6 +326,7 @@ void readUserInput( const char *prompt, entServer &entity )
 void readUserInput( const char *prompt, entString &entity )
 {
 	string buf;
+	options::event *e;
 	do
 	{
 		if(entity.defaultString)
@@ -339,8 +354,15 @@ void readUserInput( const char *prompt, entString &entity )
 			}
 			continue;
 		}
-		entity.setValue(entity.name, buf.c_str());
-		break;
+		e = entity.setValue(entity.name, buf.c_str());
+		if(e->ok)
+		{
+			break;
+		}
+		else
+		{
+			printError( (const char*)e->reason );
+		}
 	}
 	while( true );
 }
@@ -353,11 +375,11 @@ void readUserInput( const char *prompt, entString &entity )
  * \return The selected ID or the default if nothing (valid) was entered.
  * \author Stefan Valouch <stefanvalouch@googlemail.com>
  */
-int readUserMC( const char *prompt, const char *choices[], unsigned int defChoice )
+int readUserMC( const char *prompt, const char *choices[], size_t len, unsigned int defChoice )
 {
 	string buf;
 	printMessage( "%s:", prompt );
-	for( unsigned int i = 0; i < sizeof(choices)-1; i++ )
+	for( int i = 0; i < len; i++ )
 	{
 		if(i == defChoice)
 		{
@@ -368,28 +390,39 @@ int readUserMC( const char *prompt, const char *choices[], unsigned int defChoic
 			printItem( "\t %d \t%s", i, choices[i] );
 		}
 	}
-	printPrompt( "Your choice: " );
-	getline(cin, buf);
 
-	if(!cin.good())
+	do
 	{
-		cout << endl;
-		exit(1);
-	}
-	if(buf.size() < 1)
-	{
-		return defChoice;
-	}
-	else
-	{
-		unsigned int inp = atoi(buf.c_str());
-		for( unsigned int i = 0; i < sizeof(choices); i++ )
+		printPrompt( "Your choice: " );
+		getline(cin, buf);
+	
+		if(!cin.good())
 		{
-			if(i == inp)
-				return inp;
+			cout << endl;
+			exit(1);
 		}
-		return defChoice;
+		if(buf.size() < 1)
+		{
+			return defChoice;
+		}
+		else
+		{
+			unsigned int inp = atoi(buf.c_str());
+			if( inp > len-1 )
+			{
+				printError( "Please choose a valid value!" );
+				continue;
+			}
+
+			for( unsigned int i = 0; i < sizeof(choices); i++ )
+			{
+				if(i == inp)
+					return inp;
+			}
+			return defChoice;
+		}
 	}
+	while( true );
 }
 
 /*! Asks the user a simple Yes/No question.
@@ -437,7 +470,7 @@ void createInitialConfig()
 		"Slave",
 		"Leaf"
 	};
-	int bottype = readUserMC( "What type of bot do you want?", choices, 0 );
+	int bottype = readUserMC( "What type of bot do you want?", choices, 3, 0 );
 
 	switch( bottype )
 	{

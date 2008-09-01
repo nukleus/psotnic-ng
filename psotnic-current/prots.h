@@ -132,7 +132,7 @@ void readUserInput( const char *prompt, entMD5Hash &entity );
 //entHPPH
 void readUserInput( const char *prompt, entHub     &entity );
 void readUserInput( const char *prompt, entServer  &entity );
-int readUserMC( const char *prompt, const char *choices[], unsigned int defChoice );
+int readUserMC( const char *prompt, const char *choices[], size_t len, unsigned int defChoice );
 bool readUserYesNo( const char *prompt, bool defaultValue );
 //! \}
 
