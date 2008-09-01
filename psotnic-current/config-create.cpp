@@ -26,12 +26,11 @@
  * \param prompt The question used to ask for the value.
  * \param var The pstring to set.
  * \param defaultValue The default to use as pstring does not have that.
- * \param force Wether or not to repeat the question till valid data is entered.
  * \return true if a value was set, even if it is \e defaultValue. false if not set (i.e. if no
  * default and nothing entered.
  * \author Stefan Valouch <stefanvalouch@googlemail.com>
  */
-bool readUserInput( const char *prompt, pstring<> &var, bool force, const char *defaultValue )
+bool readUserInput( const char *prompt, pstring<> &var, const char *defaultValue )
 {
 	string buf;
 	do
@@ -55,13 +54,17 @@ bool readUserInput( const char *prompt, pstring<> &var, bool force, const char *
 			var = buf.c_str();
 			return true;
 		}
+		else if (strlen(defaultValue))
+		{
+			var = defaultValue;
+			return true;
+		}
 		else
 		{
-			return false;
+			continue;
 		}
 	}
-	while( force );
-	return false;
+	while( true );
 }
 
 /*! Reads a boolean value from a terminal and sets an entities value to that value.
@@ -593,7 +596,7 @@ void createInitialConfig()
 	}
 	
 	string defaultcfgfile = string(choices[bottype]) + "_" +  config.nick.getValue() + ".cfg";
-	readUserInput( "Where should the config file be saved?", config.file, true, defaultcfgfile.c_str()); // TODO: use confdir as default path once make-install is merged
+	readUserInput( "Where should the config file be saved?", config.file, defaultcfgfile.c_str()); // TODO: use confdir as default path once make-install is merged
 	e = config.save();
 	if (!e->ok)
 	{
