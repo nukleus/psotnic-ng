@@ -379,7 +379,7 @@ int readUserMC( const char *prompt, const char *choices[], size_t len, unsigned 
 {
 	string buf;
 	printMessage( "%s:", prompt );
-	for( int i = 0; i < len; i++ )
+	for( unsigned int i = 0; i < len; i++ )
 	{
 		if(i == defChoice)
 		{
@@ -628,7 +628,7 @@ void createInitialConfig()
 		readUserInput( "Check shit on nick change?", config.check_shit_on_nick_change );
 	}
 	
-	string defaultcfgfile = string(choices[bottype]) + "_" +  config.nick.getValue() + ".cfg";
+	string defaultcfgfile = config.nick.getValue() + string(".cfg");
 	readUserInput( "Where should the config file be saved?", config.file, defaultcfgfile.c_str()); // TODO: use confdir as default path once make-install is merged
 	e = config.save();
 	if (!e->ok)

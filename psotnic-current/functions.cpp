@@ -408,8 +408,7 @@ void parse_cmdline(int argc, char *argv[])
  */
 void printError( const char *format, ... )
 {
-	char str[MAX_LEN];
-	strcpy( str, "\033[1m\033[34m[\033[31m!\033[34m]\033[39m\033[22m " );
+	char str[MAX_LEN] = "\033[1m\033[34m[\033[31m!\033[34m]\033[39m\033[22m \0";
 	strncat( str, format, MAX_LEN-34 );
 	strcat( str, "\n" );
 	va_list va;
@@ -425,8 +424,7 @@ void printError( const char *format, ... )
  */
 void printItem( const char *format, ... )
 {
-	char str[MAX_LEN];
-	strcpy( str, "\033[1m\033[34m[\033[31m>\033[34m]\033[39m\033[22m " );
+	char str[MAX_LEN] = "\033[1m\033[34m[\033[31m>\033[34m]\033[39m\033[22m \0";
 	strncat( str, format, MAX_LEN-34 );
 	strcat( str, "\n" );
 	va_list va;
@@ -442,8 +440,7 @@ void printItem( const char *format, ... )
  */
 void printMessage( const char *format, ... )
 {
-	char str[MAX_LEN];
-	strcpy( str, "\033[1m\033[34m[\033[33m*\033[34m]\033[39m\033[22m " );
+	char str[MAX_LEN] = "\033[1m\033[34m[\033[33m*\033[34m]\033[39m\033[22m \0";
 	strncat( str, format, MAX_LEN-34 );
 	strcat( str, "\n" );
 	va_list va;
@@ -459,8 +456,7 @@ void printMessage( const char *format, ... )
  */
 void printPrompt( const char *format, ... )
 {
-	char str[MAX_LEN];
-	strcpy( str, "\033[1m\033[34m[\033[33m?\033[34m]\033[39m\033[22m " );
+	char str[MAX_LEN] = "\033[1m\033[34m[\033[33m?\033[34m]\033[39m\033[22m \0";
 	strncat( str, format, MAX_LEN-33 );
 	va_list va;
 	va_start( va, format );
