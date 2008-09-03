@@ -127,7 +127,12 @@ void Server::Isupport::init()
          * The server MUST specify all commands available to the user which
          * support multiple targets.
          *
-         * So all commands that are not listed allow only 1 target.
+         * If the number is not specified for a particular command, then the
+         * command does not have a limit on the number of targets.
+         *
+         * If the TARGMAX parameter is not advertised, or a value is not sent
+         * then a client SHOULD assume that no commands except the "JOIN" and
+         * "PART" commands accept multiple parameters.
          */
 
         maxkicks=1;
@@ -136,10 +141,20 @@ void Server::Isupport::init()
         while(*p1)
         {
            if(!strncasecmp(p1, "KICK:", 5))
+           {
               maxkicks=atoi(p1+5);
 
+              if(maxkicks <= 0)
+                  maxkicks=30;
+           }
+
            else if(!strncasecmp(p1, "WHO:", 4))
+           {
               maxwho=atoi(p1+4);
+
+              if(maxwho <= 0)
+                  maxwho=30;
+           }
 
            p1=strchr(p1, ',');
 
