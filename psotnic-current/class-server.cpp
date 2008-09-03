@@ -119,6 +119,45 @@ void Server::Isupport::init()
         else if((p1=find("MAXBANS")))
             maxlist=atoi(p1);
     }
+
+    if((p1=find("TARGMAX")))
+    {
+        /* The TARGMAX parameter specifies the maximum number of targets
+         * allowable for commands which accept multiple targets.
+         * The server MUST specify all commands available to the user which
+         * support multiple targets.
+         *
+         * So all commands that are not listed allow only 1 target.
+         */
+
+        maxkicks=1;
+        maxwho=1;
+
+        while(*p1)
+        {
+           if(!strncasecmp(p1, "KICK:", 5))
+              maxkicks=atoi(p1+5);
+
+           else if(!strncasecmp(p1, "WHO:", 4))
+              maxwho=atoi(p1+4);
+
+           p1=strchr(p1, ',');
+
+           if(p1 != NULL)
+               p1++;
+
+           else
+               break;
+         }
+    }
+
+    else
+    {
+        // IRCnet defaults
+
+        maxkicks=4;
+        maxwho=11; // MAXPENALTY + 1
+    }
 }
 
 /** Clears server information.

@@ -85,13 +85,15 @@ void parse_irc(char *data)
         {
 		if(!ME.findNotSyncedChannel(a))
 		{
+			// FIXME: WHO flood if bot receives many JOIN's
+
 			if((i = userlist.findChannel(a)) != -1)
 			{
 				ME.createNewChannel(a);
 				if(!(userlist.chanlist[i].status & WHO_SENT))
 				{
 					net.irc.send("WHO ", a, NULL);
-					penalty++;
+					penalty+=2;
 				}
 			}
 			//if thats !channel maybe we have to change its name
@@ -108,7 +110,7 @@ void parse_irc(char *data)
 					if(!(userlist.chanlist[i].status & WHO_SENT))
 					{
 						net.irc.send("WHO ", a, NULL);
-       		        			penalty++;
+       		        			penalty+=2;
 					}
 				}
 			}

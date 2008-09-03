@@ -930,6 +930,8 @@ class Server
             char *chanmodes; ///< indicates the channel modes available and the arguments they take (format: "A,B,C,D")
             int maxchannels; ///< maximum number of chans a client can join
             int maxlist; ///< limits how many "variable" modes of type A a client may set in total on a channel
+            int maxkicks; ///< maximum number of users that can be kicked with one KICK command
+            int maxwho; ///< maximum number of targets that are allowed in a WHO command
 
             void insert(const char *key, const char *value);
             const char *find(const char *key);

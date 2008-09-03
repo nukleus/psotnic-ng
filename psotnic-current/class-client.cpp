@@ -425,6 +425,8 @@ void client::joinAllChannels()
 	penalty += 2;
 	buf.clean();
 
+	// FIXME: WHO flood
+
 	buf.push("WHO ");
 	for(j=i=0; i<MAX_CHANNELS; ++i)
 	{
@@ -438,10 +440,10 @@ void client::joinAllChannels()
 			buf.push((const char *) userlist.chanlist[i].name);
 			++j;
 
-			if(j == 10)
+			if(j == ME.server.isupport.maxwho)
 			{
 				net.irc.send(buf.data, NULL);
-				penalty += 11;
+				penalty += j + 1;
 				buf.clean();
 				buf.push("WHO ");
 				j = 0;
