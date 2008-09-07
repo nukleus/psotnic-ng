@@ -164,7 +164,7 @@ void client::sendStatus(const char *name)
 	net.sendOwner(name, "Resolving Threads:        Disabled", NULL);
 #endif
 #ifdef HAVE_ADNS_FIREDNS
-	net.sendOwner(name, "FireDNS Resolver:         Enabled, using ", itoa(resolver.n), " threads", NULL);
+	net.sendOwner(name, "FireDNS Resolver:         Enabled", NULL);
 #else
 	net.sendOwner(name, "FireDNS Resolver:         Disabled", NULL);
 #endif

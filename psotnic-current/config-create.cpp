@@ -630,7 +630,8 @@ void createInitialConfig()
 	
 	string defaultcfgfile = config.nick.getValue() + string(".cfg");
 	readUserInput( "Where should the config file be saved?", config.file, defaultcfgfile.c_str()); // TODO: use confdir as default path once make-install is merged
-	e = config.save();
+	bool decryptedSave = readUserYesNo( "Should the config file be saved decrypted?", false );
+	e = config.save( decryptedSave );
 	if (!e->ok)
 	{
 		printError( (const char*)e->reason );

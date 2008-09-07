@@ -83,7 +83,18 @@ bool CONFIG::load(const char *file, bool decrypted)
 	{
 		printf("[*] Crypting config file\n");
 
-		e = config.save(true);
+		// make a backup
+		snprintf(buf, MAX_LEN, "%s.dec", (const char *) config.file);
+		unlink(buf);
+
+		if(rename(config.file, buf))
+		{
+			printf("[-] cannot create backup file '%s': %s\n", buf, strerror(errno));
+			exit(1);
+		}
+
+		e = config.save();
+
 		if(!e || !e->ok)
 		{
 			printf("[-] Cannot save config file: %s\n", (const char *) e->reason);

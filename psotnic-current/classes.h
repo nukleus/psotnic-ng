@@ -767,7 +767,7 @@ class CONFIG : public options
 	CONFIG();
 	void polish();
 	bool load(const char *file, bool decrypted=false);
-	options::event *save(bool makeBackup=false);
+	options::event *save(bool decrypted=false);
 };
 
 class CHANLIST

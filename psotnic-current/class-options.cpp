@@ -480,22 +480,9 @@ void CONFIG::polish()
 	ctcptype.setReadOnly(true);
 }
 
-options::event *CONFIG::save(bool makeBackup)
+options::event *CONFIG::save(bool decrypted)
 {
 	inetconn conf;
-
-	if(makeBackup)
-	{
-		char buf[MAX_LEN];
-		snprintf(buf, MAX_LEN, "%s.dec", (const char *) file);
-		unlink(buf);
-
-		if(rename(file, buf))
-		{
-			_event.setError(NULL, "cannot create backup file '%s': %s\n", buf, strerror(errno));
-			return &_event;
-		}
-	}
 
 	if(conf.open(file, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR) < 1)
 	{
@@ -503,7 +490,8 @@ options::event *CONFIG::save(bool makeBackup)
 		return &_event;
 	}
 
-	conf.enableLameCrypt();
+	if(!decrypted)
+		conf.enableLameCrypt();
 
 	ptrlist<ent>::iterator i = list.begin();
 	while(i)
