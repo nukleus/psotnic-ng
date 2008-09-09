@@ -170,17 +170,17 @@ HANDLE *ul::me()
 	return first->next;
 }
 
-int ul::isLeaf(const HANDLE *h)
+bool ul::isLeaf(const HANDLE *h)
 {
 	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == HAS_L);
 }
 
-int ul::isSlave(const HANDLE *h)
+bool ul::isSlave(const HANDLE *h)
 {
 	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == (HAS_H | HAS_L));
 }
 
-int ul::isMain(const HANDLE *h)
+bool ul::isMain(const HANDLE *h)
 {
 	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == HAS_H);
 }
@@ -750,14 +750,14 @@ void ul::sendToAll()
 			send(&net.conn[i]);
 }
 
-int ul::hasEmptyFlags(const HANDLE *h) const
+bool ul::hasEmptyFlags(const HANDLE *h) const
 {
 	int i;
 
 	for(i=0; i<MAX_CHANNELS+1; ++i)
-		if(h->flags[i]) return 0;
+		if(h->flags[i]) return false;
 
-	return 1;
+	return true;
 }
 
 
@@ -966,71 +966,71 @@ HANDLE *ul::matchPassToHandle(const char *pass, const char *host, const int flag
 	return NULL;
 }
 
-int ul::hasReadAccess(inetconn *c, HANDLE *h)
+bool ul::hasReadAccess(inetconn *c, HANDLE *h)
 {
 	if(h == c->handle)
-		return 1;
+		return true;
 
 	if(c->checkFlag(HAS_S))
-		return 1;
+		return true;
 
 	if(c->checkFlag(HAS_N))
 	{
-		return isBot(h) ? 0 : 1;
+		return isBot(h) ? false : true;
 	}
 
 	if(c->checkFlag(HAS_P) && !h->flags[GLOBAL] && !hasEmptyFlags(h))
 	{
 		for(int i=0; i<MAX_CHANNELS; ++i)
 			if(h->flags[i] && !c->checkFlag(HAS_N, i))
-				return 0;
+				return false;
 
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-int ul::hasReadAccess(inetconn *c, char *handle)
+bool ul::hasReadAccess(inetconn *c, char *handle)
 {
 	HANDLE *h = findHandle(handle);
-	return h ? hasReadAccess(c, h) : -1;
+	return h ? hasReadAccess(c, h) : false;
 }
 
-int ul::hasWriteAccess(inetconn *c, char *handle)
+bool ul::hasWriteAccess(inetconn *c, char *handle)
 {
 	HANDLE *h = findHandle(handle);
-	return h ? hasWriteAccess(c, h) : -1;
+	return h ? hasWriteAccess(c, h) : false;
 }
 
-int ul::hasWriteAccess(inetconn *c, HANDLE *h)
+bool ul::hasWriteAccess(inetconn *c, HANDLE *h)
 {
 	if(h == c->handle)
-		return 1;
+		return true;
 
 	if(c->checkFlag(HAS_N))
 	{
 		if(c->checkFlag(HAS_X))
-			return 1;
+			return true;
 
 		if(c->checkFlag(HAS_S))
 		{
-			if(!(h->flags[GLOBAL] & HAS_S)) return 1;
-			else return 0;
+			if(!(h->flags[GLOBAL] & HAS_S)) return true;
+			else return false;
 		}
 
-		if(!(h->flags[GLOBAL] & HAS_N)) return 1;
-		else return 0;
+		if(!(h->flags[GLOBAL] & HAS_N)) return true;
+		else return false;
 	}
 	else if(c->checkFlag(HAS_P) && !h->flags[GLOBAL] && !hasEmptyFlags(h))
 	{
 		for(int i=0; i<MAX_CHANNELS; ++i)
 			if(h->flags[i] && !c->checkFlag(HAS_N, i))
-				return 0;
+				return false;
 
-		return 1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 void ul::setPassword(char *user, char *pass)
@@ -1068,16 +1068,16 @@ HANDLE *ul::checkPartylinePass(const char *username, const char *pass, int flags
 		return NULL;
 }
 
-int ul::isIdiot(const char *mask, int channum) const
+bool ul::isIdiot(const char *mask, int channum) const
 {
 	if(HAS_D & (first->flags[MAX_CHANNELS] | first->flags[channum]))
 	{
 		for(int i=0; i<MAX_HOSTS; ++i)
 			if(first->host[i])
 				if(match(first->host[i], mask))
-					return 1;
+					return true;
 	}
-	return 0;
+	return false;
 }
 
 bool ul::globalChset(inetconn *c, const char *var, const char *value, int *index)
@@ -1248,7 +1248,7 @@ int ul::findChannel(const char *name) const
 	return -1;
 }
 
-int ul::removeChannel(const char *name, char *removedName)
+bool ul::removeChannel(const char *name, char *removedName)
 {
 	int i=-1, bit;
 	HANDLE *h = first;
@@ -1260,7 +1260,7 @@ int ul::removeChannel(const char *name, char *removedName)
 		int fin = atoi(name);
 
 		if(fin < 1 || fin > MAX_CHANNELS)
-			return 0;
+			return false;
 
 		for(n=0; n<MAX_CHANNELS; ++n)
 		{
@@ -1280,7 +1280,7 @@ int ul::removeChannel(const char *name, char *removedName)
 		i = findChannel(name);
 	}
 
-	if(i == -1) return 0;
+	if(i == -1) return false;
 
 	if(removedName)
 		strncpy(removedName, chanlist[i].name, MAX_LEN);
@@ -1299,7 +1299,7 @@ int ul::removeChannel(const char *name, char *removedName)
 	chanlist[i].reset();
 
 	nextSave = NOW + SAVEDELAY;
-	return 1;
+	return true;
 }
 
 void ul::update()
@@ -1422,7 +1422,7 @@ HANDLE *ul::checkBotMD5Digest(unsigned int ip, const char *digest, const char *a
 	return NULL;
 }
 
-int ul::hasPartylineAccess(const char *mask) const
+bool ul::hasPartylineAccess(const char *mask) const
 {
 	HANDLE *h = first;
 
@@ -1431,36 +1431,36 @@ int ul::hasPartylineAccess(const char *mask) const
 		if(h->flags[GLOBAL] & HAS_P)
 		{
 			if(wildFindHost(h, mask) != -1)
-				return 1;
+				return true;
 		}
 		h = h->next;
 	}
-	return 0;
+	return false;
 }
 
-int ul::isBot(const char *name)
+bool ul::isBot(const char *name)
 {
 	HANDLE *h = findHandle(name);
 
-	if(h && isBot(h)) return 1;
-	else return 0;
+	if(h && isBot(h)) return true;
+	else return false;
 }
 
-int ul::isBot(const HANDLE *h)
+bool ul::isBot(const HANDLE *h)
 {
 	return h && h->flags[MAX_CHANNELS] & HAS_B;
 }
 
-int ul::isBot(unsigned int ip)
+bool ul::isBot(unsigned int ip)
 {
 	HANDLE *h = first;
 
 	while(h)
 	{
-		if(isBot(h) && h->ip == ip) return 1;
+		if(isBot(h) && h->ip == ip) return true;
 		h = h->next;
 	}
-	return 0;
+	return false;
 }
 
 int ul::getFlags(const char *mask, const chan *ch)
@@ -1602,21 +1602,21 @@ void ul::send(inetconn *c, HANDLE *h, int strip)
 	}
 }
 
-int ul::save(const char *file, const int cypher, const char *key)
+bool ul::save(const char *file, const int cypher, const char *key)
 {
 	inetconn uf;
 	char buf[MAX_LEN];
 	HANDLE *h = first;
 	int i;
 
-	if(config.bottype == BOT_LEAF) return 1;
-	if(!SN) return 0;
+	if(config.bottype == BOT_LEAF) return true;
+	if(!SN) return false;
 
 	if((uf.open(file, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR)) < 1)
 	{
 		net.send(HAS_N, "[-] Cannot open ", file, " for writing: ", strerror(errno), NULL);
 		nextSave = NOW + SAVEDELAY;
-		return 0;
+		return false;
 	}
 
 	if(cypher)
@@ -1654,7 +1654,7 @@ int ul::save(const char *file, const int cypher, const char *key)
 	uf.send(S_SN, " ", buf, NULL);
 
 	nextSave = 0;
-	return 1;
+	return true;
 }
 
 int ul::load(const char *file, const int cypher, const char *key)

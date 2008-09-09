@@ -102,7 +102,7 @@ void parse_ctcp(char *mask, char *data, char *to)
 {
 	char arg[10][MAX_LEN], *a, buf[MAX_LEN], who[MAX_LEN];
 	chan *ch = ME.findChannel(to);
-	int n, p;
+	int n;
 
 	if(!strlen(data)) return;
 
@@ -116,10 +116,10 @@ void parse_ctcp(char *mask, char *data, char *to)
 	{
 		if(isValidIp(buf) == 6)
 			strncpy(buf, arg[3], MAX_LEN-1);
-		else 
+		else
 			sprintf(buf, "%s", inet2char(htonl(strtoul(arg[3], NULL, 10))));
 
-		if(config.bottype == BOT_MAIN && (p = userlist.hasPartylineAccess(mask)))
+		if(config.bottype == BOT_MAIN && userlist.hasPartylineAccess(mask))
 		{
 			switch(isValidIp(buf))
 			{

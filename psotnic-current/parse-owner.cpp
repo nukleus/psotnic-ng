@@ -369,7 +369,7 @@ void parse_owner(inetconn *c, char *data)
 					}
 					return;
 				}
-                case 2:
+				case 2:
 				{
 					if(creation && strlen(arg[0]))
 					{
@@ -588,7 +588,7 @@ void parse_owner(inetconn *c, char *data)
 		h = userlist.findHandle(arg[1]);
 		if(h)
 		{
-			if(userlist.hasWriteAccess(c, arg[1]) == 1)
+			if(userlist.hasWriteAccess(c, arg[1]))
 			{
 				if(userlist.addHost(h, buf, c->name, NOW) != -1)
 				{
@@ -611,7 +611,7 @@ void parse_owner(inetconn *c, char *data)
 		h = userlist.findHandle(arg[1]);
 		if(h)
 		{
-			if(userlist.hasWriteAccess(c, arg[1]) == 1)
+			if(userlist.hasWriteAccess(c, arg[1]))
 			{
 				if((n = userlist.findHost(h, arg[2])) != -1)
 				{
@@ -672,7 +672,7 @@ void parse_owner(inetconn *c, char *data)
 		h = userlist.findHandle(userlist.first->name);
 		if(h)
 		{
-			if(userlist.hasWriteAccess(c, h->name) == 1)
+			if(userlist.hasWriteAccess(c, h))
 			{
 				if(userlist.addHost(h, buf, c->name, NOW) != -1)
 				{
@@ -695,7 +695,7 @@ void parse_owner(inetconn *c, char *data)
 		h = userlist.findHandle(userlist.first->name);
 		if(h)
 		{
-			if(userlist.hasWriteAccess(c, h->name) == 1)
+			if(userlist.hasWriteAccess(c, h))
 			{
 				if((n = userlist.findHost(h, arg[1])) != -1)
 				{
@@ -1447,7 +1447,7 @@ void parse_owner(inetconn *c, char *data)
 		else c->send("Invalid channel", NULL);
 		return;
 	}
-	if(!strcmp(arg[0], ".rjump")&& strlen(arg[2]))
+	if(!strcmp(arg[0], ".rjump") && strlen(arg[2]))
 	{
 		if(!c->checkFlag(HAS_S))
 		{
@@ -1495,7 +1495,7 @@ void parse_owner(inetconn *c, char *data)
 
 		return;
 	}
-	if(!strcmp(arg[0], ".rjump6")&& strlen(arg[2]))
+	if(!strcmp(arg[0], ".rjump6") && strlen(arg[2]))
 	{
 		if(!c->checkFlag(HAS_S))
 		{
@@ -1550,7 +1550,10 @@ void parse_owner(inetconn *c, char *data)
 	}
 	if(!strcmp(arg[0], ".chpass") && strlen(arg[2]))
 	{
-		if((n = userlist.hasWriteAccess(c, arg[1])) == 1)
+		HANDLE *h = userlist.findHandle(arg[1]);
+		if (!h)
+			c->send("Invalid handle", NULL);
+		else if(userlist.hasWriteAccess(c, h))
 		{
 			if(strlen(arg[2]) < 8)
 			{
@@ -1567,13 +1570,12 @@ void parse_owner(inetconn *c, char *data)
 				userlist.nextSave = NOW + SAVEDELAY;
 			}
 		}
-		else if(n == -1) c->send("Invalid handle", NULL);
 		else c->send(S_NOPERM, NULL);
 		return;
 	}
 	if(!strcmp(arg[0], ".chaddr") && strlen(arg[2]))
 	{
-		if(userlist.hasWriteAccess(c, arg[1]) == 1)
+		if(userlist.hasWriteAccess(c, arg[1]))
 		{
 			if(!(h = userlist.changeIp(arg[1], arg[2]))) c->send("Invalid handle or ip", NULL);
 			else
@@ -1740,26 +1742,26 @@ void parse_owner(inetconn *c, char *data)
 				++i;
 			}
 
-                        if(_test == 0 || _test == 2)
-                        {
-                                int hidx;
-                                bool no_hosts=true;
+			if(_test == 0 || _test == 2)
+			{
+				int hidx;
+				bool no_hosts=true;
 
-                                for(hidx=0; hidx<MAX_HOSTS; hidx++)
-                                {
-                                        if(h->host[hidx] && *h->host[hidx])
-                                        {
-                                                no_hosts=false;
-                                                break;
-                                        }
-                                }
-                                if(no_hosts)
-                                {
-                                        _a = push(_a, h->name, " ", NULL);
-                                        _i++;
-                                }
-                        }
-			
+				for(hidx=0; hidx<MAX_HOSTS; hidx++)
+				{
+					if(h->host[hidx] && *h->host[hidx])
+					{
+						no_hosts=false;
+						break;
+					}
+				}
+				if(no_hosts)
+				{
+					_a = push(_a, h->name, " ", NULL);
+					_i++;
+				}
+			}
+
 			if(!h->flags[GLOBAL] && (_test == 0 || _test == 3))
 			{
 				for(j = 0, _j = -1; _j == -1 && j < MAX_CHANNELS; j++)
@@ -2098,9 +2100,11 @@ void parse_owner(inetconn *c, char *data)
 			c->send(S_NOPERM, NULL);
 			return;
 		}
-		if((n = userlist.hasWriteAccess(c, arg[1])) == 1)
+		HANDLE *h = userlist.findHandle(arg[1]);
+		if(!h)
+			return;
+		if(userlist.hasWriteAccess(c, h))
 		{
-			HANDLE *h = userlist.findHandle(arg[1]);
 			if(h == userlist.first)
 			{
 				c->send("Let those idiots alone ;-)", NULL);
@@ -2152,7 +2156,7 @@ void parse_owner(inetconn *c, char *data)
 		HANDLE *h = userlist.findHandle(arg[1]);
 		if(h)
 		{
-			if(userlist.hasWriteAccess(c, arg[1]) == 1)
+			if(userlist.hasWriteAccess(c, arg[1]))
 			{
 				if(h->info && h->info->data.entries() > 5)
 				{
@@ -2216,7 +2220,7 @@ void parse_owner(inetconn *c, char *data)
 		HANDLE *h = userlist.findHandle(arg[1]);
 		if(h)
 		{
-			if(userlist.hasWriteAccess(c, arg[1]) == 1)
+			if(userlist.hasWriteAccess(c, arg[1]))
 			{
 				if(!h->info || !h->info->del(arg[2]))
 					c->send("Invalid key", NULL);
@@ -2799,7 +2803,7 @@ void parse_owner(inetconn *c, char *data)
 			h = userlist.findHandle(arg[1]);
 
 			if(h)
-			{	
+			{
 				if(!userlist.hasReadAccess(c, h))
 				{
 					c->send(S_NOPERM, NULL);
@@ -2911,69 +2915,69 @@ void parse_owner(inetconn *c, char *data)
 
 char *find_alias(const char *cmd)
 {
-    char alias_name[MAX_LEN], cmd_argv[10][MAX_LEN], *p=NULL, *end;
-    int idx, cmd_argc;
-    std::string str;
+	char alias_name[MAX_LEN], cmd_argv[10][MAX_LEN], *p=NULL, *end;
+	int idx, cmd_argc;
+	string str;
 
-    cmd_argc=str2words(cmd_argv[0], cmd, 10, MAX_LEN, 0);
+	cmd_argc=str2words(cmd_argv[0], cmd, 10, MAX_LEN, 0);
 
-    // look if the command is an alias
-    for(idx=0; idx < MAX_ALIASES; idx++)
-    {
-        str2words(alias_name, config.alias[idx], 1, MAX_LEN, 0);
+	// look if the command is an alias
+	for(idx=0; idx < MAX_ALIASES; idx++)
+	{
+		str2words(alias_name, config.alias[idx], 1, MAX_LEN, 0);
 
-        if(!strcasecmp(alias_name, cmd_argv[0]))
-        {
-            p=srewind(config.alias[idx], 1);
-            break;
-        }
-    }
+		if(!strcasecmp(alias_name, cmd_argv[0]))
+		{
+			p=srewind(config.alias[idx], 1);
+			break;
+		}
+	}
 
-    if(!p)
-        return NULL;
+	if(!p)
+		return NULL;
 
-    str=".";
+	str=".";
 
-    while(*p)
-    {
-        /* replace $n by the n'th word of the command
-         * and $n- by the n'th and all following words.
-         */
+	while(*p)
+	{
+		/* replace $n by the n'th word of the command
+		 * and $n- by the n'th and all following words.
+		 */
 
-        if(*p=='$')
-        {
-            *p++;
-            idx=strtoul(p, &end, 10);
-            idx++;
+		if(*p=='$')
+		{
+			*p++;
+			idx=strtoul(p, &end, 10);
+			idx++;
 
-            if(*end=='-')
-            {
-                if(idx < cmd_argc)
-                    str+=srewind(cmd, idx);
+			if(*end=='-')
+			{
+				if(idx < cmd_argc)
+					str+=srewind(cmd, idx);
 
-                *end++;
-            }
+				*end++;
+			}
 
-            else if(idx < cmd_argc)
-                str+=cmd_argv[idx];
+			else if(idx < cmd_argc)
+				str+=cmd_argv[idx];
 
-            p=end;
-        }
+			p=end;
+		}
 
-        else
-        {
-            str+=*p+std::string();
-            *p++;
-        }
-    }
+		else
+		{
+			str+=*p+std::string();
+			*p++;
+		}
+	}
 
-   p=NULL;
+	p=NULL;
 
-   if(str.length() > 0)
-   {
-       p=(char *) malloc(str.length()+1);
-       strcpy(p, str.c_str());
-   }
+	if(str.length() > 0)
+	{
+		p=(char *) malloc(str.length()+1);
+		strcpy(p, str.c_str());
+	}
 
-   return p;
+	return p;
 }

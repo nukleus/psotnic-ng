@@ -178,7 +178,7 @@ int getRandomItems(chanuser **ret, ptrlist<chanuser>::iterator start, int interv
 
 /* string functions */
 void nickCreator(char *nick);
-int extendhost(const char *host, char *buf, unsigned int len);
+bool extendhost(const char *host, char *buf, unsigned int len);
 char *expand(const char *str, char *buf, int len, const char *args);
 unsigned int hash32(const char *word);
 int str2words(char *word, const char *str, int x, int y, int ircstrip=0);
@@ -188,7 +188,7 @@ char *memmem(void *vsp, size_t len1, void *vpp, size_t len2);
 char *push(char *ptr, const char *lst, ...);
 char *va_push(char *ptr, va_list ap, const char *lst, int size);
 int va_getlen(va_list ap, const char *lst);
-int isNullString(const char *str, int len);
+bool isNullString(const char *str, int len);
 char *itoa(int val);
 const char *getFileName(const char *path);
 int count(const char *arr[]);
@@ -237,11 +237,11 @@ char *h_strerror(int error);
 char *fetchVersion(char *buf, int client);
 char *int2units(char *buf, int len, int val, unit_table *ut);
 int units2int(const char *str, unit_table *ut, int &out);
-int isPrefix(char c);
+bool isPrefix(char c);
 int domaincmp(const char *s1, const char *s2, int n);
 char *getPartOfDomain(const char *s, int n);
 void addToCron(int i, char *argv[], int argc);
-int ipcmp(const char *s1, const char *s2, char sep, int count);
+bool ipcmp(const char *s1, const char *s2, char sep, int count);
 void error(const char *type, const char *str);
 int enableCoreDumps();
 void botnetcmd(const char *from, const char *cmd);
@@ -256,7 +256,7 @@ void *__adns_work(void *);
 int loadModule(const char *name);
 #endif
 
-int _isnumber(const char *str);
+bool _isnumber(const char *str);
 
 void gen_ul_seed(unsigned char *);
 void gen_cfg_seed(unsigned char *);

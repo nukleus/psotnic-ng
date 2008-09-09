@@ -147,13 +147,13 @@ void mem_strcat(char *&dest, const char *src)
 	strcat(dest, src);
 }
 
-int isNullString(const char *str, int len)
+bool isNullString(const char *str, int len)
 {
 	int i;
 
 	for(i=0; i<len; ++i)
-		if(*str++) return 0;
-	return 1;
+		if(*str++) return false;
+	return true;
 }
 
 int imUp()
@@ -726,17 +726,17 @@ void propaganda()
 	printf("\n");
 }
 
-int extendhost(const char *host, char *buf, unsigned int len)
+bool extendhost(const char *host, char *buf, unsigned int len)
 {
 	char *ex, *at;
 
 	if(strlen(host) + 10 > len || !isRealStr(host) || *host == '#')
-		return 0;
+		return false;
 
 	ex = strchr(host, '!');
 	at = strchr(host, '@');
 
-	if(ex != strrchr(host, '!') || at != strrchr(host, '@')) return 0;
+	if(ex != strrchr(host, '!') || at != strrchr(host, '@')) return false;
 	
 	if(at)
 	{
@@ -753,21 +753,21 @@ int extendhost(const char *host, char *buf, unsigned int len)
 		}
 		else strcpy(buf, host);
 		if(*(at + 1) == '\0') strcat(buf, "*");
-		return 1;
+		return true;
 	}
 	else
 	{
-		if(ex) return 0;
+		if(ex) return false;
 		if(strchr(host, '.') || strchr(host, ':'))
 		{
 			strcpy(buf, "*!*@");
 			strcat(buf, host);
-			return 1;
+			return true;
 		}
 		strcpy(buf, "*!");
 		strcat(buf, host);
 		strcat(buf, "@*");
-		return 1;
+		return true;
 	}
 }
 
@@ -1473,11 +1473,11 @@ int count(const char *arr[])
 	return i;
 }
 
-int isPrefix(char c)
+bool isPrefix(char c)
 {
 	if(c == '+' || c == '-' || c == '=' || c == '~' || c == '^')
-		return 1;
-	else return 0;
+		return true;
+	else return false;
 }
 
 int domaincmp(const char *s1, const char *s2, int n)
@@ -1594,28 +1594,28 @@ void addToCron(int i, char *argv[], int argc)
 	}
 }
 
-int ipcmp(const char *s1, const char *s2, char sep, int count)
+bool ipcmp(const char *s1, const char *s2, char sep, int count)
 {
 	int i;
 	
 	if(!s1 || !s2)
-		return 0;
+		return false;
 
 	for(i=0; i<count; )
 	{
 		if(!*s1 || !*s2 || *s1 != *s2)
-			return 0;
+			return false;
 		
 		if(*s1 == sep)
 		{
 			++i;
 			if(i == count)
-				return 1;
+				return true;
 		}
 		++s1;
 		++s2;
 	}
-	return 0;
+	return false;
 }
 
 char *nindex(const char *str, int count, char sep)
@@ -1735,13 +1735,13 @@ char *rtrim(char *str)
 	return back;
 }
 
-int _isnumber(const char *str)
+bool _isnumber(const char *str)
 {
 	int i = (str[0] == '-') ? 1 : 0;
 
 	for( ; str[i]; i++)
 		if(!isdigit((int) str[i]))
-			return 0;
-	return 1;
+			return false;
+	return true;
 }
 

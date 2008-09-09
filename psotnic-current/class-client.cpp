@@ -440,7 +440,7 @@ void client::joinAllChannels()
 			buf.push((const char *) userlist.chanlist[i].name);
 			++j;
 
-			if(j == ME.server.isupport.maxwho)
+			if(j == ME.server.isupport.max_who_targets)
 			{
 				net.irc.send(buf.data, NULL);
 				penalty += j + 1;
@@ -818,6 +818,16 @@ void client::checkQueue()
 	Pchar buf;
 	for(level=1; level<10; level+=2)
 	{
+		if((level == 5 && !ME.server.isupport.find("INVEX"))
+		   || (level == 7 && !ME.server.isupport.find("EXEMPTS"))
+		   || (level == 9 && chan::getTypeOfChanMode('R') != 'A'))
+		{
+			for(ch=first; ch; ch=ch->next)
+				 ch->synlevel+=2;
+
+			continue;
+		}
+
 		ch = first;
 		i = 0;
 		while(ch)
@@ -828,7 +838,7 @@ void client::checkQueue()
 				buf.push((const char *) ch->name);
 				++ch->synlevel;
 				++i;
-				if(i == 4) break;
+				if(i == ME.server.isupport.max_mode_targets) break;
 			}
 			ch = ch->next;
 		}

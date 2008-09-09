@@ -21,7 +21,7 @@
 #include "prots.h"
 #include "global-var.h"
 
-bool CONFIG::load(const char *file, bool decrypted)
+void CONFIG::load(const char *file, bool decrypted)
 {
 	char arg[10][MAX_LEN], buf[MAX_LEN];
 	int line = 0, n;
@@ -201,6 +201,4 @@ bool CONFIG::load(const char *file, bool decrypted)
 
 	}
 #endif
-
-	return 1;
 }

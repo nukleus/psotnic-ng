@@ -133,7 +133,7 @@ void signalHandling()
 
 	register_signal(SIGPIPE, SIG_IGN);
 	register_signal(SIGCHLD, (sighandler_t) sigChild);
- 	register_signal(SIGTERM, (sighandler_t) sigTerm);
+	register_signal(SIGTERM, (sighandler_t) sigTerm);
 	register_signal(SIGINT, (sighandler_t) sigInt);
 	register_signal(SIGHUP, (sighandler_t) sigHup);
 	register_signal(SIGUSR1, (sighandler_t) sigUpdated);

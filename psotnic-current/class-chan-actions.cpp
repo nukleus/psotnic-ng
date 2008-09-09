@@ -150,7 +150,7 @@ int chan::kick4(chanuser **MultHandle, int num)
 
 	if(penalty < 10 && me->flags & IS_OP)
 	{
-		for(i=j=0; i<num && j<ME.server.isupport.maxkicks; ++i)
+		for(i=j=0; i<num && j<ME.server.isupport.max_kick_targets; ++i)
 		{
 			if(*MultHandle[i]->nick && !(MultHandle[i]->flags & KICK_SENT))
 			{

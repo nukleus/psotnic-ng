@@ -21,6 +21,11 @@
 #include "prots.h"
 #include "global-var.h"
 
+Server::Server()
+{
+    isupport.server=this;
+}
+
 void Server::Isupport::insert(const char *key, const char *value)
 {
     if(!key || !*key)
@@ -120,6 +125,10 @@ void Server::Isupport::init()
             maxlist=atoi(p1);
     }
 
+    max_kick_targets=1;
+    max_who_targets=1;
+    max_mode_targets=1;
+
     if((p1=find("TARGMAX")))
     {
         /* The TARGMAX parameter specifies the maximum number of targets
@@ -135,25 +144,30 @@ void Server::Isupport::init()
          * "PART" commands accept multiple parameters.
          */
 
-        maxkicks=1;
-        maxwho=1;
-
         while(*p1)
         {
            if(!strncasecmp(p1, "KICK:", 5))
            {
-              maxkicks=atoi(p1+5);
+              max_kick_targets=atoi(p1+5);
 
-              if(maxkicks <= 0)
-                  maxkicks=30;
+              if(max_kick_targets <= 0)
+                  max_kick_targets=30;
            }
 
            else if(!strncasecmp(p1, "WHO:", 4))
            {
-              maxwho=atoi(p1+4);
+              max_who_targets=atoi(p1+4);
 
-              if(maxwho <= 0)
-                  maxwho=30;
+              if(max_who_targets <= 0)
+                  max_who_targets=30;
+           }
+
+           else if(!strncasecmp(p1, "MODE:", 5))
+           {
+               max_mode_targets=atoi(p1+5);
+
+               if(max_mode_targets > 4 || max_mode_targets <= 0)
+                   max_mode_targets=4;
            }
 
            p1=strchr(p1, ',');
@@ -168,10 +182,18 @@ void Server::Isupport::init()
 
     else
     {
-        // IRCnet defaults
+        // lame IRCnet check
 
-        maxkicks=4;
-        maxwho=11; // MAXPENALTY + 1
+        p1=find("NETWORK");
+
+        if((p1 && !strcasecmp(p1, "ircnet"))
+           || match("2.*", server->version))
+        {
+            // hardcoded IRCnet defaults
+            max_kick_targets=4;
+            max_who_targets=11; // MAXPENALTY + 1
+            max_mode_targets=4; // there is no limit actually
+        }
     }
 }
 

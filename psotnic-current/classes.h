@@ -766,7 +766,7 @@ class CONFIG : public options
 
 	CONFIG();
 	void polish();
-	bool load(const char *file, bool decrypted=false);
+	void load(const char *file, bool decrypted=false);
 	options::event *save(bool decrypted=false);
 };
 
@@ -920,6 +920,7 @@ class Server
             public:
             typedef std::map<std::string, std::string> isupportType;
             isupportType isupport_map; ///< contains all 005 tokens
+            Server *server; // pointer to upper class
 
             /* the following variables are in the map too,
              * but either they are used very often, so the bot should not search
@@ -930,8 +931,10 @@ class Server
             char *chanmodes; ///< indicates the channel modes available and the arguments they take (format: "A,B,C,D")
             int maxchannels; ///< maximum number of chans a client can join
             int maxlist; ///< limits how many "variable" modes of type A a client may set in total on a channel
-            int maxkicks; ///< maximum number of users that can be kicked with one KICK command
-            int maxwho; ///< maximum number of targets that are allowed in a WHO command
+            int max_kick_targets; ///< maximum number of users that can be kicked with one KICK command
+            int max_who_targets; ///< maximum number of targets that are allowed in a WHO command
+            int max_mode_targets; /**< maximum number of targets (channels and users) that are allowed in a MODE command
+                                      e.g. MODE #chan1,#chan2,#chan3 */
 
             void insert(const char *key, const char *value);
             const char *find(const char *key);
@@ -939,7 +942,7 @@ class Server
             void init();
         } isupport;
 
-	Server() { };
+	Server();
 	~Server() {}
 	void reset();
 };
@@ -1027,7 +1030,7 @@ class ul
 
 	int userLevel(const HANDLE *h, int n) const;
 	int userLevel(int flags) const;
-	int hasEmptyFlags(const HANDLE *h) const;
+	bool hasEmptyFlags(const HANDLE *h) const;
 	HANDLE *me();
 
 	/* `idiots' code */
@@ -1063,18 +1066,18 @@ class ul
 	static int str2userFlags(const char *str);
 	static int str2botFlags(const char *str);
 	static void compactFlags(char *str);
-	int hasPartylineAccess(const char *mask) const;
-	static int isBot(const HANDLE *h);
-	int isBot(const char *name);
-	int isBot(unsigned int ip);
-	static int isMain(const HANDLE *h);
-	static int isSlave(const HANDLE *h);
-	static int isLeaf(const HANDLE *h);
-	int isIdiot(const char *mask, int channum) const;
+	bool hasPartylineAccess(const char *mask) const;
+	static bool isBot(const HANDLE *h);
+	bool isBot(const char *name);
+	bool isBot(unsigned int ip);
+	static bool isMain(const HANDLE *h);
+	static bool isSlave(const HANDLE *h);
+	static bool isLeaf(const HANDLE *h);
+	bool isIdiot(const char *mask, int channum) const;
 
 	/* Channels */
 	int addChannel(const char *name, const char *pass, const char *attr);
-	int removeChannel(const char *name, char *removedName=NULL);
+	bool removeChannel(const char *name, char *removedName=NULL);
 	int findChannel(const char *name) const;
 	bool globalChset(inetconn *c, const char *var, const char *value, int *index=NULL);
 	int isRjoined(int i, const HANDLE *h=NULL);
@@ -1088,7 +1091,7 @@ class ul
 	void sendHandleInfo(inetconn *c, const HANDLE *h, const char *mask=NULL);
 	void sendDSetsToBots(const char *channel);
 
-	int save(const char *file, const int cypher=1, const char *key=NULL);
+	bool save(const char *file, const int cypher=1, const char *key=NULL);
 	int load(const char *file, const int cypher=1, const char *key=NULL);
 	void update();
 	void send(inetconn *c);
@@ -1099,10 +1102,10 @@ class ul
 	HANDLE *changePass(char *user, char *pass);
 	HANDLE *changeIp(char *user, char *ip);
 	void setPassword(char *user, char *rawpass);
-	int hasWriteAccess(inetconn *c, char *handle);
-	int hasWriteAccess(inetconn *c, HANDLE *h);
-	int hasReadAccess(inetconn *c, char *handle);
-	int hasReadAccess(inetconn *c, HANDLE *h);
+	bool hasWriteAccess(inetconn *c, char *handle);
+	bool hasWriteAccess(inetconn *c, HANDLE *h);
+	bool hasReadAccess(inetconn *c, char *handle);
+	bool hasReadAccess(inetconn *c, HANDLE *h);
 
 	HANDLE *matchPassToHandle(const char *pass, const char *host, const int flags=0) const;
 	void autoSave(int notice=1);

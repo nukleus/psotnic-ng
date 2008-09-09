@@ -71,136 +71,136 @@ void parse_irc(char *data)
 	}
 #endif
 
-    /* reaction */
-    if(!strcmp(arg[1], "JOIN"))
-    {
-	chanuser u(arg[0], NULL, 0, false);
-        int netjoin = arg[2][0] != ':';
-        if(netjoin)
-            a = arg[2];
-        else
-            a = arg[2] + 1;
+	/* reaction */
+	if(!strcmp(arg[1], "JOIN"))
+	{
+		chanuser u(arg[0], NULL, 0, false);
+		int netjoin = arg[2][0] != ':';
+		if(netjoin)
+			a = arg[2];
+		else
+			a = arg[2] + 1;
 
-	if(!strcasecmp(ME.nick, u.nick))
-        {
-		if(!ME.findNotSyncedChannel(a))
+		if(!strcasecmp(ME.nick, u.nick))
 		{
-			// FIXME: WHO flood if bot receives many JOIN's
+			if(!ME.findNotSyncedChannel(a))
+			{
+				// FIXME: WHO flood if bot receives many JOIN's
 
-			if((i = userlist.findChannel(a)) != -1)
-			{
-				ME.createNewChannel(a);
-				if(!(userlist.chanlist[i].status & WHO_SENT))
+				if((i = userlist.findChannel(a)) != -1)
 				{
-					net.irc.send("WHO ", a, NULL);
-					penalty+=2;
-				}
-			}
-			//if thats !channel maybe we have to change its name
-			//to !0WN3Dchannel
-			//FIXME: is that necessary?
-			else if(*a == '!' && strlen(a) > 6)
-			{
-				buf[0] = '!';
-				strcpy(buf+1, a + 6);
-				if((i = userlist.findChannel(buf)) != -1)
-				{
-					userlist.chanlist[i].name = a;
 					ME.createNewChannel(a);
 					if(!(userlist.chanlist[i].status & WHO_SENT))
 					{
 						net.irc.send("WHO ", a, NULL);
-       		        			penalty+=2;
+						penalty+=2;
 					}
+				}
+				//if thats !channel maybe we have to change its name
+				//to !0WN3Dchannel
+				//FIXME: is that necessary?
+				else if(*a == '!' && strlen(a) > 6)
+				{
+					buf[0] = '!';
+					strcpy(buf+1, a + 6);
+					if((i = userlist.findChannel(buf)) != -1)
+					{
+						userlist.chanlist[i].name = a;
+						ME.createNewChannel(a);
+						if(!(userlist.chanlist[i].status & WHO_SENT))
+						{
+							net.irc.send("WHO ", a, NULL);
+							penalty+=2;
+						}
+					}
+				}
+				else
+				{
+					net.irc.send("PART ", a, " :wtf?", NULL);
+					penalty += 3;
 				}
 			}
 			else
 			{
-				net.irc.send("PART ", a, " :wtf?", NULL);
-				penalty += 3;
+				net.send(HAS_N, "\0039 >> Double join to ", a, " <<\003", NULL);
 			}
 		}
 		else
 		{
-			net.send(HAS_N, "\0039 >> Double join to ", a, " <<\003", NULL);
-		}
-        }
-        else
-        {
-		ch = ME.findChannel(a);
-		if(ch)
-			ch->gotJoin(arg[0], netjoin ? NET_JOINED : 0);
+			ch = ME.findChannel(a);
+			if(ch)
+				ch->gotJoin(arg[0], netjoin ? NET_JOINED : 0);
 #ifdef HAVE_DEBUG
-		else if(!ME.findNotSyncedChannel(a))
-			net.send(HAS_N, "\0039 >>> Join observed to non exitsing channel ", a, "<<\003", NULL);
+			else if(!ME.findNotSyncedChannel(a))
+				net.send(HAS_N, "\0039 >>> Join observed to non exitsing channel ", a, "<<\003", NULL);
 #endif
+		}
+		return;
 	}
-        return;
-    }
-    if(!strcmp(arg[1], "MODE"))
-    {
-        ch = ME.findChannel(arg[2]);
-        if(ch)
-        {
-            a = push(NULL, arg[4], " ", arg[5], " ", arg[6], " ", arg[7], NULL);
-            ch->gotMode(arg[3], a, arg[0]);
-            free(a);
-        }
-        return;
-    }
-    if(!strcmp(arg[1], "KICK"))
-    {
-        if(!strcasecmp(ME.nick, arg[3]))
-        {
+	if(!strcmp(arg[1], "MODE"))
+	{
+		ch = ME.findChannel(arg[2]);
+		if(ch)
+		{
+			a = push(NULL, arg[4], " ", arg[5], " ", arg[6], " ", arg[7], NULL);
+			ch->gotMode(arg[3], a, arg[0]);
+			free(a);
+		}
+		return;
+	}
+	if(!strcmp(arg[1], "KICK"))
+	{
+		if(!strcasecmp(ME.nick, arg[3]))
+		{
 			ch = ME.findChannel(arg[2]);
 			if(ch)
 				ch->buildAllowedOpsList(arg[0]);
 			ME.removeChannel(arg[2]);
-           	ME.rejoin(arg[2], set.REJOIN_DELAY);
-        }
-        else
-        {
-            ch = ME.findChannel(arg[2]);
-            if(ch)
-                ch->gotKick(arg[3], arg[0], srewind(data, 4)+1);
-        }
-        return;
-    }
-    if(!strcmp(arg[1], "PART"))
-    {
+			ME.rejoin(arg[2], set.REJOIN_DELAY);
+		}
+		else
+		{
+			ch = ME.findChannel(arg[2]);
+			if(ch)
+				ch->gotKick(arg[3], arg[0], srewind(data, 4)+1);
+		}
+		return;
+	}
+	if(!strcmp(arg[1], "PART"))
+	{
 		HOOK(pre_part, pre_part(arg[0], arg[2], srewind(data,3), false));
 		stopParsing=false;
-		
-        if(!strcasecmp(ME.mask, arg[0]))
-        {
-            ME.removeChannel(arg[2]);
-			penalty += 4;
-        }
-        else
-        {
-            ch = ME.findChannel(arg[2]);
-            if(ch)
-            {
-                mem_strncpy(a, arg[0], abs(arg[0] - strchr(arg[0], '!')) + 1);
-                ch->gotPart(a, 0);
-                free(a);
-            }
 
-        }
+		if(!strcasecmp(ME.mask, arg[0]))
+		{
+			ME.removeChannel(arg[2]);
+			penalty += 4;
+		}
+		else
+		{
+			ch = ME.findChannel(arg[2]);
+			if(ch)
+			{
+				mem_strncpy(a, arg[0], abs(arg[0] - strchr(arg[0], '!')) + 1);
+				ch->gotPart(a, 0);
+				free(a);
+			}
+
+		}
 		HOOK(post_part, post_part(arg[0], arg[2], srewind(data,3), false));
 		stopParsing=false;
-        return;
-    }
-    if(!strcmp(arg[1], "NICK"))
-    {
-        ME.gotNickChange(arg[0], arg[2]);
-        return;
-    }
-    if(!strcasecmp(arg[1], "352"))
-    {
-        ch = ME.findNotSyncedChannel(arg[3]);
-        if(ch && !ch->synced())
-        {
+		return;
+	}
+	if(!strcmp(arg[1], "NICK"))
+	{
+		ME.gotNickChange(arg[0], arg[2]);
+		return;
+	}
+	if(!strcasecmp(arg[1], "352"))
+	{
+		ch = ME.findNotSyncedChannel(arg[3]);
+		if(ch && !ch->synced())
+		{
 
 			wasoptest *w = userlist.chanlist[ch->channum].allowedOps;
 			if(w && w->since + w->TOL <= NOW)
@@ -659,97 +659,97 @@ void parse_irc(char *data)
 					{
 						p = ch->getUser(arg[0]);
 						if(p && p->flags & (HAS_V | HAS_O) && !(p->flags & IS_VOICE))
-            	    	{
-	                    	HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
-            	        	if(h) ch->modeQ[PRIO_LOW].add(NOW + i, "+v", p->nick);
+						{
+							HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
+							if(h) ch->modeQ[PRIO_LOW].add(NOW + i, "+v", p->nick);
 							i+=4;
-                		}
+						}
 					}
 				}
 				return;
-	        }
-			
-			
+			}
 
-	        /* invite pass #chan */
+
+
+			/* invite pass #chan */
 			if((!strcmp(arg[3], "invite") || !strcmp(arg[3], ".invite") || !strcmp(arg[3], "!invite")) && strlen(arg[5]))
-        	{
-	            ch = ME.findChannel(arg[5]);
-    	        if(ch)
-	            {
-    	            HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
-        	        if(h && (h->flags[MAX_CHANNELS] & HAS_F || h->flags[ch->channum] & HAS_F))
-            	    {
-	                    ch->invite(arg[0]);
-    	            }
-        	    }
-	            return;
-    	    }
-	        /* key pass chan */
-			if((!strcmp(arg[3], "key") || !strcmp(arg[3], ".key") || !strcmp(arg[3], "!key")) && strlen(arg[5]))
-	        {
-    	        ch = ME.findChannel(arg[5]);
-        	    if(ch && ch->key && *ch->key)
-            	{
-	                HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
-    	            if(h && (h->flags[MAX_CHANNELS] & HAS_F || h->flags[ch->channum] & HAS_F))
-						ctcp.push("NOTICE ", arg[0], " :", arg[5], "'s key: ", (const char *) ch->key, NULL);
-	            }
+			{
+				ch = ME.findChannel(arg[5]);
+				if(ch)
+				{
+					HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
+					if(h && (h->flags[MAX_CHANNELS] & HAS_F || h->flags[ch->channum] & HAS_F))
+					{
+						ch->invite(arg[0]);
+					}
+				}
 				return;
-	        }
-		/* pass oldpass newpass */
-		if(config.bottype == BOT_MAIN && (!strcmp(arg[3], "pass") || !strcmp(arg[3], ".pass") || !strcmp(arg[3], "!pass")) && strlen(arg[4]))
-		{
-		    HANDLE *h;
-		    if(strlen(arg[5])) // pass change
-		    {
-			h = userlist.matchPassToHandle(arg[4], arg[0], 0);
-			
-			if(h)
-			{
-			    if(strlen(arg[5]) < 8)
-			    {
-		    		ctcp.push("NOTICE ", arg[0], " :New password must be at least 8 characters long!", NULL);
-			    }
-			    else
-			    {
-				char buf[MAX_LEN];
-    	        		userlist.changePass(h->name, arg[5]);
-				net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has changed his password", NULL);
-				net.send(HAS_B, S_PASSWD, " ", h->name, " ", quoteHexStr(h->pass, buf), NULL);
-
-				ctcp.push("NOTICE ", arg[0], " :Password changed", NULL);
-                     		++userlist.SN;
-                		userlist.nextSave = NOW + SAVEDELAY;			    
-			    }
 			}
-			return;
-		    }
-		    else // pass set
-		    {
-			h = userlist.findHandleByHost(arg[0]);
-			if(h && h != userlist.first && (!strcmp((const char*) h->pass, "0000000000000000") || !strlen((const char*) h->pass))) // no pass
+			/* key pass chan */
+			if((!strcmp(arg[3], "key") || !strcmp(arg[3], ".key") || !strcmp(arg[3], "!key")) && strlen(arg[5]))
 			{
-			    if(strlen(arg[4]) < 8)
-			    {
-		    		ctcp.push("NOTICE ", arg[0], " :Password must be at least 8 characters long!", NULL);			    
-			    }
-			    else
-			    {
-				char buf[MAX_LEN];
-    	        		userlist.changePass(h->name, arg[4]);
-				net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has set his password", NULL);
-				net.send(HAS_B, S_PASSWD, " ", h->name, " ", quoteHexStr(h->pass, buf), NULL);
-
-				ctcp.push("NOTICE ", arg[0], " :Password set", NULL);
-                     		++userlist.SN;
-                		userlist.nextSave = NOW + SAVEDELAY;			    				
-			    }
+				ch = ME.findChannel(arg[5]);
+				if(ch && ch->key && *ch->key)
+				{
+					HANDLE *h = userlist.matchPassToHandle(arg[4], arg[0], 0);
+					if(h && (h->flags[MAX_CHANNELS] & HAS_F || h->flags[ch->channum] & HAS_F))
+						ctcp.push("NOTICE ", arg[0], " :", arg[5], "'s key: ", (const char *) ch->key, NULL);
+				}
+				return;
 			}
-			return;
-		    }
-		}   
-	    
+			/* pass oldpass newpass */
+			if(config.bottype == BOT_MAIN && (!strcmp(arg[3], "pass") || !strcmp(arg[3], ".pass") || !strcmp(arg[3], "!pass")) && strlen(arg[4]))
+			{
+				HANDLE *h;
+				if(strlen(arg[5])) // pass change
+				{
+					h = userlist.matchPassToHandle(arg[4], arg[0], 0);
+
+					if(h)
+					{
+						if(strlen(arg[5]) < 8)
+						{
+							ctcp.push("NOTICE ", arg[0], " :New password must be at least 8 characters long!", NULL);
+						}
+						else
+						{
+							char buf[MAX_LEN];
+							userlist.changePass(h->name, arg[5]);
+							net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has changed his password", NULL);
+							net.send(HAS_B, S_PASSWD, " ", h->name, " ", quoteHexStr(h->pass, buf), NULL);
+
+							ctcp.push("NOTICE ", arg[0], " :Password changed", NULL);
+							++userlist.SN;
+							userlist.nextSave = NOW + SAVEDELAY;
+						}
+					}
+					return;
+				}
+				else // pass set
+				{
+					h = userlist.findHandleByHost(arg[0]);
+					if(h && h != userlist.first && (!strcmp((const char*) h->pass, "0000000000000000") || !strlen((const char*) h->pass))) // no pass
+					{
+						if(strlen(arg[4]) < 8)
+						{
+							ctcp.push("NOTICE ", arg[0], " :Password must be at least 8 characters long!", NULL);
+						}
+						else
+						{
+							char buf[MAX_LEN];
+							userlist.changePass(h->name, arg[4]);
+							net.send(HAS_N, "[*] \002",(const char *) h->name, "\002 has set his password", NULL);
+							net.send(HAS_B, S_PASSWD, " ", h->name, " ", quoteHexStr(h->pass, buf), NULL);
+
+							ctcp.push("NOTICE ", arg[0], " :Password set", NULL);
+							++userlist.SN;
+							userlist.nextSave = NOW + SAVEDELAY;
+						}
+					}
+					return;
+				}
+			}
+
 			/* chat */
 			if(config.bottype == BOT_MAIN && (!strcmp(arg[3], "chat") || !strcmp(arg[3], ".chat") || !strcmp(arg[3], "!chat")))
 			{
@@ -761,105 +761,105 @@ void parse_irc(char *data)
 				return;
 			}
 
-    	    /* mainowner */
-        	if(creation && !strcmp(arg[3], "mainowner") && strlen(arg[5]))
-	        {
-    	        if(!strcmp(arg[4], "idiots"))
-        	    {
-            	    net.irc.send("PRIVMSG ", arg[0], " :Invalid handle", NULL);
-                	return;
-	            }
-    	        if(strlen(arg[5]) < 8)
-        	    {
-            	    net.irc.send("PRIVMSG ", arg[0], " :Password must be at least 8 characters long", NULL);
-                	return;
-	            }
+			/* mainowner */
+			if(creation && !strcmp(arg[3], "mainowner") && strlen(arg[5]))
+			{
+				if(!strcmp(arg[4], "idiots"))
+				{
+					net.irc.send("PRIVMSG ", arg[0], " :Invalid handle", NULL);
+					return;
+				}
+				if(strlen(arg[5]) < 8)
+				{
+					net.irc.send("PRIVMSG ", arg[0], " :Password must be at least 8 characters long", NULL);
+					return;
+				}
 
-    	        HANDLE *h = userlist.addHandle(arg[4], 0, 0, 0, 0, arg[4]);
-        	    if(h)
-            	{
-                	sprintf(buf, "*%s", strchr(arg[0], '!'));
-	                userlist.addHost(h, buf, arg[4], NOW);
-    	            userlist.changePass(arg[4], arg[5]);
-        	        userlist.changeFlags(arg[4], "aofmnstx", "");
-	
-    	            net.irc.send("PRIVMSG ", arg[0], " :Account created", NULL);
-        	        printf("[*] Added user `%s' with host `%s' and password `%s'\n", arg[4], buf, arg[5]);
+				HANDLE *h = userlist.addHandle(arg[4], 0, 0, 0, 0, arg[4]);
+				if(h)
+				{
+					sprintf(buf, "*%s", strchr(arg[0], '!'));
+					userlist.addHost(h, buf, arg[4], NOW);
+					userlist.changePass(arg[4], arg[5]);
+					userlist.changeFlags(arg[4], "aofmnstx", "");
+
+					net.irc.send("PRIVMSG ", arg[0], " :Account created", NULL);
+					printf("[*] Added user `%s' with host `%s' and password `%s'\n", arg[4], buf, arg[5]);
 					printf("[*] Now do `/chat %s' and supply owner pass from the config file and %s's password\n", (const char *) ME.nick, arg[4]);
 
-                	++userlist.SN;
-	                userlist.save(config.userlist_file);
+					++userlist.SN;
+					userlist.save(config.userlist_file);
 
 #ifdef HAVE_DEBUG
 					if(!debug)
 #endif
-                    lurk();
-        	        creation = 0;
-            	    ++userlist.SN;
-	            }
+						lurk();
+					creation = 0;
+					++userlist.SN;
+				}
 				return;
-	        }
+			}
 		}
 
-        return;
-    }
-    /* some numeric replies */
-    if((i = atoi(arg[1])))
-    {
-        ch = ME.findChannel(arg[3]);
-        if(ch)
-        {
-		protmodelist::entry *global, *local;
+		return;
+	}
+	/* some numeric replies */
+	if((i = atoi(arg[1])))
+	{
+		ch = ME.findChannel(arg[3]);
+		if(ch)
+		{
+			protmodelist::entry *global, *local;
 
-            switch(i)
-            {
-            	case RPL_BANLIST:
+			switch(i)
+			{
+				case RPL_BANLIST:
 					ch->list[BAN].add(arg[4], "", protmodelist::isSticky(arg[4], BAN, ch) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					return;
-		case RPL_ENDOFBANLIST:
+				case RPL_ENDOFBANLIST:
 					++ch->synlevel;
 					ch->list[BAN].received=true;
 					return;
-            	case RPL_EXCEPTLIST:
+				case RPL_EXCEPTLIST:
 					local=ch->protlist[EXEMPT]->find(arg[4]);
 					global=userlist.protlist[EXEMPT]->find(arg[4]);
 					ch->list[EXEMPT].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					if(ch->chset->USER_EXEMPTS==2 && !local && !global)
 						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-e", arg[4]);
 					return;
-            	case RPL_ENDOFEXCEPTLIST:
-                			++ch->synlevel;
+				case RPL_ENDOFEXCEPTLIST:
+					++ch->synlevel;
 					ch->list[EXEMPT].received=true;
-                			return;
-            	case RPL_INVITELIST:
+					return;
+				case RPL_INVITELIST:
 					local=ch->protlist[INVITE]->find(arg[4]);
 					global=userlist.protlist[INVITE]->find(arg[4]);
 					ch->list[INVITE].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					if(ch->chset->USER_INVITES==2 && !local && !global)
 						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-I", arg[4]);
 					return;
-            	case RPL_ENDOFINVITELIST:
+				case RPL_ENDOFINVITELIST:
 					++ch->synlevel;
 					ch->list[INVITE].received=true;
 					return;
-		case RPL_REOPLIST:
+				case RPL_REOPLIST:
 					local=ch->protlist[REOP]->find(arg[4]);
 					global=userlist.protlist[REOP]->find(arg[4]);
 					ch->list[REOP].add(arg[4], "", ((local && local->sticky) || (global && global->sticky)) ? 0 : set.BIE_MODE_BOUNCE_TIME);
 					if(ch->chset->USER_REOPS==2 && !local && !global)
 						ch->modeQ[PRIO_LOW].add(NOW+penalty+10, "-R", arg[4]);
 					return;
-		case RPL_ENDOFREOPLIST:
+				case RPL_ENDOFREOPLIST:
 					++ch->synlevel;
 					ch->list[REOP].received=true;
 					return;
-		case ERR_NOSUCHNICK:
+				case ERR_NOSUCHNICK:
 					penalty -= 2;
 					return;
-		case ERR_NOSUCHCHANNEL:
+				case ERR_NOSUCHCHANNEL:
 					penalty--;
 					return;
-		default:
+				default:
 					break;
 			}
 		}
