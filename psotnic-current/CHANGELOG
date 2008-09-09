@@ -54,8 +54,7 @@ Psotnic 0.2.13 (2007/10/10) changes:
 - fixed: now will build on FreeBSD 4.11 (made a va_copy wrapper) (uukgoblin)
 - fixed: now should build and work on x86_64 (uukgoblin)
 - fixed: segfaults occuring on x86_64 and possibly i386 too (uukgoblin)
-- fixed: .
-whois command now show offences correctly (Esio)
+- fixed: .whois command now show offences correctly (Esio)
 - change: improved offences reporting and managing system (Esio)
 - added: .me command :) (Esio)
 - fixed: update problems on some bots (small ommision in code;>)
