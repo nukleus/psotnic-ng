@@ -16,13 +16,16 @@
 * svn log https://psotnic.svn.sourceforge.net/svnroot/psotnic                         *
 ***************************************************************************************
 
-Psotnic 0.2.14-pre1 (2008/08/31) most important changes:
+Psotnic 0.2.14-pre1 (2008/09/09) most important changes:
+- added Doxygen files to be able to generate the API documentation (files by [C]167)
 - config file generator, see ./psotnic -n (coded by [C]167)
 - aliases for partyline commands, .bc <bot> cfg +/-alias .. (patrick)
 - more mode-lock/protect-chmodes fixes (patch by wilk)
 - bots can add/request shit, to enable it: .set bots-can-add-shit ON (patrick)
 - .status shows configure options (patch by [C]167)
 - 004 and 005 numeric support (patrick)
+- whois after connecting for ircds which do not send hostmask in 001 (patrick)
+- ask only for eIR list if the ircd supports it (patrick)
 - fixed "/msg <mainbot> pass <pw>" which was never working (patch by AnGelZ)
 - .mpart does not delete the channel structure anymore as .-chan does (patrick)
 - renamed protect-chmodes to mode-lock and brought old protect-chmodes back (patrick)
@@ -51,7 +54,8 @@ Psotnic 0.2.13 (2007/10/10) changes:
 - fixed: now will build on FreeBSD 4.11 (made a va_copy wrapper) (uukgoblin)
 - fixed: now should build and work on x86_64 (uukgoblin)
 - fixed: segfaults occuring on x86_64 and possibly i386 too (uukgoblin)
-- fixed: .whois command now show offences correctly (Esio)
+- fixed: .
+whois command now show offences correctly (Esio)
 - change: improved offences reporting and managing system (Esio)
 - added: .me command :) (Esio)
 - fixed: update problems on some bots (small ommision in code;>)

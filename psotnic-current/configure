@@ -145,7 +145,8 @@ print $f "list:\n";
 print $f "\t\@echo Available targets:\n";
 print $f "\t\@echo '* dynamic (prefered for most systems)'\n";
 print $f "\t\@echo '* static'\n";
-print $f "\t\@echo '* debug'\n\n";
+print $f "\t\@echo '* debug'\n";
+print $f "\t\@echo '* apidox'\n\n";
 
 print $f "create_hidden_seed:\n";
 print $f "\t\@${cc_prefix}g++ -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c\n\n";
@@ -161,6 +162,10 @@ print $f "\t\@\$(MAKE) -f Makefile.dynamic\n\n";
 print $f "static: create_hidden_seed\n";
 print $f "\t\@echo [*] Making static\n";
 print $f "\t\@\$(MAKE) -f Makefile.static\n\n";
+
+print $f "apidox:\n";
+print $f "\t\@echo [*] Generating API documentation\n";
+print $f "\t\@doxygen Doxyfile > docs/doxygen.log 2>&1\n\n";
 
 print $f "\nclean:\n";
 print $f "\t\@rm -f *.exe *.o core psotnic-* psotnic validator *.log vgcore.* tests/a.out tests/a.exe make-hiddenseed\n\n";
