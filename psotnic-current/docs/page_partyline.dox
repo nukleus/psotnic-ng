@@ -1,0 +1,434 @@
+
+/*! \page page_partyline The PartyLine
+The partyline lets you control a single bot or the entire botnet. There are several ways to get in there, see \ref partyline_access.
+
+
+\section partyline_access Access the partyline
+This section describes the ways to get to the party, even without bringing beer.
+
+\subsection partyline_access_1 ?
+
+\subsection partyline_access_2 ?
+
+\subsection partyline_access_3 ?
+
+\section partyline_commands Partyline commands
+To run a partyline command just type "." before it otherwise, it will be recognized as a chat line.
+For example:
+\code
+.help
+\endcode
+
+\subsection partyline_cmd_arg_semantics Command argument semantics
+Mandatory arguments are written in < > tags, if you do not supply the argument command will fail.
+For example:
+\code
+.info \<handle\>
+\endcode
+
+Options that are not mandatory are written in [ ] tags, if you omit those
+options, the default value will be taken.
+For example:
+\code
+.bots [expr] [flags]
+\endcode
+
+There is additional construct that looks like [%TEXT], where % is a
+character that has to be put before the parameter, otherwise command
+will fail (or it will work differently than expected). The reason of
+such construct is that some commands take two optional parameters, and
+the prefixed character is the only way to distinguish between them.
+For example:
+\code
+.+exempt [#%chan] [%time] \<mask\> [reason]
+\endcode
+
+\section partyline_commands_list List of all available commands:
+
+<table>
+	<tr>
+		<td><strong>Command</strong></td>
+		<td><strong>Argument(s)</strong></td>
+		<td><strong>Description</strong></td>
+	</tr>
+	<tr>
+		<td>+bot</td>
+		<td>&lt;handle&gt; &lt;ip&gt;</td>
+		<td>Adds new bot with name <em>handle</em> and with adress <em>ip</em></td>
+	</tr>
+	<tr>
+		<td>+chan</td>
+		<td>&lt;%chan&gt; [key]</td>
+		<td>Adds new channel with name <em>%chan</em> and optionally sets <em>key</em></td>
+	</tr>
+	<tr>
+		<td>+exempt</td>
+		<td>[\#%chan] [\%time] &lt;mask&gt; [reason]</td>
+		<td>Adds ban exception to the <em>%chan</em> for given <em>mask</em> for <em>time</em> with reason <em>reason</em></td>
+	</tr>
+	<tr>
+		<td>+host</td>
+		<td>&lt;handle&gt; &lt;host&gt;</td>
+		<td>Adds a host <em>host</em> to a user identified by <em>handle</em></td>
+	</tr>
+	<tr>
+		<td>+info</td>
+		<td>&lt;handle&gt; &lt;key&gt; &lt;value&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>+invite</td>
+		<td>[\#%chan] [\%time] &lt;mask&gt; [reason]</td>
+		<td>Adds a new invite on channel <em>\#%chan</em> with expiration time <em>\%time</em>, mask <em>mask</em> and optional reason <em>reason</em>.<br>If no %chan is specified, the user will be invited on all chans.<br>If no time is given, the invitation will never expire.</td>
+	</tr>
+	<tr>
+		<td>+reop</td>
+		<td>[\#%chan] [\%time] &lt;mask&gt; [reason]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>+shit</td>
+		<td>[\#%chan] [\%time] &lt;mask&gt; [reason]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>+stick</td>
+		<td>[\#%chan] [\%time] &lt;mask&gt; [reason]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>+user</td>
+		<td>&lt;handle&gt; [host]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>-bot</td>
+		<td>&lt;handle&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>-exempt</td>
+		<td>&lt;mask&gt; [%chan]</td>
+		<td>Removes exempt with identified my <em>mask</em> from channel <em>%chan</em></td>
+	</tr>
+	<tr>
+		<td>-host</td>
+		<td>&lt;handle&gt; &lt;host&gt;</td>
+		<td>Removes a host <em>host</em> from the user identified by <em>handle</em></td>
+	</tr>
+	<tr>
+		<td>-info</td>
+		<td>&lt;handle&gt; &lt;key&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>-invite</td>
+		<td>&lt;mask&gt; [%chan]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>-reop</td>
+		<td>&lt;mask&gt; [%chan]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>-shit</td>
+		<td>&lt;mask&gt; [%chan]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>-user</td>
+		<td>&lt;handle&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>abuse</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>boot</td>
+		<td>&lt;handle&gt; &lt;reason&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>bots</td>
+		<td>[expr] [flags]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		
+		<td>bottree</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>bye</td>
+		<td>[reason]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>chaddr</td>
+		<td>&lt;handle&gt; &lt;ip&gt;</td>
+		<td>Description</td>
+		
+	</tr>
+	<tr>
+		<td>channels</td>
+		<td></td>
+		<td>Shows channels in which bots are on</td>
+	</tr>
+	<tr>
+		<td>chattr</td>
+		<td>&lt;handle&gt; &lt;flags&gt; [%chan]</td>
+		<td>Sets global or channel flags <em>flags</em> for a user or bot identified by <em>handle</em></td>
+	</tr>
+	<tr>
+		<td>chhandle</td>
+		<td>&lt;handle&gt; &lt;new handle&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>chnick</td>
+		<td>&lt;bot&gt; &lt;nick&gt;</td>
+		<td>Changes <em>bot</em>s nickname to <em>nick</em></td>
+	</tr>
+	<tr>
+		<td>chpass</td>
+		<td>&lt;handle&gt; &lt;pass&gt;</td>
+		<td>Sets the password <em>pass</em> for bot identified by <em>handle</em></td>
+	</tr>
+	<tr>
+		<td>chset</td>
+		<td>&lt;%chan&gt; [var] [value]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>clearoffences</td>
+		<td>[handle]</td>
+		<td>Deletes %offences of <em>handle</em></td>
+	</tr>
+	<tr>
+		<td>cwho</td>
+		<td>&lt;bot&gt; &lt;%chan&gt; [flags]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>downbots</td>
+		<td></td>
+		<td>Shows all unlinked bots</td>
+	</tr>
+	<tr>
+		<td>exempts</td>
+		<td>[%chan]</td>
+		<td>Shows global exempts or the ones for channel <em>%chan</em></td>
+	</tr>
+	<tr>
+		<td>export</td>
+		<td>&lt;file&gt; [pass]</td>
+		<td>Exports the userlist to file <em>file</em>, optionally encrypted with <em>pass</em></td>
+	</tr>
+	<tr>
+		<td>gset</td>
+		<td>[var] [value]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>import</td>
+		<td>&lt;file&gt; [pass]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>info</td>
+		<td>&lt;handle&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>invites</td>
+		<td>[%chan]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>list</td>
+		<td>&lt;apcdsvuiU&gt; [bot]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>match</td>
+		<td>&lt;expr&gt; [flags] [%chan]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>mcycle</td>
+		<td>&lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>mjoin</td>
+		<td>&lt;%chan&gt; [key] [delay]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>mk</td>
+		<td>&lt;o|n|a&gt; &lt;%chan&gt; [lock]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>mpart</td>
+		<td>&lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>names</td>
+		<td>&lt;bot&gt; &lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>%offences</td>
+		<td>[handle]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>owners</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rcycle</td>
+		<td>&lt;bot&gt; &lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rdie</td>
+		<td>&lt;bot&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>reops</td>
+		<td>[%chan]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>restart</td>
+		<td>&lt;bot&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rflags</td>
+		<td>&lt;handle&gt; &lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rjoin</td>
+		<td>&lt;bot&gt; &lt;%chan&gt; [key]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rjump</td>
+		<td>&lt;bot&gt; &lt;host&gt; [port]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rjump6</td>
+		<td>&lt;bot&gt; &lt;host&gt; [port]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rjumps5</td>
+		<td>&lt;bot&gt; &lt;proxy&gt; &lt;port&gt; &lt;server&gt; &lt;port&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>rpart</td>
+		<td>&lt;bot&gt; &lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>save</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>set</td>
+		<td>[var] [value]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>shits</td>
+		<td>[%chan]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>sjoin</td>
+		<td>&lt;slave&gt; &lt;%chan&gt; [key]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>spart</td>
+		<td>&lt;slave&gt; &lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>status</td>
+		<td>[bot]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>tkmjoin</td>
+		<td>&lt;%chan&gt; [key] [delay]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>tkrjoin</td>
+		<td>&lt;bot&gt; &lt;%chan&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>tksjoin</td>
+		<td>&lt;slave&gt; &lt;%chan&gt; [key]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>upbots</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>%update</td>
+		<td>&lt;bot&gt; [URL]</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>users</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>verify</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>who</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>whob</td>
+		<td></td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>whois</td>
+		<td>&lt;handle&gt;</td>
+		<td>Description</td>
+	</tr>
+	<tr>
+		<td>whom</td>
+		<td></td>
+		<td>Description</td>
+		
+	</tr>
+</table>
+*/
+// vim:filetype=doxygen

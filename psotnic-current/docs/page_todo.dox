@@ -1,0 +1,7 @@
+/*! \page page_todo Things that have to be documented!
+
+- botnet connections using ssl: ssl:hostname... << class-ent.cpp \ref entHost::getConnectionStringType
+
+
+*/
+// vim:filetype=doxygen

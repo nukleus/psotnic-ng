@@ -1,0 +1,124 @@
+/*! \page page_configfile The config files
+Config files are needed to initially set up a botnet or to restart bots.
+In Psotnic, config files are encryped to provide more security. So, the
+bots will refuse to load a config file that is unencrypted. Every bot
+needs its own config file and every bot type (see \ref page_bot_types)
+needs different settings
+
+\section configfile_settings Settings
+\subsection configfile_settings_mandatory_general Mandatory settings for all bot types
+<table>
+	<tr>
+		<th>Variable</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>nick</td>
+		<td>Bot's nickname</td>
+		<td>fido</td>
+	</tr>
+	<tr>
+		<td>realname</td>
+		<td>Bot's real name (visible in whois)</tr>
+		<td>Dog in the fog</td>
+	</tr>
+	<tr>
+		<td>nickappend</td>
+		<td>List of characters that will be appended to the nick if it is already taken by someone else. It is only taken in consideration if <em>altuidnick</em> is set to 0</td>
+		<td>_'`</td>
+	</tr>
+	<tr>
+		<td>myipv4</td>
+		<td>The bot's own IP-adress</td>
+		<td>88.45.56.15, 0.0.0.0 means any adress</td>
+	</tr>
+</table>
+
+\subsection configfile_settings_optional_general Additional settings for all bot types
+<table>
+	<tr>
+		<th>Variable</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>ident</td>
+		<td>Bot's username</td>
+		<td>handle</td>
+		<td>vhost</td>
+		<td>logfile</td>
+		<td>userlist</td>
+		<td>altuidnick</td>
+		<td>ctcptype</td>
+		<td>keepnick</td>
+		<td>kickreason</td>
+		<td>limitreason</td>
+		<td>keepoutreason</td>
+		<td>partreason</td>
+		<td>quitreason</td>
+		<td>cyclereason</td>
+		<td>bnc</td>
+		<td>router</td>
+	</tr>
+</table>
+\subsection configfile_settings_mandatory_hub Mandatory settings for HUB
+<table>
+	<tr>
+		<th>Variable</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>listen</th>
+		<td>Port on which \ref bot_hub is listening for connections from \ref bot_slave bots and owners</td>
+		<td>12345, below 1024 only if root, maximum 65535</td>
+	</tr>
+	<tr>
+		<td>ownerpass</td>
+		<td>MF5 sum of the owner password. You will be asked for this password each time you connect to \ref page_partyline. See \ref configfile_ownerpass_create</td>
+		<td>24e70511c32ad46bf53302a9717c651b</td>
+	</tr>
+</table>
+
+\subsubsection configfile_settings_mandatory_slave Mandatory settings for SLAVEs
+<table>
+	<tr>
+		<th>Variable</th>
+		<th>Description</th>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>listen</td>
+		<td>Port on which \ref bot_slave bots listen for connections from \ref bot_leaf bots</td>
+		<td>12345, below 1024 only if root, maximum 65535</td>
+	</tr>
+	<tr>
+		<td>hub</td>
+		<td>ip, port and password of the \ref bot_hub bot</td>
+		<td>123.123.123.123 9000 some_password</td>
+	</tr>
+</table>
+
+\subsubsection configfile_settings_mandatory_leaf Mandatory settings for LEAFs
+<table>
+	<tr>
+		<th>Variable</td>
+		<th>Description</td>
+		<th>Example</th>
+	</tr>
+	<tr>
+		<td>hub</td>
+		<td>ip, port, password and slave {ref} handle name</td>
+		<td>111.111.111.111 8000 some_password slave1</td>
+	</tr>
+</table>
+
+\section configfile_settings_optional Optional settings
+\subsection configfile_settings_optional_general Optional settings for all bot types
+
+
+\subsection configfile_ownerpass_create How to generate the ownerpass md5 string
+
+*/
+// vim:filetype=doxygen

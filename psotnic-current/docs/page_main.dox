@@ -1,0 +1,9 @@
+/*! \mainpage The Psotnic Project
+Welcome to the \b API documentation of <b>The Psotnic Project</b>.\n
+
+You'll find here the complete documentation for all functions and classes as well as the documentation for the individual modules.
+
+
+
+*/
+// vim:filetype=doxygen

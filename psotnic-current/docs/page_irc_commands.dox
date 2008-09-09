@@ -1,0 +1,22 @@
+/*! \page page_irc_commands IRC commands
+You can do some actions using irc
+
+\section irc_commands_password_change Password change
+This section describes how to change the own user password
+\note To do this you must have an user account
+
+The general syntax is:
+\code
+/msg hub pass oldpass newpass
+\endcode
+Where \e hub is the nickname of \ref bot_hub.
+
+\section irc_commands_op Get OPed by the bot
+This section describes how to get opped by the bot...
+The general syntax is:
+\code
+/msg bot op passwd [#channel]
+\endcode
+
+*/
+// vim:filetype=doxygen

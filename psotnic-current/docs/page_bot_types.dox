@@ -1,0 +1,21 @@
+/*! \page page_bot_types The different types of bots
+A Psotnic botnet consists of several different types of bots:
+ - The \ref bot_main
+ - The \ref bot_slave
+ - The \ref bot_leaf
+
+\section bot_types Bot types
+\subsection bot_main MAIN
+The HUB or MAIN is the master of the botnet. This bot has the control
+over all bots connected to it.
+
+\subsection bot_slave SLAVE
+Slaves connect to the \ref bot_hub in order to receive commands from it.
+Once connected, it receives the userlist and stores a local copy of it.
+
+\subsection bot_leaf LEAF
+Leafes connect to slaves and represent the lowest type of bots in a
+Psotnic botnet.
+
+*/
+// vim:filetype=doxygen
