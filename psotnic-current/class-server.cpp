@@ -23,7 +23,32 @@
 
 Server::Server()
 {
+    name=NULL;
+    version=NULL;
+    usermodes=NULL;
+    chanmodes=NULL;
     isupport.server=this;
+}
+
+Server::~Server()
+{
+   reset();
+}
+
+Server::Isupport::Isupport()
+{
+   chan_status_flags=NULL;
+   chanmodes=NULL;
+   maxchannels=0;
+   maxlist=0;
+   max_kick_targets=0;
+   max_who_targets=0;
+   max_mode_targets=0;
+}
+
+Server::Isupport::~Isupport()
+{
+   reset();
 }
 
 void Server::Isupport::insert(const char *key, const char *value)
@@ -51,7 +76,7 @@ const char *Server::Isupport::find(const char *key)
         return NULL;
 }
 
-void Server::Isupport::clear()
+void Server::Isupport::reset()
 {
     if(chan_status_flags)
     {
@@ -67,6 +92,9 @@ void Server::Isupport::clear()
 
     maxchannels=0;
     maxlist=0;
+    max_kick_targets=0;
+    max_who_targets=0;
+    max_mode_targets=0;
 
     isupport_map.clear();
 }
@@ -226,5 +254,5 @@ void Server::reset()
             chanmodes=NULL;
         }
 
-        isupport.clear();
+        isupport.reset();
 }

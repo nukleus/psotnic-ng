@@ -936,14 +936,16 @@ class Server
             int max_mode_targets; /**< maximum number of targets (channels and users) that are allowed in a MODE command
                                       e.g. MODE #chan1,#chan2,#chan3 */
 
+            Isupport();
+            ~Isupport();
             void insert(const char *key, const char *value);
             const char *find(const char *key);
-            void clear();
+            void reset();
             void init();
         } isupport;
 
 	Server();
-	~Server() {}
+	~Server();
 	void reset();
 };
 
