@@ -33,7 +33,7 @@
  * If you are going to use this module on more than one bot, you
  * should disable 'notice' and set 'max-delay' (e.g. to 10)
  *
- * Thanks to the following people for testing: AnGelZ, Aretino, Lu[4, MnEm0nIc
+ * Thanks to the following people for testing: AnGelZ, Aretino, death, Lu[4, MnEm0nIc, rocks
  *
 */
 
@@ -56,8 +56,6 @@ class vsettings : public options
     entString INTRO;
     entTime CFG_SAVE_DELAY;
     entWord BAN_TYPE;
-    entBool USE_TOPIC_APPENDIX;
-    entWord TOPIC_APPENDIX;
     entBool DONT_KICK_VOICED_USERS;
 
     vsettings();
@@ -70,8 +68,6 @@ vsettings::vsettings()
     registerObject(INTRO = entString("intro", 1, 255, "Welcome to the control, you can use:"));
     registerObject(CFG_SAVE_DELAY = entTime("cfg-save-delay", 0, 3600, 20));
     registerObject(BAN_TYPE = entWord("ban-type", 1, 255, "*!%i@%h"));
-    registerObject(USE_TOPIC_APPENDIX = entBool("use-topic-appendix", 0));
-    registerObject(TOPIC_APPENDIX = entWord("topic-appendix", 0, 32, "(%n)"));
     registerObject(DONT_KICK_VOICED_USERS = entBool("dont-kick-voiced-users", 0));
 }
 
@@ -96,6 +92,10 @@ class vchanset : public options
     entWord UNBAN_CMD_REQUIRED_FLAG;
     entBool TOPIC_CMD;
     entWord TOPIC_CMD_REQUIRED_FLAG;
+    entBool USE_TOPIC_PREFIX;
+    entString TOPIC_PREFIX;
+    entBool USE_TOPIC_APPENDIX;
+    entString TOPIC_APPENDIX;
 
     vchanset();
 };
@@ -118,6 +118,10 @@ vchanset::vchanset()
     registerObject(UNBAN_CMD_REQUIRED_FLAG = entWord("unban-command-required-flag", 1, 1, "-"));
     registerObject(TOPIC_CMD = entBool("topic-command", 1));
     registerObject(TOPIC_CMD_REQUIRED_FLAG = entWord("topic-command-required-flag", 1, 1, "-"));
+    registerObject(USE_TOPIC_PREFIX = entBool("use-topic-prefix", 0));
+    registerObject(TOPIC_PREFIX = entString("topic-prefix", 0, 128));
+    registerObject(USE_TOPIC_APPENDIX = entBool("use-topic-appendix", 0));
+    registerObject(TOPIC_APPENDIX = entString("topic-appendix", 0, 128, "(%n)"));
 }
 
 time_t vctrl_next_save;
@@ -491,11 +495,6 @@ void vctrl_banmask(chan *ch, chanuser *from, char *text)
     char *banmask, *ptr;
     HANDLE *h;
     ptrlist<chanuser>::iterator u;
-    CHANLIST *cl;
-
-    if(!(cl=userlist.findChanlist(ch->name)))
-        return;
-
 
     if(!(text) || (*(text)=='\0'))
     {
@@ -551,7 +550,9 @@ void vctrl_unban(chan *ch, chanuser *from, char *text)
 
 void vctrl_topic(chan *ch, chanuser *from, char *text)
 {
-    char buffer[MAX_LEN];
+    Pchar buffer;
+    char buffer2[MAX_LEN];
+    CHANLIST *cl;
 
     if(!(text) || (*(text)=='\0'))
     {
@@ -565,16 +566,28 @@ void vctrl_topic(chan *ch, chanuser *from, char *text)
         return;
     }
 
-    if(vset.USE_TOPIC_APPENDIX)
+
+    if(!(cl=userlist.findChanlist(ch->name)))
+        return;
+
+    if(((vchanset *)cl->customData)->USE_TOPIC_PREFIX && ((vchanset *)cl->customData)->TOPIC_PREFIX.getLen() > 0)
     {
-        vctrl_format(buffer, MAX_LEN, vset.TOPIC_APPENDIX, from);
-    	net.irc.send("TOPIC ", (const char *) ch->name, " :", text, " ", buffer, NULL);
+        vctrl_format(buffer2, MAX_LEN, ((vchanset *)cl->customData)->TOPIC_PREFIX, from);
+        buffer.push(buffer2);
+        buffer.push(" ");
     }
 
-    else
-         net.irc.send("TOPIC ", (const char *) ch->name, " :", text, NULL);
+    buffer.push(text);
 
-    penalty+=2;
+    if(((vchanset *)cl->customData)->USE_TOPIC_APPENDIX && ((vchanset *)cl->customData)->TOPIC_APPENDIX.getLen() > 0)
+    {
+        vctrl_format(buffer2, MAX_LEN, ((vchanset *)cl->customData)->TOPIC_APPENDIX, from);
+        buffer.push(" ");
+        buffer.push(buffer2);
+    }
+
+    net.irc.send("TOPIC ", (const char *) ch->name, " :", buffer.data, NULL);
+    penalty+=3;
 }
 
 // replaces %n by u->nick, %i by u->ident and %h by u->host
