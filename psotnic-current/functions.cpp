@@ -357,14 +357,12 @@ void parse_cmdline(int argc, char *argv[])
 
 		if(!strcmp(argv[i], "-p"))
 		{
-			char buf[MAX_LEN], hash[33];
-			printf("Bot is now running in MD5 hash generator mode\n");
-			printf("Warning: strings longer than 100 characters will be cut\n\n");
-
-			printf("string to hash: ");
-			scanf("%100s", buf);
-			MD5HexHash(hash, buf, strlen(buf), NULL, 0);
-			printf("MD5 hash      : %s\n", hash);
+			char hash[33];
+			printMessage("Bot is now running in MD5 hash generator mode");
+			pstring<> toHash;
+			readUserInput("String to hash", toHash);
+			MD5HexHash(hash, toHash, toHash.len(), NULL, 0);
+			printMessage("MD5 hash      : %s\n", hash);
 			
 			exit(0);
 		}
