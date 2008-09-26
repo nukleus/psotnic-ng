@@ -819,11 +819,14 @@ void client::checkQueue()
 	for(level=1; level<10; level+=2)
 	{
 		if((level == 5 && !ME.server.isupport.find("INVEX"))
-		   || (level == 7 && !ME.server.isupport.find("EXEMPTS"))
+		   || (level == 7 && !ME.server.isupport.find("EXCEPTS"))
 		   || (level == 9 && chan::getTypeOfChanMode('R') != 'A'))
 		{
 			for(ch=first; ch; ch=ch->next)
-				 ch->synlevel+=2;
+			{
+				if(level == ch->synlevel)
+					ch->synlevel+=2;
+			}
 
 			continue;
 		}
