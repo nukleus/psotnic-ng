@@ -1232,8 +1232,8 @@ int ul::addChannel(const char *name, const char *pass, const char *attr)
 	nextSave = NOW + SAVEDELAY;
 
 #ifdef HAVE_MODULES
-	if(chanlist[i].customDataConstructor)
-		chanlist[i].customDataConstructor(&chanlist[i]);
+	/*if(chanlist[i].customDataConstructor)
+		chanlist[i].customDataConstructor(&chanlist[i]);*/
 #endif
 	return i;
 }
@@ -2080,7 +2080,7 @@ ul::ul()
 		chanlist[i].protlist[REOP] = NULL;
 		chanlist[i].allowedOps = NULL;
 #ifdef HAVE_MODULES
-		chanlist[i].customDataDestructor = NULL;
+		//chanlist[i].customDataDestructor = NULL;
 #endif
 	}
 	dset = new chanset();
@@ -2186,8 +2186,8 @@ void CHANLIST::reset()
 		 delete(allowedOps);
 
 #ifdef HAVE_MODULES
-	if(customDataDestructor)
-		customDataDestructor(this);
+/*	if(customDataDestructor)
+		customDataDestructor(this);*/
 #endif
 
 	chset = NULL;

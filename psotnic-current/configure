@@ -39,6 +39,7 @@ class-chan-gotmode.o
 class-comment.o
 class-client.o
 class-clone.o
+class-customdata.o
 class-ent.o
 class-http.o
 class-ignore.o
@@ -70,7 +71,6 @@ hidden-seed-functions.o
 inet_pton.o
 main.o
 match.o
-module.o
 md5.o
 md5func.o
 parse-bot.o

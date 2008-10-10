@@ -1,6 +1,5 @@
 #include "../prots.h"
 #include "../global-var.h"
-#include "module.h"
 
 void hook_privmsg(const char *from, const char *to, const char *msg)
 {

@@ -18,6 +18,8 @@ struct HANDLE;
 #include <string>
 #include <map>
 
+using std::map;
+
 class XSRand
 {
 	private:
@@ -325,7 +327,38 @@ class fifo
 	char *flush();
 };
 
+/*! Base class for all custom data storages.
+ * Inherit from this function if you want your class to be saveable as custom data.
+ */
+class CustomDataObject
+{
+	public:
+		CustomDataObject() {};
+		virtual ~CustomDataObject() {};
+};
+
+/*! Storage place for custom data entries.
+ * In order to give the ability to let modules store data inside your class, simply inherit from
+ * this one.
+ */
+class CustomDataStorage
+{
+	public:
+		CustomDataStorage();
+		virtual ~CustomDataStorage();
+
+		CustomDataObject *customData( const char *moduleName );
+		void setCustomData( const char *moduleName, CustomDataObject *data );
+		void delCustomData( const char *moduleName );
+
+	private:
+		map< const char *, CustomDataObject * > m_data;		//! Storage.
+};
+
 class chanuser
+#ifdef HAVE_MODULES
+	: public CustomDataStorage
+#endif
 {
 	public:
 	char *nick;
@@ -358,13 +391,6 @@ class chanuser
 
 #ifdef HAVE_DEBUG
 	void display();
-#endif
-
-	void *customData;
-
-#ifdef HAVE_MODULES
-	static FUNCTION (*customDataConstructor)(chanuser *me);
-	static FUNCTION (*customDataDestructor)(chanuser *me);
 #endif
 };
 
@@ -771,6 +797,9 @@ class CONFIG : public options
 };
 
 class CHANLIST
+#ifdef HAVE_MODULES
+	: public CustomDataStorage
+#endif
 {
 	public:
 	pstring<> name;
@@ -783,18 +812,15 @@ class CHANLIST
 	wasoptest *allowedOps;
 	protmodelist *protlist[4];
 
-	void *customData;
-#ifdef HAVE_MODULES
-	static FUNCTION (*customDataConstructor)(CHANLIST *me);
-	static FUNCTION (*customDataDestructor)(CHANLIST *me);
-#endif
-
-	CHANLIST(): status(0), nextjoin(0), updated(0), chset(0), wasop(0), allowedOps(0) { }
+	CHANLIST();
 	void reset();
 
 };
 
 class chan
+#ifdef HAVE_MODULES
+	: public CustomDataStorage
+#endif
 {
 	public:
 	fastptrlist<chanuser> users, toOp, botsToOp, opedBots, toKick;
@@ -892,12 +918,6 @@ class chan
 	/* Destruction derby */
 	~chan();
 	void removeFromAllPtrLists(chanuser *handle);
-
-	void *customData;
-#ifdef HAVE_MODULES
-	static FUNCTION (*customDataConstructor)(chan *me);
-	static FUNCTION (*customDataDestructor)(chan *me);
-#endif
 };
 
 /** Stores server information.
@@ -918,7 +938,7 @@ class Server
         class Isupport
         {
             public:
-            typedef std::map<std::string, std::string> isupportType;
+            typedef map<std::string, std::string> isupportType;
             isupportType isupport_map; ///< contains all 005 tokens
             Server *server; // pointer to upper class
 

@@ -6,7 +6,6 @@
 
 #include "../prots.h"
 #include "../global-var.h"
-#include "module.h"
 #include <sys/param.h>
 
 #ifdef linux 

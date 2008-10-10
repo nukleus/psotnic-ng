@@ -39,7 +39,6 @@
 
 #include "../prots.h"
 #include "../global-var.h"
-#include "module.h"
 
 #include <regex.h>
 #include <stdarg.h>

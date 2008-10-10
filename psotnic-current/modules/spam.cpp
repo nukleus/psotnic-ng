@@ -1,9 +1,9 @@
 #include "../prots.h"
 #include "../global-var.h"
-#include "module.h"
+#include "../classes.h"
 #include <regex.h>
 
-class repeat
+class repeat : public CustomDataObject
 {
     public:
     pstring<> str;
@@ -24,7 +24,7 @@ class repeat
 	return false;
     }
 		
-    repeat() : when(0), creation(NOW) { };
+    repeat() : CustomDataObject(), when(0), creation(NOW) { };
     ~repeat() { };
 };    
 
@@ -86,6 +86,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 	if(u && !(u->flags & (HAS_V | HAS_O | IS_OP | IS_VOICE)))
 	{
 	    int crap = countCrap(msg);    
+	    repeat *cdata = (repeat*)u->customData( "spam" );
 	
 	    //big crap
 	    if(crap > 4)
@@ -100,7 +101,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 		ch->knockout(u, "dont ask for op - expires in 5 minutes", 60*5);
 	    }
 	    //www
-	    else if(((repeat *) u->customData)->creation + 60 >= NOW &&
+	    else if( cdata && cdata->creation + 60 >= NOW &&
 		!regexec(&spamWWW, msg, 1, &spamMatch, 0))
 	    {
 		ch->knockout(u, "http://spam.com - expires in 5 minutes", 60*5);
@@ -116,7 +117,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 		ch->knockout(u, "more then 3 crap chars in a line - expires in 1 minute", 60);
 	    }
 	    //repeat
-	    else if(((repeat *) u->customData)->hit(msg))
+	    else if( cdata && cdata->hit(msg))
 	    {
 		u->setReason("Do not repeat yourself!");
 		ch->toKick.sortAdd(u);
@@ -131,19 +132,20 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 /**
  * Custom constructors and destructors
  */
-void chanuserConstructor(chanuser *me)
+void hook_new_chanuser(chanuser *me)
 {
-    me->customData = (void *) new repeat;
+	printf( "[M] spam: new chanuser( %s )\n", me->nick );
+	me->setCustomData( "spam", new repeat );
 }
 
-void chanuserDestructor(chanuser *me)
+/*void chanuserDestructor(chanuser *me)
 {
     if(me->customData)
     {
 	delete (repeat *) me->customData;
 	me->customData = NULL;
     }
-}
+}*/
 
 /**
  * Init stuff
@@ -157,7 +159,8 @@ extern "C" module *init()
     m->hooks->ctcp = hook_ctcp;
     
     //add custom constructor and destructor for all objects of type `chanuser' and `CHANLIST'
-    initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
+    //initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
+    m->hooks->new_chanuser=hook_new_chanuser;
     
     //construct regular expressions
     regcomp(&spamChannel, "#[[:alpha:]]", REG_ICASE | REG_EXTENDED);

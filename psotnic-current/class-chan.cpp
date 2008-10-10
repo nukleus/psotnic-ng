@@ -21,6 +21,15 @@
 #include "prots.h"
 #include "global-var.h"
 
+CHANLIST::CHANLIST() :
+#ifdef HAVE_MODULES
+	CustomDataStorage(),
+#endif
+	status(0), nextjoin(0), updated(0), chset(0), wasop(0), allowedOps(0)
+{
+	HOOK( new_CHANLIST, new_CHANLIST( this ) );
+}
+
 char _chmodes[MAX_LEN];
 
 void chan::recheckShits()
@@ -1105,6 +1114,9 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 
 /* Constructor */
 chan::chan()
+#ifdef HAVE_MODULES
+	: CustomDataStorage()
+#endif
 {
 	sentKicks = flags = limit = status = synlevel = 0;
 	me = NULL;
@@ -1118,26 +1130,20 @@ chan::chan()
 	modeQ[0].setChannel(this);
 	modeQ[1].setChannel(this);
 
-#ifdef HAVE_MODULES
-	if(customDataConstructor)
-		customDataConstructor(this);
-#endif
-
+	HOOK( new_chan, new_chan( this ) );
 }
 
 /* Destruction derby */
 chan::~chan()
 {
-#ifdef HAVE_MODULES
-	if(customDataDestructor)
-		customDataDestructor(this);
-#endif
-
 }
 
 /* class chanuser */
 
 chanuser::chanuser(const char *str)
+#ifdef HAVE_MODULES
+	: CustomDataStorage()
+#endif
 {
 	char *a = strchr(str, '!');
 	if(a) mem_strncpy(nick, str, (int) abs(str - a) + 1);
@@ -1151,12 +1157,17 @@ chanuser::chanuser(const char *str)
 	reason = NULL;
 	ip4 = NULL;
 	ip6 = NULL;
+
+	HOOK( new_chanuser, new_chanuser( this ) );
 }
 
 chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
+#ifdef HAVE_MODULES
+	: CustomDataStorage()
+#endif
 {
 	char *a = strchr(m, '!');
-    char *b = strchr(m, '@');
+	char *b = strchr(m, '@');
 
 	reason = NULL;
 
@@ -1199,22 +1210,20 @@ chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
 
 	clones_to_check = CLONE_HOST | CLONE_IPV6 | CLONE_IPV4 | CLONE_IDENT | CLONE_PROXY;
 
-#ifdef HAVE_MODULES
-	if(customDataConstructor)
-		customDataConstructor(this);
-#endif
 	if(ch)
 	{
 		HOOK(chanuserConstructor, chanuserConstructor(ch, this));
 		stopParsing=false;
 	}
+
+	HOOK( new_chanuser, new_chanuser( this ) );
 }
 
 chanuser::~chanuser()
 {
 #ifdef HAVE_MODULES
-	if(host && customDataDestructor)
-		customDataDestructor(this);
+/*	if(host && customDataDestructor)
+		customDataDestructor(this);*/
 #endif
 	if(nick) free(nick);
 	if(ident) free(ident);

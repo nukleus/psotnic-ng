@@ -6,7 +6,6 @@
 
 #include "../prots.h"
 #include "../global-var.h"
-#include "module.h"
 
 // configuration
 
@@ -199,7 +198,7 @@ private:
     time_t timer;
 };
 #endif
-class info
+class info : public CustomDataObject
 {
 public:
     info()
@@ -210,6 +209,7 @@ public:
 #endif
         wait=false;
     }
+    ~info() {};
 
     repeatcheck *repeat;
 #ifdef USE_FLOOD_PROT
@@ -223,7 +223,7 @@ public:
    If he should reach the repeat/flood-limit again, he will be banned this time.
 */
 
-class cache 
+class cache : public CustomDataObject
 {
 public:
     class entry
@@ -246,6 +246,7 @@ public:
     {
         data.removePtrs();
     }
+    ~cache() {};
 
     void add(char *ident, char *host)
     {
@@ -322,7 +323,8 @@ void hook_privmsg_notice(const char *from, const char *to, const char *msg)
     if(!(cu=ch->getUser(from)))
         return;
 
-    if(((info*)cu->customData)->wait || cu->flags & (HAS_V | HAS_O | IS_OP))
+    info *cdata = (info *)cu->customData( "repeat" );
+    if(cdata && (cdata->wait || cu->flags & (HAS_V | HAS_O | IS_OP)))
         return;
 
     detect_repeat(cu, ch, msg);
@@ -348,8 +350,9 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
     
     if(!(cu=ch->getUser(from)))
         return;
-    
-    if(((info*)cu->customData)->wait || cu->flags & (HAS_V | HAS_O | IS_OP))
+
+    info *cdata = (info *)cu->customData( "repeat" );
+    if(cdata && (cdata->wait || cu->flags & (HAS_V | HAS_O | IS_OP)))
         return;
 
     if(match("ACTION *", msg))
@@ -370,9 +373,15 @@ void hook_timer()
     for(ch=ME.first; ch; ch=ch->next)
     {
         for(u=ch->users.begin(); u; u++)
-            ((info*)u->customData)->repeat->delExpiredLines();
+	{
+	    info *infoCData = (info *)u->customData( "repeat" );
+	    if(infoCData)
+                infoCData->repeat->delExpiredLines();
+	}
 #ifndef BAN_DIRECTLY
-        ((cache*)ch->customData)->delExpiredUsers();
+	    cache *cacheCData = (cache *)ch->customData( "repeat" );
+	    if(cacheCData)
+                cacheCData->delExpiredUsers();
 #endif
     }
 #ifdef USE_LAGCHECK
@@ -408,29 +417,36 @@ void detect_flood(chanuser *cu, chan *ch)
 {
     char buffer[MAX_LEN];
     cache::entry *e;
-    ((info*)cu->customData)->flood->increase();
+    info *infoCData = (info *)cu->customData( "repeat" );
+    cache *cacheCData = (cache *)ch->customData( "repeat" );
 
-    if(((info*)cu->customData)->flood->getCount()>=FL_LINES)
+    if(infoCData)
+	infoCData->flood->increase();
+
+    if(infoCData && infoCData->flood->getCount()>=FL_LINES)
     {
 #ifndef BAN_DIRECTLY
-        if((e=((cache*)ch->customData)->find(cu->ident, cu->host)))
-        {
-            ((cache*)ch->customData)->del(e);
+	if(cacheCData)
+	{
+            if((e=cacheCData->find(cu->ident, cu->host)))
+            {
+                cacheCData->del(e);
 #endif
-            if(!set.BOTS_CAN_ADD_SHIT
-                 || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
-                ch->knockout(cu, FL_BANREASON, FL_BANTIME*60);
+                if(!set.BOTS_CAN_ADD_SHIT
+                     || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
+                    ch->knockout(cu, FL_BANREASON, FL_BANTIME*60);
 #ifndef BAN_DIRECTLY
-        }
+            }
 
-        else
-        {
-            ((cache*)ch->customData)->add(cu->ident, cu->host);
-            cu->setReason(FL_KICKREASON);
-            ch->toKick.sortAdd(cu);
-        }
+            else
+            {
+                cacheCData->add(cu->ident, cu->host);
+                cu->setReason(FL_KICKREASON);
+                ch->toKick.sortAdd(cu);
+            }
 #endif
-        ((info*)cu->customData)->wait=true;
+	}
+        infoCData->wait=true;
     }
 }
 #endif
@@ -439,61 +455,49 @@ void detect_repeat(chanuser *cu, chan *ch, const char *msg)
     char buffer[MAX_LEN];
     cache::entry *e;
 
+    info *infoCData = (info *)cu->customData( "repeat" );
+    cache *cacheCData = (cache *)ch->customData( "repeat" );
+
     for(unsigned int i=0, size=sizeof(rp_exceptions)/sizeof(rp_exceptions[0]); i<size; i++)
         if(match(rp_exceptions[i], msg))
             return;
 
-    if(((info*)cu->customData)->repeat->addLine(msg)>=RP_REPEATS)
+    if(infoCData && infoCData->repeat->addLine(msg)>=RP_REPEATS)
     {
 #ifndef BAN_DIRECTLY
-        if((e=((cache*)ch->customData)->find(cu->ident, cu->host)))
-        {
-            ((cache*)ch->customData)->del(e);
+	if(cacheCData)
+	{
+            if((e=cacheCData->find(cu->ident, cu->host)))
+            {
+                cacheCData->del(e);
 #endif
-            if(!set.BOTS_CAN_ADD_SHIT
-                 || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
-                ch->knockout(cu, RP_BANREASON, RP_BANTIME*60);
+                if(!set.BOTS_CAN_ADD_SHIT
+                     || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
+                    ch->knockout(cu, RP_BANREASON, RP_BANTIME*60);
 #ifndef BAN_DIRECTLY
-        }
+            }
 
-        else
-        {
-            ((cache*)ch->customData)->add(cu->ident, cu->host);
-            cu->setReason(RP_KICKREASON);
-            ch->toKick.sortAdd(cu);
-        }
+            else
+            {
+                cacheCData->add(cu->ident, cu->host);
+                cu->setReason(RP_KICKREASON);
+                ch->toKick.sortAdd(cu);
+            }
 #endif
-        ((info*)cu->customData)->wait=true;
+	}
+        infoCData->wait=true;
     }
 }
 
-void chanuserConstructor(chanuser *me)
+void hook_new_chanuser(chanuser *me)
 {
-    me->customData=(void *)new info;
-}
-
-void chanuserDestructor(chanuser *me)
-{
-    if(me->customData)
-    {
-        delete (info *)me->customData;
-        me->customData=NULL;
-    }
+    me->setCustomData( "repeat", new info );
 }
 
 #ifndef BAN_DIRECTLY
-void chanConstructor(chan *me)
+void hook_new_chan(chan *me)
 {
-    me->customData=(void *)new cache;
-}
-
-void chanDestructor(chan *me)
-{
-    if(me->customData)
-    {
-        delete (cache *)me->customData;
-        me->customData=NULL;
-    }
+    me->setCustomData( "repeat", new cache );
 }
 #endif
 
@@ -506,9 +510,9 @@ void prepareCustomData()
     for(ch=ME.first; ch; ch=ch->next)
     {
         for(u=ch->users.begin(); u; u++)
-            chanuserConstructor(u);
+            hook_new_chanuser(u);
 #ifndef BAN_DIRECTLY
-        chanConstructor(ch);
+        hook_new_chan(ch);
 #endif
     }
 }
@@ -516,9 +520,9 @@ void prepareCustomData()
 extern "C" module *init()
 {
     module *m=new module("repeat", "patrick <patrick@psotnic.com>", "0.2");
-    initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
+    m->hooks->new_chanuser=hook_new_chanuser;
 #ifndef BAN_DIRECTLY
-    initCustomData("chan", (FUNCTION) chanConstructor, (FUNCTION) chanDestructor);
+    m->hooks->new_chan=hook_new_chan;
 #endif
     prepareCustomData();
     m->hooks->privmsg=hook_privmsg_notice;

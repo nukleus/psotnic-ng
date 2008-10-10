@@ -40,6 +40,11 @@ class Hooks
 	void (*receivedSigHup)();
 	void (*rehash)();
 
+	// customDataMaintenance
+	void (*new_chan)( chan *ch );
+	void (*new_CHANLIST)( CHANLIST *chl );
+	void (*new_chanuser)( chanuser *u );
+
 	Hooks()
 	{
 		memset(this, 0, sizeof(Hooks));

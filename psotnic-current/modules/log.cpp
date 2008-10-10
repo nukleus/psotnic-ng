@@ -13,7 +13,6 @@
 
 #include "../prots.h"
 #include "../global-var.h"
-#include "module.h"
 #include <time.h>
 #include <string>
 #include <iostream>
