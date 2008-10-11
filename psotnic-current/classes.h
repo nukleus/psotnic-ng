@@ -812,7 +812,11 @@ class CHANLIST
 	wasoptest *allowedOps;
 	protmodelist *protlist[4];
 
-	CHANLIST(): status(0), nextjoin(0), updated(0), chset(0), wasop(0), allowedOps(0) { };
+	CHANLIST() :
+#ifdef HAVE_MODULES
+		CustomDataStorage,
+#endif
+		status(0), nextjoin(0), updated(0), chset(0), wasop(0), allowedOps(0) { };
 	void reset();
 
 };

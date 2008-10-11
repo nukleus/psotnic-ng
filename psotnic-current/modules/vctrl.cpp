@@ -130,6 +130,7 @@ vchanset::~vchanset()
 
 time_t vctrl_next_save;
 vsettings vset;
+module *module_info;
 
 struct vctrl_func
 {
@@ -191,14 +192,11 @@ void vctrl_load()
 
         if(!strcmp(arg[0], "vset"))
             e=vset.setVariable(arg[1], rtrim(srewind(buffer, 2)));
+
         else if(!strcmp(arg[0], "vchanset"))
         {
             if((cl=userlist.findChanlist(arg[1])))
-	    {
-		vchanset *cdata = (vchanset *)cl->customData( "vctrl" );
-		if(cdata)
-		    e=(cdata->setVariable(arg[2], rtrim(srewind(buffer, 3))));
-	    }
+                (vchanset *)cl->customData(module_info->desc)->setVariable(arg[2], rtrim(srewind(buffer, 3)));
         }
 	// else ..
 
@@ -233,7 +231,7 @@ void vctrl_save()
     {   
         if(userlist.chanlist[j].name)
         {
-            for(i=((vchanset *)userlist.chanlist[j].customData( "vctrl" ))->list.begin(); i; i++)
+            for(i=((vchanset *)userlist.chanlist[j].customData(module_info->desc))->list.begin(); i; i++)
             {
                 if(!i->isDefault() && i->isPrintable())
                     fprintf(fh, "vchanset %s %s\n", (const char*) userlist.chanlist[j].name, i->print());
@@ -258,7 +256,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     if(!(cl=userlist.findChanlist(to)))
         return;
 
-    if(!((vchanset *)cl->customData( "vctrl" ))->VOICE_CONTROL) // vctrl is not enabled for this channel
+    if(!((vchanset *)cl->customData(module_info->desc))->VOICE_CONTROL) // vctrl is not enabled for this channel
         return;
 
     if(!(ch=ME.findChannel(to)))       // bot received the msg but is not on channel
@@ -282,7 +280,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     {
         if(match(fptr->command, cmd))
         {
-            if((ptr=((vchanset *)cl->customData( "vctrl" ))->getValue(fptr->enabled)) && !strcmp(ptr, "OFF"))
+            if((ptr=((vchanset *)cl->customData(module_info->desc))->getValue(fptr->enabled)) && !strcmp(ptr, "OFF"))
                 return;
 
             if(fptr->flag)
@@ -318,7 +316,7 @@ void hook_mode(chan *ch, const char (*mode)[MODES_PER_LINE], const char **user, 
     if(!(cl=userlist.findChanlist(ch->name)))
         return;
 
-    if(!((vchanset *)cl->customData( "vctrl" ))->VOICE_CONTROL)
+    if(!((vchanset *)cl->customData(module_info->desc))->VOICE_CONTROL)
         return;
 
     if(!vset.NOTICE)
@@ -345,7 +343,7 @@ void hook_mode(chan *ch, const char (*mode)[MODES_PER_LINE], const char **user, 
 
             for(fptr=vctrl_flist; fptr->command; fptr++)
             {
-                if((ptr=((vchanset *)cl->customData( "vctrl" ))->getValue(fptr->enabled)) && !strcmp(ptr, "OFF"))
+                if((ptr=((vchanset *)cl->customData(module_info->desc))->getValue(fptr->enabled)) && !strcmp(ptr, "OFF"))
                     continue;
                 if(!vctrl_check_flag(cl, u, fptr->flag))
                     continue;
@@ -578,18 +576,18 @@ void vctrl_topic(chan *ch, chanuser *from, char *text)
     if(!(cl=userlist.findChanlist(ch->name)))
         return;
 
-    if(((vchanset *)cl->customData( "vctrl" ))->USE_TOPIC_PREFIX && ((vchanset *)cl->customData( "vctrl" ))->TOPIC_PREFIX.getLen() > 0)
+    if(((vchanset *)cl->customData(module_info->desc))->USE_TOPIC_PREFIX && ((vchanset *)cl->customData(module_info->desc))->TOPIC_PREFIX.getLen() > 0)
     {
-        vctrl_format(buffer2, MAX_LEN, ((vchanset *)cl->customData( "vctrl" ))->TOPIC_PREFIX, from);
+        vctrl_format(buffer2, MAX_LEN, ((vchanset *)cl->customData(module_info->desc))->TOPIC_PREFIX, from);
         buffer.push(buffer2);
         buffer.push(" ");
     }
 
     buffer.push(text);
 
-    if(((vchanset *)cl->customData( "vctrl" ))->USE_TOPIC_APPENDIX && ((vchanset *)cl->customData( "vctrl" ))->TOPIC_APPENDIX.getLen() > 0)
+    if(((vchanset *)cl->customData(module_info->desc))->USE_TOPIC_APPENDIX && ((vchanset *)cl->customData(module_info->desc))->TOPIC_APPENDIX.getLen() > 0)
     {
-        vctrl_format(buffer2, MAX_LEN, ((vchanset *)cl->customData( "vctrl" ))->TOPIC_APPENDIX, from);
+        vctrl_format(buffer2, MAX_LEN, ((vchanset *)cl->customData(module_info->desc))->TOPIC_APPENDIX, from);
         buffer.push(" ");
         buffer.push(buffer2);
     }
@@ -695,7 +693,7 @@ bool vctrl_check_flag(CHANLIST *cl, chanuser *u, const char *var)
     if(!cl)
         flagstr=vset.getValue(var);
     else
-        flagstr=((vchanset *)cl->customData( "vctrl" ))->getValue(var);
+        flagstr=((vchanset *)cl->customData(module_info->desc))->getValue(var);
 
     if(!flagstr)
     {
@@ -754,8 +752,7 @@ void hook_botnetcmd(const char *from, const char *cmd)
             {   
                 if(userlist.chanlist[i].name)
                 {
-		    vchanset *cdata = (vchanset *)userlist.chanlist[i].customData( "vctrl" );
-                    if(cdata && cdata->parseUser(arg[0], arg[3], srewind(cmd, 4), userlist.chanlist[i].name))
+                    if((vchanset *)userlist.chanlist[i].customData(module_info->desc)->parseUser(arg[0], arg[3], srewind(cmd, 4), userlist.chanlist[i].name))
                         vctrl_setSave();
                 }
             }
@@ -769,8 +766,7 @@ void hook_botnetcmd(const char *from, const char *cmd)
                 return;
             }
 
-	    vchanset *cdata = (vchanset *)cl->customData( "vctrl" );
-            if(cdata && cdata->parseUser(arg[0], arg[3], srewind(cmd, 4), cl->name))
+            if((vchanset *)cl->customData(module_info->desc)->parseUser(arg[0], arg[3], srewind(cmd, 4), cl->name))
                 vctrl_setSave();
         }
     }
@@ -784,7 +780,7 @@ void hook_timer()
 
 void hook_new_CHANLIST(CHANLIST *me)
 {
-    me->setCustomData( "vctrl", new vchanset );
+    me->setCustomData(module_info->desc, new vchanset);
 }
 
 // load config file here because modules are loaded before userlist
@@ -798,7 +794,7 @@ extern "C" module *init()
 {
     int i;
     struct timeval tv;
-    module *module_info=new module("voicecontrol", "patrick <patrick@psotnic.com>", "0.4");
+    module_info=new module("voicecontrol", "patrick <patrick@psotnic.com>", "0.4");
 
     // for the case that the module is loaded by partyline
     if(userlist.SN)

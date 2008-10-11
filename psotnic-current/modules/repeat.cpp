@@ -69,6 +69,7 @@ const char *rp_exceptions[]={
 
 // end of configuration
 
+module *m;
 
 #ifdef USE_LAGCHECK
 struct _lagcheck
@@ -209,7 +210,6 @@ public:
 #endif
         wait=false;
     }
-    ~info() {};
 
     repeatcheck *repeat;
 #ifdef USE_FLOOD_PROT
@@ -246,7 +246,6 @@ public:
     {
         data.removePtrs();
     }
-    ~cache() {};
 
     void add(char *ident, char *host)
     {
@@ -323,8 +322,7 @@ void hook_privmsg_notice(const char *from, const char *to, const char *msg)
     if(!(cu=ch->getUser(from)))
         return;
 
-    info *cdata = (info *)cu->customData( "repeat" );
-    if(cdata && (cdata->wait || cu->flags & (HAS_V | HAS_O | IS_OP)))
+    if(((info*)cu->customData(m->desc))->wait || cu->flags & (HAS_V | HAS_O | IS_OP))
         return;
 
     detect_repeat(cu, ch, msg);
@@ -350,9 +348,8 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
     
     if(!(cu=ch->getUser(from)))
         return;
-
-    info *cdata = (info *)cu->customData( "repeat" );
-    if(cdata && (cdata->wait || cu->flags & (HAS_V | HAS_O | IS_OP)))
+    
+    if(((info*)cu->customData(m->desc))->wait || cu->flags & (HAS_V | HAS_O | IS_OP))
         return;
 
     if(match("ACTION *", msg))
@@ -373,15 +370,9 @@ void hook_timer()
     for(ch=ME.first; ch; ch=ch->next)
     {
         for(u=ch->users.begin(); u; u++)
-	{
-	    info *infoCData = (info *)u->customData( "repeat" );
-	    if(infoCData)
-                infoCData->repeat->delExpiredLines();
-	}
+            ((info*)u->customData(m->desc))->repeat->delExpiredLines();
 #ifndef BAN_DIRECTLY
-	    cache *cacheCData = (cache *)ch->customData( "repeat" );
-	    if(cacheCData)
-                cacheCData->delExpiredUsers();
+        ((cache*)ch->customData(m->desc))->delExpiredUsers();
 #endif
     }
 #ifdef USE_LAGCHECK
@@ -417,36 +408,29 @@ void detect_flood(chanuser *cu, chan *ch)
 {
     char buffer[MAX_LEN];
     cache::entry *e;
-    info *infoCData = (info *)cu->customData( "repeat" );
-    cache *cacheCData = (cache *)ch->customData( "repeat" );
+    ((info*)cu->customData(m->desc))->flood->increase();
 
-    if(infoCData)
-	infoCData->flood->increase();
-
-    if(infoCData && infoCData->flood->getCount()>=FL_LINES)
+    if(((info*)cu->customData(m->desc))->flood->getCount()>=FL_LINES)
     {
 #ifndef BAN_DIRECTLY
-	if(cacheCData)
-	{
-            if((e=cacheCData->find(cu->ident, cu->host)))
-            {
-                cacheCData->del(e);
+        if((e=((cache*)ch->customData(m->desc))->find(cu->ident, cu->host)))
+        {
+            ((cache*)ch->customData(m->desc))->del(e);
 #endif
-                if(!set.BOTS_CAN_ADD_SHIT
-                     || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
-                    ch->knockout(cu, FL_BANREASON, FL_BANTIME*60);
+            if(!set.BOTS_CAN_ADD_SHIT
+                 || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
+                ch->knockout(cu, FL_BANREASON, FL_BANTIME*60);
 #ifndef BAN_DIRECTLY
-            }
+        }
 
-            else
-            {
-                cacheCData->add(cu->ident, cu->host);
-                cu->setReason(FL_KICKREASON);
-                ch->toKick.sortAdd(cu);
-            }
+        else
+        {
+            ((cache*)ch->customData(m->desc))->add(cu->ident, cu->host);
+            cu->setReason(FL_KICKREASON);
+            ch->toKick.sortAdd(cu);
+        }
 #endif
-	}
-        infoCData->wait=true;
+        ((info*)cu->customData(m->desc))->wait=true;
     }
 }
 #endif
@@ -455,49 +439,43 @@ void detect_repeat(chanuser *cu, chan *ch, const char *msg)
     char buffer[MAX_LEN];
     cache::entry *e;
 
-    info *infoCData = (info *)cu->customData( "repeat" );
-    cache *cacheCData = (cache *)ch->customData( "repeat" );
-
     for(unsigned int i=0, size=sizeof(rp_exceptions)/sizeof(rp_exceptions[0]); i<size; i++)
         if(match(rp_exceptions[i], msg))
             return;
 
-    if(infoCData && infoCData->repeat->addLine(msg)>=RP_REPEATS)
+    if(((info*)cu->customData(m->desc))->repeat->addLine(msg)>=RP_REPEATS)
     {
 #ifndef BAN_DIRECTLY
-	if(cacheCData)
-	{
-            if((e=cacheCData->find(cu->ident, cu->host)))
-            {
-                cacheCData->del(e);
+        if((e=((cache*)ch->customData(m->desc))->find(cu->ident, cu->host)))
+        {
+            ((cache*)ch->customData(m->desc))->del(e);
 #endif
-                if(!set.BOTS_CAN_ADD_SHIT
-                     || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
-                    ch->knockout(cu, RP_BANREASON, RP_BANTIME*60);
+            if(!set.BOTS_CAN_ADD_SHIT
+                 || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
+                ch->knockout(cu, RP_BANREASON, RP_BANTIME*60);
 #ifndef BAN_DIRECTLY
-            }
+        }
 
-            else
-            {
-                cacheCData->add(cu->ident, cu->host);
-                cu->setReason(RP_KICKREASON);
-                ch->toKick.sortAdd(cu);
-            }
+        else
+        {
+            ((cache*)ch->customData(m->desc))->add(cu->ident, cu->host);
+            cu->setReason(RP_KICKREASON);
+            ch->toKick.sortAdd(cu);
+        }
 #endif
-	}
-        infoCData->wait=true;
+        ((info*)cu->customData(m->desc))->wait=true;
     }
 }
 
 void hook_new_chanuser(chanuser *me)
 {
-    me->setCustomData( "repeat", new info );
+    me->setCustomData(m->desc, new info);
 }
 
 #ifndef BAN_DIRECTLY
 void hook_new_chan(chan *me)
 {
-    me->setCustomData( "repeat", new cache );
+    me->setCustomData(m->desc, new cache);
 }
 #endif
 
@@ -510,7 +488,7 @@ void prepareCustomData()
     for(ch=ME.first; ch; ch=ch->next)
     {
         for(u=ch->users.begin(); u; u++)
-            hook_new_chanuser(u);
+            hook_new_chanuser(u); 
 #ifndef BAN_DIRECTLY
         hook_new_chan(ch);
 #endif
@@ -519,12 +497,10 @@ void prepareCustomData()
 
 extern "C" module *init()
 {
-    module *m=new module("repeat", "patrick <patrick@psotnic.com>", "0.2");
-    m->hooks->new_chanuser=hook_new_chanuser;
-#ifndef BAN_DIRECTLY
-    m->hooks->new_chan=hook_new_chan;
-#endif
+    m=new module("repeat", "patrick <patrick@psotnic.com>", "0.2");
     prepareCustomData();
+    m->hooks->new_chanuser=hook_new_chanuser;
+    m->hooks->new_chan=hook_new_chan;
     m->hooks->privmsg=hook_privmsg_notice;
     m->hooks->notice=hook_privmsg_notice;
     m->hooks->ctcp=hook_ctcp;
