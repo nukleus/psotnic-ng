@@ -21,15 +21,6 @@
 #include "prots.h"
 #include "global-var.h"
 
-CHANLIST::CHANLIST() :
-#ifdef HAVE_MODULES
-	CustomDataStorage(),
-#endif
-	status(0), nextjoin(0), updated(0), chset(0), wasop(0), allowedOps(0)
-{
-	HOOK( new_CHANLIST, new_CHANLIST( this ) );
-}
-
 char _chmodes[MAX_LEN];
 
 void chan::recheckShits()

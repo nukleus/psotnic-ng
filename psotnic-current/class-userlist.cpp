@@ -1232,8 +1232,7 @@ int ul::addChannel(const char *name, const char *pass, const char *attr)
 	nextSave = NOW + SAVEDELAY;
 
 #ifdef HAVE_MODULES
-	/*if(chanlist[i].customDataConstructor)
-		chanlist[i].customDataConstructor(&chanlist[i]);*/
+	HOOK( new_CHANLIST, new_CHANLIST( &chanlist[i] ) );
 #endif
 	return i;
 }
