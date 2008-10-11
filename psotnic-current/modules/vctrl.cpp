@@ -196,7 +196,7 @@ void vctrl_load()
         else if(!strcmp(arg[0], "vchanset"))
         {
             if((cl=userlist.findChanlist(arg[1])))
-                (vchanset *)cl->customData(module_info->desc)->setVariable(arg[2], rtrim(srewind(buffer, 3)));
+                ((vchanset *)cl->customData(module_info->desc))->setVariable(arg[2], rtrim(srewind(buffer, 3)));
         }
 	// else ..
 
@@ -752,7 +752,7 @@ void hook_botnetcmd(const char *from, const char *cmd)
             {   
                 if(userlist.chanlist[i].name)
                 {
-                    if((vchanset *)userlist.chanlist[i].customData(module_info->desc)->parseUser(arg[0], arg[3], srewind(cmd, 4), userlist.chanlist[i].name))
+                    if(((vchanset *)userlist.chanlist[i].customData(module_info->desc))->parseUser(arg[0], arg[3], srewind(cmd, 4), userlist.chanlist[i].name))
                         vctrl_setSave();
                 }
             }
@@ -766,7 +766,7 @@ void hook_botnetcmd(const char *from, const char *cmd)
                 return;
             }
 
-            if((vchanset *)cl->customData(module_info->desc)->parseUser(arg[0], arg[3], srewind(cmd, 4), cl->name))
+            if(((vchanset *)cl->customData(module_info->desc))->parseUser(arg[0], arg[3], srewind(cmd, 4), cl->name))
                 vctrl_setSave();
         }
     }
