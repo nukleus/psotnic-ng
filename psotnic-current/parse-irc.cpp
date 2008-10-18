@@ -142,8 +142,12 @@ void parse_irc(char *data)
 		ch = ME.findChannel(arg[2]);
 		if(ch)
 		{
-			a = push(NULL, arg[4], " ", arg[5], " ", arg[6], " ", arg[7], NULL);
-			ch->gotMode(arg[3], a, arg[0]);
+			char *tmp=srewind(data, 4); // args
+
+                        if(tmp)
+				a=strdup(tmp);
+
+			ch->gotMode(arg[3], tmp ? a : "", arg[0]);
 			free(a);
 		}
 		return;
