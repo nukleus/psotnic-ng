@@ -148,7 +148,9 @@ void parse_irc(char *data)
 				a=strdup(tmp);
 
 			ch->gotMode(arg[3], tmp ? a : "", arg[0]);
-			free(a);
+
+			if(tmp)
+				free(a);
 		}
 		return;
 	}
