@@ -2079,7 +2079,7 @@ ul::ul()
 		chanlist[i].protlist[REOP] = NULL;
 		chanlist[i].allowedOps = NULL;
 #ifdef HAVE_MODULES
-		//chanlist[i].customDataDestructor = NULL;
+		HOOK( del_CHANLIST, del_CHANLIST( &chanlist[i] ) )
 #endif
 	}
 	dset = new chanset();
@@ -2185,8 +2185,7 @@ void CHANLIST::reset()
 		 delete(allowedOps);
 
 #ifdef HAVE_MODULES
-/*	if(customDataDestructor)
-		customDataDestructor(this);*/
+	HOOK( del_CHANLIST, del_CHANLIST( this ) )
 #endif
 
 	chset = NULL;

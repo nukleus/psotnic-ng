@@ -138,14 +138,12 @@ void hook_new_chanuser(chanuser *me)
 	me->setCustomData( "spam", new repeat );
 }
 
-/*void chanuserDestructor(chanuser *me)
+void hook_del_chanuser(chanuser *me)
 {
-    if(me->customData)
-    {
-	delete (repeat *) me->customData;
-	me->customData = NULL;
-    }
-}*/
+    repeat *cdata = (repeat *) me->customData( "spam" );
+    if( cdata )
+        delete cdata;
+}
 
 /**
  * Init stuff
@@ -161,6 +159,7 @@ extern "C" module *init()
     //add custom constructor and destructor for all objects of type `chanuser' and `CHANLIST'
     //initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
     m->hooks->new_chanuser=hook_new_chanuser;
+    m->hooks->del_chanuser=hook_del_chanuser;
     
     //construct regular expressions
     regcomp(&spamChannel, "#[[:alpha:]]", REG_ICASE | REG_EXTENDED);

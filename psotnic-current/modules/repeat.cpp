@@ -472,10 +472,25 @@ void hook_new_chanuser(chanuser *me)
     me->setCustomData(m->desc, new info);
 }
 
+void hook_del_chanuser(chanuser *me)
+{
+    info *cdata=(info *)me->customData(m->desc);
+
+    if(cdata)
+        delete cdata;
+}
+
 #ifndef BAN_DIRECTLY
 void hook_new_chan(chan *me)
 {
     me->setCustomData(m->desc, new cache);
+}
+
+void hook_del_chan( chan *me )
+{
+	cache *cdata = (cache *) me->customData( "repeat" );
+	if( cdata )
+		delete cdata;
 }
 #endif
 
@@ -500,7 +515,9 @@ extern "C" module *init()
     m=new module("repeat", "patrick <patrick@psotnic.com>", "0.2");
     prepareCustomData();
     m->hooks->new_chanuser=hook_new_chanuser;
+    m->hooks->del_chanuser=hook_del_chanuser;
     m->hooks->new_chan=hook_new_chan;
+    m->hooks->del_chan=hook_del_chan;
     m->hooks->privmsg=hook_privmsg_notice;
     m->hooks->notice=hook_privmsg_notice;
     m->hooks->ctcp=hook_ctcp;

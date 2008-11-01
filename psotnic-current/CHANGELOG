@@ -16,7 +16,8 @@
 * svn log https://psotnic.svn.sourceforge.net/svnroot/psotnic                         *
 ***************************************************************************************
 
-Psotnic 0.2.14-pre1 (2008/10/10) most important changes:
+Psotnic 0.2.14-pre1 (2008/11/01) most important changes:
+- .bc command supports wildcards (patrick)
 - new customData API, multiple modules requiring customData can now be loaded at the same time (coded by [C]167)
 - added Doxygen files to be able to generate the API documentation (files by [C]167)
 - config file generator, see ./psotnic -n (coded by [C]167)

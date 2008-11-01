@@ -2616,14 +2616,36 @@ void parse_owner(inetconn *c, char *data)
 		}
 		else
 		{
-			inetconn *bot = net.findConn(userlist.findHandle(arg[1]));
-			if(bot)
+			HANDLE *p;
+			inetconn *bot;
+
+			net.sendCmd(c, data+1, NULL);
+
+			for(p = userlist.first; p; p=p->next)
 			{
-				net.sendCmd(c, data+1, NULL);
-				bot->send(S_BOTCMD, " ", c->name, " ", srewind(data, 2), NULL);
+				if(!(p->flags[GLOBAL] & HAS_B))
+					continue;
+
+				if(match(arg[1], p->name))
+				{
+					if(!strcmp(p->name, config.handle))
+					{
+						pstring<> str(c->name);
+						str += " ";
+						str += srewind(data, 2);
+
+						botnetcmd(config.handle, str);
+					}
+
+					else
+					{
+						bot = net.findConn(p);
+
+						if(bot)
+							bot->send(S_BOTCMD, " ", c->name, " ", srewind(data, 2), NULL);
+					}
+				}
 			}
-			else
-				c->send("Invalid bot", NULL);
 		}
 		return;
 	}

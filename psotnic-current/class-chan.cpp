@@ -1127,6 +1127,7 @@ chan::chan()
 /* Destruction derby */
 chan::~chan()
 {
+	HOOK( del_chan, del_chan( this ) )
 }
 
 /* class chanuser */
@@ -1213,8 +1214,8 @@ chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
 chanuser::~chanuser()
 {
 #ifdef HAVE_MODULES
-/*	if(host && customDataDestructor)
-		customDataDestructor(this);*/
+	if(host)
+		HOOK( del_chanuser, del_chanuser( this ) )
 #endif
 	if(nick) free(nick);
 	if(ident) free(ident);

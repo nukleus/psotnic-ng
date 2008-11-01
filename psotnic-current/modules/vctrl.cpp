@@ -783,6 +783,14 @@ void hook_new_CHANLIST(CHANLIST *me)
     me->setCustomData(module_info->desc, new vchanset);
 }
 
+void hook_del_CHANLIST(CHANLIST *me)
+{
+    vchanset *cdata=(vchanset *)me->customData(module_info->desc);
+
+    if(cdata)
+        delete cdata;
+}
+
 // load config file here because modules are loaded before userlist
 // also chanlists will be rebuilt every time when the bot retrieves a userlist
 void hook_userlistLoaded()
@@ -814,6 +822,7 @@ extern "C" module *init()
     module_info->hooks->botnetcmd=hook_botnetcmd;
     module_info->hooks->timer=hook_timer;
     module_info->hooks->new_CHANLIST=hook_new_CHANLIST;
+    module_info->hooks->del_CHANLIST=hook_del_CHANLIST;
 
     gettimeofday(&tv, NULL);
     srand(tv.tv_usec);

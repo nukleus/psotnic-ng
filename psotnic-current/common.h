@@ -44,6 +44,9 @@ class Hooks
 	void (*new_chan)( chan *ch );
 	void (*new_CHANLIST)( CHANLIST *chl );
 	void (*new_chanuser)( chanuser *u );
+	void (*del_chan)( chan *ch );
+	void (*del_CHANLIST)( CHANLIST *chl );
+	void (*del_chanuser)( chanuser *u );
 
 	Hooks()
 	{
