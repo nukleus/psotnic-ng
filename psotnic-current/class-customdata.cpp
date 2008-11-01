@@ -26,7 +26,6 @@
 /*! Standard constructor */
 CustomDataStorage::CustomDataStorage()
 {
-	DEBUG( printf("[D] CDS: CONSTRUCT!\n"); )
 	// just to be sure.
 	m_data.clear();
 }
@@ -34,7 +33,6 @@ CustomDataStorage::CustomDataStorage()
 /*! Destructor, cleans up the map. */
 CustomDataStorage::~CustomDataStorage()
 {
-	DEBUG( printf("[D] CDS: DESTRUCT!\n"); )
 	m_data.clear();
 }
 
@@ -45,7 +43,6 @@ CustomDataStorage::~CustomDataStorage()
  */
 CustomDataObject *CustomDataStorage::customData( const char *moduleName )
 {
-	DEBUG( printf("[D] CDS: customData( %s )\n", moduleName ); )
 	map< const char *, CustomDataObject * >::iterator it = m_data.find( moduleName );
 	if ( it != m_data.end() )
 	{
@@ -64,7 +61,6 @@ CustomDataObject *CustomDataStorage::customData( const char *moduleName )
  */
 void CustomDataStorage::setCustomData( const char *moduleName, CustomDataObject *data )
 {
-	DEBUG( printf("[D] CDS: setModuleData( %s, %s )\n", moduleName, data ? "data" : "NULL"); )
 	if( !data )
 		return;
 
@@ -76,6 +72,5 @@ void CustomDataStorage::setCustomData( const char *moduleName, CustomDataObject 
  */
 void CustomDataStorage::delCustomData( const char *moduleName )
 {
-	DEBUG( printf("[D] CDS: delCustomData( %s )\n", moduleName ); )
 	m_data.erase( moduleName );
 }
