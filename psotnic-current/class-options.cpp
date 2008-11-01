@@ -262,8 +262,8 @@ settings::settings()
 	registerObject(BOTS_CAN_ADD_SHIT = entBool("bots-can-add-shit", 0));
 	registerObject(PRE_023_FINAL_COMPAT = entBool("pre-0.2.3-final-compat", 0));
 	registerObject(PRE_0211_FINAL_COMPAT = entBool("pre-0.2.11-final-compat", 0));
-	registerObject(PRE_0214_FINAL_COMPAT = entBool("pre-0.2.14-final-compat", 1));
-	registerObject(PRE_REV127_COMPAT = entBool("pre-rev127-compat", 1));
+	registerObject(PRE_0214_FINAL_COMPAT = entBool("pre-0.2.14-final-compat", 0));
+	registerObject(PRE_REV127_COMPAT = entBool("pre-rev127-compat", 0));
 }
 
 /*
