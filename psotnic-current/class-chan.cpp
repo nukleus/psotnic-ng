@@ -1394,8 +1394,8 @@ void chan::checkProtectedChmodes()
 			case '-' : pos=false; break;
 			default  :
 				if((pos && !hasFlag(modes[i])) || (!pos && hasFlag(modes[i])) ||
-						(pos && (modes[i] == 'k' && strcmp((const char *) key, chset->MODE_LOCK.getKey()) && hasFlag(modes[i])
-							 || (modes[i] == 'l' && limit != chset->MODE_LOCK.getLimit()) && hasFlag(modes[i]))))
+						(pos && ((modes[i] == 'k' && strcmp((const char *) key, chset->MODE_LOCK.getKey()) && hasFlag(modes[i]))
+							 || ((modes[i] == 'l' && limit != chset->MODE_LOCK.getLimit()) && hasFlag(modes[i])))))
 				{
 					mode[0]=pos?'+':'-';
 					mode[1]=modes[i];

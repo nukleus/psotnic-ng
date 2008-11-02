@@ -50,6 +50,7 @@
 #include <list>
 #include <string>
 #include <fstream>
+#include <algorithm>
 
 class DataFile
 {

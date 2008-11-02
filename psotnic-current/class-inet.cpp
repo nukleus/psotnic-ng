@@ -177,7 +177,7 @@ int inet::closeConn(inetconn *c, const char *reason)
 
 	//DEBUG(printf("pos: %d\n", pos));
 
-	if(pos >= 0 && pos < max_conns || c == &net.hub)
+	if ((pos >= 0 && pos < max_conns) || c == &net.hub)
 	{
 		/* close given connection */
 		if(c->isRegBot() && !c->isRedir()) net.propagate(c, S_BQUIT, " ", reason, NULL);

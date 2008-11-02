@@ -188,7 +188,7 @@ void parse_ctcp(char *mask, char *data, char *to)
 					//printf("match: %s\n", db[i].query);
 					n = querylen(db[i].query);
 
-					if(config.ctcptype == VER_IRSSI || config.ctcptype == VER_PSOTNIC && n > 40)
+					if((config.ctcptype == VER_IRSSI || config.ctcptype == VER_PSOTNIC) && n > 40)
 							data[40] = '\0';
 
 					expand(db[i].reply, buf, MAX_LEN, data + n + 1);
