@@ -1,0 +1,137 @@
+plog
+----
+
+plog is a logging module for psotnic.
+
+Requirements
+------------
+
+psotnic revision 151 (which is 0.2.14) or newer
+
+
+Installation
+------------
+
+1) extract the tarball
+
+extract the tarball in psotnic*/modules/, so that so that you have psotnic*/modules/plog/
+
+2) compile the module
+
+go to plog/ directory and compile it with:
+ g++ main.cpp plog.cpp misc.cpp -o ../plog.so -shared
+
+If it does not work, try again with -fPIC
+
+This should have created a file named "plog.so" in modules/
+
+3) load the module
+
+Append a line similar to this to the config file of your bot:
+
+ load /path/to/psotnic/modules/plog.so
+
+or load the module while the bot is running with this partyline command:
+
+ .bc <bot> cfg +load /path/to/psotnic/modules/plog.so
+
+To verify that the module is loaded, type:
+
+ .bc <bot> modules
+
+
+Configuration
+-------------
+
+Logging is disabled by default, so that you can choose a path first where you want to store the logs
+and to choose what should be logged.
+
+1) choose a path
+
+Default is "logs/$0.log" while $0 is a variable for the target (e.g. "#psotnic").
+It supports also strftime format.
+
+Set the path:
+
+ .bc <bot> plog set path /path/to/logs/$0.log
+
+strftime example:
+
+ .bc <bot> plog set path /path/to/logs/%Y/%M/%d/$0.log
+
+ will create logs like: /path/to/logs/2008/07/27/#psotnic.log
+
+It is recommended to set an absoulte path, otherwise the location depends on how you start psotnic.
+
+
+2) adjust other global settings (not necessary)
+
+To see all global settings: .bc <bot> plog set
+
+This step can be skipped.
+
+
+3) specify what you want to log
+
+For client logging (connected, disconnected, got msg, kline etc):
+
+ .bc <bot> plog clientset
+
+If you want to log channels, add them first:
+
+ .bc <bot> plog addchan <channel>
+
+and then choose what you want to log there:
+
+ .bc <bot> plog chanset <channel>
+
+
+4) enable logging
+
+ .bc <bot> plog clientset log ON
+ .bc <bot> plog chanset <channel> log ON
+
+Send a message (or anything else that should be logged) to your bot and to a logged channel to test it.
+
+That's all!
+
+
+5) overview of commands
+
+ .bc <bot> plog set [<key> [<value>]]
+ .bc <bot> plog clientset [<key> [<value>]]
+ .bc <bot> plog addchan <channel>
+ .bc <bot> plog chans
+ .bc <bot> plog delchan <channel>
+ .bc <bot> plog chanset <channel> [<key> [<value>]]
+
+for all channels, use "chanset * .."
+
+Sorry but the commands are not very handy :)
+
+
+Further hints
+-------------
+
+Safe channels must be added with id, e.g. !EX2TMpsotnic
+
+If you need logs only as evidence for takeovers:
+
+ .bc <bot> plog chanset <channel> log-msg OFF
+ .bc <bot> plog chanset <channel> log-notice OFF
+ .bc <bot> plog chanset <channel> log-topic OFF
+
+
+Contact
+-------
+
+send bug reports, feature requests and everything else to patrick@psotnic.com
+
+
+Credits
+-------
+
+Thanks to the following people for testing:
+ * Aretino
+
+Thanks to Irssi, I borrowed some ideas from it ;-)
