@@ -6,7 +6,7 @@ plog is a logging module for psotnic.
 Requirements
 ------------
 
-psotnic revision 151 (which is 0.2.14) or newer
+psotnic 0.2.14 or newer.
 
 
 Installation

@@ -527,7 +527,9 @@ void parse_irc(char *data)
 		chan *ch = ME.findChannel(arg[2]);
 		if(ch)
 		{
+#ifdef HAVE_MODULES
 			chanuser *u = ch->getUser(arg[0]);
+#endif
 			pstring<> oldtopic(ch->topic);
 			ch->topic = srewind(data, 3)+1;
 
