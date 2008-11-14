@@ -967,6 +967,25 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 
 		if(md5)
 		{
+			struct stat statbuf;
+
+			// avoid crashes on systems that allow to open() a directory -- patrick
+
+			if(stat(arg2, &statbuf) == 0)
+			{
+				if(!S_ISREG(statbuf.st_mode))
+				{
+					_event.setError(this, "cannot open %s: no regular file", arg2);
+					return &_event;
+				}
+			}
+
+			else
+			{
+				_event.setError(this, "cannot stat %s: %s", arg2, strerror(errno));
+				return &_event;
+			}
+
 			fd = open(arg2, O_RDONLY);
 
 			if(fd == -1)

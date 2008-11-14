@@ -89,6 +89,7 @@ noautorejoin
 op
 peak
 peak2
+raw
 repeat
 spam
 subop
@@ -189,7 +190,7 @@ print $f "\ndistclean:\n";
 print $f "\t\@\$(MAKE) clean\n";
 print $f "\t\@echo [*] Removing seed.h\n";
 print $f "\t\@rm -f seed.h\n";
-print $f "\t\@rm -rf bin/* pid.* *.ul Makefile Makefile.* modules/Makefile modules/plog/Makefile modules/*.so\n\n";
+print $f "\t\@rm -rf bin/* pid.* *.ul config.h Makefile Makefile.* modules/Makefile modules/plog/Makefile modules/*.so\n\n";
 
 print $f "current:\n";
 print $f "\t\@echo [*] Making current source package\n";
@@ -252,6 +253,7 @@ foreach $t (keys %targets)
 
     print $f "tar: $filelist\n";
     print $f "\t\@echo [*] Linking\n";
+    print $f "\t\@test -d bin || mkdir bin\n";
 
     if($t =~ /debug|dynamic/) {
 	print $f "\t\@${cc_prefix}g++ $filelist -o $out $targets{$t} $cflags $lflags -export-dynamic\n";
@@ -272,7 +274,7 @@ foreach $t (keys %targets)
 #
 # Modules makefile
 #
-my $f = new FileHandle "> modules/Makefile" or die 'Cannot create Makefile';
+my $f = new FileHandle "> modules/Makefile" or die 'Cannot create modules/Makefile';
 
 print "[+] Generating modules/Makefile\n";
 print $f "#########################################\n";
@@ -369,56 +371,29 @@ else
 #moved to makefiles, to keep compatybility
 #`gcc -o make-hiddenseed make-hiddenseed.c && ./make-hiddenseed > hidden-seed-functions.c`;
 
-
-#
-# Generating config.h
-#
-	$f = new FileHandle "> config.h";
-    if(defined $f)
-    {
-		print "[+] Generating config.h\n";
-        print $f "#ifndef PSOTNIC_CONFIG_H\n";
-        print $f "#define PSOTNIC_CONFIG_H 1\n\n";
-
-		my @arr = split(/ /, $cflags);
- 
-		foreach(@arr)
-		{
-		    if(/(-D)(.*)=(.*)/) {
-				print $f "#ifndef $2\n";
-        		print $f "#\tdefine $2\t$3\n";
-				print $f "#endif\n\n";
-		    }
-		    elsif(/(-D)(.*)/) {
-				print $f "#ifndef $2\n";
-        		print $f "\t#define $2\t1\n";
-				print $f "#endif\n\n";
-		    }
-		}
-		print $f "\n#endif\n";
-		$f->close		
-	}
-
 #
 # Creating revision file
 #
 
-print "[*] Generating SVN revision file\n";
+print "[*] Retrieving SVN revision\n";
 
 
 my $svn_entries = ".svn/entries";
 
-sub check_svn_revision {
+sub check_svn_revision
+{
 	my $f = shift;
 
 	my $x = `head -n 4 $f | tail -n 1 2>/dev/null`;
 	$x =~ s/\n//;
-	if(!($x =~ /^\d+$/)) {
-    	$x = `head -n 4 $f | tail -1 2>/dev/null`;
-	    $x =~ s/\n//;
+	if(!($x =~ /^\d+$/))
+	{
+		$x = `head -n 4 $f | tail -1 2>/dev/null`;
+		$x =~ s/\n//;
 	}
 
-	if(!($x =~ /^\d+$/)) {
+	if(!($x =~ /^\d+$/))
+	{
 		$x = 'UNKNOWN';
 	}
 
@@ -427,10 +402,12 @@ sub check_svn_revision {
 
 my $svn_rev = check_svn_revision($svn_entries);
 
-if($svn_rev == 'UNKNOWN') {
+if($svn_rev == 'UNKNOWN')
+{
 	my $currDir = `pwd`;
 
-if($currDir =~ /.*\/\.update-[0-9]*$/) {
+	if($currDir =~ /.*\/\.update-[0-9]*$/)
+	{
 		$svn_entries = `ls psotnic-*/.svn/entries`;
 		$svn_entries =~ s/\n//;
 		if($svn_entries =~ /entries/) {
@@ -439,12 +416,37 @@ if($currDir =~ /.*\/\.update-[0-9]*$/) {
 	}
 }
 
-$f = new FileHandle "> svn-rev.h";
-print $f "#ifndef PSOTNIC_SVN_REV_H\n";
-print $f "#define PSOTNIC_SVN_REV_H 1\n\n";
-print $f "#define SVN_REVISION \"$svn_rev\"\n";
-print $f "#endif\n";
-$f->close;
+$cflags .= "-DSVN_REVISION=\"$svn_rev\" ";
 print "[+] Done; Source Code Revision = $svn_rev\n";
+
+
+#
+# Generating config.h
+#
+$f = new FileHandle "> config.h";
+if(defined $f)
+{
+	print "[+] Generating config.h\n";
+	print $f "#ifndef PSOTNIC_CONFIG_H\n";
+	print $f "#define PSOTNIC_CONFIG_H 1\n\n";
+
+	my @arr = split(/ /, $cflags);
+
+	foreach(@arr)
+	{
+		if(/(-D)(.*)=(.*)/) {
+			print $f "#ifndef $2\n";
+			print $f "#\tdefine $2\t$3\n";
+			print $f "#endif\n\n";
+		}
+		elsif(/(-D)(.*)/) {
+			print $f "#ifndef $2\n";
+			print $f "\t#define $2\t1\n";
+			print $f "#endif\n\n";
+		}
+	}
+	print $f "\n#endif\n";
+	$f->close
+}
 
 1;

@@ -170,7 +170,7 @@ void readUserInput( const char *prompt, entInt &entity, bool force )
  * \param entity The entits.
  * \author Stefan Valouch <stefanvalouch@googlemail.com>
  */
-void readUserInput( const char *prompt, entHost &entity )
+void readUserInput( const char *prompt, entHost &entity, bool allowEmpty )
 {
 	string buf;
 	do
@@ -188,6 +188,10 @@ void readUserInput( const char *prompt, entHost &entity )
 		{
 			cout << endl;
 			exit(1);
+		}
+		if( allowEmpty && buf.empty() )
+		{
+			break;
 		}
 		options::event *e = entity.setValue(entity.name, buf.c_str());
 		if(!e->ok)
@@ -595,6 +599,7 @@ void createInitialConfig()
 	if( readUserYesNo( "Do you want to set up the very basic and optional stuff?", false ) )
 	{
 		printMessage( "Detailed configuration" );
+		readUserInput( "IPv4 or IPv6 address (default: determined by OS", config.vhost, true );
 		readUserInput( "What is the bots username?", config.ident );
 
 		config.handle.defaultString = config.nick.string;

@@ -16,7 +16,9 @@
 * svn log https://psotnic.svn.sourceforge.net/svnroot/psotnic                         *
 ***************************************************************************************
 
-Psotnic 0.2.14-pre1 (2008/11/01) most important changes:
+Psotnic 0.2.14rc2 (2008/11/14) most important changes:
+- fixed segfault when module path is a directory (patrick)
+- added raw and plog module (patrick)
 - .bc command supports wildcards (patrick)
 - new customData API, multiple modules requiring customData can now be loaded at the same time (coded by [C]167)
 - added Doxygen files to be able to generate the API documentation (files by [C]167)

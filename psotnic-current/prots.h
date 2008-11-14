@@ -85,7 +85,6 @@ using std::string;
 #ifndef PSOTNIC_PROTS_H
 #define PSOTNIC_PROTS_H 1
 
-#include "svn-rev.h"
 #include "pstring.h"
 //#include "class-ent.h"
 //#include "iterator.h"
@@ -125,7 +124,7 @@ void readUserInput( const char *prompt, entBool    &entity, bool force=false);
 void readUserInput( const char *prompt, entInt     &entity, bool force=false);
 //entTime
 //entPerc
-void readUserInput( const char *prompt, entHost   &entity);
+void readUserInput( const char *prompt, entHost   &entity, bool allowEmpty = false );
 void readUserInput( const char *prompt, entString &entity);
 //entWord
 void readUserInput( const char *prompt, entMD5Hash &entity );
