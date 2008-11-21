@@ -417,6 +417,8 @@ void detect_flood(chanuser *cu, chan *ch)
         {
             ((cache*)ch->customData(m->desc))->del(e);
 #endif
+            snprintf(buffer, MAX_LEN, "*!%s@%s", cu->ident, cu->host);
+
             if(!set.BOTS_CAN_ADD_SHIT
                  || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
                 ch->knockout(cu, FL_BANREASON, FL_BANTIME*60);
@@ -450,6 +452,8 @@ void detect_repeat(chanuser *cu, chan *ch, const char *msg)
         {
             ((cache*)ch->customData(m->desc))->del(e);
 #endif
+            snprintf(buffer, MAX_LEN, "*!%s@%s", cu->ident, cu->host);
+
             if(!set.BOTS_CAN_ADD_SHIT
                  || !protmodelist::addShit(ch->name, buffer, "repeat", RP_BANTIME*60, RP_BANREASON))
                 ch->knockout(cu, RP_BANREASON, RP_BANTIME*60);
