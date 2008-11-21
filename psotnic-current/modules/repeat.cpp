@@ -490,10 +490,10 @@ void hook_new_chan(chan *me)
     me->setCustomData(m->desc, new cache);
 }
 
-void hook_del_chan( chan *me )
+void hook_del_chan(chan *me)
 {
 	cache *cdata = (cache *) me->customData( "repeat" );
-	if( cdata )
+	if(cdata)
 		delete cdata;
 }
 #endif
