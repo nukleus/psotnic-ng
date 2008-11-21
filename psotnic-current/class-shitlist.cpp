@@ -488,7 +488,7 @@ int protmodelist::addShit(const char *channel, const char *mask, const char *fro
         else
         {
             if(bot)
-                net.send(HAS_N, "Added shit `\002", mask, "\002' on `\002", channel, "\002' requested by bot `\002", bot?bot:(const char*)config.handle, "\002'", NULL);
+                net.send(HAS_N, "Added shit `\002", mask, "\002' on `\002", channel, "\002' requested by bot `\002", bot, "\002'", NULL);
             else
                 net.send(HAS_N, "Added shit `\002", mask, "\002' on `\002", channel, "\002'", NULL);
 

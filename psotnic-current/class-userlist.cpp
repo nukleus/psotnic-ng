@@ -2391,32 +2391,14 @@ int ul::addIdiot(const char *mask, const char *channel, const char *reason, unsi
 		if(value != 5)
 		{
 			userlist.flags2str(h->flags[chnum], buf);
-
 			net.send(HAS_N, "Changing \002", channel, "\002 flags for `\002", h->name, "\002' to `\002", buf, "\002'", NULL);
-
-			if(set.PRE_0211_FINAL_COMPAT)
-			{
-				net.send(HAS_B, S_CHATTR, " ", h->name, " - ", channel, NULL);
-				net.send(HAS_B, S_CHATTR, " ", h->name, " ", buf, " ", channel, NULL);
-				++userlist.SN;
-			}
-			else
-				net.send(HAS_B, S_CHATTR, " ", h->name, " -", buf2, "+", buf, " ", channel, NULL);
+			net.send(HAS_B, S_CHATTR, " ", h->name, " -", buf2, "+", buf, " ", channel, NULL);
 		}
 		else
 		{
 			userlist.flags2str(h->flags[GLOBAL], buf);
-
 			net.send(HAS_N, "Changing Global flags for `\002", h->name, "\002' to `\002", buf, "\002'", NULL);
-
-			if(set.PRE_0211_FINAL_COMPAT)
-			{
-				net.send(HAS_B, S_CHATTR, " ", h->name, " -", NULL);
-				net.send(HAS_B, S_CHATTR, " ", h->name, " ", buf,  NULL);
-				++userlist.SN;
-			}
-			else
-				net.send(HAS_B, S_CHATTR, " ", h->name, " -", buf2, "+", buf, NULL);
+			net.send(HAS_B, S_CHATTR, " ", h->name, " -", buf2, "+", buf, NULL);
 
 			for(int j = 0; j < MAX_CHANNELS; j++)
 			{

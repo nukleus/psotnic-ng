@@ -89,55 +89,20 @@ int getRandomNumbers_safe(int top, int *ret, int num)
 
 int getRandomNumbers(int top, int *ret, int num)
 {
-	if(!set.PRE_0214_FINAL_COMPAT)
-		return getRandomNumbers_safe(top, ret, num);
-
-	int i, k;
-	char *t = new char[top];
-
-	memset(t, 0, top);
-
-	if(num > top) num = top;
-	for(i=0; i<num; )
-	{
-		k = rand() % top;
-		if(t[k]) continue;
-		t[k] = 1;
-		++i;
-	}
-
-	for(i=k=0; k<top; ++k)
-		if(t[k]) ret[i++] = k;
-
-	delete [] t;
-	return i;
+	return getRandomNumbers_safe(top, ret, num);
 }
 
 XSRand xsrand;
 
 void srand(int a, int b, int c)
 {
-	if(set.PRE_023_FINAL_COMPAT)
-	{
-		if(!a && !b && !c)
-			Isaac.srand(nanotime(), hash32(config.handle), 0);
-		else Isaac.srand(a, b, c);
-	}
-	else
-	{
-		if(set.PRE_REV127_COMPAT)
-			xsrand.srand(a ? a : nanotime());
-		else
-			xsrand.srand(a ^ b ? a ^ b : nanotime());
-	}
-
-
+	xsrand.srand(a ^ b ? a ^ b : nanotime());
 }
 
 int rand()
 {
 
-	return abs(set.PRE_023_FINAL_COMPAT ? Isaac.rand() : xsrand.rand());
+	return abs(xsrand.rand());
 }
 
 /**

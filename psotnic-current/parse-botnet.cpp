@@ -140,7 +140,7 @@ int parse_botnet(inetconn *c, char *data)
 			}
 			else
 			{
-				net.send(HAS_N, "[!] Invalid packet from", c->name, ": ", data, NULL);
+				net.send(HAS_N, "[!] Invalid packet from ", c->name, ": ", data, NULL);
 				c->close("Invalid packet -- internal error or smb is doing sth nasty");
 				return 1;
 			}
@@ -335,9 +335,9 @@ int parse_botnet(inetconn *c, char *data)
 		if(!strcmp(arg[0], S_REQSHIT) && strlen(arg[5]))
 		{
 			if(set.BOTS_CAN_ADD_SHIT)
-				protmodelist::addShit(arg[1], arg[2], arg[3], atol(arg[4]), srewind(data, 5), c->name);
+				protmodelist::addShit(arg[1], arg[2], arg[3], atol(arg[4]), srewind(data, 5), c->handle->name);
 			else
-				net.send(HAS_N, "[?] ", c->name, " requested shit but bots-can-add-shit is OFF", NULL);
+				net.send(HAS_N, "[?] ", c->handle->name, " requested shit but bots-can-add-shit is OFF", NULL);
 
 			return 1;
 		}

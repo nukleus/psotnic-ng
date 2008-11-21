@@ -54,10 +54,8 @@ void chan::updateLimit()
 				penalty += 4;
 			}
 		}
-		if(set.PRE_0211_FINAL_COMPAT)
-			nextlimit = NOW + chset->LIMIT_TIME * chset->LIMIT_BOTS;
-		else
-			nextlimit = NOW + chset->LIMIT_TIME_UP + rand() % 10;
+
+		nextlimit = NOW + chset->LIMIT_TIME_UP + rand() % 10;
 	}
 }
 

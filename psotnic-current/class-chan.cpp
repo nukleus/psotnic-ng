@@ -764,7 +764,7 @@ void chan::gotPart(const char *nick, int netsplit)
 		}
 	}
 
-	if(!set.PRE_0211_FINAL_COMPAT && synced() && nextlimit > NOW + chset->LIMIT_TIME_DOWN)
+	if(synced() && nextlimit > NOW + chset->LIMIT_TIME_DOWN)
 	{
 		int tolerance;
 

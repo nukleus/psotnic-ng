@@ -395,7 +395,6 @@ void calculatePenaltyOfChanmode(char *modes, int args, int *mypenalty)
  *
  * \author patrick <patrick@psotnic.com>
  * \param modes mode string like +iw
- * \param argc number of arguments for the modes (not used)
  * \param mypenalty pointer to the penalty of calculatePenalty()
  */
 

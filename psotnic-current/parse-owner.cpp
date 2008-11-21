@@ -845,15 +845,7 @@ void parse_owner(inetconn *c, char *data)
 		if(strlen(arg[3]))
 		{
 			c->send("Changing \002", arg[3], "\002 flags for `\002", arg[1], "\002' to `\002", buf, "\002'", NULL);
-
-			if(set.PRE_0211_FINAL_COMPAT)
-			{
-				net.send(HAS_B, S_CHATTR, " ", arg[1], " - ", arg[3], NULL);
-				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", buf, " ", arg[3], NULL);
-				++userlist.SN;
-			}
-			else
-				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], " ", arg[3], NULL);
+			net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], " ", arg[3], NULL);
 			//ME.recheckFlags(arg[3]);
 		}
 		else
@@ -871,14 +863,7 @@ void parse_owner(inetconn *c, char *data)
 			}
 			else c->send("Changing botnet flags for `\002", arg[1], "\002' to `\002", buf, "\002'", NULL);
 
-			if(set.PRE_0211_FINAL_COMPAT)
-			{
-				net.send(HAS_B, S_CHATTR, " ", arg[1], " -", NULL);
-				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", buf, NULL);
-				++userlist.SN;
-			}
-			else
-				net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], NULL);
+			net.send(HAS_B, S_CHATTR, " ", arg[1], " ", arg[2], NULL);
 
 
 			//ME.recheckFlags();
@@ -2755,15 +2740,7 @@ void parse_owner(inetconn *c, char *data)
 
 				net.sendCmd(c, "rflags ", arg[1], " ", arg[2],  NULL);
 				c->send("Restoring \002", arg[1], "\002 flags for `\002", arg[2], "\002' to `\002", flags1, "\002'", NULL);
-
-				if(set.PRE_0211_FINAL_COMPAT)
-				{
-					net.send(HAS_B, S_CHATTR, " ", arg[1], " - ", arg[2], NULL);
-					net.send(HAS_B, S_CHATTR, " ", arg[1], " ", flags2, " ", arg[2], NULL);
-					++userlist.SN;
-				}
-				else
-					net.send(HAS_B, S_CHATTR, " ", arg[1], " -", flags2, "+", flags1, " ", arg[2], NULL);
+				net.send(HAS_B, S_CHATTR, " ", arg[1], " -", flags2, "+", flags1, " ", arg[2], NULL);
 				++userlist.SN;
 				userlist.nextSave = NOW + SAVEDELAY;
 				return;

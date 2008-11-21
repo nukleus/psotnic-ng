@@ -232,22 +232,10 @@ void chan::gotMode(const char *modes, const char *args, const char *mask)
 						/* bot has changed the limit */
 						if(nickHandle->flags & HAS_B)
 						{
-                        			    if(set.PRE_0211_FINAL_COMPAT)
-                        			    {
-							    if(limit == -1)
-                                				nextlimit = -1;
-							    else if(nickHandle == me)
-                                				nextlimit = NOW + chset->LIMIT_TIME * chset->LIMIT_BOTS;
-							    else
-                                				nextlimit = NOW + chset->LIMIT_TIME;
-                        			    }
-                        			    else
-                        			    {
                             				if(limit == -1)
                                 			    nextlimit = -1;
                             				else
                                 			    nextlimit = NOW + chset->LIMIT_TIME_UP;
-                        			    }  
 						}
 						/* owner has changed the limit */
 						else if(nickHandle->flags & HAS_N)

@@ -16,7 +16,8 @@
 * svn log https://psotnic.svn.sourceforge.net/svnroot/psotnic                         *
 ***************************************************************************************
 
-Psotnic 0.2.14rc2 (2008/11/14) most important changes:
+Psotnic 0.2.14rc3 (2008/11/21) most important changes:
+- removed compabitility settings (patrick)
 - fixed segfault when module path is a directory (patrick)
 - added raw and plog module (patrick)
 - .bc command supports wildcards (patrick)
