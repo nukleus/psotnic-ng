@@ -141,8 +141,24 @@ void hook_new_chanuser(chanuser *me)
 void hook_del_chanuser(chanuser *me)
 {
     repeat *cdata = (repeat *) me->customData( "spam" );
+
     if( cdata )
+    {
         delete cdata;
+        me->delCustomData( "spam" );
+    }
+}
+
+void prepareCustomData()
+{
+    chan *ch;
+    ptrlist<chanuser>::iterator u;
+
+    for(ch=ME.first; ch; ch=ch->next)
+    {
+        for(u=ch->users.begin(); u; u++)
+            hook_new_chanuser(u);
+    }
 }
 
 /**
@@ -151,7 +167,8 @@ void hook_del_chanuser(chanuser *me)
 extern "C" module *init()
 {
     module *m = new module("example #2: antispam", "Grzegorz Rusin <pks@irc.pl, gg:0x17f1ceh>", "0.1.0");
-    
+    prepareCustomData();
+
     //register hooks
     m->hooks->privmsg = hook_privmsg;
     m->hooks->ctcp = hook_ctcp;
@@ -160,6 +177,7 @@ extern "C" module *init()
     //initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
     m->hooks->new_chanuser=hook_new_chanuser;
     m->hooks->del_chanuser=hook_del_chanuser;
+
     
     //construct regular expressions
     regcomp(&spamChannel, "#[[:alpha:]]", REG_ICASE | REG_EXTENDED);
@@ -171,4 +189,12 @@ extern "C" module *init()
 	    
 extern "C" void destroy()
 {
+    chan *ch;
+    ptrlist<chanuser>::iterator u;
+
+    for(ch=ME.first; ch; ch=ch->next)
+    {
+        for(u=ch->users.begin(); u; u++)
+            hook_del_chanuser(u);
+    }
 }

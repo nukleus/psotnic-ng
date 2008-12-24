@@ -41,7 +41,7 @@ const char *rp_exceptions[]={
 
 #define FL_KICKREASON "stop flooding"
 
-#define FL_BANREASON "multiple flood"
+#define FL_BANREASON "multiple floods"
 
 #define FL_BANTIME 60
 
@@ -481,7 +481,10 @@ void hook_del_chanuser(chanuser *me)
     info *cdata=(info *)me->customData(m->desc);
 
     if(cdata)
+    {
         delete cdata;
+        me->delCustomData(m->desc);
+    }
 }
 
 #ifndef BAN_DIRECTLY
@@ -492,9 +495,13 @@ void hook_new_chan(chan *me)
 
 void hook_del_chan(chan *me)
 {
-	cache *cdata = (cache *) me->customData( "repeat" );
-	if(cdata)
-		delete cdata;
+    cache *cdata=(cache *)me->customData(m->desc);
+
+    if(cdata)
+    {    
+        delete cdata;
+        me->delCustomData(m->desc);
+    }
 }
 #endif
 
@@ -538,4 +545,15 @@ extern "C" module *init()
 
 extern "C" void destroy()
 {
+    chan *ch;
+    ptrlist<chanuser>::iterator u;
+
+    for(ch=ME.first; ch; ch=ch->next)
+    {
+        for(u=ch->users.begin(); u; u++)
+            hook_del_chanuser(u); 
+#ifndef BAN_DIRECTLY
+        hook_del_chan(ch);
+#endif
+    }
 }

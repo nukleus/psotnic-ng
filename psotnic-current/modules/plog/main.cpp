@@ -1,4 +1,4 @@
-/* plog - a logging module for psotnic (test version!)
+/* plog - a logging module for psotnic
  *
  * TODO: - ME.removeChannel() can be executed before the bot has left the channel,
  *         if it retrieves traffic of this channel, the logfile will be opened again
@@ -150,15 +150,19 @@ void hook_invite(const char *from, const char *to, chan *ch, CHANLIST *cl)
 
 void hook_disconnect(const char *reason)
 {
-    char *stripped_reason;
+    char *stripped_reason=NULL;
 
     if(plog->client->set->LOG && plog->client->set->LOG_DISCONNECTED)
     {
         if(!plog->client->parsedQuit)
         {
-            stripped_reason=strip_color(reason, strlen(reason), false);
-            plog->client->log("Disconnected from server %s (%s)", net.irc.name, stripped_reason);
-            free(stripped_reason);
+            if(reason)
+                stripped_reason=strip_color(reason, strlen(reason), false);
+
+            plog->client->log("Disconnected from server %s (%s)", net.irc.name, stripped_reason?stripped_reason:"");
+
+            if(stripped_reason)
+                free(stripped_reason);
         }
 
         else
@@ -245,40 +249,61 @@ void hook_raw(const char *data)
 
     else if(!strcmp(arg[1], "KICK"))
     {
-        char *comment, *stripped_comment;
+        char *comment, *stripped_comment=NULL;
         logrec=plog->findLoggingChannel(arg[2]);
 
         if(logrec && logrec->set->LOG_KICK)
         {
-            comment=srewind(data, 4)+1;
-            stripped_comment=strip_color(comment, strlen(comment), false);
-            logrec->log("-!- %s was kicked from %s by %s [%s]", arg[3], arg[2], get_hostmask(arg[0]), stripped_comment);
-            free(stripped_comment);
+            comment=srewind(data, 4);
+
+            if(comment)
+            {
+                *comment++;
+                stripped_comment=strip_color(comment, strlen(comment), false);
+            }
+
+            logrec->log("-!- %s was kicked from %s by %s [%s]", arg[3], arg[2], get_hostmask(arg[0]), stripped_comment?stripped_comment:"");
+
+            if(stripped_comment)
+                free(stripped_comment);
         }
     }
 
     if(!strcmp(arg[1], "PART"))
     {
-        char *partmsg, *stripped_partmsg;
+        char *partmsg, *stripped_partmsg=NULL;
 
         logrec=plog->findLoggingChannel(arg[2]);
 
         if(logrec && logrec->set->LOG_PART)
         {
-            partmsg=srewind(data, 3)+1;
-            stripped_partmsg=strip_color(partmsg, strlen(partmsg), false);
-            logrec->log("-!- %s has left %s [%s]", get_hostmask(arg[0]), arg[2], stripped_partmsg);
-            free(stripped_partmsg);
+            partmsg=srewind(data, 3);
+
+            if(partmsg)
+            {
+                *partmsg++;
+                stripped_partmsg=strip_color(partmsg, strlen(partmsg), false);
+            }
+
+            logrec->log("-!- %s has left %s [%s]", get_hostmask(arg[0]), arg[2], stripped_partmsg?stripped_partmsg:"");
+
+            if(stripped_partmsg)
+                free(stripped_partmsg);
         }
     }
 
     else if(!strcmp(arg[1], "QUIT"))
     {
         chanuser *u;
-        char *quitmsg, *stripped_quitmsg;
+        char *quitmsg, *stripped_quitmsg=NULL;
 
-        quitmsg=srewind(data, 2)+1;
-        stripped_quitmsg=strip_color(quitmsg, strlen(quitmsg), false);
+        quitmsg=srewind(data, 2);
+
+        if(quitmsg)
+        {
+            *quitmsg++;
+            stripped_quitmsg=strip_color(quitmsg, strlen(quitmsg), false);
+        }
 
         for(ch=ME.first; ch; ch=ch->next)
         {
@@ -287,23 +312,33 @@ void hook_raw(const char *data)
                 logrec=plog->findLoggingChannel(ch->name);
 
                 if(logrec && logrec->set->LOG_QUIT)
-                    logrec->log("-!- %s has quit [%s]", get_hostmask(arg[0]), stripped_quitmsg);
+                    logrec->log("-!- %s has quit [%s]", get_hostmask(arg[0]), stripped_quitmsg?stripped_quitmsg:"");
             }
         }
 
-        free(stripped_quitmsg);
+        if(stripped_quitmsg)
+            free(stripped_quitmsg);
     }
 
     else if(!strcmp(arg[0], "ERROR"))
     {
-        char *errormsg, *stripped_errormsg;
+        char *errormsg, *stripped_errormsg=NULL;
 
         if(plog->client->set->LOG && plog->client->set->LOG_DISCONNECTED)
         {
-            errormsg=srewind(data, 1)+1;
-            stripped_errormsg=strip_color(errormsg, strlen(errormsg), false);
-            plog->client->log("Disconnected from server %s (%s)", net.irc.name, stripped_errormsg);
-            free(stripped_errormsg);
+            errormsg=srewind(data, 1);
+
+            if(errormsg)
+            {
+                *errormsg++;
+                stripped_errormsg=strip_color(errormsg, strlen(errormsg), false);
+            }
+
+            plog->client->log("Disconnected from server %s (%s)", net.irc.name, stripped_errormsg?stripped_errormsg:"");
+
+            if(stripped_errormsg)
+                free(stripped_errormsg);
+
             // do not log the disconnect in hook_disconnect() again.
             plog->client->parsedQuit=true;
         }
@@ -325,32 +360,47 @@ void hook_raw(const char *data)
 
     else if(!strcmp(arg[1], "TOPIC"))
     {
-        char *topic, *stripped_topic;
+        char *topic, *stripped_topic=NULL;
 
         logrec=plog->findLoggingChannel(arg[2]);
 
         if(logrec && logrec->set->LOG_TOPIC)
         {
-            topic=srewind(data, 3)+1;
-            stripped_topic=strip_color(topic, strlen(topic), false);
+            topic=srewind(data, 3);
 
-            logrec->log("-!- %s changed the topic of %s to: %s", get_hostmask(arg[0]), arg[2], stripped_topic);
-            free(stripped_topic);
+            if(topic)
+            {
+                *topic++;
+                stripped_topic=strip_color(topic, strlen(topic), false);
+            }
+
+            logrec->log("-!- %s changed the topic of %s to: %s", get_hostmask(arg[0]), arg[2], stripped_topic?stripped_topic:"");
+
+            if(stripped_topic)
+                free(stripped_topic);
         }
     }
 
     else if(!strcmp(arg[1], "332")) // RPL_TOPIC
     {
-        char *topic, *stripped_topic;
+        char *topic, *stripped_topic=NULL;
 
         logrec=plog->findLoggingChannel(arg[3]);
 
         if(logrec && logrec->set->LOG_TOPIC)
         {
-            topic=srewind(data, 4)+1;
-            stripped_topic=strip_color(topic, strlen(topic), false);
+            topic=srewind(data, 4);
 
-            logrec->log("-!- Topic for %s: %s", arg[3], stripped_topic);
+            if(topic)
+            {
+                *topic++;
+                stripped_topic=strip_color(topic, strlen(topic), false);
+            }
+
+            logrec->log("-!- Topic for %s: %s", arg[3], stripped_topic?stripped_topic:"");
+
+            if(stripped_topic)
+                free(stripped_topic);
         }
     }
 
@@ -386,6 +436,7 @@ void hook_raw(const char *data)
         {
             ch=ME.findChannel(arg[4]);
 
+            // check if the bot just joined the channel
             if(!ch || !ch->synced())
                 logrec->log("-!- Users: %s", srewind(data, 5)+1);
         }
@@ -574,7 +625,7 @@ void chanDestructor(chan *me)
 
 extern "C" module *init()
 {
-    module *m=new module("plog", "patrick <patrick@psotnic.com>", "0.1a5");
+    module *m=new module("plog", "patrick <patrick@psotnic.com>", "0.1");
     m->hooks->privmsg=hook_privmsg;
     m->hooks->notice=hook_notice;
     m->hooks->ctcp=hook_ctcp;

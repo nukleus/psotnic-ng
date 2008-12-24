@@ -788,7 +788,10 @@ void hook_del_CHANLIST(CHANLIST *me)
     vchanset *cdata=(vchanset *)me->customData(module_info->desc);
 
     if(cdata)
+    {
         delete cdata;
+        me->delCustomData(module_info->desc);
+    }
 }
 
 // load config file here because modules are loaded before userlist
@@ -832,4 +835,11 @@ extern "C" module *init()
 
 extern "C" void destroy()
 {
+    int i;
+
+    for(i=0; i<MAX_CHANNELS; i++)
+    {
+        if(userlist.chanlist[i].name)
+            hook_del_CHANLIST(&userlist.chanlist[i]);
+    }
 }

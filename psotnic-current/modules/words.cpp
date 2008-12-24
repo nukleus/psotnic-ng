@@ -744,7 +744,9 @@ void hook_notice(const char *from,const char *to, const char *msg)
   if (chans->match((const char *)ch->name)==Words::NO_MATCH) return;
 
   chanuser *u = ch->getUser(from);
-	
+
+  if(!u) return;
+
   if (u->flags & (HAS_V | HAS_O | IS_OP | IS_VOICE)) return;
 
   AntiWords::check_word(msg,ch,u);
@@ -761,7 +763,9 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
   if (chans->match((const char *)ch->name)==Words::NO_MATCH) return;
 
   chanuser *u = ch->getUser(from);
-	
+
+  if(!u) return;
+
   if (u->flags & (HAS_V | HAS_O | IS_OP | IS_VOICE)) return;
 
   if (!match("ACTION *", msg)) return;
