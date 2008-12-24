@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Loggin in</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+There are <strong>3 ways</strong> to login into the botnet:<br />
+
+<ol><ol>
+        <li>Telnet</li>
+        <li>DCC</li>
+        <li>SSL</li>
+    </ol></li>
+</ol>
+
+<br />
+<h3 id="toc0">Telnet</h3>
+Telnet mode consists to connect to the hub through a client that supports telnet protocol like<br />
+<a class="wiki_link_ext" href="http://www.chiark.greenend.org.uk/%7Esgtatham/putty/" rel="nofollow"> Putty</a>, Penguinet, SecureCRT, and obviously Telnet (free and available in any platform).<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">telnet box1.shellprovider.com 31337</pre>
+
+Oh Oh! Got an empty screen? Don't care, it is normal!<br />
+Before to see any signs of life by the hub <u>you have to type the <em>ownerpassword</em></u> then, if correct, you will see the login request.<br />
+Too hard for you? Then you might consider to use a dedicated client like Psotnic Client and EaZy Psotnic.<br />
+<br />
+<strong>DCC</strong><br />
+DCC (Direct Client Connection) mode consists to connect to the hub through a DCC Chat using your preferred IRC Client (Kvirc, Xchat, mIRC, etc).<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">/DCC chat hubnickname</pre>
+
+If you can't host a DCC session because you are firewalled or behind a NAT (eg: router) you can start a passive DCC<br />
+by asking the hub to host a session for you using the <strong>chat</strong> command.<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">/msg hubnickname chat</pre>
+
+You will see a DCC chat request from the hub bot.<br />
+Doesn't it work? Make sure you have inserted a correct IP in the <em>myipv4</em> directive in the config file.<br />
+<br />
+<strong>SSL</strong><br />
+SSL connection works in a similar way as telnet connection, with the exception that all transfered data is being encrypted.<br />
+<br />
+In order to connect to hub you have to use some kind of SSL-enabled client. In the example bellow I present use ssl client from <a class="wiki_link_ext" href="http://openssl.org" rel="nofollow">openssl</a> ulity:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">openssl s_client -connect box1.shellprovider.com:12345</pre>
+
+<br />
+<strong>NOTE:</strong> You can only connect to hub which has <em>ssl_listen</em> port open. Any SSL connections directed to ordinary <em>listen</em> port (the one used for telnet) will FAIL.<br />
+<br />
+After connection has been established, you have to supply ownerpassword (as with telnet connection bot won't ask you for it, you just have to type it in), username and password.
+    </div>
+  </body>
+</html>

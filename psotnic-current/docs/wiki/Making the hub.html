@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Making the hub</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+The first step to make your botnet is the creation of the main bot (aka hub).<br />
+<br />
+<h3 id="toc0">Choosing a main password (ownerpass):</h3>
+Now, enter into the directory where you compiled the bot (eg: <em>bin</em> ) and create the MD5 hash of your main password<br />
+using the following command: <em>echo &quot;yourpassword&quot; | ./psotnic -p</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">echo &quot;b0tm4st3r&quot; | ./psotnic -p</pre>
+
+You will have an output like this:<br />
+<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">Psotnic C++ edition, version current-2007/07/05-ipv6 (Aug  5 2007 23:27:43)
+Copyright (C) 2003-2007 Grzegorz Rusin &lt;grusin@gmail.com&gt;
+&nbsp;
+Bot is now running in MD5 hash generator mode
+Warning: strings longer than 100 characters will be cut
+&nbsp;
+string to hash: MD5 hash      : aa21ad108a57d28b87b8b4c05bceec57</pre>
+
+Take note of the MD5 hash (<em>aa21ad108a57d28b87b8b4c05bceec57</em>) , we will need it later.<br />
+<br />
+<h3 id="toc1">Creating the configuration file:</h3>
+Create a new text file with your preferred editor (eg: pico ).<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">pico conf.apocalypse</pre>
+
+According to <a class="wiki_link" href="Config%20File.html">config file directives</a> fill the requested informations and paste the <em>ownerpass</em> saved before:<br />
+For example:<br />
+<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">nick            apocalypse
+realname        Time of Judgment
+nickappend      _`
+myipv4          0.0.0.0
+listen          31070
+ownerpass       aa21ad108a57d28b87b8b4c05bceec57
+&nbsp;
+ident           knight
+handle          apocalypse
+&nbsp;
+server          195.40.6.37 6667
+server          212.40.5.89 6668</pre>
+
+Save the file and proceed to encryption using the following command: <em>./psotnic -c &lt;filename&gt;</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">./psotnic -c conf.apocalypse</pre>
+
+Move <em>&lt;filename&gt;.dec</em> (decrypted config file) to safe place if you do not want others to see your configuration.<br />
+<br />
+<h3 id="toc2">Starting the main bot (Hub):</h3>
+To start a bot just use <em>./psotnic &lt;configfile&gt;</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">./psotnic conf.apocalypse</pre>
+
+The bot will request you to supply an username (<em>handle</em>) and a password (<em>userpassword</em>) through IRCNet therefore open your IRC client<br />
+and set it with: <em>/msg &lt;botnickname&gt; mainowner &lt;username&gt; &lt;password&gt;</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">/msg apocalypse mainowner mafiaboy 1l0v3p1zz4</pre>
+
+<strong>Note:</strong> The <em>userpassword</em> is NOT the <em>ownerpassword</em> and must be at least 8 characters long.<br />
+<br />
+A message (&quot;<em>Account created</em>&quot;) will inform you that all is done.
+    </div>
+  </body>
+</html>

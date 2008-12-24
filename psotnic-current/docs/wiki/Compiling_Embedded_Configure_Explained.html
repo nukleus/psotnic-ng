@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Compiling_Embedded_Configure_Explained</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+<br />
+Below there is an explanation of configure parameters for:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">./configure --cc-prefix=~/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc- --little-endian \
+--cc-options=&quot;-fno-builtin -nostdinc++ -nodefaultlibs -Os&quot; --ld-options=&quot;-luClibc++ -lm&quot; --disable-adns
+&nbsp;</pre>
+
+<br />
+1. --cc-prefix<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">--cc-prefix=~/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc-</pre>
+
+This option tells configure script use different compiler than the default, in this case instead of using <strong>g++</strong>, compiler from build environment will be used.<br />
+<br />
+Each call to a compiler will be prefixed with <em>~/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc-</em>, so in our case<br />
+<em>~/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc-g++</em> will be called. Which of course exists in the system:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">grusin@it:~$ ls -al ~/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc-g++
+-rwxr-xr-x 1 grusin grusin 281819 2007-01-30 17:43 /home/grusin/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc-g++
+&nbsp;</pre>
+
+and points to a compiler from the build environment.<br />
+<br />
+<strong>NOTE:</strong> Each build environment will probably require different cc_prefix.<br />
+<br />
+2. --little-endian, --big-endian<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">--little-endian
+&nbsp;</pre>
+
+This options tells configure script to configure cryptographic support for machine with little endian processor.<br />
+<br />
+<strong>NOTE:</strong> You should check what kind of endian does CPU in your router have, in case of having router with big endian CPU pass --big-endian instead of --little-endian.<br />
+<br />
+3. --cc-options<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">--cc-options=&quot;-fno-builtin -nostdinc++ -nodefaultlibs -Os&quot;</pre>
+
+This line forces passing &quot;-fno-builtin -nostdinc++ -nodefaultlibs -Os&quot; compile options to the compiler.<br />
+<br />
+<strong>NOTE:</strong> You should check what compiler options are needed for building software for your router's linux distribution. In case of openwrt, those should work :)<br />
+<br />
+4. --ld-options<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">--ld-options=&quot;-luClibc++ -lm&quot;</pre>
+
+This line forces linker to link with micro c++ library and math library.<br />
+<br />
+<strong>NOTE:</strong> You should check what linker options are needed.<br />
+<br />
+5. --disable-adns<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">--disable-adns</pre>
+
+This options forces configure script to disable asynchronous dns support. If you do not pass this option bot will be built with adns support and it will require libpthread to be instilled on your router. It is advised to disable this option, because adns support consumes a lot of memory.
+    </div>
+  </body>
+</html>

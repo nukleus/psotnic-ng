@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Compiling_Embedded </title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+The compilation process of psotnic for embedded systems is a little bit more difficult than the one for ordinary linux box.<br />
+<br />
+In order to compile it you must have following prerequisites:<br />
+<br />
+
+<ol>
+    <li>psotnic source code with revison at least 64 (previous versions didn't have support of embedded systems)</li>
+    <li>build environment for linux distribution installed on the router:<ul>
+        <li><a class="wiki_link_ext" href="http://downloads.openwrt.org/whiterussian/0.9/OpenWrt-SDK-Linux-i686-1.tar.bz2" rel="nofollow">openwrt whiterussian 0.9</a></li>
+        <li>(TODO: fill with more links to build enviroments)</li>
+    </ul></li>
+</ol>
+
+<br />
+While the first one is obvious, the second is usually not. The reason for having build environment (sometimes called build root) is the fact that the linux distribution running on the router has different set of system libraries and that the router is not an x86 compatible machine, so code compiled on your linux box won't be understood by the router. Here comes the build environment with set of libraries and development tools (compilers, linkers, ...) that allow you to build software that will be working on your router.<br />
+<br />
+Bellow I will present compilation process for my Linksys WRT54GL router. It has OpenWRT whiterussian 0.9 installed.<br />
+<br />
+1. Unpack OpenWrt-SDK-Linux-i686-1.tar.bz2 to your home directory:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">tar xzf OpenWrt-SDK-Linux-i686-1.tar.bz2</pre>
+
+2. Unpack psotnic-current.tar.gz to your home directory:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">tar xzf psotnic-current.tar.gz</pre>
+
+3. Enter psotnic directory<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">cd psotnic-current</pre>
+
+4. Run ./configure script<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">./configure --cc-prefix=~/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc- --little-endian \
+--cc-options=&quot;-fno-builtin -nostdinc++ -nodefaultlibs -Os&quot; --ld-options=&quot;-luClibc++ -lm&quot; --disable-adns</pre>
+
+If you are interested in explanation of this line, <a class="wiki_link" href="Compiling_Embedded_Configure_Explained.html">read on this.</a><br />
+<br />
+5. Compile<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">make dynamic</pre>
+
+This should cause bot to compile. If you get problems with compilation, please form a <a class="wiki_link_ext" href="http://sourceforge.net/tracker/?atid=758978&amp;group_id=144510&amp;func=browse" rel="nofollow">bug report</a>. Make sure that you give us information about the router (linux distro and model should be enough) and linux box you are compiling on.<br />
+<br />
+The output binary should be about 600KB.<br />
+<br />
+As for now I do not recommend compiling in debug mode, because the binary will be around 3MB. If you are having problems, and you insist on using debug version, please make sure that you strip debug symbols out of it, to do use strip utility from your build environment:<br />
+<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">~/OpenWrt-SDK-Linux-i686-1/staging_dir_mipsel/bin/mipsel-linux-uclibc-strip bin/psotnic</pre>
+
+<br />
+6. Copy bin/psotnic to your router. That's all!!!
+    </div>
+  </body>
+</html>

@@ -1,0 +1,314 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Channel settings</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+<h3 id="toc0"> </h3>
+<h3 id="toc1">Channels setting:</h3>
+<br />
+To change a channel setting use <em><strong>.chset</strong></em> command as defined below:<br />
+<em>.chset &lt;channel&gt; [variable] [value]</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.chset #psotnic aop-bots 2</pre>
+
+These settings can also used to make a <em>default configuration</em> with <strong><em>.dset</em></strong> command:<br />
+.dset [variable] [value]<br />
+The <em>default configuration</em> will be loaded each time you join (or add) a new channel.<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.dset aop-bots 2</pre>
+
+Also you can use <em><strong>.gset</strong></em> command to apply a single set to <u>all channels</u>:<br />
+.gset [variable] [value]<br />
+For example:<br />
+<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.gset aop-bots 2</pre>
+
+<br />
+<h3 id="toc2">List of all available settings with respective type and acceptable values:</h3>
+<br />
+
+
+<table class="wiki_table">
+    <tr>
+        <td><strong>Variable</strong></td>
+        <td><strong>Type</strong></td>
+        <td><strong>Values</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>aop-bots</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>number of bots assigned to oping joining +ao ppl</td>
+    </tr>
+    <tr>
+        <td>bitch</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>turns on/off bitch mode</td>
+    </tr>
+    <tr>
+        <td>bot-aop-bots</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>number of bots assigned to oping joining bots</td>
+    </tr>
+    <tr>
+        <td>bot-aop-mode</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>it sets bot autop op mode, when it is set to 2, bots op like in &lt; 0.2.7 versions (fast but insecurity - if someone pretends to be a bot, he migh get oped), when it is set to 1, bots use getop code to gain op only if the number of ppl to kick is not larger then 4, otherwise they use &lt; 0.2.7 op code, when this setting is set to 0, bots will only use get op code (it might be useful when you really care that nobody would spoof bots hosts, but you also do not care whether bots op fast or slow). Additionally when takeover is enabled, bots will always use the fastest op mode (that is 0).</td>
+    </tr>
+    <tr>
+        <td>channel-ctcp</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>check-shit-on-nick-change</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>clonecheck</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>clone protection</td>
+    </tr>
+    <tr>
+        <td>dynamic-bans</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>turn ON in order to make that the bots remove the bans from the bans list after a specific time. If set OFF the bots will not remove the bans automatically</td>
+    </tr>
+    <tr>
+        <td>dynamic-exempts</td>
+        <td>boolean</td>
+        <td>&lt; ON - OFF &gt;</td>
+        <td>like above but for the exempts</td>
+    </tr>
+    <tr>
+        <td>dynamic-invites</td>
+        <td>boolean</td>
+        <td>&lt; ON - OFF &gt;</td>
+        <td>like above but for the invites</td>
+    </tr>
+    <tr>
+        <td>enforce-bans</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>turns on/off ban enforcing (=kicking ppl that are matching placed ban)</td>
+    </tr>
+    <tr>
+        <td>enforce-limits</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>turns on/off limit enforcing, if somebody with +n flag places lower limit then the number of users bots will `remove' surplus</td>
+    </tr>
+    <tr>
+        <td>getop-bots</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity &gt;</td>
+        <td>number of bots which bot will ask for op</td>
+    </tr>
+    <tr>
+        <td>guardian-bots</td>
+        <td>percentage</td>
+        <td>&lt; 0 - 100 &gt;</td>
+        <td>number of bots which will guard channel modes</td>
+    </tr>
+    <tr>
+        <td>idiots</td>
+        <td>integer</td>
+        <td>&lt; 0 - 5 &gt;</td>
+        <td><strong>0</strong> off</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td><strong>1</strong> remove +a only (if exists)</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td><strong>2</strong> remove +a and the highest level flag. if user will have no flag we'll give him +d</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td><strong>3</strong> remove all flags for 1st offence. 2nd time +d</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td><strong>4</strong> +d locally</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td><strong>5</strong> +d globally and clear flags for all other channels</td>
+    </tr>
+    <tr>
+        <td>invite-on-unban-request</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>invite_bots</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>number of bots witch bot will ask for invitation</td>
+    </tr>
+    <tr>
+        <td>keepout</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>when enabled, channel will be kept locked (+i), all not added (not having +v or +o) ppl will be forced to leave :P</td>
+    </tr>
+    <tr>
+        <td>limit</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>turns on/off autolimit feature</td>
+    </tr>
+    <tr>
+        <td>limit-bots</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>number of limit bots assigned to autolimiting</td>
+    </tr>
+    <tr>
+        <td>limit-offset</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>autolimit offset (new limit := number_of_users + this value)</td>
+    </tr>
+    <tr>
+        <td>limit-time</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>autolimit recheck time</td>
+    </tr>
+    <tr>
+        <td>limit-time-down</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>limit-time-up</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>limit-tolerance</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>tolerance of the limit (:= limit offset * this value), this setting prevents too frequent changes of the limit</td>
+    </tr>
+    <tr>
+        <td>lockdown</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>turns on/off locking of the channel if the number of bots on the channel reaches critical level</td>
+    </tr>
+    <tr>
+        <td>lockdown-time</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>not used ;-)</td>
+    </tr>
+    <tr>
+        <td>owner-limit-time</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>protect-chmodes</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>can protect/forbid channel modes. example: &quot;+nt-ims&quot; will make sure that 'n' and 't' are always set, and that 'i' 'm' and 's' are not set.</td>
+    </tr>
+    <tr>
+        <td>punish-bots</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>number of bots assigned to kicking ppl that are doing sth nasty</td>
+    </tr>
+    <tr>
+        <td>stop-nethack</td>
+        <td>boolean</td>
+        <td>&lt; ON / OFF &gt;</td>
+        <td>turns on/off kicking of -f ppl upon receiving op from the irc serve</td>
+    </tr>
+    <tr>
+        <td>strict-bans</td>
+        <td>time</td>
+        <td>&lt; 0 - Infinity&gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>takeover</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>turns on/off takeover mode</td>
+    </tr>
+    <tr>
+        <td>user-exempts</td>
+        <td>enum</td>
+        <td>&lt; 0 | 1 | 2 &gt;</td>
+        <td><strong>0</strong> every op can set +/-e</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td><strong>1</strong> only owners (+n), bots and servers can set +/-e</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td><strong>2</strong> only exempts added by partyline can be in the list</td>
+    </tr>
+    <tr>
+        <td>user-invites</td>
+        <td>enum</td>
+        <td>&lt; 0 | 1 | 2 &gt;</td>
+        <td>like above</td>
+    </tr>
+    <tr>
+        <td>user-reops</td>
+        <td>enum</td>
+        <td>&lt; 0 | 1 | 2 &gt;</td>
+        <td>like above</td>
+    </tr>
+    <tr>
+        <td>wasoptest</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>When it's set ON the op list is &quot;stored&quot; by the bot/s that split during a net-split and when this bot/s returns from the split it check if the op list is the same and kick all user/s that have been oped during the split.</td>
+    </tr>
+</table>
+
+
+    </div>
+  </body>
+</html>

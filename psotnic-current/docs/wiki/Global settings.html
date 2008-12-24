@@ -1,0 +1,319 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Global settings</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+To change a global setting use <em><strong>.set</strong></em> command as defined below:<br />
+<em>.set &lt;variable&gt; &lt;value&gt;</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.set auth-time 1m</pre>
+
+There are <strong>5 types</strong> of values:<br />
+<br />
+
+<ol><ol>
+        <li>boolean</li>
+        <li>integer</li>
+        <li>percentage</li>
+        <li>time</li>
+        <li>enum</li>
+    </ol></li>
+</ol>
+
+<br />
+A <em>boolean</em> value can be expressed in binary notation (0 and 1) or using the strings <em>ON</em> and <em>OFF.</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.set public-away 0  IS EQUIVALENT TO  .set public-away OFF</pre>
+
+<br />
+A <em>time</em> value can be expressed as integer (the number of seconds) or using the time notation (w=week, d=day, h=hour, m=minute, s=seconds).<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.set auth-time 300  IS EQUIVALENT TO  .set auth-time 5m</pre>
+
+<br />
+A <em>enum</em> value can be expressed by few predefined constants (see the table below).<br />
+Other types don't need to be explained.<br />
+<br />
+To see the current settings just type <em>.set</em> without arguments.<br />
+<br />
+The table below describes all settings with respective type and acceptable values:<br />
+
+
+<table class="wiki_table">
+    <tr>
+        <td><strong>Variable</strong></td>
+        <td><strong>Type</strong></td>
+        <td><strong>Values</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>ask-for-op-delay</td>
+        <td>time</td>
+        <td>&lt; 1s - 60s &gt;</td>
+        <td>after this time bot asks for op if he wasn't opped before</td>
+    </tr>
+    <tr>
+        <td>auth-time</td>
+        <td>time</td>
+        <td>&lt; 15s - 6m &gt;</td>
+        <td>all unauthorised connections are closed after this time</td>
+    </tr>
+    <tr>
+        <td>away-time</td>
+        <td>time</td>
+        <td>&lt; 1m - Infinity &gt;</td>
+        <td>bots will stay away for this time</td>
+    </tr>
+    <tr>
+        <td>bIe-mode-bounce-time</td>
+        <td>time</td>
+        <td>&lt; 0s - Infinity &gt;</td>
+        <td>after this time bots will remove b/e/I channel modes</td>
+    </tr>
+    <tr>
+        <td>backup-mode-delay</td>
+        <td>time</td>
+        <td>&lt; 0s - 60s &gt;</td>
+        <td>(to be filled)</td>
+    </tr>
+    <tr>
+        <td>between-msg-delay</td>
+        <td>time</td>
+        <td>&lt; 10s - Infinity &gt;</td>
+        <td>delay time between sending messages when bots are not away (anti-idle)</td>
+    </tr>
+    <tr>
+        <td>chat-time</td>
+        <td>time</td>
+        <td>&lt; 60s - Infinity &gt;</td>
+        <td>bots will stay not away for this time</td>
+    </tr>
+    <tr>
+        <td>clone-life-time</td>
+        <td>time</td>
+        <td>&lt; 0s - Infinity &gt;</td>
+        <td>time after witch clones are deleted from clone list</td>
+    </tr>
+    <tr>
+        <td>conn-timeout</td>
+        <td>time</td>
+        <td>&lt; 16s - 10m &gt;</td>
+        <td>time after witch all authorsied inacive connection are being closed</td>
+    </tr>
+    <tr>
+        <td>critical-bots</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>cycle-delay</td>
+        <td>time</td>
+        <td>&lt; 0s - 60s &gt;</td>
+        <td>time after the bots will enter channel after a part in a cycle</td>
+    </tr>
+    <tr>
+        <td>dont-trust-ops</td>
+        <td>enum</td>
+        <td>&lt; 0 | 1 | 2 &gt;</td>
+        <td>0 : disabled</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td>1 : ops (that dont have +f) can op only users that have +s or bots</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td>2 : ops (that dont have +f) can op only users that have +s</td>
+    </tr>
+    <tr>
+        <td>get-op-check</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>host-clones</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity &gt;</td>
+        <td>number of same-host process to be recognized as clones</td>
+    </tr>
+    <tr>
+        <td>hub-conn-delay</td>
+        <td>time</td>
+        <td>&lt; 10s - 1h &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>ident-clones</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity &gt;</td>
+        <td>number of same-ident process to be recognized as clones</td>
+    </tr>
+    <tr>
+        <td>irc-conn-delay</td>
+        <td>time</td>
+        <td>&lt; 10s - 1h &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>keep-nick-check-delay</td>
+        <td>time</td>
+        <td>&lt; 5s - 1d &gt;</td>
+        <td>time after bots will check for nick availability</td>
+    </tr>
+    <tr>
+        <td>max-matches</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>ops-per-mode</td>
+        <td>enum</td>
+        <td>&lt; 0 | 1 | 2 | 3 &gt;</td>
+        <td>number of ops in one line when there are enemies in the channel</td>
+    </tr>
+    <tr>
+        <td>perip-burst-size</td>
+        <td>integer</td>
+        <td>&lt; 1 - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>perip-burst-time</td>
+        <td>time</td>
+        <td>&lt; 0s - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>perip-ignore-time</td>
+        <td>time</td>
+        <td>&lt; 0s - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>perip-max-shown-conns</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>pre-0.2.11-final-compat</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>pre-0.2.3-final-compat</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>private-ctcp</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>proxy-clones</td>
+        <td>integer</td>
+        <td>&lt; 0 - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>public-away</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>quarantine-time</td>
+        <td>time</td>
+        <td>&lt; 0s - 2m &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>randomness</td>
+        <td>percentage</td>
+        <td>&lt; 0% - 100% &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>rejoin-delay</td>
+        <td>time</td>
+        <td>&lt; 0s - 60s &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>rejoin-fail-delay</td>
+        <td>time</td>
+        <td>&lt; 7s - 60s &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>remember-old-keys</td>
+        <td>boolean</td>
+        <td>&lt; ON | OFF &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>synflood-ignore-time</td>
+        <td>time</td>
+        <td>&lt; 0s - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>synflood-max-conns</td>
+        <td>integer</td>
+        <td>&lt; 1 - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+    <tr>
+        <td>telnet-owners</td>
+        <td>enum</td>
+        <td>&lt; 0 | 1 | 2 &gt;</td>
+        <td>0 : owners are not allowed to connect via telnet</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td>1 : all owners having +pt flags can connect to main via telnet</td>
+    </tr>
+    <tr>
+        <td colspan="3"></td>
+        <td>2 : only owners having +pt flags set and having their ip added to host list are allowed to connect</td>
+    </tr>
+    <tr>
+        <td>wasop-cache-time</td>
+        <td>time</td>
+        <td>&lt; 0s - Infinity &gt;</td>
+        <td>description</td>
+    </tr>
+</table>
+
+
+    </div>
+  </body>
+</html>

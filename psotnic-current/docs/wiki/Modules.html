@@ -1,0 +1,199 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Modules</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+Psotnic, <u>if compiled as <em>dynamic</em></u>, can load C++ modules.<br />
+A module is a piece of code that implements some additional features (eg: antispam, antiflood, voicelikeop..)<br />
+which can be loaded by one (or more) Psotnic bot.<br />
+<br />
+<h2 id="toc0">Compiling a module:</h2>
+There are two ways of compiling modules:<br />
+<h3 id="toc1">Using the makefile:</h3>
+After running configure, you will find a Makefile in the modules directory. If you are in that directory, you can simply run &quot;make&quot; and all modules will be compiled.<br />
+Also, you can run make with the name of the module you want as target. If you want for example to compile vctrl:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">make vctrl</pre>
+
+However, if you want to compile your own modules or third-party modules, you'll have to use the second method:<br />
+<h3 id="toc2">Compiling by hand:</h3>
+Once you extracted the Psotnic source archive you will find modules in the <em>modules</em> directory. You can compile a module using the following command:<br />
+<em>g++ -o &lt;modulename&gt;.so &lt;modulename&gt;.cpp -shared</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">cd modules
+g++ -o vctrl.so vctrl.cpp -shared</pre>
+
+This will compile the voice control module (aka voicelikeop).<br />
+<br />
+<h2 id="toc3">Loading a module:</h2>
+To load a module you have to use the <strong><em>load</em></strong> directive in the <strong>config file</strong> as defined below:<br />
+<em>load /path/to/module.so</em><br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">load /home/jack70/psotnic-0.2.14/modules/vctrl.so</pre>
+
+<u>This is NOT a partyline command!</u> If you want to load modules via partyline, read the <a class="wiki_link" href="bc%20command.html">Botnet Control</a> document in advanced techniques section.<br />
+Each bot can load more than one module, but overcharging a single bot with many modules is not a good idea.<br />
+<br />
+<strong>Note:</strong> Each module is protected by md5 sum, which is stored in the config file, as soon as the bot loads the module for the first time. If you alter the module file (vctrl.so in this example), the bot will refuse the load the module. This is to prevent authorized code from being injected into the bot.<br />
+<br />
+If you are a module developer you probably would like to have the ability of changing the module without the need of recreating the config file. In that case you should use <em>debugLoad</em> directive instead of l<em>oad.</em><br />
+<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">debugLoad /home/jack70/psotnic-0.2.14/modules/vctrl.so</pre>
+
+<br />
+<h2 id="toc4">List of all available modules:</h2>
+These modules are beeing shipped with the official tarballs:<br />
+
+
+<table class="wiki_table">
+    <tr>
+        <td><strong>Module</strong></td>
+        <td><strong>Author</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/control.cpp" rel="nofollow">control</a></td>
+        <td>Grzegorz Rusin &lt;<a class="wiki_link_ext" href="mailto:pks@irc.pl" rel="nofollow">pks@irc.pl</a>, gg:0x17f1ceh&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/date.cpp" rel="nofollow">date</a></td>
+        <td>cgod &lt;<a class="wiki_link_ext" href="mailto:cgod@siigot.sytes.net" rel="nofollow">c@sii.ath.cx</a>&gt;</td>
+        <td>Gets actual date in current timezone (!date); in GMT (!gdate); current date, time, day of week numerically (!ddate); and also can compute day of week from given date (!day &lt;yyy-mm-dd&gt;)</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/log.cpp" rel="nofollow">log</a></td>
+        <td>Stuart Scott &lt;<a class="wiki_link_ext" href="mailto:stu@wilf.co.uk" rel="nofollow">stu@wilf.co.uk</a>&gt;</td>
+        <td>Logging module producting eggdrop-format logfiles.</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/noautorejoin.cpp" rel="nofollow">noautorejoin</a></td>
+        <td>patrick &lt;<a class="wiki_link_ext" href="mailto:patrick@psotnic.com" rel="nofollow">patrick@psotnic.com</a>&gt;</td>
+        <td>Bans users who rejoin automatically after being kicked.</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/op.cpp" rel="nofollow">op</a></td>
+        <td>Grzegorz Rusin &lt;<a class="wiki_link_ext" href="mailto:pks@irc.pl" rel="nofollow">pks@irc.pl</a>, gg:0x17f1ceh&gt;</td>
+        <td>Provides a public !op command to let users op somebody.</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/peak.cpp" rel="nofollow">peak</a></td>
+        <td>matrix &lt;<a class="wiki_link_ext" href="mailto:admin@areaunix.org" rel="nofollow">admin@areaunix.org</a>&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/peak2.cpp" rel="nofollow">peak2</a></td>
+        <td>cgod &lt;<a class="wiki_link_ext" href="mailto:cgod@siigot.sytes.net" rel="nofollow">c@sii.ath.cx</a>&gt;</td>
+        <td>Displays last peak (max. number of users) on channel(s), can operate on more channels and can be managed directly from irc; has auto-save also</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/plog/README" rel="nofollow">plog</a></td>
+        <td>patrick &lt;<a class="wiki_link_ext" href="mailto:patrick@psotnic.com" rel="nofollow">patrick@psotnic.com</a>&gt;</td>
+        <td>Logging module with per-channel options.</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/raw.cpp" rel="nofollow">raw</a></td>
+        <td>patrick &lt;<a class="wiki_link_ext" href="mailto:patrick@psotnic.com" rel="nofollow">patrick@psotnic.com</a>&gt;</td>
+        <td>Lets you send raw data to the IRC server via partyline.</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/repeat.cpp" rel="nofollow">repeat</a></td>
+        <td>patrick &lt;<a class="wiki_link_ext" href="mailto:patrick@psotnic.com" rel="nofollow">patrick@psotnic.com</a>&gt;</td>
+        <td>Detects users who repeat or flood and kicks/bans them. It has also a lagcheck.</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/spam.cpp" rel="nofollow">spam</a></td>
+        <td>Grzegorz Rusin &lt;<a class="wiki_link_ext" href="mailto:pks@irc.pl" rel="nofollow">pks@irc.pl</a>, gg:0x17f1ceh&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/subop.cpp" rel="nofollow">subop</a></td>
+        <td>Stuart Scott &lt;<a class="wiki_link_ext" href="mailto:stu@wilf.co.uk" rel="nofollow">stu@wilf.co.uk</a>&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/uptime.cpp" rel="nofollow">uptime</a></td>
+        <td>patrick &lt;<a class="wiki_link_ext" href="mailto:patrick@psotnic.com" rel="nofollow">patrick@psotnic.com</a>&gt;</td>
+        <td>shows system uptime.</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/vctrl.cpp" rel="nofollow">vctrl</a></td>
+        <td>patrick &lt;<a class="wiki_link_ext" href="mailto:patrick@psotnic.com" rel="nofollow">patrick@psotnic.com</a>&gt;</td>
+        <td>Gives voiced users the possibility to conrol the channel. Commands are: !kick, !ban, !unban, !voice, !devoice, !topic</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/*checkout*/psotnic/psotnic-current/modules/words.cpp" rel="nofollow">words</a></td>
+        <td>cgod &lt;<a class="wiki_link_ext" href="mailto:c@sii.ath.cx" rel="nofollow">c@sii.ath.cx</a>&gt;</td>
+        <td>Kicks/bans user who used some words which are in database (ban is based on number of violations); can operate on more channels and can be managed directly from IRC; has auto-save, ignore list, black list, chan list, etc.</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc5">List of deprecated modules:</h2>
+These modules are not part of psotnic anymore for various reasons. If you think you need them, you can find them in older revisions in the svn repository.<br />
+But be warned: The modules haven't been adapted to the new modules-API, so you have to port them before you can use them.<br />
+
+
+<table class="wiki_table">
+    <tr>
+        <td><strong>Module</strong></td>
+        <td><strong>Author</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/psotnic/psotnic-current/framework/oroblram-modules/country.cpp?revision=1&amp;pathrev=139" rel="nofollow">country</a></td>
+        <td>Stuart Scott &lt;<a class="wiki_link_ext" href="mailto:stu@wilf.co.uk" rel="nofollow">stu@wilf.co.uk</a>&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/psotnic/psotnic-current/framework/oroblram-modules/mysql-required/explain.cpp?revision=1&amp;pathrev=139" rel="nofollow">explain</a></td>
+        <td>Stuart Scott &lt;<a class="wiki_link_ext" href="mailto:stu@wilf.co.uk" rel="nofollow">stu@wilf.co.uk</a>&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/psotnic/psotnic-current/framework/google.cpp?revision=1&amp;pathrev=139" rel="nofollow">google</a></td>
+        <td>matrix &lt;<a class="wiki_link_ext" href="mailto:admin@areaunix.org" rel="nofollow">admin@areaunix.org</a>&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/psotnic/psotnic-current/framework/oroblram-modules/mysql-required/seen.cpp?revision=1&amp;pathrev=139" rel="nofollow">seen</a></td>
+        <td>Stuart Scott &lt;<a class="wiki_link_ext" href="mailto:stu@wilf.co.uk" rel="nofollow">stu@wilf.co.uk</a>&gt;</td>
+        <td>?</td>
+    </tr>
+    <tr>
+        <td><a class="wiki_link_ext" href="http://psotnic.svn.sourceforge.net/viewvc/psotnic/psotnic-current/framework/oroblram-modules/seen.cpp?revision=1&amp;pathrev=139" rel="nofollow">useful</a></td>
+        <td>Stuart Scott &lt;<a class="wiki_link_ext" href="mailto:stu@wilf.co.uk" rel="nofollow">stu@wilf.co.uk</a>&gt;</td>
+        <td>?</td>
+    </tr>
+</table>
+
+
+    </div>
+  </body>
+</html>

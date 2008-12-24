@@ -1,0 +1,446 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Partyline commands</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+To run a partyline command just type &quot;<strong>.</strong>&quot; before it otherwise, it will be recognized as a chat line.<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.help</pre>
+
+<h3 id="toc0">Command argument semantics</h3>
+Mandatory arguments are written in <strong>&lt; &gt;</strong> tags, if you do not supply the argument command will fail.<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.info &lt;handle&gt;</pre>
+
+Options that are not mandatory are written in <strong>[ ]</strong> tags, if you omit those options default value will be taken.<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.bots [expr] [flags]</pre>
+
+There is additional construct that looks like <strong>[%TEXT]</strong>, where <strong>%</strong> is a character that has to be put before the parameter, otherwise command will fail (or it will work differently than expected). The reason of such construct is that some commands take two optional parameters, and the prefixed character is the only way to distinguish between them.<br />
+For example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.+exempt [#chan] [%time] &lt;mask&gt; [reason]</pre>
+
+<br />
+<h3 id="toc1">List of all available commands:</h3>
+<br />
+
+
+<table class="wiki_table">
+    <tr>
+        <td><strong>Command</strong></td>
+        <td><strong>Argument(s)</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    <tr>
+        <td>+bot</td>
+        <td>&lt;handle&gt; &lt;ip&gt;</td>
+        <td>Adds new bot with name <em>handle</em> and with adress <em>ip</em></td>
+    </tr>
+    <tr>
+        <td>+chan</td>
+        <td>&lt;chan&gt; [key]</td>
+        <td>Adds new channel with name <em>chan</em> and optionally sets <em>key</em></td>
+    </tr>
+    <tr>
+        <td>+exempt</td>
+        <td>[#chan] [%time] &lt;mask&gt; [reason]</td>
+        <td>Adds ban exception to the <em>chan</em> for given <em>mask</em> for <em>time</em></td>
+    </tr>
+    <tr>
+        <td>+host</td>
+        <td>&lt;handle&gt; &lt;host&gt;</td>
+        <td>Adds a host to a specific handle</td>
+    </tr>
+    <tr>
+        <td>+info</td>
+        <td>&lt;handle&gt; &lt;key&gt; &lt;value&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>+invite</td>
+        <td>[#chan] [%time] &lt;mask&gt; [reason]</td>
+        <td>Like &quot;+exempt&quot; but for invites</td>
+    </tr>
+    <tr>
+        <td>+reop</td>
+        <td>[#chan] [%time] &lt;mask&gt; [reason]</td>
+        <td>Like &quot;+exempt&quot; but for reops</td>
+    </tr>
+    <tr>
+        <td>+shit</td>
+        <td>[#chan] [%time] &lt;mask&gt; [reason]</td>
+        <td>Adds a shit to the chan for a given mask for a specific time</td>
+    </tr>
+    <tr>
+        <td>+stick</td>
+        <td>[#chan] [%time] &lt;mask&gt; [reason]</td>
+        <td>Like above but for skick bans</td>
+    </tr>
+    <tr>
+        <td>+user</td>
+        <td>&lt;handle&gt; [host]</td>
+        <td>Adds a user specifying a handle and a host</td>
+    </tr>
+    <tr>
+        <td>-bot</td>
+        <td>&lt;handle&gt;</td>
+        <td>Removes a bot specifying the handle</td>
+    </tr>
+    <tr>
+        <td>-exempt</td>
+        <td>&lt;mask&gt; [chan]</td>
+        <td>Removes an exepmt specifying the mask and the chan</td>
+    </tr>
+    <tr>
+        <td>-host</td>
+        <td>&lt;handle&gt; &lt;host&gt;</td>
+        <td>Removes a host of a handle</td>
+    </tr>
+    <tr>
+        <td>-info</td>
+        <td>&lt;handle&gt; &lt;key&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>-invite</td>
+        <td>&lt;mask&gt; [chan]</td>
+        <td>Like &quot;-exempt&quot; but for invites</td>
+    </tr>
+    <tr>
+        <td>-reop</td>
+        <td>&lt;mask&gt; [chan]</td>
+        <td>Like &quot;-exempt&quot; but for reops</td>
+    </tr>
+    <tr>
+        <td>-shit</td>
+        <td>&lt;mask&gt; [chan]</td>
+        <td>Removes a shit specifying the mask and the chan</td>
+    </tr>
+    <tr>
+        <td>-user</td>
+        <td>&lt;handle&gt;</td>
+        <td>Removes a user specifying the handle</td>
+    </tr>
+    <tr>
+        <td>abuse</td>
+        <td></td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>boot</td>
+        <td>&lt;handle&gt; &lt;reason&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>bots</td>
+        <td>[expr] [flags]</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>bottree</td>
+        <td></td>
+        <td>Shows the bottree</td>
+    </tr>
+    <tr>
+        <td>bye</td>
+        <td>[reason]</td>
+        <td>To exit from partyline giving a &quot;reason of exit&quot;</td>
+    </tr>
+    <tr>
+        <td>chaddr</td>
+        <td>&lt;handle&gt; &lt;ip&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>channels</td>
+        <td></td>
+        <td>Shows all channels where are the bots</td>
+    </tr>
+    <tr>
+        <td>chattr</td>
+        <td>&lt;handle&gt; &lt;flags&gt; [chan]</td>
+        <td>Sets the flag/s for a specific handle for a chan</td>
+    </tr>
+    <tr>
+        <td>chhandle</td>
+        <td>&lt;handle&gt; &lt;handle&gt;</td>
+        <td>Changes the handle with a new one</td>
+    </tr>
+    <tr>
+        <td>chhandle</td>
+        <td>&lt;handle&gt; &lt;new handle&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>chnick</td>
+        <td>&lt;bot&gt; &lt;nick&gt;</td>
+        <td>Changes the nick of a specific bot</td>
+    </tr>
+    <tr>
+        <td>chpass</td>
+        <td>&lt;handle&gt; &lt;pass&gt;</td>
+        <td>Changes the password of a specific handle</td>
+    </tr>
+    <tr>
+        <td>chset</td>
+        <td>&lt;chan&gt; [var] [value]</td>
+        <td>Changes a setting of a specific channel</td>
+    </tr>
+    <tr>
+        <td>clearoffences</td>
+        <td>[handle]</td>
+        <td>Clear all the offences of a handle</td>
+    </tr>
+    <tr>
+        <td>cwho</td>
+        <td>&lt;bot&gt; &lt;chan&gt; [flags]</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>downbots</td>
+        <td></td>
+        <td>Shows the bots that are down</td>
+    </tr>
+    <tr>
+        <td>exempts</td>
+        <td>[chan]</td>
+        <td>Shows the exempt/s of a channel</td>
+    </tr>
+    <tr>
+        <td>export</td>
+        <td>&lt;file&gt; [pass]</td>
+        <td>Export the userlist</td>
+    </tr>
+    <tr>
+        <td>gset</td>
+        <td>[var] [value]</td>
+        <td>Changes a specific setting for all the channels</td>
+    </tr>
+    <tr>
+        <td>import</td>
+        <td>&lt;file&gt; [pass]</td>
+        <td>Import a userlist</td>
+    </tr>
+    <tr>
+        <td>info</td>
+        <td>&lt;handle&gt;</td>
+        <td>Shows info of a specific handle</td>
+    </tr>
+    <tr>
+        <td>invites</td>
+        <td>[chan]</td>
+        <td>Shows the invite/s of a channel</td>
+    </tr>
+    <tr>
+        <td>list</td>
+        <td>&lt;apcdsvuiU&gt; [bot]</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>match</td>
+        <td>&lt;expr&gt; [flags] [chan]</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>mcycle</td>
+        <td>&lt;chan&gt;</td>
+        <td>Parts and joins the bots on a specific channel</td>
+    </tr>
+    <tr>
+        <td>mjoin</td>
+        <td>&lt;chan&gt; [key] [delay]</td>
+        <td>To join all bots on a specific channel with a key</td>
+    </tr>
+    <tr>
+        <td>mk</td>
+        <td>&lt;o|n|a&gt; &lt;chan&gt; [lock]</td>
+        <td>To make a mass kick (o=ops, n=non ops, a=all)</td>
+    </tr>
+    <tr>
+        <td>mpart</td>
+        <td>&lt;chan&gt;</td>
+        <td>To part all bots from a specific channel</td>
+    </tr>
+    <tr>
+        <td>names</td>
+        <td>&lt;bot&gt; &lt;chan&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>offences</td>
+        <td>[handle]</td>
+        <td>Shows the offences of a specific handle</td>
+    </tr>
+    <tr>
+        <td>owners</td>
+        <td></td>
+        <td>Shows the owners</td>
+    </tr>
+    <tr>
+        <td>rcycle</td>
+        <td>&lt;bot&gt; &lt;chan&gt;</td>
+        <td>Like &quot;mcycle&quot; but for one bot</td>
+    </tr>
+    <tr>
+        <td>rdie</td>
+        <td>&lt;bot&gt;</td>
+        <td>Kills one bot</td>
+    </tr>
+    <tr>
+        <td>reops</td>
+        <td>[chan]</td>
+        <td>Shows the reop/s of a specific channel</td>
+    </tr>
+    <tr>
+        <td>restart</td>
+        <td>&lt;bot&gt;</td>
+        <td>Restart a specific bot</td>
+    </tr>
+    <tr>
+        <td>rflags</td>
+        <td>&lt;handle&gt; &lt;chan&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>rjoin</td>
+        <td>&lt;bot&gt; &lt;chan&gt; [key]</td>
+        <td>Like &quot;mjoin&quot; but for one bot</td>
+    </tr>
+    <tr>
+        <td>rjump</td>
+        <td>&lt;bot&gt; &lt;host&gt; [port]</td>
+        <td>Jumps a bot on a host giving a port</td>
+    </tr>
+    <tr>
+        <td>rjump6</td>
+        <td>&lt;bot&gt; &lt;host&gt; [port]</td>
+        <td>Like rjump but for Ipv6</td>
+    </tr>
+    <tr>
+        <td>rjumps5</td>
+        <td>&lt;bot&gt; &lt;proxy&gt; &lt;port&gt; &lt;server&gt; &lt;port&gt;</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>rpart</td>
+        <td>&lt;bot&gt; &lt;chan&gt;</td>
+        <td>Like &quot;mpart&quot; but for one bot</td>
+    </tr>
+    <tr>
+        <td>save</td>
+        <td></td>
+        <td>Saves userlist</td>
+    </tr>
+    <tr>
+        <td>set</td>
+        <td>[var] [value]</td>
+        <td>Sets a setting</td>
+    </tr>
+    <tr>
+        <td>shits</td>
+        <td>[chan]</td>
+        <td>Shows the shits of a channel</td>
+    </tr>
+    <tr>
+        <td>sjoin</td>
+        <td>&lt;slave&gt; &lt;chan&gt; [key]</td>
+        <td>Like &quot;mjoin&quot; but for a specific slave and his leafs</td>
+    </tr>
+    <tr>
+        <td>spart</td>
+        <td>&lt;slave&gt; &lt;chan&gt;</td>
+        <td>Like &quot;mpart&quot; but for a specific slave and his leafs</td>
+    </tr>
+    <tr>
+        <td>status</td>
+        <td>[bot]</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>tkmjoin</td>
+        <td>&lt;chan&gt; [key] [delay]</td>
+        <td>Join all bots on a channel with takeover mode sets ON</td>
+    </tr>
+    <tr>
+        <td>tkrjoin</td>
+        <td>&lt;bot&gt; &lt;chan&gt;</td>
+        <td>Join one bot on a channel with takeover mode sets ON</td>
+    </tr>
+    <tr>
+        <td>tksjoin</td>
+        <td>&lt;slave&gt; &lt;chan&gt; [key]</td>
+        <td>Join a slave and his leafs on a channel with takeover mode sets ON</td>
+    </tr>
+    <tr>
+        <td>upbots</td>
+        <td></td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>update</td>
+        <td>&lt;bot&gt; [URL]</td>
+        <td>To update a bot giving the url</td>
+    </tr>
+    <tr>
+        <td>users</td>
+        <td></td>
+        <td>Shows all users added</td>
+    </tr>
+    <tr>
+        <td>verify</td>
+        <td></td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>who</td>
+        <td></td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>whob</td>
+        <td></td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>whois</td>
+        <td>&lt;handle&gt;</td>
+        <td>Shows all the information (flags, hosts etc) of a handle</td>
+    </tr>
+    <tr>
+        <td>whom</td>
+        <td></td>
+        <td>Description</td>
+    </tr>
+</table>
+
+
+    </div>
+  </body>
+</html>

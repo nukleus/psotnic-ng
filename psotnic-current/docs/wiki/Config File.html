@@ -1,0 +1,199 @@
+<html>
+  <head>
+    <title>psotnic &raquo; Config File</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+Each instance of running irc bot needs a separate configuration file. There are three types of bots<br />
+
+<ol>
+    <li>Main (also known as hub)</li>
+    <li>Slave</li>
+    <li>Leaf</li>
+</ol>
+
+<h2 id="toc0"> </h2>
+Depending on the contents of the configuration file psotnic will act as the main bot, slave or as a leaf.<br />
+<br />
+<h2 id="toc1">Mandatory options for all bots</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>nick</td>
+        <td>bot's nickname (eg. fido)</td>
+    </tr>
+    <tr>
+        <td>realname</td>
+        <td>bot's real name (eg. Dog in the fog)</td>
+    </tr>
+    <tr>
+        <td>nickappend</td>
+        <td>list of characters that will be appended to nick if it is taken (eg. -|`^, this setting is taken in consideration <strong>only</strong> if <tt>altuidnick</tt> is set to 0)</td>
+    </tr>
+    <tr>
+        <td>myipv4</td>
+        <td>ip address of the bot (eg. 88.45.56.15, 0.0.0.0 means any address)</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc2">Mandatory options for main (aka hub)</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>listen</td>
+        <td>port on which main is listening for connections from slaves and owners (eg. 12345)</td>
+    </tr>
+    <tr>
+        <td>ownerpass</td>
+        <td>md5 sum of owner password for partyline, you will be asked for this password each time you connect to the partyline, in order to generate the password run ./psotnic -p and copy the obtained md5 sum to the config file</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc3">Additional options for main</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>ssl_listen</td>
+        <td>SSL secured port for partyline access, to connect use openssl s_client command (man s_client).</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc4">Mandatory options for slave</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>listen</td>
+        <td>port on which slave is listening for connections from leafes (eg. 12345)</td>
+    </tr>
+    <tr>
+        <td>hub</td>
+        <td>ip, port, pass of the main bot (eg. 123.123.123.123 9000 some_password)</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc5">Mandatory options for leafs</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>hub</td>
+        <td>ip, port, pass and slave handle name (eg. 111.111.111.111 8000 some_password slave1)</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc6">Additional oprtion for leafs</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>alt</td>
+        <td>ip, port of alternative slave (eg. 1111.111.222.222 9000, it can be set more than once)</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc7">Additional options for all bots</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>ident</td>
+        <td>bot's username (default: same as account name)</td>
+    </tr>
+    <tr>
+        <td>handle</td>
+        <td>bot's handle that is visible in the partyline (default: same as nick)</td>
+    </tr>
+    <tr>
+        <td>vhost</td>
+        <td>ipv4 or ipv6 address (e.g: 217.2.3.54 or 3ffe:2f4:56:35:0:0:0:23), domain names are not supported (default: determined by the operating system)</td>
+    </tr>
+    <tr>
+        <td>logfile</td>
+        <td>file where bot logs some actions (default: /dev/null :)</td>
+    </tr>
+    <tr>
+        <td>userlist</td>
+        <td>userlist (aka. userfile) will be stored there (default: $nick.ul)</td>
+    </tr>
+    <tr>
+        <td>altuidnick</td>
+        <td>turns on/off changing of nick to 0 when nick is taken (by default it is turned ON)</td>
+    </tr>
+    <tr>
+        <td>ctcptype</td>
+        <td>ctcp version (default: random). Available options:  0 - none, 1 - psotnic, 2 - irssi, 3 - epic, 4 - lice, 5 - bitchx, 6 - dzony loker, 7 - luzik, 8 - mirc 6.14</td>
+    </tr>
+    <tr>
+        <td>keepnick</td>
+        <td>keepnick (default: 0)</td>
+    </tr>
+    <tr>
+        <td>kickreason</td>
+        <td>kick reason used for most kicks</td>
+    </tr>
+    <tr>
+        <td>limitreason</td>
+        <td>kick reason used when somebody overrides channel limit</td>
+    </tr>
+    <tr>
+        <td>keepoutreason</td>
+        <td>kick reason for keepout setting</td>
+    </tr>
+    <tr>
+        <td>partreason</td>
+        <td>part reason</td>
+    </tr>
+    <tr>
+        <td>quitreason</td>
+        <td>quit reason</td>
+    </tr>
+    <tr>
+        <td>cyclereason</td>
+        <td>cycle reason</td>
+    </tr>
+    <tr>
+        <td>bnc</td>
+        <td>ip, port, pass of the bnc (only BNC from <a class="wiki_link_ext" href="http://www.gotbnc.com" rel="nofollow">http://www.gotbnc.com</a> is supported)</td>
+    </tr>
+    <tr>
+        <td>router</td>
+        <td>ip, port, pass of the router (only cisco routers are supported)</td>
+    </tr>
+</table>
+
+<br />
+<h2 id="toc8">Addition options for all bots, those options can be set more then once</h2>
+
+
+<table class="wiki_table">
+    <tr>
+        <td>server</td>
+        <td>ipv4 (or ipv6 in case of 0.2.3 or newer) address and port of irc server. Additionally you can add a password, if this is necessary to connect. (eg. 218.234.456.123 6667 password)</td>
+    </tr>
+    <tr>
+        <td>server6</td>
+        <td>ipv6 address and port of the irc server (e.g: 3ffe:2f4:56:35:0:0:0:23 6667) (this option has been removed in 0.2.3 version)</td>
+    </tr>
+    <tr>
+        <td>ssl_server</td>
+        <td>specifies SSL server, syntax is the same as in server option</td>
+    </tr>
+</table>
+
+<br />
+<span class="membersnap"><b> - <a href="http://sourceforge.net/users/grusin/">grusin</a></b><span onclick="location.href = 'http://sourceforge.net/users/grusin/'; return false;"> <img src="http://www.wiki.sourceforge.net/user/pic/grusin-sm.jpg" width="16" height="16" alt="grusin" border="0" style="vertical-align: text-top;" /> <small>Aug 25, 2007 10:25 am</small></span></span>
+    </div>
+  </body>
+</html>

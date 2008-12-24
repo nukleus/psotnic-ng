@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <title>psotnic &raquo; bc command</title>
+    <link rel="stylesheet" href="static/style.css" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  </head>
+  <body>
+    <div class="wiki" id="content_view" style="display: block;">
+The <em>.bc</em> command (bc stands for Botnet Control) allows main owner (and only main owner) to send direct commands to one of the bots in the botnet.<br />
+By default psotnic supports only few commands, additional functionally can be easily extended by module writers.<br />
+<br />
+<h2 id="toc0">Syntax:</h2>
+<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.bc &lt;bot&gt; &lt;command&gt; [arguments]</pre>
+
+Where <em>bot</em> is the handle of bot you would like to give <em>command</em> to.<br />
+<br />
+<h2 id="toc1">Altering config file:</h2>
+<br />
+Viewing configuration of given bot:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text"> .bc &lt;bot&gt; cfg</pre>
+
+<br />
+example:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text"> [09:35] #pks# bc hub cfg
+ cfg: nick ptest
+ cfg: realname Psotnic C++ Edition
+ cfg: nickappend _-^`|
+ cfg: ident grusin
+ cfg: oidentd-config
+ cfg: handle hub
+ cfg: bnc 0.0.0.0 0
+ cfg: router 0.0.0.0 0
+ cfg: hub 0.0.0.0 0
+ cfg: server warszawa.irc.pl 6667</pre>
+
+<br />
+The .bc bot cfg command has the same semantics as .chset command, other words it allows to query just one variable<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text"> [09:39] #pks# bc hub cfg realname
+ cfg: realname Psotnic C++ Edition</pre>
+
+<br />
+or to change the value of a variable:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text"> [09:40] #pks# bc hub cfg realname I am proud to be a bot!
+ [09:40] #pks# cfg realname I am proud to be a bot!
+ cfg: realname has been set to I am proud to be a bot!</pre>
+
+<br />
+There are some special variable that can occur several times in the configuration time:<br />
+
+<ul>
+    <li>server</li>
+    <li>alt</li>
+    <li>ssl_server</li>
+</ul>
+
+<br />
+In order to alter values of those variables, it is required to prefix them with <strong>-</strong> (remove) and +(add) character.<br />
+<br />
+To remove irc server <em>warszawa.irc.pl 6667</em>:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">[10:06] #pks# bc hub cfg -server warszawa.irc.pl 6667
+[10:06] #pks# cfg -server 0.0.0.0 0
+cfg: removing entry: server warszawa.irc.pl 6667</pre>
+
+<br />
+and add k<em>rakow.irc.pl 6677</em>:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.bc hub cfg +server kwakow.irc.pl 6667
+[10:06] #pks# bc hub cfg +server kwakow.irc.pl 6667
+[10:06] #pks# cfg +server kwakow.irc.pl 6667
+cfg: adding new entry: server kwakow.irc.pl 6667</pre>
+
+<br />
+<strong>NOTE:</strong> Config file changes are not saved until you explicitly save them. In order to save changes do:<br />
+
+<style type="text/css"><!--
+/* GeSHi (c) Nigel McNie 2004 (http://qbnz.com/highlighter) */
+.text .imp {font-weight: bold; color: red;}
+
+-->
+</style><pre class="text">.bc &lt;bot&gt; cfg-save</pre>
+
+
+    </div>
+  </body>
+</html>
