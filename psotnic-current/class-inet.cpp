@@ -238,7 +238,7 @@ void inet::sendCmd(inetconn *c, const char *lst, ...)
 
 	strftime(buf, MAX_LEN, "[\002%H\002:\002%M\002] ", localtime(&NOW));
 	a = push(NULL, buf, "\002#\002", c->name, "\002#\002", " ", NULL);
-	
+
 	int len;
 	va_start(ap, lst);
 	len = va_getlen(ap, lst);
@@ -261,7 +261,7 @@ void inet::sendexcept(int excp, int who, const char *lst, ...)
 	for(i=0; i<max_conns; ++i)
 	{
 		if(conn[i].fd > 0 && conn[i].status & STATUS_REGISTERED && conn[i].checkFlag(who)
-		 && !(conn[i].status & STATUS_REDIR) && conn[i].fd != excp) 
+		 && !(conn[i].status & STATUS_REDIR) && conn[i].fd != excp)
 		{
 			va_start(ap, lst);
 			conn[i].va_send(ap, lst);
@@ -306,13 +306,13 @@ void inet::sendOwner(const char *who, const char *lst, ...)
 					va_start(ap, lst);
 					len = va_getlen(ap, lst);
 					va_end(ap);
-					
+
 					char *str;
-					
+
 					va_start(ap, lst);
 					str = va_push(NULL, ap, lst, len + 1);
 					va_end(ap);
-					
+
 					c->send(S_OREDIR, " ", userlist.first->next->name, " ", who, " ", str, NULL);
 					free(str);
 				}
@@ -340,7 +340,7 @@ void inet::send(int who, const char *lst, ...)
 	for(i=0; i<max_conns; ++i)
 	{
 		if(conn[i].fd > 0 && conn[i].status & STATUS_REGISTERED && conn[i].checkFlag(who)
-		 && !(conn[i].status & STATUS_REDIR)) 
+		 && !(conn[i].status & STATUS_REDIR))
 		{
 			va_start(ap, lst);
 			conn[i].va_send(ap, lst);
@@ -388,7 +388,7 @@ void inet::propagate(inetconn *from, const char *str, ...)
 {
 	va_list ap;
 	int len;
-	
+
 	char *p = push(NULL, S_FORWARD, " ", from ? from->handle->name : (const char *) config.handle, " * ", NULL);
 
 	va_start(ap, str);
@@ -479,7 +479,7 @@ void inetconn::_close(const char *reason)
 			{
 				net.propagate(NULL, S_CHNICK, NULL);
 
-				HOOK(disconnected, disconnected(reason));
+				HOOK(onDisconnected(reason));
 				if(stopParsing)
 					stopParsing=false;
 				else
@@ -488,7 +488,7 @@ void inetconn::_close(const char *reason)
 			}
 			else if(status & STATUS_KLINED)
 			{
-				HOOK(klined, klined(reason));
+				HOOK(onKlined(reason));
 				if(stopParsing)
 					stopParsing=false;
 				else
@@ -562,7 +562,7 @@ void inetconn::_close(const char *reason)
 
 int inetconn::va_send(va_list ap, const char *lst)
 {
-	int size; 
+	int size;
 	char *p, *q;
 
 	va_list ap_copy;
@@ -734,7 +734,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 					strncpy(buf, read.buf, n);
 					if(n && (buf[n-1] == '\r' || buf[n-1] == '\n'))
 						--n;
-					
+
 					buf[n] = '\0';
 					free(read.buf);
 					memset(&read, 0, sizeof(read));
@@ -744,7 +744,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 					n = 0;
 					buf[0] = '\0';
 				}
-				
+
 				if(n)
 				{
 					DEBUG(printf("[%c] read[%s]: %s\n", blowfish ? 'C' : '*', name, buf));
@@ -757,10 +757,10 @@ int inetconn::readln(char *buf, int len, int *ok)
 							net.send(HAS_N, "[D] read[", name ? name : "???", "]: ", buf, NULL);
 					}
 				}
-				
+
 				if(ok)
 					*ok = 1;
-				
+
 				return n;
 			}
 			else
@@ -781,11 +781,11 @@ int inetconn::readln(char *buf, int len, int *ok)
 						return -1;
 					}
 					read.buf[read.len++] = buf[i];
-					
+
 				}
 			}
 		}
-		
+
 		if(ok)
 			*ok = 0;
 		return 0;
@@ -805,7 +805,7 @@ int inetconn::readln(char *buf, int len, int *ok)
 
 	if(ok)
 		*ok = ret ? 0 : 1;
-	
+
 	return -1;
 }
 
@@ -900,7 +900,7 @@ int inetconn::disableCrypt()
 	if(status & STATUS_SSL)
 		return 0;
 #endif
-	
+
 	if(blowfish)
 	{
 		delete blowfish;
@@ -1144,7 +1144,7 @@ void inetconn::writeBufferedData()
 #endif
 		if(::write(fd, write.buf + write.pos, 1) == 1)
 			++write.pos;
-				
+
 		if(write.pos == write.len)
 		{
 			free(write.buf);
@@ -1163,7 +1163,7 @@ bool inetconn::enableSSL()
 	ssl_ctx = SSL_CTX_new(SSLv23_method());
 	if(!ssl_ctx)
 		return false;
-		
+
 	DEBUG(printf("[D] ssl_ctx: %p\n", (void *) ssl_ctx));
 	SSL_CTX_set_mode(ssl_ctx, SSL_MODE_ENABLE_PARTIAL_WRITE);
 	ssl = SSL_new(ssl_ctx);

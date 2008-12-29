@@ -103,6 +103,9 @@ using std::string;
 #include "common.h"
 #include "firestring.h"
 #include "firedns.h"
+#ifdef HAVE_MODULES
+#include "module.h"
+#endif
 
 typedef void (*sighandler_t)(int);
 typedef void (*sig_t)(int);

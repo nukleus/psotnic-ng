@@ -19,8 +19,9 @@
  ***************************************************************************/
 
 #include "prots.h"
+#include "module.h"
 
-ptrlist<module> modules;
+ptrlist<Module> modules;
 
 time_t NOW;
 CONFIG config;
@@ -103,7 +104,7 @@ void md5_test()
 int main(int argc, char *argv[])
 {
 //	md5_test();
-    
+
 	char buf[MAX_LEN];
 	int i, n, ret;
 	struct timeval tv;
@@ -170,7 +171,7 @@ int main(int argc, char *argv[])
 		else if(n == 1)
 		{
 			printf("[+] Userlist loaded (sn: %llu)\n", userlist.SN);
-			HOOK(userlistLoaded, userlistLoaded());
+			HOOK(onUserlistLoaded());
 			stopParsing=false;
 		}
 	}
@@ -223,12 +224,12 @@ int main(int argc, char *argv[])
 		{
 			FD_SET(net.listenfd, &rfd);
 			net.bidMaxFd(net.listenfd);
-			
+
 #ifdef HAVE_SSL
 			FD_SET(net.ssl_listenfd, &rfd);
 			net.bidMaxFd(net.ssl_listenfd);
 #endif
-		
+
 			for(i=0; i<net.max_conns; ++i)
 			{
 				if(net.conn[i].fd && !(net.conn[i].status & STATUS_REDIR) && !net.conn[i].timedOut())
@@ -317,7 +318,7 @@ int main(int argc, char *argv[])
 #ifdef HAVE_TCL
 			tclparser.expireTimers();
 #endif
-			HOOK(timer, timer());
+			HOOK(onTimer());
 			stopParsing=false;
 #ifdef HAVE_ADNS
 			if(NOW - last_dns >= 5*60)
@@ -363,9 +364,9 @@ int main(int argc, char *argv[])
 		/* WRITE BUFFER */
 		for(i=0; i<net.max_conns; ++i)
 		{
-			
+
 			c = &net.conn[i];
-			
+
 			/*
 			if(c->write.buf && !(c->status & STATUS_REDIR) && FD_ISSET(c->fd, &wfd))
 			{
@@ -377,17 +378,17 @@ int main(int argc, char *argv[])
 				}
 			}
 			*/
-			
+
 			if(c->isConnected() && FD_ISSET(c->fd, &wfd))
 				c->writeBufferedData();
 		}
 
 		if(net.hub.isConnected() && FD_ISSET(net.hub.fd, &wfd))
 			net.hub.writeBufferedData();
-		
+
 		if(net.irc.isConnected() && FD_ISSET(net.irc.fd, &wfd))
 			net.irc.writeBufferedData();
-		
+
 		/* READ from IRC */
 		if(FD_ISSET(net.irc.fd, &rfd))
 		{
@@ -417,11 +418,11 @@ int main(int argc, char *argv[])
 				{
 #endif
 
-#ifdef HAVE_IRC_BACKTRACE			
+#ifdef HAVE_IRC_BACKTRACE
 				n = net.irc.readln(irc_buf[current_irc_buf], MAX_LEN);
 				if(n > 0)
 				{
-					HOOK(rawirc, rawirc(irc_buf[current_irc_buf]));
+					HOOK(onRawirc(irc_buf[current_irc_buf]));
 					if(stopParsing)
 						stopParsing=false;
 					else
@@ -429,11 +430,11 @@ int main(int argc, char *argv[])
 					if(++current_irc_buf == IRC_BUFS)
 						current_irc_buf = 0;
 
-#else			
+#else
 				n = net.irc.readln(buf, MAX_LEN);
 				if(n > 0)
 				{
-					HOOK(rawirc, rawirc(buf));
+					HOOK(onRawirc(buf));
 					if(stopParsing)
 						stopParsing=false;
 					else
@@ -478,7 +479,7 @@ int main(int argc, char *argv[])
 		if(FD_ISSET(net.ssl_listenfd, &rfd) && acceptConnection(net.ssl_listenfd, true))
 			continue;
 #endif
-				
+
 		/* READ from BOTS and OWNERS */
 		if(config.listenport
 #ifdef HAVE_SSL
@@ -555,10 +556,10 @@ int main(int argc, char *argv[])
 					DEBUG(printf("[D] SSL: TCP connection has been established\n"));
 					net.hub.status &= ~STATUS_SYNSENT;
 				}
-				else 
+				else
 					continue;
 			}
-		
+
 			net.hub.SSLHandshake();
 			if(net.hub.status & STATUS_CONNECTED)
 			{
@@ -573,7 +574,7 @@ int main(int argc, char *argv[])
 		/* firedns resolver */
 #ifdef HAVE_ADNS_FIREDNS
 		dynamic_cast<adns_firedns*>(resolver)->processResultSET(&rfd);
-#endif		
+#endif
 
 		if(net.hub.fd && net.hub.status & STATUS_SYNSENT)
 		{
@@ -587,9 +588,9 @@ int main(int argc, char *argv[])
 			}
 		}
 #ifdef HAVE_SSL
-//		DEBUG(printf("[D] net.irc.fd: %d, STATUS_SSL: %u, STATUS_SSL_HANDSHAKING: %u\n", 
+//		DEBUG(printf("[D] net.irc.fd: %d, STATUS_SSL: %u, STATUS_SSL_HANDSHAKING: %u\n",
 //			net.irc.fd, net.irc.status & STATUS_SSL, net.irc.status & STATUS_SSL_HANDSHAKING));
-			
+
 		if(net.irc.fd && net.irc.status & STATUS_SSL_HANDSHAKING)
 		{
 			if(net.irc.status & STATUS_SYNSENT)
@@ -600,21 +601,21 @@ int main(int argc, char *argv[])
 					net.irc.status &= ~STATUS_SYNSENT;
 					//net.irc.status |= STATUS_CONNECTED;
 				}
-				else 
+				else
 					continue;
 			}
-			
+
 			net.irc.SSLHandshake();
 			if(net.irc.status & STATUS_CONNECTED)
 			{
 				net.irc.send("NICK ", (const char *) config.nick, NULL);
 				net.irc.send("USER ", (const char *) config.ident, " 8 * :", (const char *) config.realname, NULL);
-				
+
 				net.irc.status &= ~STATUS_SSL_HANDSHAKING;
 			}
 		}
 #endif
-		
+
 		if(net.irc.fd && net.irc.status & STATUS_SYNSENT)
 		{
 			if(FD_ISSET(net.irc.fd, &wfd))

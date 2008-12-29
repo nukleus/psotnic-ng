@@ -8,6 +8,7 @@
 
 class ent;
 class inetconn;
+class Module;
 
 class options
 {
@@ -274,15 +275,8 @@ class entMult : public ent
 
 class entLoadModules : public ent
 {
-	private:
-	pstring<> file;
-	pstring<> md5sum;
-	bool md5;
-
-	virtual options::event *_setValue(const char *arg1, const char *arg2, const char *arg3, bool justTest=0);
-
 	public:
-		entLoadModules(const char *n="", bool needValidMD5=1) : ent(n), md5(needValidMD5) { };
+	entLoadModules(const char *n="", bool needValidMD5=1) : ent(n), m_md5(needValidMD5) { };
 	virtual ~entLoadModules() { };
 
 	virtual options::event *setValue(const char *arg1, const char *arg2, bool justTest=0);
@@ -290,9 +284,29 @@ class entLoadModules : public ent
 	virtual void reset();
 	virtual bool isDefault() const;
 	virtual entLoadModules &operator=(const entLoadModules &e);
-	ptrlist<module>::iterator findModule(const char *str);
+	ptrlist<Module>::iterator findModule(const char *str);
 	//bool rehash
 	bool unload(const char *str);
+
+	/*! Pointer to a function that returns a pstring<> */
+	typedef pstring<> (*sfp)();
+
+	/*! Pointer to a voif function */
+	typedef void (*vfp);
+
+	/*! Module load function pointer */
+	typedef Module* (*mfp)(void *, const char *, const char *, time_t, const char *);
+
+	private:
+	pstring<> m_file;
+	pstring<> m_md5sum;
+	time_t m_loadDate;
+	void *m_handle;
+	bool m_md5;
+
+	virtual options::event *_setValue(const char *arg1, const char *arg2, const char *arg3, bool justTest=0);
+
+
 };
 
 class entChattr : public ent
@@ -312,7 +326,7 @@ class entChattr : public ent
 	long int dLimit;
 	char dmFlags[32];
 	char dpFlags[32];
-	
+
 	void setFlags();
 	void setFlag(int plusFlag, const char flag);
 
@@ -326,7 +340,7 @@ class entChattr : public ent
 	virtual const char *getValue() const;
 	virtual void reset();
 	virtual bool isDefault() const;
-	entChattr(const char *n="", const char *modes="") : ent(n) 
+	entChattr(const char *n="", const char *modes="") : ent(n)
 	{
 		memset(pFlags, 0, sizeof(pFlags));
 		memset(mFlags, 0, sizeof(mFlags));

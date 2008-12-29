@@ -1232,7 +1232,7 @@ int ul::addChannel(const char *name, const char *pass, const char *attr)
 	nextSave = NOW + SAVEDELAY;
 
 #ifdef HAVE_MODULES
-	HOOK( new_CHANLIST, new_CHANLIST( &chanlist[i] ) );
+	HOOK( onNewCHANLIST(&chanlist[i]) );
 #endif
 	return i;
 }
@@ -1367,7 +1367,7 @@ void ul::update()
 	net.hub.send(S_ULOK, " ", itoa(n), NULL);
 	nextSave = 0;
 	save(config.userlist_file);
-	HOOK(userlistLoaded, userlistLoaded());
+	HOOK(onUserlistLoaded());
 	stopParsing=false;
 
 	//if(strlen(ME.nick) && wildFindHost(userlist.me(), mask) == -1)
@@ -2079,7 +2079,7 @@ ul::ul()
 		chanlist[i].protlist[REOP] = NULL;
 		chanlist[i].allowedOps = NULL;
 #ifdef HAVE_MODULES
-		HOOK( del_CHANLIST, del_CHANLIST( &chanlist[i] ) )
+		HOOK(onDelCHANLIST(&chanlist[i]))
 #endif
 	}
 	dset = new chanset();
@@ -2185,7 +2185,7 @@ void CHANLIST::reset()
 		 delete(allowedOps);
 
 #ifdef HAVE_MODULES
-	HOOK( del_CHANLIST, del_CHANLIST( this ) )
+	HOOK(onDelCHANLIST(this))
 #endif
 
 	chset = NULL;

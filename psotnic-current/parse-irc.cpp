@@ -61,7 +61,7 @@ void parse_irc(char *data)
 				ME.recheckFlags();
 				return;
 			}
-			
+
 			/*if(!strcmp(arg[3], "!crash"))
 			{
 				char *buf = NULL;
@@ -174,7 +174,7 @@ void parse_irc(char *data)
 	}
 	if(!strcmp(arg[1], "PART"))
 	{
-		HOOK(pre_part, pre_part(arg[0], arg[2], srewind(data,3), false));
+		HOOK(onPrePart(arg[0], arg[2], srewind(data,3), false));
 		stopParsing=false;
 
 		if(!strcasecmp(ME.mask, arg[0]))
@@ -193,7 +193,7 @@ void parse_irc(char *data)
 			}
 
 		}
-		HOOK(post_part, post_part(arg[0], arg[2], srewind(data,3), false));
+		HOOK(onPostPart(arg[0], arg[2], srewind(data,3), false));
 		stopParsing=false;
 		return;
 	}
@@ -253,7 +253,7 @@ void parse_irc(char *data)
 				userlist.chanlist[ch->channum].status &= ~SET_TOPIC;
 
 
-			HOOK(justSynced, justSynced(ch));
+			HOOK(onChannelSynced(ch));
 			stopParsing=false;
 		}
 		return;
@@ -429,7 +429,7 @@ void parse_irc(char *data)
 
 		if(!creation)
 		{
-			HOOK(connected, connected());
+			HOOK(onConnected());
 			stopParsing=false;
 		}
 
@@ -516,7 +516,7 @@ void parse_irc(char *data)
 		if(ch)
 		{
 			ch->topic = srewind(data, 4)+1;
-			HOOK(topicChange, topicChange(ch, ch->topic, NULL, NULL));
+			HOOK(onTopicChange(ch, ch->topic, NULL, NULL));
 			stopParsing=false;
 		}
 		return;
@@ -533,7 +533,7 @@ void parse_irc(char *data)
 			pstring<> oldtopic(ch->topic);
 			ch->topic = srewind(data, 3)+1;
 
-			HOOK(topicChange, topicChange(ch, ch->topic, u, oldtopic));
+			HOOK(onTopicChange(ch, ch->topic, u, oldtopic));
 			stopParsing=false;
 		}
 	}
@@ -550,14 +550,14 @@ void parse_irc(char *data)
 			}
 		}
 
-		HOOK(invite, invite(arg[0], arg[3], ch, i == -1 ? NULL : &userlist.chanlist[i]));
+		HOOK(onInvite(arg[0], arg[3], ch, i == -1 ? NULL : &userlist.chanlist[i]));
 		stopParsing=false;
 		return;
 	}
 
 	if(!strcmp(arg[1], "NOTICE"))
 	{
-		HOOK(notice, notice(arg[0], arg[2], srewind(data, 3) + 1));
+		HOOK(onNotice(arg[0], arg[2], srewind(data, 3) + 1));
 
 		if(stopParsing)
 		{
@@ -601,7 +601,7 @@ void parse_irc(char *data)
 			return;
 		}
 
-		HOOK(privmsg, privmsg(arg[0], arg[2], srewind(data, 3) + 1));
+		HOOK(onPrivmsg(arg[0], arg[2], srewind(data, 3) + 1));
 
 		if(stopParsing)
 		{
@@ -931,6 +931,6 @@ void parse_irc(char *data)
 		}
 	}
 
-	HOOK(crap, crap(data));
+	HOOK(onCrap(data));
 	stopParsing=false;
 }

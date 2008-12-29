@@ -460,7 +460,7 @@ void parse_owner(inetconn *c, char *data)
 			free(alias);
 		}
 
-		HOOK(partylineCmd, partylineCmd(c->name, c->handle->flags[GLOBAL], arg[0], srewind(data, 1)));
+		HOOK(onPartylineCmd(c->name, c->handle->flags[GLOBAL], arg[0], srewind(data, 1)));
 
 		if(stopParsing)
 		{

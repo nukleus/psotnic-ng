@@ -73,6 +73,7 @@ main.o
 match.o
 md5.o
 md5func.o
+module.o
 parse-bot.o
 parse-botnet.o
 parse-ctcp.o

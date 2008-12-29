@@ -4,75 +4,10 @@
 #include "pstring.h"
 #include "prots.h"
 
-class chanuser;
-class chan;
-struct CHANLIST;
+class CHANLIST;
 class ptime;
 class comment;
 class offence;
-
-class Hooks
-{
-	public:
-	void (*privmsg)(const char *from, const char *to, const char *msg);
-	void (*notice)(const char *from, const char *to, const char *msg);
-	void (*join)(chanuser *u, chan *ch, const char *mask, int netjoin);
-	void (*botnetcmd)(const char *from, const char *cmd);
-	void (*timer)();
-	void (*connecting)();
-	void (*connected)();
-	void (*disconnected)(const char *reason);
-	void (*klined)(const char *reason);
-	void (*mode)(chan *ch, const char mode[2][MODES_PER_LINE], const char *arg[MODES_PER_LINE], const char *mask);
-	void (*crap)(const char *data);
-	void (*kick)(chan *ch, chanuser *kicked, chanuser *kicker, const char *msg);
-	void (*nick)(const char *from, const char *to);
-	void (*invite)(const char *who, const char *channame, chan *chan, CHANLIST *chLst);
-	void (*rawirc)(const char *data);
-	void (*ctcp)(const char *from, const char *to, const char *msg);
-	void (*justSynced)(chan *ch);
-	void (*partylineCmd)(const char *from, int flags, const char *cmd, const char *args);
-	void (*topicChange)(chan *ch, const char *topic, chanuser *u, const char *oldtopic);
-	void (*pre_part)(const char *mask, const char *channel, const char *msg, bool quit);
-	void (*post_part)(const char *mask, const char *channel, const char *msg, bool quit);
-	void (*userlistLoaded)();
-	void (*chanuserConstructor)(const chan *ch, chanuser *cu);
-	void (*receivedSigHup)();
-	void (*rehash)();
-
-	// customDataMaintenance
-	void (*new_chan)( chan *ch );
-	void (*new_CHANLIST)( CHANLIST *chl );
-	void (*new_chanuser)( chanuser *u );
-	void (*del_chan)( chan *ch );
-	void (*del_CHANLIST)( CHANLIST *chl );
-	void (*del_chanuser)( chanuser *u );
-
-	Hooks()
-	{
-		memset(this, 0, sizeof(Hooks));
-	};
-};
-
-class module
-{
-	public:
-	pstring<> desc, author, version;
-	pstring<> file, md5sum;
-	time_t loadDate;
-	Hooks *hooks;
-	void *handle;
-	void *(*destroy)();
-
-	module(const char *Desc="", const char *Author="", const char *Version="") :
-			desc(Desc), author(Author), version(Version), hooks(new Hooks) {};
-
-	~module()
-	{
-		destroy();
-		delete hooks;
-	}
-};
 
 struct HANDLE
 {

@@ -155,7 +155,7 @@ void parse_ctcp(char *mask, char *data, char *to)
 	{
 		DEBUG(printf("ctcp: %s\n", data));
 
-		HOOK(ctcp, ctcp(mask, to, data));
+		HOOK(onCtcp(mask, to, data));
 
 		if(stopParsing)
 		{

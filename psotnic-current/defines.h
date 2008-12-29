@@ -94,7 +94,7 @@
 //clone check types
 #define CLONE_IPV4				0x00000001
 #define CLONE_HOST				0x00000002
-#define CLONE_IPV6				0x00000004	
+#define CLONE_IPV6				0x00000004
 #define CLONE_PROXY				0x00000008
 #define CLONE_IDENT				0x00000010
 
@@ -162,7 +162,7 @@
 
 //used in str2args function for detecting BEGIN and END of argument
 #define BEGIN_ARG_CHAR				'"'
-#define END_ARG_CHAR				'"' 
+#define END_ARG_CHAR				'"'
 
 #define CHAN_LEN				50
 
@@ -319,18 +319,15 @@ typedef unsigned int(*DLSYM_FUNCTION)();
 typedef void* DLSYM_OBJECT;
 
 #ifdef HAVE_MODULES
-#define HOOK(__name, __fun)									\
-{															\
-	ptrlist<module>::iterator _i = modules.begin();			\
-	while(_i)												\
-	{														\
-		if(_i->hooks->__name)								\
-			_i->hooks->__fun;								\
-		_i++;												\
-	}														\
+#define HOOK(FUNCTION)							\
+{									\
+	for(ptrlist<Module>::iterator _i = modules.begin(); _i; _i++)	\
+	{								\
+			_i->FUNCTION;					\
+	}								\
 }
 #else
-#define HOOK(x, y)
+#define HOOK(X)
 #endif
 
 #ifndef NS_IN6ADDRSZ
@@ -345,7 +342,7 @@ typedef void* DLSYM_OBJECT;
 #ifndef bzero
     #define bzero(a, b) memset(a, 0, b)
 #endif
-	
+
 #ifndef MAX
 	#define MAX(A, B) (A) > (B) ? (A) : (B)
 #endif

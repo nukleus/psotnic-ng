@@ -20,12 +20,13 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "module.h"
 
 void botnetcmd(const char *from, const char *cmd)
 {
 	char arg[10][MAX_LEN];
 
-	HOOK(botnetcmd, botnetcmd(from, cmd));
+	HOOK(onBotnetcmd(from, cmd));
 	if(stopParsing)
 	{
 		stopParsing=false;
@@ -71,39 +72,91 @@ void botnetcmd(const char *from, const char *cmd)
 		if(h && h->flags[GLOBAL] & HAS_X)
 		{
 			int n = 0;
-			ptrlist<module>::iterator i = modules.begin();
+			ptrlist<Module>::iterator i = modules.begin();
 			while(i)
 			{
-				net.sendOwner(arg[0], "module: ", (const char *) i->file, " (v", (const char *) i->version, " by ", (const char *) i->author, ")", NULL);
+				net.sendOwner(arg[0], "module: ", (const char *) i->name(), " (v", (const char *) i->version(), " by ", (const char *) i->author(), ")", NULL);
 				i++;
 				n++;
 			}
-			net.sendOwner(arg[0], itoa(n), " modules has been found", NULL);
+			if(n != 1)
+				net.sendOwner(arg[0], itoa(n), " modules has been found", NULL);
+			else
+				net.sendOwner(arg[0], "1 module has been found", NULL);
+			net.sendOwner(arg[0], "Use \"modinfo\"to get further information about specific modules.", NULL);
 		}
 		else
 			net.sendOwner(arg[0], S_NOPERM, NULL);
+	}
+	else if ( !strcmp( arg[1], "modinfo" ) )
+	{
+		HANDLE *h = userlist.findHandle(arg[0]);
+
+		if (h && h->flags[GLOBAL] & HAS_X)
+		{
+			if ( strlen( arg[2] ) )
+			{
+				int n = 0;
+				ptrlist<Module>::iterator i = modules.begin();
+				while (i)
+				{
+					if (!strcmp( arg[2], (const char*) i->name() ) )
+					{
+						char buf[MAX_LEN];
+						strftime( buf, MAX_LEN, "%X %x", localtime( i->loadDate() ) );
+						net.sendOwner( arg[0], "Extended module information for module ", (const char*) i->name(), ":", NULL );
+						net.sendOwner( arg[0], "\tname:     ", (const char*) i->name(), NULL );
+						net.sendOwner( arg[0], "\tdesc:     ", (const char*) i->description(), NULL );
+						net.sendOwner( arg[0], "\tversion:  ", (const char*) i->version(), NULL );
+						net.sendOwner( arg[0], "\tloaded:   ", buf, NULL );
+						net.sendOwner( arg[0], "\tauthor:   ", (const char*) i->author(), " <", (const char*) i->email(), ">", NULL );
+						net.sendOwner( arg[0], "\tcompiled: ", (const char*) i->compileDate(), " ", (const char*) i->compileTime(), NULL );
+						net.sendOwner( arg[0], "\tfile:     ", (const char*) i->file(), NULL );
+						if ( i->md5sum() )
+						{
+							net.sendOwner( arg[0], "\tMD5 sum:  ", (const char*) i->md5sum(), NULL );
+						}
+						else
+						{
+							net.sendOwner( arg[0], "\tMD5 sum: Module loaded in debug mode, no MD5 checksum saved!", NULL );
+						}
+						break;
+					}
+					i++;
+					n++;
+				}
+			}
+			else
+			{
+				net.sendOwner( arg[0], "Wrong syntax, use \"modinfo <module name>\"", NULL );
+			}
+		}
+		else
+		{
+			net.sendOwner(arg[0], S_NOPERM, NULL);
+		}
 	}
 	else if(!strcmp(arg[1], "rehash"))
 	{
 		HANDLE *h = userlist.findHandle(arg[0]);
 		if(h && h->flags[GLOBAL] & HAS_X)
 		{
-			ptrlist<module>::iterator i = modules.begin();
+			ptrlist<Module>::iterator i = modules.begin();
 
 			int num = 0;
 
 			while(i)
 			{
-				if(!*arg[2] || !strcmp(arg[2], i->file))
+				if(!*arg[2] || !strcmp(arg[2], i->file()))
 				{
-					net.send(HAS_N, "rehasing module: ", (const char *) i->file, NULL);
+					net.send(HAS_N, "rehasing module: ", (const char *) i->file(), NULL);
 
 					++num;
 
 				}
 				i++;
 			}
-			HOOK(rehash, rehash());
+			HOOK(onRehash());
 		}
 		else
 			net.sendOwner(arg[0], S_NOPERM, NULL);

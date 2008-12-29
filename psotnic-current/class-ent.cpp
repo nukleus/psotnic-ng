@@ -82,10 +82,10 @@ options::event *entBool::setValue(const char *arg1, const char *arg2, const bool
 			_event.setError(this, "entry %s is read-only", name);
 			return &_event;
 		}
-		
+
 		if(!arg2)
 		{
-		    _event.setError(this, "argument doesn't exists for entry %s", name); 
+		    _event.setError(this, "argument doesn't exists for entry %s", name);
 		    return &_event;
 		}
 
@@ -356,7 +356,7 @@ int entHost::getConnectionStringType(const char *str) const
 
 	switch(isValidIp(ptr))
 	{
-		case 4: 
+		case 4:
 			type |= ipv4;
 			break;
 		case 6:
@@ -388,7 +388,7 @@ options::event *entHost::setValue(const char *arg1, const char *arg2, const bool
 			//TODO: add more verbous message here
 			_event.setError(this, "%s is not valid: unsupported format", arg2);
 			return &_event;
-		}		
+		}
 
 		const char *_arg = (type & use_ssl) ? arg2+4 : arg2;
 
@@ -398,7 +398,7 @@ options::event *entHost::setValue(const char *arg1, const char *arg2, const bool
 			{
 				ip = _arg;
 				connectionString = arg2;
-			}		
+			}
 			_event.setOk(this, "%s has been set to %s", name, getValue());
 			return &_event;
 		}
@@ -904,20 +904,20 @@ options::event *entServer::set(const char *ip, const char *port, const char *pas
 
 bool entLoadModules::isDefault() const
 {
-	return *file=='\0';
+	return *m_file=='\0';
 }
 
 void entLoadModules::reset()
 {
-	entLoadModules::unload(file);
-	file="";
-	md5sum="";
+	entLoadModules::unload(m_file);
+	m_file="";
+	m_md5sum="";
 }
 
 entLoadModules &entLoadModules::operator=(const entLoadModules &e)
 {
 	name=e.name;
-	md5=e.md5;
+	m_md5=e.m_md5;
 	dontPrintIfDefault=e.dontPrintIfDefault;
 	readOnly=e.readOnly;
 
@@ -928,10 +928,10 @@ const char *entLoadModules::getValue() const
 {
 	static char str[MAX_LEN];
 
-	if(*md5sum)
-		snprintf(str, MAX_LEN, "%s %s", (const char*)file, (const char*)md5sum); 
+	if(*m_md5sum)
+		snprintf(str, MAX_LEN, "%s %s", (const char*)m_file, (const char*)m_md5sum);
 	else
-		snprintf(str, MAX_LEN, "%s", (const char*)file);
+		snprintf(str, MAX_LEN, "%s", (const char*)m_file);
 
 	return str;
 }
@@ -965,7 +965,7 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 		unsigned char digest[16];
 		char digestHex[33];
 
-		if(md5)
+		if(m_md5)
 		{
 			struct stat statbuf;
 
@@ -1011,10 +1011,8 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 		else
 			digestHex[0] = '\0';
 
-
-		//int (*_register)(const char *name, DLSYM_FUNCTION address);
-		module *(*init)();
-		void *handle = dlopen(arg2, RTLD_LAZY);
+		// load the module
+		void *handle = dlopen(arg2, RTLD_NOW);
 
 		if(!handle)
 		{
@@ -1022,50 +1020,115 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 			return &_event;
 		}
 
-		/*_register = (int (*)(const char*, DLSYM_FUNCTION)) dlsym_cast(handle, "_register");
-		if(!_register)
+		sfp version = (sfp) dlsym(handle, "version");
+		if(!version)
 		{
-			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
-			return &_event;
-		}*/
-
-		init = (module*(*)()) dlsym_cast(handle, "init");
-		if(!init)
-		{
-			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			_event.setError(this, "error while loading module %s: %s", arg2, dlerror());
+			dlclose(handle);
 			return &_event;
 		}
 
-		//registerAll(_register);
-
-		void *(*destroy)()=(void*(*)()) dlsym_cast(handle, "destroy");
-
-		if(!destroy)
+		sfp description = (sfp) dlsym(handle, "description");
+		if(!description)
 		{
-			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			_event.setError(this, "error while loading module %s: %s", arg2, dlerror());
+			dlclose(handle);
 			return &_event;
 		}
 
-		module *m = init();
+		sfp author = (sfp) dlsym(handle, "author");
+		if(!author)
+		{
+			_event.setError(this, "error while loading module %s: %s", arg2, dlerror());
+			dlclose(handle);
+			return &_event;
+		}
+
+		sfp email = (sfp) dlsym( handle, "email" );
+		if(!email)
+		{
+			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			dlclose(handle);
+ 			return &_event;
+		}
+
+		sfp name = (sfp) dlsym(handle, "name");
+		if(!name)
+		{
+			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			dlclose(handle);
+			return &_event;
+		}
+
+		sfp compileTime = (sfp) dlsym(handle, "compileTime");
+		if(!compileTime)
+		{
+			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			dlclose(handle);
+			return &_event;
+		}
+
+		sfp compileDate = (sfp) dlsym(handle, "compileDate");
+		if(!compileDate)
+		{
+			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			dlclose(handle);
+			return &_event;
+		}
+
+		mfp load = (mfp) dlsym(handle, "load");
+		if(!load)
+		{
+			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			dlclose(handle);
+			return &_event;
+		}
+
+		vfp unload = (vfp) dlsym(handle, "unload");//dlsym_cast?
+		if(!unload)
+		{
+			_event.setError(this, "error while loading %s: %s", arg2, dlerror());
+			dlclose(handle);
+			return &_event;
+		}
+
+
+		/* FIRE */
+		Module *module = load(handle, arg2, digestHex, time(NULL), "./");
 
 		if(!justTest)
 		{
-			modules.addLast(m);
-			m->file = arg2;
-			m->md5sum = digestHex;
-			m->loadDate = time(NULL);
-			m->destroy=destroy;
-			m->handle=handle;
+			modules.addLast(module);
+			module->setAuthor(author());
+			module->setCompileTime(compileTime(), compileDate());
+			module->setDescription(description());
+			module->setEmail(email());
+			module->setName(name());
+			module->setVersion(version());
+			m_file = arg2;
+			m_md5sum = digestHex;
+			m_loadDate = time(NULL);
+			//m_handle=handle;
 
-			file=arg2;
 
-			if(md5)
-				md5sum=digestHex;
+			if(m_md5)
+				m_md5sum=digestHex;
+
+				string loadMessage;
+				bool loadCheck = module->onLoad( /* args, */ loadMessage );
+				if(!loadCheck)
+				{
+					_event.setError(this, "Module %s refused to load: %s", arg2, loadMessage.c_str());
+					this->unload(arg2);
+					return &_event;
+				}
 		}
 		else
+		{
 			dlclose(handle);
+		}
 
-		_event.setOk(this, "loaded module %s", arg2);
+		_event.setOk(this, "loaded module %s", (const char *)name());
 		return &_event;
 
 #else
@@ -1076,16 +1139,16 @@ options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, co
 	return NULL;
 }
 
-ptrlist<module>::iterator entLoadModules::findModule(const char *str)
+ptrlist<Module>::iterator entLoadModules::findModule(const char *str)
 {
-	ptrlist<module>::iterator i = modules.begin();
+	ptrlist<Module>::iterator i = modules.begin();
 
 	while(i)
 	{
-		if(!strcmp(i->file, str))
+		if(!strcmp(i->file(), str))
 			return i;
 
-			i++;
+		i++;
 	}
 
 	return i;
@@ -1095,13 +1158,12 @@ ptrlist<module>::iterator entLoadModules::findModule(const char *str)
 bool entLoadModules::unload(const char *str)
 {
 #ifdef HAVE_MODULES
-	ptrlist<module>::iterator i = findModule(str);
-	void *handle;
+	ptrlist<Module>::iterator i = findModule(str);
 
 	if(i)
 	{
-		handle=i->handle;
-		modules.removeLink(i);
+		void *handle=i->handle();
+		modules.removeLink(i, false);
 		dlclose(handle);
 		return true;
 	}
@@ -1115,8 +1177,6 @@ bool entLoadModules::rehash(const char *str)
 {
 	if(
 */
-//options::event *entLoadModules::_setValue(const char *arg1, const char *arg2, const char *arg3, bool justTest)
-//moved to modules.cpp
 
 /**
  * class entChattr
@@ -1148,7 +1208,7 @@ int entChattr::checkArg(const char *args)
 	{
 		if(arg[0][i] == '-' || arg[0][i] == '+')
 			continue;
-		if(arg[0][i] == '*') 
+		if(arg[0][i] == '*')
 		{
 			if(!k)
 			{
@@ -1182,7 +1242,7 @@ int entChattr::checkArg(const char *args)
 				break;
 			default:
 				setFlag(c, arg[0][i]);
-				if(c && (arg[0][i] == 'l' || arg[0][i] == 'k') && s < 3) 
+				if(c && (arg[0][i] == 'l' || arg[0][i] == 'k') && s < 3)
 				{
 					switch(arg[0][i])
 					{
@@ -1210,7 +1270,7 @@ int entChattr::checkArg(const char *args)
 			if(strchr(duplicate, modes[i]) == NULL)
 			{
 				setFlag(star, modes[i]);
-				if(star && (modes[i] == 'l' || modes[i] == 'k') && s < 3) 
+				if(star && (modes[i] == 'l' || modes[i] == 'k') && s < 3)
 				{
 					switch(modes[i])
 					{
@@ -1242,7 +1302,7 @@ int entChattr::checkArg(const char *args)
 		{
 			_l = strchr(gpFlags, 'l');
 			_k = strchr(gpFlags, 'k');
-			if(_k != NULL && _l != NULL) 
+			if(_k != NULL && _l != NULL)
 			{
 				if(_l - _k > 0) // we need to swap those chars
 				{
@@ -1399,7 +1459,7 @@ options::event *entChattr::setValue(const char *arg1, const char *arg2, const bo
 			case -5:
 				_event.setError(this, "argument for key has no length");
 				return &_event;
-			case -4: 
+			case -4:
 				_event.setError(this, "argument for limit is not a number");
 				return &_event;
 			case -3:
@@ -1439,7 +1499,7 @@ options::event *entChattr::setValue(const char *arg1, const char *arg2, const bo
 void entChattr::reset()
 {
 	strcpy(pFlags, dpFlags);
-	strcpy(mFlags, dmFlags); 
+	strcpy(mFlags, dmFlags);
 	strcpy(Key, dKey);
 	Limit = dLimit;
 }

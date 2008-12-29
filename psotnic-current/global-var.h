@@ -22,7 +22,7 @@ extern asyn_socks5 socks5;
 extern update psotget;
 extern int hostNotify;
 extern int stopPsotnic;
-extern ptrlist<module> modules;
+extern ptrlist<Module> modules;
 extern bool stopParsing;
 
 #ifdef HAVE_DEBUG

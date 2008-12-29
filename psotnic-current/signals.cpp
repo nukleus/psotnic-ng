@@ -46,16 +46,16 @@ void sigInt()
 void sigHup()
 {
 	userlist.save(config.userlist_file);
-	HOOK(receivedSigHup, receivedSigHup());
+	HOOK(onReceivedSigHup());
 }
 
 void sigSegv()
 {
 	signal(SIGSEGV, SIG_IGN);
-	
+
 	net.send(HAS_N, "[!] Got segmentation fault signal; please report this crash", NULL);
 	net.irc.send("QUIT :Got segmentation fault signal; please report this crash", NULL);
-	
+
 #ifdef HAVE_DEBUG
 	char gdb[MAX_LEN], cmdlist[256], btfile[256];
 	int bt = 0;
@@ -101,7 +101,7 @@ void safeExit()
 void sigCpuTime()
 {
 	net.send(HAS_N, "[*] Cpu time limit reached, terminating", NULL);
-	if(net.irc.fd > 0) net.irc.send("QUIT :Cpu time limit reached, terminating", NULL);	
+	if(net.irc.fd > 0) net.irc.send("QUIT :Cpu time limit reached, terminating", NULL);
 	stopPsotnic = 1;
 }
 

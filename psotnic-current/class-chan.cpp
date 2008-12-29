@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "module.h"
 
 char _chmodes[MAX_LEN];
 
@@ -668,7 +669,7 @@ void chan::gotKick(const char *victim, const char *offender, const char *reason)
 	kicked = getUser(victim);
 	kicker = getUser(offender);
 
-        HOOK(kick, kick(this, kicked, kicker, reason));
+        HOOK(onKick(this, kicked, kicker, reason));
         if(stopParsing)
         {
             stopParsing=false;
@@ -688,7 +689,7 @@ void chan::gotKick(const char *victim, const char *offender, const char *reason)
 				if((int) chset->IDIOTS)
 				{
 					char *b = push(NULL, (const char *) "kick ", victim, NULL);
-					
+
 					/* should we remove spaces from end of reason? */
 					//b = rtrim(b);
 
@@ -1096,7 +1097,7 @@ chanuser *chan::gotJoin(const char *mask, int def_flags)
 
 	if(synced())
 	{
-		HOOK(join, join(p, this, mask, def_flags & NET_JOINED));
+		HOOK(onJoin(p, this, mask, def_flags & NET_JOINED));
 		stopParsing=false;
 	}
 
@@ -1121,13 +1122,13 @@ chan::chan()
 	modeQ[0].setChannel(this);
 	modeQ[1].setChannel(this);
 
-	HOOK( new_chan, new_chan( this ) );
+	HOOK( onNewChan( this ) );
 }
 
 /* Destruction derby */
 chan::~chan()
 {
-	HOOK( del_chan, del_chan( this ) )
+	HOOK( onDelChan( this ) )
 }
 
 /* class chanuser */
@@ -1150,7 +1151,7 @@ chanuser::chanuser(const char *str)
 	ip4 = NULL;
 	ip6 = NULL;
 
-	HOOK( new_chanuser, new_chanuser( this ) );
+	HOOK( onNewChanuser( this ) );
 }
 
 chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
@@ -1202,20 +1203,14 @@ chanuser::chanuser(const char *m, const chan *ch, const int f, const bool scan)
 
 	clones_to_check = CLONE_HOST | CLONE_IPV6 | CLONE_IPV4 | CLONE_IDENT | CLONE_PROXY;
 
-	if(ch)
-	{
-		HOOK(chanuserConstructor, chanuserConstructor(ch, this));
-		stopParsing=false;
-	}
-
-	HOOK( new_chanuser, new_chanuser( this ) );
+	HOOK( onNewChanuser( this ) );
 }
 
 chanuser::~chanuser()
 {
 #ifdef HAVE_MODULES
 	if(host)
-		HOOK( del_chanuser, del_chanuser( this ) )
+		HOOK( onDelChanuser( this ) )
 #endif
 	if(nick) free(nick);
 	if(ident) free(ident);
@@ -1492,7 +1487,7 @@ bool chan::chanModeRequiresArgument(char sign, char mode)
                    */
 
                    return true;
-        case 'B' : 
+        case 'B' :
                    /* "Type B: Modes that change a setting on a channel.  These modes
                                MUST always have a parameter."
                    */

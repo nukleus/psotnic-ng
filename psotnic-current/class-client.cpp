@@ -484,7 +484,7 @@ void client::gotNickChange(const char *from, const char *to)
 		hostNotify = 1;
 	}
 
-	HOOK(nick, nick(fromnick, to));
+	HOOK(onNickChange(fromnick, to));
 	stopParsing=false;
 	free(fromnick);
 }
@@ -653,7 +653,7 @@ int client::connectToIRC(entServer *s)
 			net.irc.status |= STATUS_SSL_WANT_CONNECT | STATUS_SSL_HANDSHAKING;
 		}
 #endif
-		HOOK(connecting, connecting());
+		HOOK(onConnecting());
 		stopParsing=false;
 		return n;
 	}
@@ -892,11 +892,11 @@ void client::gotUserQuit(const char *mask, const char *reason)
 	{
 		if (ch->synced())
 		{
-			HOOK(pre_part, pre_part(mask, ch->name, reason, true));
+			HOOK(onPrePart(mask, ch->name, reason, true));
 			stopParsing=false;
 
 			ch->gotPart(nick, netsplit);
-			HOOK(post_part, post_part(mask, ch->name, reason, true));
+			HOOK(onPostPart(mask, ch->name, reason, true));
 			stopParsing=false;
 		}
 		ch = ch->next;
