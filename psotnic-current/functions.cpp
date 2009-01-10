@@ -399,10 +399,24 @@ void parse_cmdline(int argc, char *argv[])
 	}
 }
 
+/*! Prints out a formatted error message [-].
+ * \param format The format string.
+ * \param ... Variable list of paramaters.
+ */
+void printBad( const char *format, ... )
+{
+	char str[MAX_LEN] = "\033[1m\033[34m[\033[31m-\033[34m]\033[39m\033[22m \0";
+	strncat( str, format, MAX_LEN-34 );
+	strcat( str, "\n" );
+	va_list va;
+	va_start( va, format );
+	vprintf( str, va );
+	va_end( va );
+}
+
 /*! Prints out a formatted error message.
  * \param format The format string.
  * \param ... Variable list of paramaters.
- * \author Stefan Valouch <stefanvalouch@googlemail.com>
  */
 void printError( const char *format, ... )
 {
@@ -418,7 +432,6 @@ void printError( const char *format, ... )
 /*! Prints out a formatted item string.
  * \param format The format string.
  * \param ... Variable list of parameters.
- * \author Stefan Valouch <stefanvalouch@googlemail.com>
  */
 void printItem( const char *format, ... )
 {
@@ -434,7 +447,6 @@ void printItem( const char *format, ... )
 /*! Prints out a formatted message.
  * \param format The format string.
  * \param ... Variable parameter list.
- * \author Stefan Valouch <stefanvalouch@googlemail.com>
  */
 void printMessage( const char *format, ... )
 {
@@ -450,12 +462,26 @@ void printMessage( const char *format, ... )
 /*! Prints out a formatted prompt to stdout.
  * \param format The format string.
  * \param ...
- * \author Stefan Valouch <stefanvalouch@googlemail.com>
  */
 void printPrompt( const char *format, ... )
 {
 	char str[MAX_LEN] = "\033[1m\033[34m[\033[33m?\033[34m]\033[39m\033[22m \0";
 	strncat( str, format, MAX_LEN-33 );
+	va_list va;
+	va_start( va, format );
+	vprintf( str, va );
+	va_end( va );
+}
+
+/*! Prints out a formatted success message.
+ * \param format The format string.
+ * \param ... Variable parameter list.
+ */
+void printSuccess( const char *format, ... )
+{
+	char str[MAX_LEN] = "\033[1m\033[34m[\033[33m+\033[34m]\033[39m\033[22m \0";
+	strncat( str, format, MAX_LEN-34 );
+	strcat( str, "\n" );
 	va_list va;
 	va_start( va, format );
 	vprintf( str, va );

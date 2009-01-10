@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 
 	if(config.bottype != BOT_LEAF)
 	{
-		printf("[*] Loading userlist from `%s'\n", (const char *) config.userlist_file);
+		printMessage("Loading userlist from `%s'", (const char *) config.userlist_file);
 		n = userlist.load(config.userlist_file);
 
 		if(!n)
@@ -152,25 +152,25 @@ int main(int argc, char *argv[])
 			if(config.bottype == BOT_MAIN)
 			{
 				userlist.first->next->flags[MAX_CHANNELS] |= HAS_H;
-				printf("[*] Userlist not found, running in owner creation mode\n");
+				printMessage("Userlist not found, running in owner creation mode");
 				creation = 1;
 			}
 			else if(config.bottype == BOT_SLAVE)
-				printf("[*] Userlist not found (new slave?)\n");
+				printMessage("Userlist not found (new slave?)");
 		}
 		else if(n == -1)
 		{
 			if(config.bottype == BOT_MAIN)
 			{
-				printf("[-] Userlist is broken, please import it from your backup\n");
+				printBad("Userlist is broken, please import it from your backup");
 				exit(1);
 			}
 			else if(config.bottype == BOT_SLAVE)
-				printf("[*] Userlist is broken, i will fetch it later\n");
+				printMessage("Userlist is broken, i will fetch it later");
 		}
 		else if(n == 1)
 		{
-			printf("[+] Userlist loaded (sn: %llu)\n", userlist.SN);
+			printSuccess("Userlist loaded (sn: %llu)", userlist.SN);
 			HOOK(onUserlistLoaded());
 			stopParsing=false;
 		}

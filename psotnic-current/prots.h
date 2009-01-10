@@ -113,10 +113,12 @@ typedef void (*sig_t)(int);
 /*! Formatted output.
  * \{
  * */
+void printBad( const char *format, ... );
 void printError( const char *format, ... );
 void printItem( const char *format, ... );
 void printMessage( const char *format, ... );
 void printPrompt( const char *format, ... );
+void printSuccess( const char *format, ... );
 //! \}
 
 /*! Read stuff from users.
