@@ -177,14 +177,14 @@ class Module
 	pstring<> version();
 
 	protected:
-	pstring<> m_author;		//! Module author.
-	pstring<> m_compileDate;	//! Date the module was compiled.
-	pstring<> m_compileTime;	//! Time the module was compiled.
-	pstring<> m_dataDir;		//! Directory where the module may save its data.
-	pstring<> m_desc;		//! Module description.
-	pstring<> m_email;		//! Module author email.
-	pstring<> m_name;		//! Modules name
-	pstring<> m_version;		//! Module version string.
+	pstring<> m_author;		//!< Module author.
+	pstring<> m_compileDate;	//!< Date the module was compiled.
+	pstring<> m_compileTime;	//!< Time the module was compiled.
+	pstring<> m_dataDir;		//!< Directory where the module may save its data.
+	pstring<> m_desc;		//!< Module description.
+	pstring<> m_email;		//!< Module author email.
+	pstring<> m_name;		//!< Modules name
+	pstring<> m_version;		//!< Module version string.
 	
 
 	private:
