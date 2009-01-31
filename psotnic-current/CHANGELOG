@@ -16,7 +16,7 @@
 * svn log https://psotnic.svn.sourceforge.net/svnroot/psotnic                         *
 ***************************************************************************************
 
-Psotnic 0.x.y  (2008/12/29) changes:
+Psotnic v0.x.y  (2008/12/29) changes:
 - Add a new Modules API providing a more C++isch way of module handling.
 
 Psotnic 0.2.14 (2008/12/24) most important changes:
