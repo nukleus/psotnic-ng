@@ -235,7 +235,7 @@ void parse_cmdline(int argc, char *argv[]);
 void lurk();
 int userLevel(chanuser *u);
 int isValidIp(const char *str);
-int imUp();
+bool imUp();
 int listcmd(char what, const char *from, const char *arg1=NULL, const char *arg2=NULL, inetconn *c=NULL);
 char *h_strerror(int error);
 char *fetchVersion(char *buf, int client);

@@ -156,7 +156,10 @@ bool isNullString(const char *str, int len)
 	return true;
 }
 
-int imUp()
+/*! Checks if the bot is up.
+ * \return true if the bot is up and running, false otherwise.
+ */
+bool imUp()
 {
 	char pid[MAX_LEN];
 	int fd;
@@ -164,10 +167,10 @@ int imUp()
 	//read pid
 	snprintf(pid, MAX_LEN, "pid.%s", (const char *) config.handle);
 	if((fd = open(pid, O_RDONLY)) < 1)
-		return 0;
+		return false;
 	memset(pid, 0, MAX_LEN);
 	if(read(fd, pid, MAX_LEN) < 1)
-		return 0;
+		return false;
 
 	close(fd);
 
@@ -188,7 +191,7 @@ int imUp()
 	*/
 
 	if(atoi(pid) == getpid())
-		return 0;
+		return false;
 
 	return !kill(atoi(pid), SIGHUP);
 }
@@ -242,12 +245,12 @@ void lurk()
 
 		if(pid == -1)
 		{
-			printf("[-] Fork failed: %s\n", strerror(errno));
+			printBad("Fork failed: %s", strerror(errno));
 			_exit(1);
 		}
 		else if(!pid)
 		{
-			printf("[+] Going into background [pid: %d]\n", (int) getpid());
+			printSuccess("Going into background [pid: %d]", (int) getpid());
 			if(setsid() == -1)
 				perror("[!] Cannot create new session: setsid()");
 			freopen("/dev/null", "r", stdin);
@@ -324,6 +327,12 @@ int rmdirext(const char *dir)
 	return 0;
 }
 
+/*!
+ * Parses the command line parameters and descides what to do. Note that the command line parameters
+ * differ depending on the compile mode.
+ * \param argc Number of command line arguments.
+ * \param argv Array of strings forming the arguments.
+ */
 void parse_cmdline(int argc, char *argv[])
 {
 	int i;
@@ -795,7 +804,7 @@ bool extendhost(const char *host, char *buf, unsigned int len)
 	}
 }
 
-/** Generates new nicknames.
+/*! Generates new nicknames.
  * This function will be executed when the bot's nickname is already in use during registration.
  * At first it tries to append chars of config.nickappend in all variations.
  * After that it will append numbers at the 9th position.
@@ -805,7 +814,6 @@ bool extendhost(const char *host, char *buf, unsigned int len)
  *
  * \author patrick <patrick@psotnic.com>
  */
-
 void nickCreator(char *nick)
 {
 	int i, nicklen=strlen(nick), applen=strlen(config.nickappend);
@@ -916,12 +924,12 @@ int acceptConnection(int fd, bool ssl)
 					
 					int ret = SSL_accept(c->ssl);
 					
-					DEBUG(printf("[D] SSL: accept: %d\n", ret));
+					DEBUG(printDebug("SSL: accept: %d", ret));
 					switch(ret)
 					{
 						case 0:
 						c->close("Handshake terminated");
-						DEBUG(printf("[D] SSL: Handshake terminated\n"));
+						DEBUG(printDebug("SSL: Handshake terminated"));
 						break;
 						
 						case -1:
@@ -930,19 +938,19 @@ int acceptConnection(int fd, bool ssl)
 							case SSL_ERROR_WANT_READ:
 							case SSL_ERROR_WANT_WRITE:
 							//c->status |= STATUS_SSL_HANDSHAKING | STATUS_SSL_WANT_ACCEPT;
-							DEBUG(printf("[D] SSL: want accept\n"));
+							DEBUG(printDebug("SSL: want accept"));
 							break;
 							
 							default:
 							c->close("SSL handshake failed");
-							DEBUG(printf("[D] SSL: handshake failed\n"));
+							DEBUG(printDebug("SSL: handshake failed"));
 							break;
 						}
 						break;
 						
 						default:
 						c->status |= STATUS_CONNECTED;
-						DEBUG(printf("[D] SSL socket is connected!!!\n"));
+						DEBUG(printDebug("SSL socket is connected!!!"));
 						break;
 					}
 				}
@@ -1295,7 +1303,10 @@ char *va_push(char *ptr, va_list ap, const char *lst, int size)
 	return ptr;
 }
 
-
+/*! Converts an integer to a string.
+ * \param value The integer to convert.
+ * \return The resulting string.
+ */
 char *itoa(int value)
 {
 	static int i=0;
@@ -1490,6 +1501,10 @@ int units2int(const char *str, unit_table *ut, int &out)
 	}
 }
 
+/*! Finds out the length of a string array.
+ * \param arr The input array.
+ * \return The length of the array.
+ */
 int count(const char *arr[])
 {
 	int i;
@@ -1497,6 +1512,16 @@ int count(const char *arr[])
 	return i;
 }
 
+/*! Checks if the given char \a c is a prefix character.
+ * Valid prefixes are:
+ * - +
+ * - -
+ * - =
+ * - ~
+ * - ^
+ * \param c The char to check.
+ * \return true fi the found char is a prefix char, false otherwise.
+ */
 bool isPrefix(char c)
 {
 	if(c == '+' || c == '-' || c == '=' || c == '~' || c == '^')
@@ -1549,6 +1574,10 @@ char *getPartOfDomain(const char *s, int n)
 	return NULL;
 }
 
+/*! Reads a single byte from a socket or file.
+ * \param fd The file descriptor identifying the file or socket.
+ * \return The char read or -1 if an error occured.
+ */
 char read_byte(int fd)
 {
 	char c;
@@ -1599,21 +1628,24 @@ void addToCron(int i, char *argv[], int argc)
 			//else
 			{
 				fprintf(p, "*/10 * * * * cd %s; %s %s >/dev/null 2>&1\n", buf, thisfile, argv[i]);
-				printf("[+] Adding: */10 * * * * cd %s; %s %s >/dev/null 2>&1\n", buf, thisfile, argv[i]);
+				printSuccess("Adding: */10 * * * * cd %s; %s %s >/dev/null 2>&1", buf, thisfile, argv[i]);
 			}
 			++n;
 		}
-		else printf("[-] Cannot stat `%s': %s\n", argv[i], strerror(errno));
+		else
+		{
+			printBad("Cannot stat `%s': %s", argv[i], strerror(errno));
+		}
 	}
 
 	if(!fclose(p))
 	{
-		printf("[+] Added %d psotnic%sto cron\n", n, (n == 1 ? " " : "s "));
+		printSuccess("Added %d psotnic%sto cron", n, (n == 1 ? " " : "s "));
 		return;
 	}
 	else
 	{
-		printf("[-] Addition to crontab failed: %s\n", strerror(errno));
+		printBad("Addition to crontab failed: %s", strerror(errno));
 		return;
 	}
 }
