@@ -123,18 +123,18 @@ bool update::doUpdate(const char *site)
 
 		if(link.ok() && match("*.tar.gz", link.file) && strlen(link.file) < MAX_LEN)
 		{
-			printf("[+] The newest version is: %s, downloading (this may take a while)\n", link.file);
+			printSuccess("The newest version is: %s, downloading (this may take a while)", link.file);
 			snprintf(updir, 256, ".update-%d", (int) getpid());
 
 			if(mkdir(updir, 0700))
 			{
-				printf("[-] Cannot create update directory: %s\n", strerror(errno));
+				printBad("Cannot create update directory: %s", strerror(errno));
 				return false;
 			}
 
 			if(chdir(updir))
 			{
-				printf("[-] Cannot change directory to %s: %s\n", updir, strerror(errno));
+				printBad("Cannot change directory to %s: %s", updir, strerror(errno));
 				return false;
 			}
 
@@ -142,7 +142,7 @@ bool update::doUpdate(const char *site)
 			if((n = file.get(link, link.file)) > 0)
 			{
 				//return false;
-				printf("[+] Unpacking\n");
+				printSuccess("Unpacking");
 
 				int len = strlen(link.file) - 7;
 
@@ -153,7 +153,7 @@ bool update::doUpdate(const char *site)
 				if(system(buf))
 					goto dupa;
 
-				printf("[+] Restoring seeds (creating seed.h)\n");
+				printSuccess("Restoring seeds (creating seed.h)");
 				FILE *f = fopen("seed.h", "w+");
 				if(!f)
 					goto dupa;
@@ -195,7 +195,7 @@ bool update::doUpdate(const char *site)
 				if(system(buf))
 					goto dupa;
 
-				printf("[*] Compiling (this may take a longer while)\n");
+				printMessage("Compiling (this may take a longer while)");
 
 #ifdef HAVE_DEBUG
 	if(system("make debug"))
@@ -208,7 +208,7 @@ bool update::doUpdate(const char *site)
 #endif
 					goto dupa;
 
-				printf("[*] Copying files\n");
+				printMessage("Copying files");
 #ifdef HAVE_CYGWIN
 				if(rename("bin/psotnic.exe", "../psotnic.exe"))
 #else
@@ -216,40 +216,40 @@ bool update::doUpdate(const char *site)
 #endif
 					goto dupa;
 
-				printf("[*] Cleaning up\n");
+				printMessage("Cleaning up");
 
 				if(chdir("..") || rmdirext(updir))
 				{
-					printf("[-] Failed to remove %s: %s\n", updir, strerror(errno));
+					printBad("Failed to remove %s: %s", updir, strerror(errno));
 					return false;
 				}
 
-				printf("[+] We are ready to rock'n'roll ;-)\n");
+				printSuccess("We are ready to rock'n'roll ;-)");
 
 				return true;
 			}
 			else
 			{
-				printf("[-] Unable to download file: %s\n", file.error(n));
+				printBad("Unable to download file: %s", file.error(n));
 				dupa:
-				printf("[-] Error occured during last operation: %s\n", strerror(errno));
+				printBad("Error occured during last operation: %s", strerror(errno));
 
-				printf("[*] Cleaning up after a failure\n");
+				printMessage("Cleaning up after a failure");
 				if(chdir("..") || rmdirext(updir))
-					printf("[-] Failed to remove %s: %s\n", updir, strerror(errno));
+					printBad("Failed to remove %s: %s", updir, strerror(errno));
 
 				return false;
 			}
 		}
 		else
 		{
-			printf("[-] Invalid response (%s)\n", php.data);
+			printBad("Invalid response (%s)", php.data);
 			return false;
 		}
 	}
 	else
 	{
-		printf("[-] Error occured: %s\n", php.error(n));
+		printBad("Error occured: %s", php.error(n));
 		return false;
 	}
 }
