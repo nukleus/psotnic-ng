@@ -139,7 +139,7 @@ void client::sendStatus(const char *name)
 	net.sendOwner(name, "Antiptrace:               Disabled", NULL);
 #endif
 #ifdef HAVE_IRC_BACKTRACE
-	net.sendOwner(name, "IRC Backtrace:            Enabeled", NULL);
+	net.sendOwner(name, "IRC Backtrace:            Enabled", NULL);
 #else
 	net.sendOwner(name, "IRC Backtrace:            Disabled", NULL);
 #endif
