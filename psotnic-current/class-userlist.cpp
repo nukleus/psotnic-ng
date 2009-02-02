@@ -54,9 +54,8 @@ flagTable BFT[] = {
 };
 
 
-/*
- * finds flag by letter in FLAG table
- * @return pointer to flagTable entry, otherwise NULL
+/*! Finds flag by letter in FLAG table
+ * \return pointer to flagTable entry, otherwise NULL
  */
 flagTable *ul::findFlagByLetter(char letter, flagTable *ft)
 {
@@ -71,9 +70,8 @@ flagTable *ul::findFlagByLetter(char letter, flagTable *ft)
 	return NULL;
 }
 
-/*
- * merges \flags with \str of letters prefixed with + or - (eg. +af-t)
- * @return true if \str consists of valid flags
+/*! Merges \a flags with \a str of letters prefixed with + or -. (eg. +af-t)
+ * \return true if \a str consists of valid flags
  */
 bool ul::mergeFlags(unsigned int &flags, const char *str)
 {
@@ -165,21 +163,36 @@ CHANLIST *ul::findChanlist(const char *name)
 		return NULL;
 }
 
+/*! Returns the bots own hadle.
+ * \return The bots own handle.
+ */
 HANDLE *ul::me()
 {
 	return first->next;
 }
 
+/*! Checks if the bot identified by its handle \a a is a leaf.
+ * \param h The handle to check.
+ * \return true if the bot is a leaf.
+ */
 bool ul::isLeaf(const HANDLE *h)
 {
 	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == HAS_L);
 }
 
+/*! Checks if the bot identified by its handle \a h is a slave.
+ * \param h The handle to check.
+ * \return true if the bot is a slave.
+ */
 bool ul::isSlave(const HANDLE *h)
 {
 	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == (HAS_H | HAS_L));
 }
 
+/*! Checks if the bot identified by its handle \a h is the main hub.
+ * \param h The handle to check.
+ * \return true if the bot is the main hub.
+ */
 bool ul::isMain(const HANDLE *h)
 {
 	return isBot(h) && ((h->flags[GLOBAL] & (HAS_H | HAS_L)) == HAS_H);
@@ -326,7 +339,10 @@ HANDLE *ul::changeIp(char *user, char *ip)
 	return NULL;
 }
 
-/* by Pawe³ (Googie) Salawa, boogie@myslenice.one.pl */
+/*! Sends the bot hierachy tree to an owner.
+ * \param c The connection to use for sending.
+ * \author Pawe³ (Googie) Salawa <boogie@myslenice.one.pl>
+ */
 void ul::sendBotTree(inetconn *c)
 {
 	int slaves = 0;
@@ -381,7 +397,6 @@ void ul::sendBotTree(inetconn *c)
 		n == 1 ? (char *) "" : (char *) "s", " on-line", NULL);
 
 }
-/* end of by Googie */
 
 void ul::cleanChannel(int i)
 {
@@ -436,12 +451,16 @@ void ul::cleanHandle(HANDLE *h)
 	h->flags[MAX_CHANNELS] = (h->flags[MAX_CHANNELS] & HAS_B) ? B_FLAGS : 0;
 }
 
+/*! Re-generates the data imported from a userlist dump.
+ * \param data The input data to parse. Note that it must nor be encrypted.
+ * \return true if everything went well, false otherwiese.
+ */
 int ul::parse(char *data)
 {
 	char arg[10][MAX_LEN];
 	HANDLE *h;
 
-	if(!data || !strlen(data)) return 0;
+	if(!data || !strlen(data)) return false;
 
 	str2words(arg[0], data, 10, MAX_LEN);
 
@@ -456,7 +475,7 @@ int ul::parse(char *data)
 			if(!memcmp(&t.tv, &h->creation->tv, sizeof(timeval)))
 			{
 				h->updated = 1;
-				return 0;
+				return false;
 			}
 			else
 			{
@@ -472,9 +491,9 @@ int ul::parse(char *data)
 			h->updated = 1;
 			delete h->creation;
 			h->creation = new ptime(arg[2], arg[3]);
-        		return 1;
+        		return true;
 		}
-		return 0;
+		return false;
 	}
 	if((!strcmp(arg[0], S_ADDHOST) || !strcmp(arg[0], "ADDHOST")) && strlen(arg[2]))
 	{
@@ -483,9 +502,9 @@ int ul::parse(char *data)
 		{
 			userlist.addHost(h, arg[2], arg[3]);
 			ME.nextRecheck = NOW + 5;
-        		return 1;
+        		return true;
 		}
-		return 0;
+		return false;
 	}
 	if((!strcmp(arg[0], S_ADDCHAN) || !strcmp(arg[0], "ADDCHAN")) && strlen(arg[2]))
 	{
@@ -496,15 +515,15 @@ int ul::parse(char *data)
 		{
 			ME.rejoin(arg[2], atoi(arg[4]));
 			chanlist[i].updated = 1;
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 	}
 	if(!strcmp(arg[0], S_RMUSER) && strlen(arg[1]))
 	{
 		userlist.removeHandle(arg[1]);
 		ME.nextRecheck = NOW + 5;
-		return 1;
+		return true;
 	}
 	if(!strcmp(arg[0], S_RMHOST) && strlen(arg[2]))
 	{
@@ -513,9 +532,9 @@ int ul::parse(char *data)
 		{
 			userlist.removeHost(h, arg[2]);
 			ME.nextRecheck = NOW + 5;
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 	}
 	if(!strcmp(arg[0], S_RMCHAN) && strlen(arg[1]))
 	{
@@ -529,18 +548,18 @@ int ul::parse(char *data)
 	{
 		userlist.changeFlags(arg[1], arg[2], arg[3]);
 		ME.nextRecheck = NOW + 5;
-		return 1;
+		return true;
 	}
 	if(!strcmp(arg[0], S_ULSAVE))
 	{
 		userlist.save(config.userlist_file);
-		return 0;
+		return false;
 	}
 
 	if((!strcmp(arg[0], S_SET) || !strcmp(arg[0], "SET")) && strlen(arg[2]))
 	{
 		set.setVariable(arg[1], arg[2]);
-		return 1;
+		return true;
 	}
 	if((!strcmp(arg[0], S_CHSET) || !strcmp(arg[0], "CHSET")) && strlen(arg[3]))
 	{
@@ -548,35 +567,35 @@ int ul::parse(char *data)
 		if(i != -1)
 		{
 			userlist.chanlist[i].chset->setVariable(arg[2], strlen(arg[4]) ? srewind(data, 3) : arg[3]);
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 
 	}
 	if(!strcmp(arg[0], S_DSET))
 	{
 		dset->setVariable(arg[1], strlen(arg[3]) ? srewind(data, 2) : arg[2]);
-		return 1;
+		return true;
 	}
 	if(!strcmp(arg[0], S_GCHSET) && strlen(arg[2]))
 	{
 		userlist.globalChset(NULL, arg[1], strlen(arg[3]) ? srewind(data, 2) : arg[2]);
-		return 1;
+		return true;
 	}
 	if((!strcmp(arg[0], S_PASSWD) || !strcmp(arg[0], "PASSWD")) && strlen(arg[2]))
 	{
 		userlist.setPassword(arg[1], arg[2]);
-		return 1;
+		return true;
 	}
 	if((!strcmp(arg[0], S_ADDR) || !strcmp(arg[0], "ADDR")) && strlen(arg[2]))
 	{
 		userlist.changeIp(arg[1], arg[2]);
-		return 1;
+		return true;
 	}
 	if((!strcmp(arg[0], S_SN) || !strcmp(arg[0], "SN")) && strlen(arg[1]))
 	{
 		SN = strtoul(arg[1], 0, 10);
-		return 0;
+		return false;
 	}
 	if(!strcmp(arg[0], S_RJOIN) && strlen(arg[2]))
 	{
@@ -598,7 +617,7 @@ int ul::parse(char *data)
 				buf[i] = *a;
 			}
 		}
-		return 1;
+		return true;
 	}
 	if(!strcmp(arg[0], S_CHHANDLE) && strlen(arg[2]))
 	{
@@ -607,9 +626,9 @@ int ul::parse(char *data)
 		{
 			free(h->name);
 			mem_strcpy(h->name, arg[2]);
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 	}
 	if(!strcmp(arg[0], S_PROXYHOST) && strlen(arg[1]))
 	{
@@ -617,9 +636,9 @@ int ul::parse(char *data)
 		if(h && userlist.isBot(h))
 		{
 			userlist.addHost(h, arg[2], NULL, 0, MAX_HOSTS-1);
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
 	}
 	if(!strcmp(arg[0], S_ADDINFO) && strlen(arg[3]))
 	{
@@ -630,7 +649,7 @@ int ul::parse(char *data)
 			char *a = srewind(data, 3);
 			h->info->add(arg[2], a);
 		}
-		return 0;
+		return false;
 	}
 	if(!strcmp(arg[0], S_ADDOFFENCE) && strlen(arg[8]))
 	{
@@ -641,7 +660,7 @@ int ul::parse(char *data)
 			char *a = srewind(data, 8);
 			h->history->add(arg[2], a, atol(arg[3]), atoi(arg[4]), atoi(arg[5]), atoi(arg[6]), atoi(arg[7]) ? true : false);
 		}
-		return 0;
+		return false;
 	}
 	int stick;
 	if(((stick = !strcmp(arg[0], S_ADDSTICK)) || !strcmp(arg[0], S_ADDSHIT) || (stick=!strcmp(arg[0], S_ADDINVITE)) || (stick=!strcmp(arg[0], S_ADDEXEMPT)) || (stick=!strcmp(arg[0], S_ADDREOP))) && strlen(arg[5]))
@@ -682,7 +701,7 @@ int ul::parse(char *data)
 					ch->applyShit(s);
 			}
 		}
-		return 1;
+		return true;
 	}
 	if((!strcmp(arg[0], S_RMSHIT) || !strcmp(arg[0], S_RMINVITE) || !strcmp(arg[0], S_RMEXEMPT) || !strcmp(arg[0], S_RMREOP)) && strlen(arg[1]))
 	{
@@ -737,9 +756,9 @@ int ul::parse(char *data)
 
 			return protlist[type]->remove(arg[1]);
 		}
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 void ul::sendToAll()

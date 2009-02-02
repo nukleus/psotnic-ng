@@ -70,9 +70,9 @@ protmodelist::entry *chan::checkShit(const chanuser *u, const char *host)
 		return NULL;
 }
 
-/** Checks if all sticky bans, invites, exempts and reops are set.
+/*! Checks if all sticky bans, invites, exempts and reops are set.
  *
- * TODO: use invex and excepts of class server
+ * \TODO: use invex and excepts of class server
  *
  * \author patrick <patrick@psotnic.com>
  */
@@ -143,7 +143,11 @@ void chan::updateDnsEntries()
 }
 #endif
 
-int chan::flushKickQueue()
+/*! Flushes one entry from the "users-to-kick" queue by kicking one. Call this function till it
+ * returns false.
+ * \return true if a user has been kicked, false otherwise.
+ */
+bool chan::flushKickQueue()
 {
 	chanuser *MultHandle[6];
 
@@ -151,9 +155,9 @@ int chan::flushKickQueue()
 	{
 		int j = getRandomItems(MultHandle, toKick.begin(), toKick.entries() - sentKicks, 6, KICK_SENT);
 		kick4(MultHandle, j);
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 int chan::myPos()

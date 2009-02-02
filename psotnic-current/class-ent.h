@@ -48,13 +48,18 @@ class options
 	int maxVarLen;
 };
 
+/*! Configuration entity. Psotnics configuration is based on entities derived from this base class.
+ * All options that should be stored have to use entities. This base class does not save actual
+ * configuration values, but instead, it saves the name of the entity as well as some organisatory
+ * stuff. Storage has to be done by the derived classes.
+ */
 class ent
 {
 	public:
-	const char *name;
-	static options::event _event;
-	bool dontPrintIfDefault;
-	bool readOnly;
+	const char *name;		//!< The entities name.
+	static options::event _event;	//!< Event.
+	bool dontPrintIfDefault;	//!< If true, prevents this entity from beeing printed out to the config file.
+	bool readOnly;			//!< Entities marked as RO cannot be changed.
 
 	ent(const char *n=NULL) : name(n), dontPrintIfDefault(false), readOnly(false) { };
 	virtual options::event *setValue(const char *arg1, const char *arg2, const bool justTest=0) = 0;
@@ -74,12 +79,12 @@ class ent
 	//virtual ~ent();
 };
 
-
+/*! Bool storage entity. This entity is used for storing boolean ("ON, "OFF") values. */
 class entBool : public ent
 {
 	public:
-	int value;
-	int defaultValue;
+	int value;		//!< The current value.
+	int defaultValue;	//!< The default value.
 
 	virtual options::event *setValue(const char *arg1, const char *arg2="", const bool justTest=0);
 	operator int() const;
@@ -90,14 +95,18 @@ class entBool : public ent
 	virtual const char *getValue() const;
 	virtual void reset();
 	virtual bool isDefault() const;
-	int operator=(int n)	{ value = (n == 1); return value; };
+	bool operator=(int n)	{ value = (n == 1); return value; };
 	virtual ~entBool() { };
 };
 
+/*! Integer storage. Additionally provides min and max values and will refuse to accept values that
+ * are not within the defined boundaries [min, max].
+ */
 class entInt : public entBool
 {
 	public:
-	int min, max;
+	int min;	//!< Minimum value.
+	int max;	//!< Maximum value.
 
 	virtual options::event *setValue(const char *arg1, const char *arg2, const bool justTest=0);
 	virtual int str2int(const char *str, bool &ok) const;
@@ -108,10 +117,11 @@ class entInt : public entBool
 	virtual const char *getMin() const;
 	virtual const char *getMax() const;
 	operator int() const;
-	int operator==(int n) const;
+	bool operator==(int n) const;
 	virtual ~entInt() { };
 };
 
+/*! Time storage. Saves unix timestamps. */
 class entTime : public entInt
 {
 	public:
@@ -126,6 +136,7 @@ class entTime : public entInt
 	virtual ~entTime() { };
 };
 
+/*! Storage for percentage values. */
 class entPerc : public entInt
 {
 	public:
@@ -149,7 +160,15 @@ class entHost : public ent
 	pstring<8> ip;
 	pstring<16> connectionString;
 
-	enum types { ipv4 = 0x01, ipv6 = 0x02, bindCheck = 0x04, domain = 0x08, use_ssl = 0xf0};
+	enum types
+	{
+		ipv4 = 0x01,		//!< IPv4.
+		ipv6 = 0x02,		//!< IPv6.
+		bindCheck = 0x04,	//!< Perform bind check.
+		domain = 0x08,		//!< Domain.
+		use_ssl = 0xf0		//!< Use ssl.
+	};
+
 	entHost(const char *n="", const int t=ipv4) : ent(n), typesAllowed(t), ip("0.0.0.0"), connectionString("0.0.0.0") { };
 	virtual options::event *setValue(const char *arg1, const char *arg2, const bool justTest=0);
 	virtual const char *getValue() const;
@@ -165,12 +184,16 @@ class entHost : public ent
 
 };
 
+/*! String storage entity. Defines minimum and maximum length and refuses to accept strings not
+ * matching the boundaries [min, max].
+ */
 class entString : public ent
 {
 	public:
-	int min, max;
-	pstring <16> string;
-	pstring <16> defaultString;
+	int min;			//!< Minimum string length to accept.
+	int max;			//!< Maximum string length to accept.
+	pstring <16> string;		//!< The currently stored string.
+	pstring <16> defaultString;	//!< The default string.
 
 
 	virtual options::event *setValue(const char *arg1, const char *arg2, const bool justTest=0);
@@ -184,6 +207,7 @@ class entString : public ent
 	virtual ~entString() { };
 };
 
+/*! Storage for words. Words are like strings, but do not contain blanks. */
 class entWord : public entString
 {
 	public:
@@ -194,10 +218,11 @@ class entWord : public entString
 	virtual ~entWord() { };
 };
 
+/*! Storage for MD5 hashes. */
 class entMD5Hash : public entWord
 {
 	public:
-	unsigned char hash[16];
+	unsigned char hash[16];		//!< The hash to store.
 
 	public:
 	entMD5Hash(const char *n="") : entWord(n)	{ memset(hash, 0, 16); };
@@ -209,13 +234,17 @@ class entMD5Hash : public entWord
 	virtual ~entMD5Hash() { };
 };
 
+/*! Host Port Password Handle storage. This entity is a combination of some others to store more
+ * complex information.
+ */
 class entHPPH : public ent	//host port password handle
 {
 	protected:
-	entHost *_host;
-	entInt *_port;
-	entWord *_pass;
-	entWord *_handle;
+	entHost *_host;		//!< Host information.
+	entInt *_port;		//!< Port number.
+	entWord *_pass;		//!< Connection password.
+	entWord *_handle;	//!< Connection handle.
+
 	virtual options::event *_setValue(const char *arg1, const char *arg2, const char *arg3, const char *arg4, const char *arg5, const bool justTest);
 
 	public:
@@ -224,30 +253,34 @@ class entHPPH : public ent	//host port password handle
 			ent(n), _host(host), _port(port), _pass(pass), _handle(handle) { };
 	virtual const char *getValue() const;
 	virtual ~entHPPH();
-	virtual entHost &getHost()		{ return *_host; };
+	virtual entHost &getHost()	{ return *_host; };
 	virtual entInt &getPort()	{ return *_port; };
 	virtual entWord &getPass()	{ return *_pass; };
-	virtual entWord &getHandle(){ return *_handle; };
+	virtual entWord &getHandle()	{ return *_handle; };
 	virtual entHPPH &operator=(const entHPPH &e);
 	virtual void reset();
 	virtual bool isDefault() const;
 
 	friend class CONFIG;
-	virtual bool isSSL() const { return _host->isSSL(); };
+	virtual bool isSSL() const	{ return _host->isSSL(); };
 };
 
+/*! Stores connection information for connecting to a hub. It differs from entHPPH from the fact
+ * that it also stores the number of failed connections, which are not written to config file.
+ */
 class entHub : public entHPPH
 {
 	private:
 
 	public:
-	int failures;
+	int failures;		//!< Number of failed connections.
+
 	entHub(const char *n="", entHost *host=0, entInt *port=0, entMD5Hash *pass=0, entWord *handle=0) :
 		entHPPH(n, host, port, pass, handle), failures(0) { };
 	virtual ~entHub() { };
 };
 
-
+/*! Connection information for connecting to a server. */
 class entServer : public entHPPH
 {
 	public:
@@ -257,22 +290,28 @@ class entServer : public entHPPH
 	virtual ~entServer() { };
 };
 
+/*! Multi-entity-storage. This entity stores multiple other entities which don't have to be of the
+ * same type. It maintains a list of them. This is used for  storing IRC servers as well as modules.
+ */
 class entMult : public ent
 {
 	private:
-	ptrlist<ent> list;
+	ptrlist<ent> list;	//!< The list of entities to store.
 
 	public:
-	entMult(const char *n=""): ent(n) { };
+	entMult(const char *n="") : ent(n) { };
 	virtual options::event *setValue(const char *arg1, const char *arg2, bool justTest=0);
-	virtual const char *getValue() const { return NULL; };
+	virtual const char *getValue() const	{ return NULL; };
 	virtual void reset();
-	virtual bool isDefault() const { return 1; };
-	virtual bool isPrintable() const { return 0; };
+	virtual bool isDefault() const		{ return true; };
+	virtual bool isPrintable() const	{ return false; };
 	virtual void add(ent *e);
 	virtual ~entMult() { };
 };
 
+/*! Storage for loaded modules. All modules currently loaded are represented by an instance of this
+ * class. The class itself does not know wether the module is loaded in debug mode or not.
+ */
 class entLoadModules : public ent
 {
 	public:
@@ -298,11 +337,11 @@ class entLoadModules : public ent
 	typedef Module* (*mfp)(void *, const char *, const char *, time_t, const char *);
 
 	private:
-	pstring<> m_file;
-	pstring<> m_md5sum;
-	time_t m_loadDate;
-	void *m_handle;
-	bool m_md5;
+	pstring<> m_file;	//!< File containing the module.
+	pstring<> m_md5sum;	//!< Modules md5 hash.
+	time_t m_loadDate;	//!< The time the module was loaded.
+	void *m_handle;		//!< dl*-handle to access more functions inside the module.
+	bool m_md5;		//!< Wether or not to save the md5 sum.
 
 	virtual options::event *_setValue(const char *arg1, const char *arg2, const char *arg3, bool justTest=0);
 

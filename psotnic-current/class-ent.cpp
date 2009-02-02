@@ -22,14 +22,19 @@
 #include "defines.h"
 #include "global-var.h"
 
-/**
+/*
  * ent
  */
 bool ent::operator<(const ent &e) const
 {
-	return strcmp(name, e.name) < 0 ? 1 : 0;
+	return strcmp(name, e.name) < 0 ? true : false;
 }
 
+/*! Compares two entities for name equality.
+ * \note This only compares the names, not the values.
+ * \param e The entity to compare with.
+ * \return true if the names match, false otherwise.
+ */
 bool ent::operator==(const ent &e) const
 {
 	return !strcmp(name, e.name);
@@ -43,6 +48,9 @@ const char *ent::print(const int n) const
 	return buf;
 }
 
+/*! Returns the name of the entity.
+ * \return The name of the entity.
+ */
 const char *ent::getName() const
 {
 	return name;
@@ -53,21 +61,30 @@ options::event *ent::set(const char *arg, const bool justTest)
 	return setValue(name, arg, justTest);
 }
 
+/*! Checks if the entity is printable in a reasonable form.
+ * \return true if the entity could be printed, false otherwise.
+ */
 bool ent::isPrintable() const
 {
-	return dontPrintIfDefault ? !isDefault() : 1;
+	return dontPrintIfDefault ? !isDefault() : true;
 }
 
-/**
+/*
  * entBool
  */
 options::event ent::_event;
 
+/*! Integer case operator.
+ * \return The integer expression of the current value.
+ */
 entBool::operator int() const
 {
 	return value;
 }
 
+/*! Returns the current value as a string. The value is either "ON" or "OFF".
+ * \return The string expression of the current value.
+ */
 const char *entBool::getValue() const
 {
 	return value ? "ON" : "OFF";
@@ -121,38 +138,50 @@ options::event *entBool::setValue(const char *arg1, const char *arg2, const bool
 	}
 }
 
+/*! Converts the string \a str to a boolean expression. Values like "yes" or "on" are considered
+ * true, while "no", "off" and all other values are considered false.
+ * \param str The string to converts.
+ * \param ok Set to true if the conversation was successfull.
+ * \return The boolean expression of the string.
+ */
 bool entBool::str2int(const char *str, bool &ok) const
 {
 	if(!strcmp(str, "yes") || !strcmp(str, "ON") ||
 		   !strcmp(str, "enable") || !strcmp(str, "1"))
 	{
 		ok = true;
-		return 1;
+		return true;
 	}
 
 	if(!strcmp(str, "no") || !strcmp(str, "off") ||
 		   !strcmp(str, "disable") || !strcmp(str, "0"))
 	{
 		ok = true;
-		return 0;
+		return false;
 	}
 
 	ok = false;
-	return 0;
+	return false;
 }
 
+/*! Resets the current value by assigning the default value to it. */
 void entBool::reset()
 {
 	value = defaultValue;
 }
+
+/*! Checks if the current value is the default value.
+ * \return true if the current value is the default value, false otherwise.
+ */
 bool entBool::isDefault() const
 {
 	return value == defaultValue;
 }
 
-/**
+/*
  * entInt
  */
+
 options::event *entInt::setValue(const char *arg1, const char *arg2, const bool justTest)
 {
 	if(!strcmp(arg1, name))
@@ -192,6 +221,9 @@ options::event *entInt::setValue(const char *arg1, const char *arg2, const bool 
 	}
 }
 
+/*! Converts the current value to a string.
+ * \return The resulting string.
+ */
 const char *entInt::getValue() const
 {
 	static char buf[20];
@@ -199,12 +231,21 @@ const char *entInt::getValue() const
 	return buf;
 }
 
+/*! Converts the string \a str to an integer.
+ * \param str The string to converts.
+ * \param ok Always true.
+ * \return The integer expression of the string.
+ * \see atoi
+ */
 int entInt::str2int(const char *str, bool &ok) const
 {
 	ok = true;
 	return atoi(str);
 }
 
+/*! Returns the minimum allowed number as a string.
+ * \return The resulting string.
+ */
 const char *entInt::getMin() const
 {
 	static char buf[20];
@@ -212,6 +253,9 @@ const char *entInt::getMin() const
 	return buf;
 }
 
+/*! Returns the maximum allowed number as a string.
+ * \return The resulting string.
+ */
 const char *entInt::getMax() const
 {
 	static char buf[20];
@@ -223,18 +267,30 @@ const char *entInt::getMax() const
 	return buf;
 }
 
+/*! Integer cast operator.
+ * \return The current value of the entity.
+ */
 entInt::operator int() const
 {
 	return value;
 }
 
-int entInt::operator==(int n) const
+/*! Comparison operator for comparing the entities value to an other integer \a n.
+ * \return true if both are equal, false otherwise.
+ */
+bool entInt::operator==(int n) const
 {
 	return value == n;
 }
 
-/**
+/*
  * class entTime
+ */
+
+/*! Converts a given string \a str to an integer in unix timestamp format.
+ * \param str The string to converts.
+ * \param ok Set to true if the conversion was successfull, false otherwise.
+ * \return The resulting integer or 0 if conversion failed.
  */
 int entTime::str2int(const char *str, bool &ok) const
 {
@@ -250,6 +306,9 @@ int entTime::str2int(const char *str, bool &ok) const
 	return ret;
 }
 
+/*! Returns the currently stored time as a string.
+ * \return The resulting string.
+ */
 const char *entTime::getValue() const
 {
 	static char buf[80];
@@ -258,6 +317,9 @@ const char *entTime::getValue() const
 	return buf;
 }
 
+/*! Converts the minimum accepted time to a string.
+ * \return The resulting string.
+ */
 const char *entTime::getMin() const
 {
 	static char buf[80];
@@ -266,6 +328,9 @@ const char *entTime::getMin() const
 	return buf;
 }
 
+/*! Convers the maximum accepte time to a string.
+ * \return The resulting string.
+ */
 const char *entTime::getMax() const
 {
 	static char buf[80];
@@ -278,9 +343,10 @@ const char *entTime::getMax() const
 	return buf;
 }
 
-/**
+/*
  * class entPerc
  */
+
 int entPerc::str2int(const char *str, bool &ok) const
 {
 	int ret = 0;
@@ -319,9 +385,10 @@ const char *entPerc::getMin() const
 	return buf;
 }
 
-/**
+/*
  * class entHost
  */
+
 entHost::operator const char*() const
 {
 	return (const char *) connectionString;
@@ -493,6 +560,7 @@ options::event *entString::setValue(const char *arg1, const char *arg2, const bo
 	}
 }
 
+/*! Resets the entities value to its default. */
 void entString::reset()
 {
 	string = defaultString;
@@ -503,11 +571,17 @@ bool entString::isDefault() const
 	return !strcmp(defaultString, string);
 }
 
+/*! String cast operator.
+ * \return The current value.
+ */
 entString::operator const char*() const
 {
 	return string;
 }
 
+/*! Returns the current string length.
+ * \return The current string length.
+ */
 int entString::getLen() const
 {
 	return string.len();
@@ -559,9 +633,10 @@ options::event *entWord::setValue(const char *arg1, const char *arg2, const bool
 	}
 }
 
-/**
+/*
  * class entHPPH
  */
+
 options::event *entHPPH::_setValue(const char *arg1, const char *arg2, const char *arg3, const char *arg4, const char *arg5, const bool justTest)
 {
 	if(!strcmp(arg1, name))
@@ -621,6 +696,9 @@ options::event *entHPPH::_setValue(const char *arg1, const char *arg2, const cha
 	}
 }
 
+/*! Converts the entity to a string of the form "host port pass handle".
+ * \return The string representation of the entity.
+ */
 const char *entHPPH::getValue() const
 {
 	static char buf[1024];
@@ -654,6 +732,7 @@ options::event *entHPPH::setValue(const char *arg1, const char *arg2, const bool
 	return _setValue(arg1, arg[0], arg[1], arg[2], arg[3], justTest);
 }
 
+/*! Resets the stored entities to their default values. */
 void entHPPH::reset()
 {
 	if(_host)
@@ -666,6 +745,9 @@ void entHPPH::reset()
 		_handle->reset();
 }
 
+/*! Checks if all entities are at their default values.
+ * \return true if all entities are at their defaults, false otherwise.
+ */
 bool entHPPH::isDefault() const
 {
 	if(_host && !_host->isDefault())

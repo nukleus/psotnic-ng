@@ -41,6 +41,9 @@ SSL_CTX *inet::server_ctx = NULL;
 
 /* Network Connection Handling */
 
+/*! Find the hub.
+ * \return The connection to the hub or NULL if not found.
+ */
 inetconn *inet::findMainBot()
 {
 	for(int i=0; i<max_conns; ++i)
@@ -50,6 +53,7 @@ inetconn *inet::findMainBot()
 	return NULL;
 }
 
+/*! Standard constructor, generates a new connection. */
 inet::inet()
 {
 	conn = (inetconn *) malloc(sizeof(inetconn));
@@ -58,6 +62,7 @@ inet::inet()
 	conns = maxFd = 0;
 }
 
+/*! Destructor, closes the connection. */
 inet::~inet()
 {
 	net.hub.close("Going down");
