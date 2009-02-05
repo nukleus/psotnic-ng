@@ -314,10 +314,6 @@
 	for(int _i=0; _i<MAX_CHANNELS; ++_i)							\
 		if((chLst = &userlist.chanlist[_i])->name && ::match(mask, chLst->name))
 
-typedef int* FUNCTION;
-typedef unsigned int(*DLSYM_FUNCTION)();
-typedef void* DLSYM_OBJECT;
-
 #ifdef HAVE_MODULES
 #define HOOK(FUNCTION)							\
 {									\
