@@ -1,11 +1,32 @@
+
+
 #include "../prots.h"
 #include "../global-var.h"
+#include "../module.h"
 
-int calculatePenalty(const char *data);
-void calculatePenaltyOfChanmode(char *modes, int args, int *mypenalty);
-void calculatePenaltyOfUsermode(char *modes, int *mypenalty);
+class Raw : public Module
+{
+    public:
+    Raw(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
 
-void hook_botnetcmd(const char *from, const char *cmd)
+    virtual bool onLoad(string &msg);
+    virtual void onBotnetcmd(const char *from, const char *cmd);
+
+    int calculatePenalty(const char *data);
+    void calculatePenaltyOfChanmode(char *modes, int args, int *mypenalty);
+    void calculatePenaltyOfUsermode(char *modes, int *mypenalty);
+};
+
+Raw::Raw(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
+{
+}
+
+bool Raw::onLoad(string &msg)
+{
+    return true;
+}
+
+void Raw::onBotnetcmd(const char *from, const char *cmd)
 {
     char arg[2][MAX_LEN], *text;
 
@@ -32,17 +53,6 @@ void hook_botnetcmd(const char *from, const char *cmd)
     }
 }
 
-extern "C" module *init()
-{
-    module *m=new module("raw", "patrick <patrick@psotnic.com>", "1.0");
-    m->hooks->botnetcmd=hook_botnetcmd;
-    return m;
-}
-
-extern "C" void destroy()
-{
-}
-
 /** calculates penalty of a given command.
  *
  * \author patrick <patrick@psotnic.com>
@@ -50,7 +60,7 @@ extern "C" void destroy()
  * \return penalty
 */
 
-int calculatePenalty(const char *data)
+int Raw::calculatePenalty(const char *data)
 {
     char argv[10][MAX_LEN], *name, *p=NULL;
     int len, argc, mypenalty=0;
@@ -347,7 +357,7 @@ int calculatePenalty(const char *data)
  * \param mypenalty pointer to the penalty of calculatePenalty()
  */
 
-void calculatePenaltyOfChanmode(char *modes, int args, int *mypenalty)
+void Raw::calculatePenaltyOfChanmode(char *modes, int args, int *mypenalty)
 {
     int idx, len;
     char sign='+';
@@ -398,7 +408,7 @@ void calculatePenaltyOfChanmode(char *modes, int args, int *mypenalty)
  * \param mypenalty pointer to the penalty of calculatePenalty()
  */
 
-void calculatePenaltyOfUsermode(char *modes, int *mypenalty)
+void Raw::calculatePenaltyOfUsermode(char *modes, int *mypenalty)
 {
     int idx, len;
     char sign='+';
@@ -422,3 +432,9 @@ void calculatePenaltyOfUsermode(char *modes, int *mypenalty)
         *mypenalty+=1;
     }
 }
+
+MOD_LOAD( Raw );
+MOD_DESC( "Raw", "Send raw data to the irc server" );
+MOD_AUTHOR( "patrick", "patrick@psotnic.com" );
+MOD_VERSION( "0.1" );
+

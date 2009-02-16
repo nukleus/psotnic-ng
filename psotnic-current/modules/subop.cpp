@@ -1,6 +1,9 @@
+
+
 #include "../prots.h"
 #include "../global-var.h"
-#include <string.h>
+#include "../module.h"
+#include <cstring>
 #include <string>
 
 /*
@@ -19,7 +22,26 @@
 
 */
 
-void hook_privmsg(const char *from, const char *to, const char *msg) {
+class SubOp : public Module
+{
+  public:
+  SubOp(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+
+  virtual bool onLoad(string &msg);
+  virtual void onPrivmsg(const char *from, const char *to, const char *msg);
+};
+
+SubOp::SubOp(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
+{
+}
+
+bool SubOp::onLoad(string &msg)
+{
+  return true;
+}
+
+void SubOp::onPrivmsg(const char *from, const char *to, const char *msg)
+{
   // Check if we match any of our keywords
   if (match("!kick *",msg) || match("!kban *",msg) || match("!quick *",msg) || match("!topic *",msg)) {
     char arg[50][MAX_LEN];      // arguments
@@ -93,12 +115,8 @@ void hook_privmsg(const char *from, const char *to, const char *msg) {
   } // end of check for if we matched our text
 } // end of function
 
-extern "C" module *init() {
-    module *m = new module("SubOp in channels", "Stuart Scott <stu@wilf.co.uk>", "0.1.0");
-    m->hooks->privmsg = hook_privmsg;
-    return m;
-}
-
-extern "C" void destroy() {
-}
+MOD_LOAD( SubOp );
+MOD_DESC( "SubOp", "Eggdrop-like SubOp in channels" );
+MOD_AUTHOR( "Stuart Scott", "stu@wilf.co.uk" );
+MOD_VERSION( "0.1.0" );
 

@@ -7,16 +7,52 @@
  */
 
 #include "plog.h"
+#include "../../module.h"
 
-Plog *plog;
 
-void hook_connected()
+class PlogMod : public Module
+{
+    public:
+    PlogMod(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+    ~PlogMod();
+    virtual bool onLoad(string &msg);
+    virtual void onConnected();
+    virtual void onPrivmsg(const char *from, const char *to, const char *msg);
+    virtual void onNotice(const char *from, const char *to, const char *msg);
+    virtual void onCtcp(const char *from, const char *to, const char *msg);
+    virtual void onInvite(const char *who, const char *channame, chan *chan, CHANLIST *chLst);
+    virtual void onRawirc(const char *msg);
+    virtual void onDisconnected(const char *reason);
+    virtual void onBotnetcmd(const char *from, const char *cmd);
+    virtual void onTimer();
+    virtual void onNewChan(chan *me);
+    virtual void onDelChan(chan *me);
+
+    private:
+    Plog *plog;
+};
+
+PlogMod::PlogMod(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module( handle, file, md5sum, loadDate, dataDir)
+{
+	plog = new Plog();
+	plog->loadConf();
+}
+
+PlogMod::~PlogMod()
+{
+	plog->chanlist.clear();
+	delete plog->client;
+	delete plog->globalSet;
+	delete plog;
+}
+
+void PlogMod::onConnected()
 {
     if(plog->client->set->LOG && plog->client->set->LOG_CONNECTED)
         plog->client->log("connected to %s as %s", net.irc.name, (*ME.mask)?get_hostmask(ME.mask):(const char*)ME.nick);
 }
 
-void hook_privmsg(const char *from, const char *to, const char *msg)
+void PlogMod::onPrivmsg(const char *from, const char *to, const char *msg)
 {
     Plog::chanRecord *logrec;
     char *stripped_msg, to_str[MAX_LEN];
@@ -59,7 +95,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     free(stripped_msg);
 }
 
-void hook_notice(const char *from, const char *to, const char *msg)
+void PlogMod::onNotice(const char *from, const char *to, const char *msg)
 {
     Plog::chanRecord *logrec;
     char *stripped_msg, to_str[MAX_LEN];
@@ -85,7 +121,7 @@ void hook_notice(const char *from, const char *to, const char *msg)
     free(stripped_msg);
 }
 
-void hook_ctcp(const char *from, const char *to, const char *msg)
+void PlogMod::onCtcp(const char *from, const char *to, const char *msg)
 {
     Plog::chanRecord *logrec;
     char *stripped_msg, to_str[MAX_LEN];
@@ -138,7 +174,7 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
     }
 }
 
-void hook_invite(const char *from, const char *to, chan *ch, CHANLIST *cl)
+void PlogMod::onInvite(const char *from, const char *to, chan *ch, CHANLIST *cl)
 {
     if(!cl && plog->client->set->LOG && plog->client->set->LOG_GOT_INVITED) // unknown channel
         plog->client->log("%s invited me to join %s", get_hostmask(from), to);
@@ -148,7 +184,7 @@ void hook_invite(const char *from, const char *to, chan *ch, CHANLIST *cl)
  * This function will only be used here if the ircd did not send ERROR.
  */
 
-void hook_disconnect(const char *reason)
+void PlogMod::onDisconnected(const char *reason)
 {
     char *stripped_reason=NULL;
 
@@ -174,7 +210,7 @@ void hook_disconnect(const char *reason)
  * Used because the information of psotnic's hooks are too limited.
  */
 
-void hook_raw(const char *data)
+void PlogMod::onRawirc(const char *data)
 {
     char arg[11][MAX_LEN];
     Plog::chanRecord *logrec=NULL;
@@ -477,7 +513,7 @@ void hook_raw(const char *data)
 /** parses .bc command.
  */
 
-void hook_botnetcmd(const char *from, const char *cmd)
+void PlogMod::onBotnetcmd(const char *from, const char *cmd)
 {
     char arg[10][MAX_LEN];
     ptrlist<Plog::chanRecord>::iterator logrec_iter;
@@ -593,7 +629,7 @@ void hook_botnetcmd(const char *from, const char *cmd)
     }
 }
 
-void hook_timer()
+void PlogMod::onTimer()
 {
     plog->autoSaveConf();
 }
@@ -602,7 +638,7 @@ void hook_timer()
  * just for the sake of completeness.
  */
 
-void chanConstructor(chan *me)
+void PlogMod::onNewChan(chan *me)
 {
 }
 
@@ -615,7 +651,7 @@ void chanConstructor(chan *me)
  *        will be opened again and never be closed.
  */
 
-void chanDestructor(chan *me)
+void PlogMod::onDelChan(chan *me)
 {
     Plog::chanRecord *logrec=plog->findLoggingChannel(me->name);
 
@@ -623,31 +659,8 @@ void chanDestructor(chan *me)
         logrec->stop();
 }
 
-extern "C" module *init()
-{
-    module *m=new module("plog", "patrick <patrick@psotnic.com>", "0.1");
-    m->hooks->privmsg=hook_privmsg;
-    m->hooks->notice=hook_notice;
-    m->hooks->ctcp=hook_ctcp;
-    m->hooks->invite=hook_invite;
-    m->hooks->rawirc=hook_raw;
-    m->hooks->connected=hook_connected;
-    m->hooks->disconnected=hook_disconnect;
-    m->hooks->botnetcmd=hook_botnetcmd;
-    m->hooks->timer=hook_timer;
-    m->hooks->new_chan=chanConstructor;
-    m->hooks->del_chan=chanDestructor;
+MOD_LOAD( PlogMod );
+MOD_DESC( "plog", "logs chats to files" );
+MOD_AUTHOR( "patrick", "patrick@psotnic.com" );
+MOD_VERSION( "0.1" );
 
-    plog=new Plog();
-    plog->loadConf();
-
-    return m;
-}
-
-extern "C" void destroy()
-{
-    plog->chanlist.clear();
-    delete plog->client;
-    delete plog->globalSet;
-    delete plog;
-}

@@ -1,7 +1,29 @@
+
+
+
 #include "../prots.h"
 #include "../global-var.h"
+#include "../module.h"
 
-void hook_privmsg(const char *from, const char *to, const char *msg)
+class Op : public Module
+{
+	public:
+	Op(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+
+	virtual bool onLoad(string &msg);
+	virtual void onPrivmsg(const char *from, const char *to, const char *msg);
+};
+
+Op::Op(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
+{
+}
+
+bool Op::onLoad(string &msg)
+{
+    return true;
+}
+
+void Op::onPrivmsg(const char *from, const char *to, const char *msg)
 {
     if(match("!op*", msg))
     {
@@ -33,14 +55,8 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     }
 }
 
-extern "C" module *init()
-{
-    module *m = new module("example #1: !op public command", "Grzegorz Rusin <pks@irc.pl, gg:0x17f1ceh>", "0.1.0");
-    m->hooks->privmsg = hook_privmsg;
-    return m;
-}
-
-extern "C" void destroy()
-{
-}
+MOD_LOAD( Op );
+MOD_DESC( "Op", "example #1: !op public command" );
+MOD_AUTHOR( "Grzegorz Rusin", "pks@irc.pl, gg:0x17f1ceh" );
+MOD_VERSION( "0.1.0" );
 

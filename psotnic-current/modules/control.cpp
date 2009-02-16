@@ -1,7 +1,27 @@
+
 #include "../prots.h"
 #include "../global-var.h"
+#include "../module.h"
 
-void hook_privmsg(const char *from, const char *to, const char *msg)
+class Control : public Module
+{
+    public:
+    Control(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+    virtual bool onLoad(string &msg);
+    virtual void onPrivmsg(const char *from, const char *to, const char *msg);
+    virtual void onBotnetcmd(const char *from, const char *cmd);
+};
+
+Control::Control(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
+{
+}
+
+bool Control::onLoad(string &msg)
+{
+    return true;
+}
+
+void Control::onPrivmsg(const char *from, const char *to, const char *msg)
 {
     char arg[10][MAX_LEN];
     char buf[MAX_LEN];
@@ -46,7 +66,6 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 	    chanuser *u = ch->getUser(from);
 	    if(u && (u->flags & HAS_N) && (ch->me->flags & IS_OP))
 	    {
-		int i;
 		ptrlist<masklist_ent>::iterator m = ch->list[BAN].masks.begin();
 		
 		while(m)
@@ -104,10 +123,9 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     }
 }
 
-void hook_botnetcmd(const char *from, const char *cmd)
+void Control::onBotnetcmd(const char *from, const char *cmd)
 {
     char arg[10][MAX_LEN];
-    char buf[MAX_LEN];
 	
     str2words(arg[0], cmd, 10, MAX_LEN, 0);
     
@@ -135,18 +153,9 @@ void hook_botnetcmd(const char *from, const char *cmd)
 	}
     }
 }
-	
 
-extern "C" module *init()
-{
-    module *m = new module("example #3: control", "Grzegorz Rusin <pks@irc.pl, gg:0x17f1ceh>", "0.1.0");
-    
-    m->hooks->privmsg = hook_privmsg;
-    m->hooks->botnetcmd = hook_botnetcmd;
-    
-    return m;
-}
+MOD_LOAD( Control );
+MOD_DESC( "control", "example #3" );
+MOD_AUTHOR( "Grzegorz Rusin", "pks@irc.pl, gg:0x17f1ceh" );
+MOD_VERSION( "0.1.0" );
 
-extern "C" void destroy()
-{
-}

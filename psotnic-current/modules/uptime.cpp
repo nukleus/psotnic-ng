@@ -6,6 +6,7 @@
 
 #include "../prots.h"
 #include "../global-var.h"
+#include "../module.h"
 #include <sys/param.h>
 
 #ifdef linux 
@@ -15,10 +16,29 @@
     #include <sys/sysctl.h>
 #endif
 
-bool has_global_flag(chanuser *, int);
-int get_uptime();
+class Uptime : public Module
+{
+	private:
+	bool has_global_flag(chanuser *, int);
+	int get_uptime();
 
-void hook_privmsg(const char *from, const char *to, const char *msg)
+	public:
+	Uptime( void *, const char *, const char *, time_t, const char * );
+
+	virtual bool onLoad( string &msg );
+	virtual void onPrivmsg( const char *from, const char *to, const char *msg );
+};
+
+Uptime::Uptime( void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir ) : Module( handle, file, md5sum, loadDate, dataDir )
+{
+}
+
+bool Uptime::onLoad( string &msg )
+{
+	return true;
+}
+
+void Uptime::onPrivmsg(const char *from, const char *to, const char *msg)
 {
     char buffer[MAX_LEN], hostname[MAXHOSTNAMELEN];
     int uptime, days, hours, mins, secs;
@@ -67,18 +87,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     }
 }
 
-extern "C" module *init()
-{
-    module *m=new module("!uptime", "patrick <patrick@psotnic.com>", "0.1");
-    m->hooks->privmsg=hook_privmsg;
-    return m;
-}
-
-extern "C" void destroy()
-{
-}
-
-bool has_global_flag(chanuser *u, int flag)
+bool Uptime::has_global_flag(chanuser *u, int flag)
 {
     char mask[MAX_LEN];
     HANDLE *h;
@@ -99,7 +108,7 @@ bool has_global_flag(chanuser *u, int flag)
 }
 
 #ifdef SYSCTL
-int get_uptime()
+int Uptime::get_uptime()
 {
     int mib[2];
     size_t len;
@@ -120,7 +129,7 @@ int get_uptime()
 #endif
 
 #ifdef PROC_FS
-int get_uptime()
+int Uptime::get_uptime()
 {
     double proc_uptime;
     FILE *fh;
@@ -138,3 +147,9 @@ int get_uptime()
     return (int)proc_uptime;
 }
 #endif
+
+MOD_LOAD( Uptime );
+MOD_DESC( "Uptime", "Shows system uptime" );
+MOD_AUTHOR( "patrick", "patrick@psotnic.com" );
+MOD_VERSION( "0.1" )
+

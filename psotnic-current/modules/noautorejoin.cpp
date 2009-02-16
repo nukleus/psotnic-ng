@@ -6,6 +6,7 @@
 
 #include "../prots.h"
 #include "../global-var.h"
+#include "../module.h"
 
 /* if the user rejoins after being kicked within this time (in seconds),
    it will be handled as autorejoin.
@@ -17,12 +18,12 @@
 
 #define NOARJ_BAN_TIME 1
 
-class arj_chk
+class arj_chk : public Module
 {
- public:
+	public:
 	class entry
 	{
-	 public:
+		public:
 		chan *channel;
 		char nick[32];
 		time_t timestamp;
@@ -31,11 +32,19 @@ class arj_chk
 		bool expired();
 	};
 
-	ptrlist<entry> data;
+	arj_chk(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+	~arj_chk();
 
-	arj_chk();
+	virtual bool onLoad(string &msg);
+	virtual void onJoin(chanuser *u, chan *ch, const char *mask, int netjoin);
+	virtual void onKick(chan *cg, chanuser *kicked, chanuser *kicker, const char *msg);
+	virtual void onTimer();
+
 	void add(chan *, char *);
 	entry *find(chan *, char *);
+
+	private:
+	ptrlist<entry> data;
 };
 
 arj_chk::entry::entry(chan *_channel, char *_nick, time_t _timestamp)
@@ -51,9 +60,14 @@ bool arj_chk::entry::expired()
     return NOW>timestamp+NOARJ_DELAY;
 }
 
-arj_chk::arj_chk()
+arj_chk::arj_chk(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
 {
 	data.removePtrs();
+}
+
+arj_chk::~arj_chk()
+{
+	data.clear();
 }
 
 void arj_chk::add(chan *channel, char *nick)
@@ -72,46 +86,44 @@ arj_chk::entry *arj_chk::find(chan *channel, char *nick)
 	return NULL;
 }
 
-arj_chk autorejoincheck;
-
-void hook_kick(chan *ch, chanuser *kicked, chanuser *kicker, const char *reason)
+void arj_chk::onKick(chan *ch, chanuser *kicked, chanuser *kicker, const char *reason)
 {
-    if(!(ch->me->flags&IS_OP) || kicked->flags & (IS_OP | HAS_O | HAS_V | HAS_F))
-        return;
+	if(!(ch->me->flags&IS_OP) || kicked->flags & (IS_OP | HAS_O | HAS_V | HAS_F))
+		return;
 
-    autorejoincheck.add(ch, kicked->nick);
+	add(ch, kicked->nick);
 }
 
-void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin)
+void arj_chk::onJoin(chanuser *u, chan *ch, const char *mask, int netjoin)
 {
-    char buffer[MAX_LEN];
-    arj_chk::entry *entry;
+	char buffer[MAX_LEN];
+	entry *entry;
 
-    if(netjoin || !(ch->me->flags&IS_OP))
-        return;
-	
-    if((entry=autorejoincheck.find(ch, u->nick)))
-    {
-        autorejoincheck.data.remove(entry);
-        snprintf(buffer, MAX_LEN, "*!%s@%s", u->ident, u->host);
+	if(netjoin || !(ch->me->flags&IS_OP))
+		return;
 
-        if(set.BOTS_CAN_ADD_SHIT
-           && protmodelist::addShit(ch->name, buffer, "noautorejoin", NOARJ_BAN_TIME*60, "Please disable autorejoin"))
-            return;
+	if((entry=find(ch, u->nick)))
+	{
+		data.remove(entry);
+		snprintf(buffer, MAX_LEN, "*!%s@%s", u->ident, u->host);
 
-        else
-        {
-            snprintf(buffer, MAX_LEN, "Please disable autorejoin - banned for %d min%s", NOARJ_BAN_TIME, NOARJ_BAN_TIME==1?"":"s");
-            ch->knockout(u, buffer, NOARJ_BAN_TIME*60); 
-        }
-    }
+		if(set.BOTS_CAN_ADD_SHIT
+				&& protmodelist::addShit(ch->name, buffer, "noautorejoin", NOARJ_BAN_TIME*60, "Please disable autorejoin"))
+			return;
+
+		else
+		{
+			snprintf(buffer, MAX_LEN, "Please disable autorejoin - banned for %d min%s", NOARJ_BAN_TIME, NOARJ_BAN_TIME==1?"":"s");
+			ch->knockout(u, buffer, NOARJ_BAN_TIME*60);
+		}
+	}
 }
 
-void hook_timer()
+void arj_chk::onTimer()
 {
-        ptrlist<arj_chk::entry>::iterator i, j;
+	ptrlist<entry>::iterator i, j;
 
-        i=autorejoincheck.data.begin();
+	i=data.begin();
 
 	while(i)
 	{
@@ -119,22 +131,15 @@ void hook_timer()
 		j++;
 
 		if(i->expired())
-			autorejoincheck.data.remove(i);
+			data.remove(i);
 
 		i=j;
 	}
 }
 
-extern "C" module *init()
-{
-    module *m=new module("noautorejoin", "patrick <patrick@psotnic.com>", "0.2");
-    m->hooks->join=hook_join;
-    m->hooks->kick=hook_kick;
-    m->hooks->timer=hook_timer;
-    return m;
-}
 
-extern "C" void destroy()
-{
-    autorejoincheck.data.clear();
-}
+MOD_LOAD( arj_chk );
+MOD_DESC( "NoAutoRejoin", "auto rejoin protection" );
+MOD_AUTHOR( "patrick", "patrick@psotnic.com" );
+MOD_VERSION( "0.2" );
+

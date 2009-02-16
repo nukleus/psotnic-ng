@@ -13,7 +13,8 @@
 
 #include "../prots.h"
 #include "../global-var.h"
-#include <time.h>
+#include "../module.h"
+#include <ctime>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -32,6 +33,37 @@ const static string LOG_CHANNELS[MAX_CHANNELS] = {"#uk","#psottst","#beginner"};
 //  change this :P
 const static string LOG_PRIVMSG = "PRIVATE_MESSAGE";
 
+class ChanLog : public Module
+{
+	public:
+	ChanLog( void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir );
+
+	virtual bool onLoad( string &msg );
+	virtual void onPrivmsg( const char *from, const char *to, const char *msg );
+	virtual void onCtcp( const char *from, const char *to, const char *msg );
+	virtual void onJoin( chanuser *u, chan *ch, const char *mask, int netjoin );
+	virtual void onNickChange( const char *from, const char *to );
+	virtual void onTopicChange( chan *ch, const char *topic, chanuser *u, const char *oldtopic );
+	virtual void onPostPart( const char *mask, const char *channel, const char *msg, bool quit );
+	virtual void onRawirc( const char *data );
+
+	protected:
+	bool fileExists( const string &file );
+	bool isIn( const string &channel );
+	void logLine( const string &file, const string &channel );
+	string getNick( const char *from );
+	string getRest( const char *from );
+};
+
+ChanLog::ChanLog( void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir ) : Module( handle, file, md5sum, loadDate, dataDir )
+{
+}
+
+bool ChanLog::onLoad( string &msg )
+{
+	return true;
+}
+
 /**
  * fileExists
  * this function checks if the passed in filename is a valid file already or not
@@ -39,7 +71,7 @@ const static string LOG_PRIVMSG = "PRIVATE_MESSAGE";
  * @param file The filename
  * @return true if the file exists, false otherwise (or if the file isnt readable I think.. in which case ERRORCITY.)
  */
-bool fileExists(string file) {
+bool ChanLog::fileExists( const string &file ) {
 	bool ret = false; // our return value
 	fstream fin; // file
 	// try to open the file
@@ -58,7 +90,7 @@ bool fileExists(string file) {
  * @param channel  The channel name to search for
  * @return true if the channel should be logged, otherwise false
  */
-bool isIn(string channel) {
+bool ChanLog::isIn( const string &channel ) {
 	bool ret = false; // our return value
 	// loop through our channel list and see if we can find the channel
 	for (int i = 0;i < MAX_CHANNELS;i++) {
@@ -77,7 +109,7 @@ bool isIn(string channel) {
  * @param line The line to log
  * @param channel The channel to log it to
  */
-void logLine(string line,string channel) {
+void ChanLog::logLine( const string &line, const string &channel ) {
 	bool all = false; // whether we should log to all channels
 	string file,timestamp; // some strings
 	struct tm *ptr; // pointer
@@ -148,7 +180,7 @@ void logLine(string line,string channel) {
  * @param from The host string
  * @return The nickname
  */
-string getNick(const char *from) {
+string ChanLog::getNick(const char *from) {
 	string ret = from; // our return value
 	// get the nickname from the host string
 	if (ret.find("!") > 0) {
@@ -165,7 +197,7 @@ string getNick(const char *from) {
  * @param from The host string
  * @return The host part
  */
-string getRest(const char *from) {
+string ChanLog::getRest(const char *from) {
 	string ret = from; // our return value
 	// strip off the nickname! part of the host
 	if (ret.find("!") > 0) { ret = ret.substr(ret.find("!") + 1); }
@@ -173,7 +205,7 @@ string getRest(const char *from) {
 	return ret;
 }
 
-void hook_privmsg(const char *from, const char *to, const char *msg) {
+void ChanLog::onPrivmsg(const char *from, const char *to, const char *msg) {
 	chan *ch = ME.findChannel(to);// channel we are acting in
 	string line = "<" + getNick(from) + "> " + msg;
 	// check if we have a channel
@@ -184,7 +216,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg) {
 	} // end of check for if we found a valid channel
 } // end of function
 
-void hook_ctcp(const char *from, const char *to, const char *msg) {
+void ChanLog::onCtcp(const char *from, const char *to, const char *msg) {
 	chan *ch = ME.findChannel(to);// channel we are acting in
 	string line = "Action: " + getNick(from);
 	string action = msg;
@@ -197,19 +229,19 @@ void hook_ctcp(const char *from, const char *to, const char *msg) {
 	}// end of check for if we found a valid channel
 }
 
-void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin) {
+void ChanLog::onJoin(chanuser *u, chan *ch, const char *mask, int netjoin) {
 	if (u && ch) {
 		string line = string(u->nick) + " (" + getRest(mask) + ") joined " + string(ch->name);
 		logLine(line,string(ch->name));
 	}
 }
 
-void hook_nick(const char *from, const char *to) {
+void ChanLog::onNickChange(const char *from, const char *to) {
 	string line = "Nick change: " + string(from) + " -> " + string(to);
 	logLine(line,"");
 }
 
-void hook_topicChange(chan *ch, const char *topic, chanuser *u, const char *oldtopic) {
+void ChanLog::onTopicChange(chan *ch, const char *topic, chanuser *u, const char *oldtopic) {
 	if (ch && u) {
 		string line = "Topic changed on " + string(ch->name) + " by " + string(u->nick) + "!" +
 			string(u->ident) + "@" + string(u->host) + ": " + string(topic);
@@ -217,11 +249,11 @@ void hook_topicChange(chan *ch, const char *topic, chanuser *u, const char *oldt
 	}
 }
 
-void hook_post_part(const char *mask, const char *channel, const char*, bool) {
+void ChanLog::onPostPart(const char *mask, const char *channel, const char*, bool) {
 	logLine(getNick(mask) + " (" + getRest(mask) + ") left " + string(channel),string(channel));
 }
 
-void hook_rawirc(const char *data) {
+void ChanLog::onRawirc(const char *data) {
 	string dat = data; // our data string
 	string cmd,usr,msg,nick; // some strings
 	char arg[4][MAX_LEN]; // our arguments
@@ -252,17 +284,7 @@ void hook_rawirc(const char *data) {
 	}
 }
 
-extern "C" module *init() {
-	module *m = new module("Channel logger", "Stuart Scott <stu@wilf.co.uk>", "0.1.0");
-	m->hooks->privmsg = hook_privmsg;
-	m->hooks->ctcp = hook_ctcp;
-	m->hooks->join = hook_join;
-	m->hooks->nick = hook_nick;
-	m->hooks->topicChange = hook_topicChange;
-	m->hooks->post_part = hook_post_part;
-	m->hooks->rawirc = hook_rawirc;
-	return m;
-}
-
-extern "C" void destroy() { }
-
+MOD_LOAD( ChanLog );
+MOD_DESC( "ChanLog", "Eggdrop format channel logger" );
+MOD_AUTHOR( "Stuart Scott", "stu@wilf.co.uk" );
+MOD_VERSION( "0.1.0" );

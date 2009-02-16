@@ -10,6 +10,7 @@
 
 #include "../prots.h"
 #include "../global-var.h"
+#include "../module.h"
 
 namespace Date
 {
@@ -18,21 +19,31 @@ namespace Date
 
   const double YDAYS    = 365.2425;
 
+  class Date : public Module
+  {
+    public:
+    Date(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+
+    virtual bool onLoad(string &msg);
+    virtual void onPrivmsg(const char *from, const char *to, const char *msg);
+    int getday(int y,int m,int d);
+  };
+
   enum Cmds
-   {
-     CMD_DATE=0,
-     CMD_GDATE,
-     CMD_DAY,
-     
-     N_CMDS
-   };
-   
+  {
+    CMD_DATE=0,
+    CMD_GDATE,
+    CMD_DAY,
+
+    N_CMDS
+  };
+
   const char *const CMDS[N_CMDS] =
-    {
-      "date",
-      "gdate",
-      "day",
-    };
+  {
+    "date",
+    "gdate",
+    "day",
+  };
 
   const char *const DAYS[7]=
   {
@@ -44,49 +55,55 @@ namespace Date
     "Fri",
     "Sat"
   };
-  
+
   const int NDAYS[12]={31,28,31,30,31,30,31,31,30,31,30,31};
-  
-  int getday(int y,int m,int d);
+
 }
 
-int Date::getday(int y,int m,int d)
+Date::Date::Date(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
+{
+}
+
+bool Date::Date::onLoad(string &msg)
+{
+  return true;
+}
+
+int Date::Date::getday(int y,int m,int d)
 {
   int days[12];
-  
+
   m--;d--; //correct day and month to interval beginning with 0
-  
+
   if (m<0 || d<0) return -1;
-  
+
   memcpy(days,NDAYS,sizeof(days));
 
   bool leap=((abs(y)%4)==0);
   if (leap) days[1]++; //february has 29 days
 
   if (d>=days[m]) return -1;
- 
+
   int nl=abs(y+3)/4; //number of leap days (at start of this year)
 
   int ndays=y*365;
-  
+
   if (y!=0) ndays+=nl;
-  
+
   for (int i=0;i<m;i++)
     ndays+=days[i];
 
   ndays+=d+5;
   ndays=abs(ndays);
   ndays%=7;
-  
+
   return ndays;
 }
 
-void hook_privmsg(const char *from, const char *to, const char *msg)
+void Date::Date::onPrivmsg(const char *from, const char *to, const char *msg)
 {
-  using namespace Date;
-
   chan *ch = ME.findChannel(to);
-  
+
   if (!ch) return; //message is not sent to channel
 
   chanuser *u = ch->getUser(from);
@@ -94,14 +111,14 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
   if (!u) return; //user is not on channel
 
   if (msg[0]!=CMD_PREFIX) return; //message hasn't command prefix (e.g. '!')
-  
+
   time_t t;
   static char buf[256];
   struct tm timedat;
   int    j,a,b,c,sdy;
   char   *endp;
   double sd,it; //star date, internet time
-    
+
   for (int i=0;i<N_CMDS;i++)
     if (!strncmp(&msg[1],CMDS[i],strlen(CMDS[i])))
       switch (i)
@@ -141,27 +158,27 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 
 		       time(&t);
 	               memcpy(&timedat,localtime(&t),sizeof(struct tm));
-		       
+
 	               j=2+strlen(CMDS[CMD_DAY]);
 
 		       if (j>=strlen(msg)) break;
 
 		       a=strtol(&msg[j],&endp,10);
-		       
+
 		       if (endp==&msg[j] || (*endp!=DATE_SEP && *endp!=0)) break;
 
 		       if (*endp==0)
-		         { 
+		         {
 			   if (a>31)
 			     {
 			       sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
                                ME.privmsg(ch->name,buf,NULL);
 			       break;
 			     }
-		           
+
 			   sdy=getday(timedat.tm_year+1900,timedat.tm_mon+1,a);
 			 }
-		       else 
+		       else
 		         {
 		           j+=endp-&msg[j]+1;
 		           b=strtol(&msg[j],&endp,10);
@@ -169,54 +186,49 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 		           if (endp==&msg[j] || (*endp!=DATE_SEP && *endp!=0)) break;
 
 		           if (*endp==0)
-		             { 
+		             {
                                if (a>12 || b>31)
                  	         {
 		                   sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
                                    ME.privmsg(ch->name,buf,NULL);
 				   break;
 				 }
-			       
+
 			       sdy=getday(timedat.tm_year+1900,a,b);
 			     }
 			   else
 			     {
 		               j+=endp-&msg[j]+1;
 		               c=strtol(&msg[j],&endp,10);
-			       
+
 		               if (*endp!=0) break;
-			       
+
                                if (b>12 || c>31)
 			         {
 		                   sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
                                    ME.privmsg(ch->name,buf,NULL);
 				   break;
 				 }
-			
+
 			       sdy=getday(a,b,c);
                              }
 			}
-		
+
 		       if (sdy==-1)
 			 {
 		           sprintf(buf,"\x02%s:\x02 Invalid date",u->nick);
                            ME.privmsg(ch->name,buf,NULL);
 			   break;
 			 }
-		       
+
 		       sprintf(buf,"%s",DAYS[sdy]);
 		       ME.privmsg(ch->name,buf,NULL);
 	               break;
       }
 }
 
-extern "C" module *init()
-{
-    module *m = new module("Date module", "CGod <cgod@siigot.sytes.net>", "1.0");
-    m->hooks->privmsg = hook_privmsg;
-    return m;
-}
+MOD_LOAD( Date::Date );
+MOD_DESC( "date", "Displays and calculates dates, !date, !gdate, !day" );
+MOD_AUTHOR( "CGod", "cgod@siigot.sytes.net" );
+MOD_VERSION( "0.1" );
 
-extern "C" void destroy()
-{
-}

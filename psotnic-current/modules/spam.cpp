@@ -1,6 +1,9 @@
+
+
 #include "../prots.h"
 #include "../global-var.h"
 #include "../classes.h"
+#include "../module.h"
 #include <regex.h>
 
 class repeat : public CustomDataObject
@@ -26,32 +29,74 @@ class repeat : public CustomDataObject
 		
     repeat() : CustomDataObject(), when(0), creation(NOW) { };
     ~repeat() { };
-};    
+};
 
-regex_t spamChannel;
-regex_t spamWWW;
-regex_t spamOp;
-    
-regmatch_t spamMatch;
-    
-int countCrap(const char *str)
+class Spam : public Module
+{
+    public:
+    Spam(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+    ~Spam();
+
+    virtual bool onLoad(string &msg);
+    virtual void onCtcp(const char *from, const char *to, const char *msg);
+    virtual void onPrivmsg(const char *from, const char *to, const char *msg);
+    virtual void onNewChanuser(chanuser *me);
+    virtual void onDelChanuser(chanuser *me);
+
+    int countCrap(const char *str);
+    void prepareCustomData();
+
+    protected:
+    regex_t spamChannel;
+    regex_t spamWWW;
+    regex_t spamOp;
+
+    regmatch_t spamMatch;
+};
+
+Spam::Spam(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
+{
+    prepareCustomData();
+
+    //construct regular expressions
+    regcomp(&spamChannel, "#[[:alpha:]]", REG_ICASE | REG_EXTENDED);
+    regcomp(&spamOp, "(!|\\s|^)(op|opme|@+)(\\s|$)", REG_ICASE | REG_EXTENDED);
+    regcomp(&spamWWW, "http://|www[.*]|ftp://", REG_ICASE | REG_EXTENDED);
+}
+
+Spam::~Spam()
+{
+    chan *ch;
+    ptrlist<chanuser>::iterator u;
+    for(ch=ME.first; ch; ch=ch->next)
+    {
+	for (u=ch->users.begin(); u; u++)
+	{
+	    onDelChanuser(u);
+	}
+    }
+}
+
+bool Spam::onLoad(string &msg)
+{
+    return true;
+}
+
+int Spam::countCrap(const char *str)
 {
     int i;
-    
     for(i=0; *str; ++str)
     {
         if(*str == 1 || *str == 2 || *str == 3 || *str == 6 || *str == '\017' || *str == '\037' || *str == '\026' || *str == '\007')
 	    ++i;
-        
-	return i;
     }
-    
+    return i;
 }
 
 /**
  * Hooks
  */
-void hook_ctcp(const char *from, const char *to, const char *msg)
+void Spam::onCtcp(const char *from, const char *to, const char *msg)
 {
     chan *ch = ME.findChannel(to);
     
@@ -74,7 +119,7 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
     }
 }
 
-void hook_privmsg(const char *from, const char *to, const char *msg)
+void Spam::onPrivmsg(const char *from, const char *to, const char *msg)
 {
     static char buf[MAX_LEN];
     chan *ch = ME.findChannel(to);
@@ -123,8 +168,6 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 		ch->toKick.sortAdd(u);
 		ch->kick(u, "Do not repeat yourself!");
 	    }
-	    
-	    
 	}
     }
 }
@@ -132,13 +175,13 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
 /**
  * Custom constructors and destructors
  */
-void hook_new_chanuser(chanuser *me)
+void Spam::onNewChanuser(chanuser *me)
 {
 	printf( "[M] spam: new chanuser( %s )\n", me->nick );
 	me->setCustomData( "spam", new repeat );
 }
 
-void hook_del_chanuser(chanuser *me)
+void Spam::onDelChanuser(chanuser *me)
 {
     repeat *cdata = (repeat *) me->customData( "spam" );
 
@@ -149,7 +192,7 @@ void hook_del_chanuser(chanuser *me)
     }
 }
 
-void prepareCustomData()
+void Spam::prepareCustomData()
 {
     chan *ch;
     ptrlist<chanuser>::iterator u;
@@ -157,44 +200,12 @@ void prepareCustomData()
     for(ch=ME.first; ch; ch=ch->next)
     {
         for(u=ch->users.begin(); u; u++)
-            hook_new_chanuser(u);
+            onNewChanuser(u);
     }
 }
 
-/**
- * Init stuff
- */
-extern "C" module *init()
-{
-    module *m = new module("example #2: antispam", "Grzegorz Rusin <pks@irc.pl, gg:0x17f1ceh>", "0.1.0");
-    prepareCustomData();
+MOD_LOAD( Spam );
+MOD_DESC( "Spam", "example #2: antispam" );
+MOD_AUTHOR( "Grzegorz Rusin", "pks@irc.pl, gg:0x17f1ceh" );
+MOD_VERSION( "0.1.0" );
 
-    //register hooks
-    m->hooks->privmsg = hook_privmsg;
-    m->hooks->ctcp = hook_ctcp;
-    
-    //add custom constructor and destructor for all objects of type `chanuser' and `CHANLIST'
-    //initCustomData("chanuser", (FUNCTION) chanuserConstructor, (FUNCTION) chanuserDestructor);
-    m->hooks->new_chanuser=hook_new_chanuser;
-    m->hooks->del_chanuser=hook_del_chanuser;
-
-    
-    //construct regular expressions
-    regcomp(&spamChannel, "#[[:alpha:]]", REG_ICASE | REG_EXTENDED);
-    regcomp(&spamOp, "(!|\\s|^)(op|opme|@+)(\\s|$)", REG_ICASE | REG_EXTENDED);
-    regcomp(&spamWWW, "http://|www[.*]|ftp://", REG_ICASE | REG_EXTENDED);
-
-    return m;
-}
-	    
-extern "C" void destroy()
-{
-    chan *ch;
-    ptrlist<chanuser>::iterator u;
-
-    for(ch=ME.first; ch; ch=ch->next)
-    {
-        for(u=ch->users.begin(); u; u++)
-            hook_del_chanuser(u);
-    }
-}
