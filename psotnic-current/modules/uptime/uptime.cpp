@@ -4,9 +4,9 @@
    supports linux (with proc fs) and *bsd (sysctl).
 */
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include "module.h"
 #include <sys/param.h>
 
 #ifdef linux 

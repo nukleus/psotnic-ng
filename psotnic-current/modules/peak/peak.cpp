@@ -6,9 +6,9 @@
  *                Automatic when new peak in channel     *
  *********************************************************/
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include "module.h"
 #include <iostream>
 #include <fstream>
 #include <string>

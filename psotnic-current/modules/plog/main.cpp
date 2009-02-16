@@ -7,7 +7,7 @@
  */
 
 #include "plog.h"
-#include "../../module.h"
+#include "module.h"
 
 
 class PlogMod : public Module

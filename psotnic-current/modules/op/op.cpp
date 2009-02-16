@@ -1,9 +1,9 @@
 
 
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include "module.h"
 
 class Op : public Module
 {

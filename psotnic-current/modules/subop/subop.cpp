@@ -1,8 +1,8 @@
 
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include "module.h"
 #include <cstring>
 #include <string>
 

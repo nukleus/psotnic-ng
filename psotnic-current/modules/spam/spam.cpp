@@ -1,9 +1,9 @@
 
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../classes.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include "classes.h"
+#include "module.h"
 #include <regex.h>
 
 class repeat : public CustomDataObject

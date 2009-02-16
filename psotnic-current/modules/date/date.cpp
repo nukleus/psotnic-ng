@@ -8,9 +8,8 @@
  * Copyright (c) ???? CGod <c@sii.ath.cx>
  */
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
 
 namespace Date
 {

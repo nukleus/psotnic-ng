@@ -11,9 +11,9 @@
  * @desc Logger producing Eggdrop format logs
  */
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include "module.h"
 #include <ctime>
 #include <string>
 #include <iostream>

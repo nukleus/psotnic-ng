@@ -4,9 +4,9 @@
  * The user will be banned temporarily.
  */
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include <module.h>
 
 /* if the user rejoins after being kicked within this time (in seconds),
    it will be handled as autorejoin.

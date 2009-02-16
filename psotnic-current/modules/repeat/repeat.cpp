@@ -4,9 +4,9 @@
    It has also a lagcheck.
 */
 
-#include "../prots.h"
-#include "../global-var.h"
-#include "../module.h"
+#include "prots.h"
+#include "global-var.h"
+#include "module.h"
 
 // configuration
 
