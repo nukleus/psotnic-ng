@@ -46,6 +46,11 @@ PlogMod::~PlogMod()
 	delete plog;
 }
 
+bool PlogMod::onLoad(string &msg)
+{
+    return true;
+}
+
 void PlogMod::onConnected()
 {
     if(plog->client->set->LOG && plog->client->set->LOG_CONNECTED)

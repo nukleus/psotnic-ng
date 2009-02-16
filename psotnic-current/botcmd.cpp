@@ -118,7 +118,7 @@ void botnetcmd(const char *from, const char *cmd)
 						}
 						else
 						{
-							net.sendOwner( arg[0], "\tMD5 sum: Module loaded in debug mode, no MD5 checksum saved!", NULL );
+							net.sendOwner( arg[0], "\tMD5 sum:  Module loaded in debug mode, no MD5 checksum saved!", NULL );
 						}
 						break;
 					}
