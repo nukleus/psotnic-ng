@@ -99,9 +99,15 @@ add_custom_target( genseed ALL
 #####################
 # generate config.h #
 #####################
-#if()
+include( TestBigEndian )
+TEST_BIG_ENDIAN( BE )
+if( BE )
+   add_definitions( -DHAVE_BIG_ENDIAN=1 )
+   set( HAVE_BIG_ENDIAN 1 )
+else( BE )
+   add_definitions( -DHAVE_LITTLE_ENDIAN=1 )
    set( HAVE_LITTLE_ENDIAN 1 )
-#endif()
+endif( BE )
 
 #if()
    set( HAVE_IPV6 1 )
@@ -163,8 +169,15 @@ add_subdirectory( modules )
 ####################
 # feature overview #
 ####################
+message( "" )
 message( "Feature overview\nPsotnic will be compiled with the following features:" )
 message( "-----------------------------------------------------" )
+
+if( HAVE_IPV6 )
+   message( "IPv6 support                       Enabled" )
+else( HAVE_IPV6 )
+   message( "IPv6 support                       Disabled" )
+endif( HAVE_IPV6 )
 
 if( HAVE_SSL )
    message( "SSL support                        Enabled" )
@@ -195,3 +208,5 @@ if( HAVE_IRC_BACKTRACE )
 else( HAVE_IRC_BACKTRACE )
    message( "IRC backtrace dump                 Disabled" )
 endif( HAVE_IRC_BACKTRACE )
+
+message( "" )
