@@ -406,19 +406,19 @@ struct foo_func { ng_options *opt; };
 
 // all features must be stored here
 struct foo_func flist[]={
-    &color,
-    &bold,
-    &underline,
-    &reverse,
-    &channotice,
-    &chanctcp,
-    &caps,
-    &pubaway,
-    &spam,
-    &nickflood,
-    &textflood,
-    &badnick,
-    &query_spam,
+    {&color},
+    {&bold},
+    {&underline},
+    {&reverse},
+    {&channotice},
+    {&chanctcp},
+    {&caps},
+    {&pubaway},
+    {&spam},
+    {&nickflood},
+    {&textflood},
+    {&badnick},
+    {&query_spam},
 };
 
 int flist_size=sizeof(flist)/sizeof(flist[0]);
