@@ -48,10 +48,13 @@
  Thanks to the following people for testing: MnEm0nIc
 */
 
-#include "../prots.h"
-#include "../global-var.h"
+#include "prots.h"
+#include "global-var.h"
+#include "module.h"
 #include <string>
 #include <regex.h>
+
+using std::string;
 
 #define MY_CONF "ng.txt"
 #define RECORD_EXPIRY 3600
@@ -61,13 +64,11 @@
 #define NG_MAX_PATTERNS 10
 #define NG_SAVE_DELAY 10
 
-module *m;
-
 class ng_options : public options
 {
  public:
     int type;
-    std::string name;
+    string name;
     entInt PUNISH_METHOD;
     entTime BANTIME;
     entString WARNMSG;
@@ -544,7 +545,6 @@ void chanlistCustomData::remove(entry *e, bool freeCustomData)
 void chanlistCustomData::delExpiredUsers()
 {
     ptrlist<entry>::iterator i=data.begin(), j;
-    int k, l;
 
     while(i)
     {
@@ -596,11 +596,30 @@ class nogarbage : public Module
 	public:
 	nogarbage(void *, const char *, const char *, time_t, const char *);
 	~nogarbage();
+
+	virtual bool onLoad(string &msg);
+	virtual void onBotnetcmd(const char *, const char *);
+	virtual void onPrivmsg(const char *, const char *, const char *);
+	virtual void onNotice(const char *, const char *, const char *);
+	virtual void onCtcp(const char *, const char *, const char *);
+	virtual void onNickChange(const char *from, const char *to);
+	virtual void onJoin(chanuser *, chan *, const char *, int);
+	virtual void onTimer();
+	virtual void onKick(chan *, chanuser *, chanuser *, const char *);
+	virtual void onPrePart(const char *, const char *, const char *, bool);
+	virtual void onChanuserConstructor(const chan *, chanuser *u);
+	virtual void onNewCHANLIST(CHANLIST *);
+	virtual void onDelCHANLIST(CHANLIST *);
+	virtual void onNewChan(chan *);
+	virtual void onDelChan(chan *);
+
 	void action(chanuser *, chan *, ng_options *);
 	void ban(chan *, chanuser *, ng_options *);
 	void kick(chan *, chanuser *, ng_options *);
 	int calc_caps(const char *);
 	void handle_query_spam(const char *, const char *);
+	void load_conf();
+	void save_conf();
 
 	private:
 	time_t next_save;
@@ -614,21 +633,35 @@ nogarbage::nogarbage(void *handle, const char *file, const char *md5sum, time_t 
 
 	chan *ch;
 	ptrlist<chanuser>::iterator u;
-	chanuser *cu;
 	CHANLIST *cl;
 
-	foreachNamedCHanlist(cl)
+	foreachNamedChanlist(cl)
 		onNewCHANLIST(cl);
 
-	for (ch=ME.first, ch, ch=cg->next)
+	for (ch=ME.first; ch; ch=ch->next)
 	{
 		onNewChan(ch);
 
 		for (u=ch->users.begin(); u; u++)
 		{
-			hook
+			onChanuserConstructor(ch, u);
+		}
+	}
+}
 
-void nogarbage::ng_load_conf()
+nogarbage::~nogarbage()
+{
+	CHANLIST *cl;
+	foreachNamedChanlist(cl)
+		((chanlistCustomData*) cl->customData(description()))->flush();
+}
+
+bool onLoad(string &msg)
+{
+	return true;
+}
+
+void nogarbage::load_conf()
 {
     FILE *fh;
     char arg[10][MAX_LEN], buffer[MAX_LEN];
@@ -664,7 +697,7 @@ void nogarbage::ng_load_conf()
     fclose(fh);
 }
 
-void ng_save_conf()
+void nogarbage::save_conf()
 {
     FILE *fh;
     ptrlist<ent>::iterator i;
@@ -673,7 +706,7 @@ void ng_save_conf()
     if(!(fh=fopen(MY_CONF, "w")))
     {
         net.send(HAS_N, "[-] cannot open ", (const char*)MY_CONF, " for writing: ", strerror(errno), NULL);
-        ng_next_save=NOW+NG_SAVE_DELAY;
+        next_save=NOW+NG_SAVE_DELAY;
         return;
     }
 
@@ -687,11 +720,11 @@ void ng_save_conf()
    }
 
    fclose(fh);
-   ng_next_save=0;
+   next_save=0;
    net.send(HAS_N, "[*] Autosaving nogarbabe config", NULL); // m->name
 }
 
-void hook_botnetcmd(const char *from, const char *cmd)
+void nogarbage::onBotnetcmd(const char *from, const char *cmd)
 {
     char arg[10][MAX_LEN];
     int i;
@@ -702,7 +735,7 @@ void hook_botnetcmd(const char *from, const char *cmd)
     {
         for(i=0; i<flist_size; i++)
             if(flist[i].opt->parseUser(arg[0], arg[2], srewind(cmd, 3), flist[i].opt->name.c_str()))
-                ng_next_save=NOW+NG_SAVE_DELAY;
+                next_save=NOW+NG_SAVE_DELAY;
         return;
     }
 
@@ -711,12 +744,12 @@ void hook_botnetcmd(const char *from, const char *cmd)
         if(flist[i].opt->name==arg[1])
         {
             if(flist[i].opt->parseUser(arg[0], arg[2], srewind(cmd, 3), flist[i].opt->name.c_str()))
-                ng_next_save=NOW+NG_SAVE_DELAY;
+                next_save=NOW+NG_SAVE_DELAY;
         }
     }
 }
 
-void hook_privmsg(const char *from, const char *to, const char *msg)
+void nogarbage::onPrivmsg(const char *from, const char *to, const char *msg)
 {
     chan *ch;
     chanuser *cu;
@@ -724,7 +757,7 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
     if(!(ch=ME.findChannel(to)))
     {
         if(!strcasecmp(ME.nick, to))
-            ng_handle_query_spam(from, msg);
+            handle_query_spam(from, msg);
         return;
     }
 
@@ -738,28 +771,28 @@ void hook_privmsg(const char *from, const char *to, const char *msg)
         return;
 
     if(color.enabled(ch->name) && match("*\003*", msg))
-        ng_action(cu, ch, &color);
+        action(cu, ch, &color);
     // XXX: why "else"?
     else if(bold.enabled(ch->name) && match("*\002*", msg))
-        ng_action(cu, ch, &bold);
+        action(cu, ch, &bold);
 
     else if(underline.enabled(ch->name) && match("*\037*", msg))
-        ng_action(cu, ch, &underline);
+        action(cu, ch, &underline);
 
     else if(reverse.enabled(ch->name) && match("*\x16*", msg))
-        ng_action(cu, ch, &reverse);
+        action(cu, ch, &reverse);
 
-    else if(caps.enabled(ch->name) && ng_calc_caps(msg)>=(-1)*caps.PERCENT)
-        ng_action(cu, ch, &caps);
+    else if(caps.enabled(ch->name) && calc_caps(msg)>=(-1)*caps.PERCENT)
+        action(cu, ch, &caps);
 
     else if(spam.enabled(ch->name) && spam.matchPattern(msg))
-        ng_action(cu, ch, &spam);
+        action(cu, ch, &spam);
 
     else if(textflood.enabled(ch->name))
-        ng_action(cu, ch, &textflood);
+        action(cu, ch, &textflood);
 }
 
-void hook_notice(const char *from, const char *to, const char *msg)
+void nogarbage::onNotice(const char *from, const char *to, const char *msg)
 {
     chan *ch;
     chanuser *cu;
@@ -767,7 +800,7 @@ void hook_notice(const char *from, const char *to, const char *msg)
     if(!(ch=ME.findChannel(to)))
     {
         if(!strcasecmp(ME.nick, to))
-            ng_handle_query_spam(from, msg);
+            handle_query_spam(from, msg);
         return;
     }
 
@@ -781,34 +814,34 @@ void hook_notice(const char *from, const char *to, const char *msg)
         return;
 
     if(channotice.enabled(ch->name))
-        ng_action(cu, ch, &channotice);
+        action(cu, ch, &channotice);
 
     else
     {
         if(color.enabled(ch->name) && match("*\003*", msg))
-            ng_action(cu, ch, &color);
+            action(cu, ch, &color);
 
         else if(bold.enabled(ch->name) && match("*\002*", msg))
-            ng_action(cu, ch, &bold);
+            action(cu, ch, &bold);
 
         else if(underline.enabled(ch->name) && match("*\037*", msg))
-            ng_action(cu, ch, &underline);
+            action(cu, ch, &underline);
 
         else if(reverse.enabled(ch->name) && match("*\x16*", msg))
-            ng_action(cu, ch, &reverse);
+            action(cu, ch, &reverse);
 
-        else if(caps.enabled(ch->name) && ng_calc_caps(msg)>=(-1)*caps.PERCENT)
-            ng_action(cu, ch, &caps);
+        else if(caps.enabled(ch->name) && calc_caps(msg)>=(-1)*caps.PERCENT)
+            action(cu, ch, &caps);
 
         else if(spam.enabled(ch->name) && spam.matchPattern(msg))
-            ng_action(cu, ch, &spam);
+            action(cu, ch, &spam);
 
         else if(textflood.enabled(ch->name))
-            ng_action(cu, ch, &textflood);
+            action(cu, ch, &textflood);
     }
 }
 
-void hook_ctcp(const char *from, const char *to, const char *msg)
+void nogarbage::onCtcp(const char *from, const char *to, const char *msg)
 {
     char buffer[MAX_LEN];
     chan *ch;
@@ -819,7 +852,7 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
         if(!strcasecmp(ME.nick, to))
         {
             if(match("ACTION *", msg))
-                ng_handle_query_spam(from, msg+7);
+                handle_query_spam(from, msg+7);
         }
 
         return;
@@ -840,115 +873,115 @@ void hook_ctcp(const char *from, const char *to, const char *msg)
 	buffer[MAX_LEN-1]='\0';
 
         if(pubaway.enabled(ch->name) && pubaway.matchPattern(buffer))
-            ng_action(cu, ch, &pubaway);
+            action(cu, ch, &pubaway);
 
         else if(color.enabled(ch->name) && match("*\003*", buffer))
-            ng_action(cu, ch, &color);
+            action(cu, ch, &color);
 
         else if(bold.enabled(ch->name) && match("*\002*", buffer))
-            ng_action(cu, ch, &bold);
+            action(cu, ch, &bold);
 
         else if(underline.enabled(ch->name) && match("*\037*", buffer))
-            ng_action(cu, ch, &underline);
+            action(cu, ch, &underline);
 
         else if(reverse.enabled(ch->name) && match("*\x16*", buffer))
-            ng_action(cu, ch, &reverse);
+            action(cu, ch, &reverse);
 
-        else if(caps.enabled(ch->name) && ng_calc_caps(buffer)>=(-1)*caps.PERCENT)
-            ng_action(cu, ch, &caps);
+        else if(caps.enabled(ch->name) && calc_caps(buffer)>=(-1)*caps.PERCENT)
+            action(cu, ch, &caps);
 
         else if(spam.enabled(ch->name) && spam.matchPattern(buffer))
-            ng_action(cu, ch, &spam);
+            action(cu, ch, &spam);
 
         else if(textflood.enabled(ch->name))
-            ng_action(cu, ch, &textflood);
+            action(cu, ch, &textflood);
     }
 
     else if(chanctcp.enabled(ch->name))
-        ng_action(cu, ch, &chanctcp);
+        action(cu, ch, &chanctcp);
 }
 
-void ng_action(chanuser *cu, chan *ch, ng_options *opt)
+void nogarbage::action(chanuser *cu, chan *ch, ng_options *opt)
 {
     if(opt->X!=0) // lines per second
     {
-        ((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].refresh(opt->Y);
-        if(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].count<opt->X)
+        ((chanuserCustomData*)cu->customData(description()))->info[opt->type].refresh(opt->Y);
+        if(((chanuserCustomData*)cu->customData(description()))->info[opt->type].count<opt->X)
             return;
     }
 
     switch(opt->PUNISH_METHOD)
     {
-        case 1 : if(!(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level&NG_WARNED))
+        case 1 : if(!(((chanuserCustomData*)cu->customData(description()))->info[opt->type].level&NG_WARNED))
                  {
-                     ((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level|=NG_WARNED;
+                     ((chanuserCustomData*)cu->customData(description()))->info[opt->type].level|=NG_WARNED;
                      ME.notice(cu->nick, opt->WARNMSG, NULL);
                  }
 
-                 else if(!(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level&NG_KICKED))
+                 else if(!(((chanuserCustomData*)cu->customData(description()))->info[opt->type].level&NG_KICKED))
                  {
-                     ((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level|=NG_KICKED;
-                     ng_kick(ch, cu, opt); 
+                     ((chanuserCustomData*)cu->customData(description()))->info[opt->type].level|=NG_KICKED;
+                     kick(ch, cu, opt); 
                  }
                  else// if(!(i->level&NG_BANNED))
-                     ng_ban(ch, cu, opt);
+                     ban(ch, cu, opt);
                  break;
 
-        case 2 : if(!(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level&NG_WARNED))
+        case 2 : if(!(((chanuserCustomData*)cu->customData(description()))->info[opt->type].level&NG_WARNED))
                  {
-                      ((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level|=NG_WARNED;
+                      ((chanuserCustomData*)cu->customData(description()))->info[opt->type].level|=NG_WARNED;
                       ME.notice(cu->nick, opt->WARNMSG, NULL);
                  }
                  else
                  {
                      //i->level|=NG_KICKED;
-                     ng_kick(ch, cu, opt);
+                     kick(ch, cu, opt);
                  }
                  break;
 
-        case 3 : if(!(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level&NG_WARNED))
+        case 3 : if(!(((chanuserCustomData*)cu->customData(description()))->info[opt->type].level&NG_WARNED))
                  {
-                     ((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level|=NG_WARNED;
+                     ((chanuserCustomData*)cu->customData(description()))->info[opt->type].level|=NG_WARNED;
                      ME.notice(cu->nick, opt->WARNMSG, NULL);
                  }
                  else
-                     ng_ban(ch, cu, opt);
+                     ban(ch, cu, opt);
                  break;
 
-        case 4 : if(!(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level&NG_KICKED))
+        case 4 : if(!(((chanuserCustomData*)cu->customData(description()))->info[opt->type].level&NG_KICKED))
                  {
-                     ((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].level|=NG_KICKED;
-                     ng_kick(ch, cu, opt);
+                     ((chanuserCustomData*)cu->customData(description()))->info[opt->type].level|=NG_KICKED;
+                     kick(ch, cu, opt);
                  }
                  else
-                     ng_ban(ch, cu, opt);
+                     ban(ch, cu, opt);
                  break;
 
-        case 5 : ng_ban(ch, cu, opt);
+        case 5 : ban(ch, cu, opt);
                  break;
     }
 
-    ((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].count=0;
+    ((chanuserCustomData*)cu->customData(description()))->info[opt->type].count=0;
 }
 
-void ng_ban(chan *ch, chanuser *cu, ng_options *opt)
+void nogarbage::ban(chan *ch, chanuser *cu, ng_options *opt)
 {
-    std::string str1, str2;
-    std::string::size_type pos1, pos2;
+    string str1, str2;
+    string::size_type pos1, pos2;
 
     str1=(const char*)opt->BANMASK;
-    if((pos1=str1.find("%nick"))!=std::string::npos)
+    if((pos1=str1.find("%nick"))!=string::npos)
         str1.replace(pos1, strlen("%nick"), cu->nick);
-    if((pos1=str1.find("%ident"))!=std::string::npos)
+    if((pos1=str1.find("%ident"))!=string::npos)
         str1.replace(pos1, strlen("%ident"), cu->ident);
-    if((pos1=str1.find("%host"))!=std::string::npos)
+    if((pos1=str1.find("%host"))!=string::npos)
         str1.replace(pos1, strlen("%host"), cu->host);
 
     str2=(const char*)opt->BANREASON;
-    if((pos2=str2.find("%count"))!=std::string::npos)
-        str2.replace(pos2, strlen("%count"), itoa(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].count));
-    if((pos2=str2.find("%seconds"))!=std::string::npos)
-        str2.replace(pos2, strlen("%seconds"), itoa(NOW-((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].timestamp));
+    if((pos2=str2.find("%count"))!=string::npos)
+        str2.replace(pos2, strlen("%count"), itoa(((chanuserCustomData*)cu->customData(description()))->info[opt->type].count));
+    if((pos2=str2.find("%seconds"))!=string::npos)
+        str2.replace(pos2, strlen("%seconds"), itoa(NOW-((chanuserCustomData*)cu->customData(description()))->info[opt->type].timestamp));
 
     if(!set.BOTS_CAN_ADD_SHIT
        || !protmodelist::addShit(ch->name, str1.c_str(), "nogarbage", opt->BANTIME, str2.c_str()))
@@ -962,21 +995,21 @@ void ng_ban(chan *ch, chanuser *cu, ng_options *opt)
     }
 }
 
-void ng_kick(chan *ch, chanuser *cu, ng_options *opt)
+void nogarbage::kick(chan *ch, chanuser *cu, ng_options *opt)
 {
-    std::string str=(const char*)opt->KICKREASON;
-    std::string::size_type pos;
+    string str=(const char*)opt->KICKREASON;
+    string::size_type pos;
 
-    if((pos=str.find("%count"))!=std::string::npos)
-        str.replace( pos, strlen("%count"), itoa(((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].count));
-    if((pos=str.find("%seconds"))!=std::string::npos)
-        str.replace( pos, strlen("%seconds"), itoa(NOW-((chanuserCustomData*)cu->customData(m->desc))->info[opt->type].timestamp));
+    if((pos=str.find("%count"))!=string::npos)
+        str.replace( pos, strlen("%count"), itoa(((chanuserCustomData*)cu->customData(description()))->info[opt->type].count));
+    if((pos=str.find("%seconds"))!=string::npos)
+        str.replace( pos, strlen("%seconds"), itoa(NOW-((chanuserCustomData*)cu->customData(description()))->info[opt->type].timestamp));
 
     ch->kick(cu, str.c_str());
     cu->setReason(str.c_str());
 }
 
-int ng_calc_caps(const char *msg)
+int nogarbage::calc_caps(const char *msg)
 {
     int msglen=strlen(msg), capscnt=0, i, percent;
 
@@ -992,13 +1025,13 @@ int ng_calc_caps(const char *msg)
     return percent;
 }
 
-void ng_handle_query_spam(const char *from, const char *msg)
+void nogarbage::handle_query_spam(const char *from, const char *msg)
 {
     chan *ch;
     chanuser *cu;
 
     if(query_spam.noPatternsAdded() || query_spam.matchPattern(msg))
-    {   
+    {
         for(ch=ME.first; ch; ch=ch->next)
         {
             if(query_spam.enabled(ch->name) && (cu=ch->getUser(from)))
@@ -1006,14 +1039,14 @@ void ng_handle_query_spam(const char *from, const char *msg)
                 if(cu->flags & (HAS_V | HAS_O | IS_OP))
                     continue;
 
-                ng_action(cu, ch, &query_spam);
+                action(cu, ch, &query_spam);
             }
         }
-        
+
     }
 }
 
-void hook_nick(const char *from, const char *to)
+void nogarbage::onNickChange(const char *from, const char *to)
 {
     chan *ch;
     chanuser *u;
@@ -1023,167 +1056,118 @@ void hook_nick(const char *from, const char *to)
         if((u=ch->getUser(to)))
         {
             if(badnick.enabled(ch->name) && badnick.matchPattern(to))
-                ng_action(u, ch, &badnick);
+                action(u, ch, &badnick);
 
             if(nickflood.enabled(ch->name))
-                ng_action(u, ch, &nickflood);
+                action(u, ch, &nickflood);
         }
     }
 }
 
-void hook_join(chanuser *u, chan *ch, const char *mask, int netjoin)
+void nogarbage::onJoin(chanuser *u, chan *ch, const char *mask, int netjoin)
 {
     if(badnick.enabled(ch->name) && badnick.matchPattern(u->nick))
-        ng_action(u, ch, &badnick);
+        action(u, ch, &badnick);
 }
 
-void hook_timer()
+void nogarbage::onTimer()
 {
     CHANLIST *cl;
     chan *ch;
 
     foreachNamedChanlist(cl)
-        ((chanlistCustomData*)cl->customData(m->desc))->delExpiredUsers();
+        ((chanlistCustomData*)cl->customData(description()))->delExpiredUsers();
 
-    if(ng_next_save!=0 && NOW>=ng_next_save)
-        ng_save_conf();
+    if(next_save!=0 && NOW>=next_save)
+        save_conf();
 
-    for(; ng_current_cycle_chan<MAX_CHANNELS && penalty<6; ng_current_cycle_chan++)
+    for(; current_cycle_chan<MAX_CHANNELS && penalty<6; current_cycle_chan++)
     {
-        if(!userlist.chanlist[ng_current_cycle_chan].name || !query_spam.enabled(userlist.chanlist[ng_current_cycle_chan].name) || !(ch=ME.findChannel(userlist.chanlist[ng_current_cycle_chan].name)))
+        if(!userlist.chanlist[current_cycle_chan].name || !query_spam.enabled(userlist.chanlist[current_cycle_chan].name) || !(ch=ME.findChannel(userlist.chanlist[current_cycle_chan].name)))
             continue;
 
-        if(ch->opedBots.entries()>1 && NOW>=((chanCustomData*)ch->customData(m->desc))->nextCycle)
+        if(ch->opedBots.entries()>1 && NOW>=((chanCustomData*)ch->customData(description()))->nextCycle)
         {
-           if(((chanCustomData*)ch->customData(m->desc))->nextCycle!=0)
+           if(((chanCustomData*)ch->customData(description()))->nextCycle!=0)
            {
                net.irc.send("PART ", (const char *) ch->name, " :spam check", NULL);
                penalty+=4;
                ME.rejoin(ch->name, set.CYCLE_DELAY);
            }
-           ((chanCustomData*)ch->customData(m->desc))->updateCycleTime();
+           ((chanCustomData*)ch->customData(description()))->updateCycleTime();
         }
     }
 
-    if(ng_current_cycle_chan>=MAX_CHANNELS)
-        ng_current_cycle_chan=0;
+    if(current_cycle_chan>=MAX_CHANNELS)
+        current_cycle_chan=0;
 }
 
-void hook_kick(chan *ch, chanuser *kicked, chanuser *kicker, const char *reason)
+void nogarbage::onKick(chan *ch, chanuser *kicked, chanuser *kicker, const char *reason)
 {
     CHANLIST *cl=userlist.findChanlist(ch->name);
 
     if(cl)
-        ((chanlistCustomData*)cl->customData(m->desc))->add(kicked->nick, kicked->ident, kicked->host, ((chanuserCustomData*)kicked->customData(m->desc)));
+        ((chanlistCustomData*)cl->customData(description()))->add(kicked->nick, kicked->ident, kicked->host, ((chanuserCustomData*)kicked->customData(description())));
 }
 
-void hook_pre_part(const char *mask, const char *channel, const char *msg, bool quit)
+void nogarbage::onPrePart(const char *mask, const char *channel, const char *msg, bool quit)
 {
     CHANLIST *cl=userlist.findChanlist(channel);
     chan *ch=ME.findChannel(channel);
     chanuser *u;
 
     if(cl && ch && (u=ch->getUser(mask)))
-        ((chanlistCustomData*)cl->customData(m->desc))->add(u->nick, u->ident, u->host, ((chanuserCustomData*)u->customData(m->desc)));
+        ((chanlistCustomData*)cl->customData(description()))->add(u->nick, u->ident, u->host, ((chanuserCustomData*)u->customData(description())));
 }
 
-void hook_chanuserConstructor(const chan *ch, chanuser *u)
+void nogarbage::onChanuserConstructor(const chan *ch, chanuser *u)
 {
     chanlistCustomData::entry *i;
     CHANLIST *cl=userlist.findChanlist(ch->name);
 
-    if(cl && (i=((chanlistCustomData *)cl->customData(m->desc))->find(u->nick, u->ident, u->host)))
+    if(cl && (i=((chanlistCustomData *)cl->customData(description()))->find(u->nick, u->ident, u->host)))
     {
-        u->setCustomData(m->desc, (chanlistCustomData *) i->customData);
+        u->setCustomData(description(), (chanlistCustomData *) i->customData);
         //u->customData=i->customData; TODO: rm
-        ((chanlistCustomData*)cl->customData(m->desc))->remove(i, false);
+        ((chanlistCustomData*)cl->customData(description()))->remove(i, false);
     }
     else
-        u->setCustomData(m->desc, new chanuserCustomData);
+        u->setCustomData(description(), new chanuserCustomData);
 }
 
-void hook_new_CHANLIST(CHANLIST *me)
+void nogarbage::onNewCHANLIST(CHANLIST *me)
 {
-    me->setCustomData(m->desc, new chanlistCustomData);
+    me->setCustomData(description(), new chanlistCustomData);
 }
 
-void hook_del_CHANLIST(CHANLIST *me)
+void nogarbage::onDelCHANLIST(CHANLIST *me)
 {
-    if(me->customData(m->desc))
+    if(me->customData(description()))
     {
-        ((chanlistCustomData*)me->customData(m->desc))->flush();
-        delete (chanlistCustomData*) me->customData(m->desc);
-        me->delCustomData(m->desc);
+        ((chanlistCustomData*)me->customData(description()))->flush();
+        delete (chanlistCustomData*) me->customData(description());
+        me->delCustomData(description());
     }
 
-    ng_current_cycle_chan=0;
+    current_cycle_chan=0;
 }
 
-void hook_new_chan(chan *me)
+void nogarbage::onNewChan(chan *me)
 {
-    me->setCustomData(m->desc, new chanCustomData);
+    me->setCustomData(description(), new chanCustomData);
 }
 
-void hook_del_chan(chan *me)
+void nogarbage::onDelChan(chan *me)
 {
-    if(me->customData(m->desc))
+    if(me->customData(description()))
     {
-        delete (chanCustomData *)me->customData(m->desc);
-        me->delCustomData(m->desc);
+        delete (chanCustomData *)me->customData(description());
+        me->delCustomData(description());
     }
 }
 
-void prepareCustomData()
-{
-    chan *ch;
-    ptrlist<chanuser>::iterator u;
-    chanuser *cu;
-    CHANLIST *cl;
+MOD_LOAD( nogarbage );
+MOD_DESC( "nogarbage", "Anti garbage attack" );
+MOD_AUTHOR( "Patrick", "patrick@psotnic.com" );
+MOD_VERSION( "0.1-pre3" );
 
-   foreachNamedChanlist(cl)
-       hook_new_CHANLIST(cl);
-
-   for(ch=ME.first; ch; ch=ch->next)
-   {
-       hook_new_chan(ch);
-
-       for(u=ch->users.begin(); u; u++)
-           hook_chanuserConstructor(ch, u);
-    }
-}
-
-extern "C" module *init()
-{
-    m=new module("nogarbage", "patrick <patrick@psotnic.com>", "0.1-pre3");
-
-    ng_next_save=0;
-    ng_current_cycle_chan=0;
-    ng_load_conf();
-    prepareCustomData();
-
-    m->hooks->chanuserConstructor=hook_chanuserConstructor;
-    m->hooks->new_chan=hook_new_chan;
-    m->hooks->del_chan=hook_del_chan;
-    m->hooks->new_CHANLIST=hook_new_CHANLIST;
-    m->hooks->del_CHANLIST=hook_del_CHANLIST;
-
-    m->hooks->botnetcmd=hook_botnetcmd;
-    m->hooks->privmsg=hook_privmsg;
-    m->hooks->notice=hook_notice;
-    m->hooks->ctcp=hook_ctcp;
-    m->hooks->nick=hook_nick;
-    m->hooks->join=hook_join;
-    m->hooks->timer=hook_timer;
-    m->hooks->kick=hook_kick;
-    m->hooks->pre_part=hook_pre_part;
-    m->hooks->chanuserConstructor=hook_chanuserConstructor;
-    return m;
-}
-
-extern "C" void destroy()
-{
-    CHANLIST *cl;
-
-    foreachNamedChanlist(cl)
-        ((chanlistCustomData*)cl->customData(m->desc))->flush();
-}
