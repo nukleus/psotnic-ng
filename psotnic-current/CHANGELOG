@@ -17,7 +17,14 @@
 ***************************************************************************************
 
 Psotnic v0.x.y  (2008/12/29) changes:
+- Add module nogarbage (coded by patrick)
+- Add module oidentd (coded by patrick)
+- Add new cmake based build system.
+- Fix some typos.
+- Port modules control, date, log, noautorejoin, nogarbage, oidentd, op, peak, plog,
+  raw, repeat, spam, subop, uptime to the new API.
 - Add a new Modules API providing a more C++isch way of module handling.
+- More parts of psotnic now sue the colorfull print functions.
 
 Psotnic 0.2.14 (2008/12/24) most important changes:
 - removed compabitility settings (patrick)
