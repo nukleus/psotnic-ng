@@ -6,53 +6,8 @@
 #include "module.h"
 #include <regex.h>
 
-class repeat : public CustomDataObject
-{
-    public:
-    pstring<> str;
-    time_t when;
-    time_t creation;
-    
-    bool hit(const char *s)
-    {
-        if(when + 10 >= NOW && !strcmp(str, s))
-	{
-	    when = NOW;
-	    str = s;
-	    return true;
-	}
-	str =  s;
-	when = NOW;
-	
-	return false;
-    }
-		
-    repeat() : CustomDataObject(), when(0), creation(NOW) { };
-    ~repeat() { };
-};
-
-class Spam : public Module
-{
-    public:
-    Spam(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
-    ~Spam();
-
-    virtual bool onLoad(string &msg);
-    virtual void onCtcp(const char *from, const char *to, const char *msg);
-    virtual void onPrivmsg(const char *from, const char *to, const char *msg);
-    virtual void onNewChanuser(chanuser *me);
-    virtual void onDelChanuser(chanuser *me);
-
-    int countCrap(const char *str);
-    void prepareCustomData();
-
-    protected:
-    regex_t spamChannel;
-    regex_t spamWWW;
-    regex_t spamOp;
-
-    regmatch_t spamMatch;
-};
+#include "spam.h"
+#include "repeat.h"
 
 Spam::Spam(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
 {
