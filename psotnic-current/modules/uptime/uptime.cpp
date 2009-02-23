@@ -6,28 +6,8 @@
 
 #include "prots.h"
 #include "global-var.h"
-#include "module.h"
-#include <sys/param.h>
 
-#ifdef linux 
-    #define PROC_FS
-#else
-    #define SYSCTL
-    #include <sys/sysctl.h>
-#endif
-
-class Uptime : public Module
-{
-	private:
-	bool has_global_flag(chanuser *, int);
-	int get_uptime();
-
-	public:
-	Uptime( void *, const char *, const char *, time_t, const char * );
-
-	virtual bool onLoad( string &msg );
-	virtual void onPrivmsg( const char *from, const char *to, const char *msg );
-};
+#include "uptime.h"
 
 Uptime::Uptime( void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir ) : Module( handle, file, md5sum, loadDate, dataDir )
 {
