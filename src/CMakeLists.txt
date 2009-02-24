@@ -1,14 +1,5 @@
 
 
-project( psotnic )
-
-cmake_minimum_required( VERSION 2.6 )
-#set( CMAKE_VERBOSE_MAKEFILE ON )
-
-find_package( Perl REQUIRED )
-find_package( Threads )
-find_package( OpenSSL )
-
 # build the list of files to compile
 set( psotnic_SRC
    botcmd.cpp
@@ -147,7 +138,7 @@ if( WITH_SSL )
    endif( OPENSSL_FOUND )
 endif( WITH_SSL )
 
-configure_file( config.cmake config.h )
+configure_file( config.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 # This is needed to include seed.h
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
