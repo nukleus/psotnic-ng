@@ -21,6 +21,7 @@
 #include "prots.h"
 #include "global-var.h"
 #include "module.h"
+#include "functions.hpp"
 
 void botnetcmd(const char *from, const char *cmd)
 {

@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 static char mode[2][MODES_PER_LINE];
 static char *arg[MODES_PER_LINE];

@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 static char arg[11][MAX_LEN], *a, buf[MAX_LEN];
 static chan *ch;

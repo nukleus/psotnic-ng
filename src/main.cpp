@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "module.h"
+#include "functions.hpp"
 
 ptrlist<Module> modules;
 

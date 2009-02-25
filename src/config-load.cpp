@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 void CONFIG::load(const char *file, bool decrypted)
 {

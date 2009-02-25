@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 #include "topics.h"
 
 void client::checkMyHost(const char *to,  bool justConnected)

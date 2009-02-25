@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 /* STRANGE ACTIONS */
 void chan::updateLimit()

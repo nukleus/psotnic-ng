@@ -21,6 +21,7 @@
 #include "prots.h"
 #include "global-var.h"
 #include "ctcp.h"
+#include "functions.hpp"
 
 int querylen(const char *str)
 {

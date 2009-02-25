@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 flagTable FT[] = {
 	{ 'x',  HAS_X,  7,  X_FLAGS,    "perms",            "can do everything" },

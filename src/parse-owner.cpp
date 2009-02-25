@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 #include <string>
 
 char *find_alias(const char *cmd);

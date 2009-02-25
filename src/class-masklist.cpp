@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 masklist_ent::masklist_ent(const char *m, const char *w, time_t t)
 {

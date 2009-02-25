@@ -1,6 +1,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 void MD5Hash(unsigned char digest[16], const char *data, int datalen, const unsigned char *key, int keylen)
 {

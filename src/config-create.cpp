@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 /*! Reads a string from a terminal and sets a pstrings value to it.
  * \overload

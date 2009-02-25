@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 static char arg[10][MAX_LEN];
 static char *reason;

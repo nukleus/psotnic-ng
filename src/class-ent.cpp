@@ -21,6 +21,7 @@
 #include "prots.h"
 #include "defines.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 /*
  * ent

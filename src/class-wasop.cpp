@@ -20,6 +20,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 /* entry */
 wasoptest::entry::entry(char *n, char *i, char *h)

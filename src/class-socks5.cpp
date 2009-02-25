@@ -27,6 +27,7 @@
 
 #include "prots.h"
 #include "global-var.h"
+#include "functions.hpp"
 
 char *username = NULL;
 char *password = NULL;
