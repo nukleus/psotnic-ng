@@ -7,6 +7,8 @@
 #ifndef BRUCE_SCHNEIER_BLOWFISH_H
 #define BRUCE_SCHNEIER_BLOWFISH_H 1
 
+#include <string> // uint8_t et al
+
 #define MAXKEYBYTES 	56		// 448 bits max
 #define NPASS           16		// SBox passes
 

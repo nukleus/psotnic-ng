@@ -18,9 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <iostream>
+
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+
+using std::cin;
+using std::cout;
+using std::endl;
 
 /*! Reads a string from a terminal and sets a pstrings value to it.
  * \overload

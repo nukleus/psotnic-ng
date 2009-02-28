@@ -18,6 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <arpa/inet.h> // inet_addr
+#include <errno.h>
+
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
@@ -2153,7 +2156,7 @@ void parse_owner(inetconn *c, char *data)
 				char *a;
 				a = srewind(data, 3);
 				if(!h->info)
-					h->info = new comment;
+					h->info = new Comment;
 				if(h->info->add(arg[2], a))
 				{
 					net.sendCmd(c, data+1, NULL);
@@ -2185,7 +2188,7 @@ void parse_owner(inetconn *c, char *data)
 				return;
 			}
 
-			ptrlist<comment::entry>::iterator e = h->info->data.begin();
+			ptrlist<Comment::entry>::iterator e = h->info->data.begin();
 			a = NULL;
 
 			while(e)

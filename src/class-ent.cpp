@@ -18,10 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <arpa/inet.h> // for entHost::operator
+#include <errno.h> // entHost, entLoadModules
+#include <fcntl.h> // stat, open, for entLoadModules
+#include <typeinfo> // typeid
+
+#include "config.h"
 #include "prots.h"
 #include "defines.h"
 #include "global-var.h"
 #include "functions.hpp"
+
+#ifdef HAVE_MODULES
+	#include <dlfcn.h> // dl*
+#endif
 
 /*
  * ent

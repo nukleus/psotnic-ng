@@ -20,6 +20,10 @@
 
 #ifdef HAVE_ADNS_PTHREAD
 
+#include <arpa/inet.h> // for work()
+#include <netdb.h> // hostent, gethostbyname*
+#include <signal.h> // pthread_kill, SIGKILL, for killThreads()
+
 #include "prots.h"
 #include "global-var.h"
 

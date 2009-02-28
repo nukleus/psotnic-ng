@@ -18,6 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <arpa/inet.h> // inet_pton, inet_ntoa, inet_addr
+#include <dirent.h> // for rmdirext()
+#include <errno.h>
+#include <fcntl.h>
+#include <signal.h> // SIGHUP, kill, for imUp()
+#include <sys/time.h> // gettimeofday
+#include <sys/utsname.h> // for sendLogo(), precache_expand()
+
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"

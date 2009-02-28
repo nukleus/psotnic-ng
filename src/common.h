@@ -6,7 +6,7 @@
 
 class CHANLIST;
 class ptime;
-class comment;
+class Comment;
 class offence;
 
 struct HANDLE
@@ -22,7 +22,7 @@ struct HANDLE
 	HANDLE *prev;
 	char updated;
 	ptime *creation;
-	comment *info;
+	Comment *info;
 	offence *history;
 	char *createdBy;
 };

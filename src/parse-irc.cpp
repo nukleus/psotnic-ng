@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <arpa/inet.h> // inet_network
+
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"

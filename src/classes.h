@@ -13,6 +13,8 @@ class client;
 
 struct HANDLE;
 
+#include <netinet/in.h> // AF_INET
+
 #include "pstring.h"
 #include "class-ent.h"
 #include <string>
@@ -224,7 +226,7 @@ class Pchar
 	void clean();
 };
 
-class comment
+class Comment
 {
 	public:
 	class entry
@@ -245,7 +247,7 @@ class comment
 	int add(char *key, char *value);
 	int del(char *key);
 	char *get(char *key);
-	comment();
+	Comment();
 };
 
 

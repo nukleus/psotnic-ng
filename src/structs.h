@@ -3,8 +3,6 @@
 
 #include "pstring.h"
 
-class comment;
-
 struct psotnicHeader
 {
 	char id[8];

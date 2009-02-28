@@ -18,6 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <errno.h> // for CONFIG::save()
+#include <fcntl.h> // O_*, S_*, for save()
+#include <pwd.h> // getpwuid, passwd
+
 #include "prots.h"
 #include "global-var.h"
 

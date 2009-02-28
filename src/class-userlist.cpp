@@ -18,6 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <arpa/inet.h> // inet_addr
+#include <errno.h>
+#include <fcntl.h> // O_*, S_*
+#include <math.h> // pow
+
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
@@ -237,7 +242,7 @@ void ul::sendHandleInfo(inetconn *c, const HANDLE *h, const char *mask)
 
 	if(h->info && h->info->data.entries())
 	{
-		ptrlist<comment::entry>::iterator e = h->info->data.begin();
+		ptrlist<Comment::entry>::iterator e = h->info->data.begin();
 		a = NULL;
 
 		while(e)
@@ -646,7 +651,7 @@ int ul::parse(char *data)
 		HANDLE *h = userlist.findHandle(arg[1]);
 		if(h)
 		{
-			if(!h->info) h->info = new comment;
+			if(!h->info) h->info = new Comment;
 			char *a = srewind(data, 3);
 			h->info->add(arg[2], a);
 		}
@@ -1599,7 +1604,7 @@ void ul::send(inetconn *c, HANDLE *h, int strip)
 		if(h->pass && strip ? !isBot(h) : 1) c->send(S_PASSWD, " ", h->name, " ", quoteHexStr(h->pass, buf), NULL);
 		if(h->info && c->status & STATUS_FILE)
 		{
-			ptrlist<comment::entry>::iterator e = h->info->data.begin();
+			ptrlist<Comment::entry>::iterator e = h->info->data.begin();
 
 			while(e)
 			{

@@ -1,4 +1,6 @@
 
+#include <fcntl.h> // for MD5HashFile()
+
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"

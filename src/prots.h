@@ -19,46 +19,8 @@ void srand(int a=0, int b=0, int c=0);
 #endif
 
 #include "config.h"
-#include <stdarg.h>
-#include <string.h>
-#include <signal.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/utsname.h>
-#include <sys/time.h>
-#include <sys/stat.h>
-#include <sys/resource.h>
-#include <sys/wait.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <time.h>
-#include <utime.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <math.h>
-//#include <arpa/nameser.h>
-#include <dirent.h>
 #define comment pwd_h_comment
-#include <pwd.h>
 #undef comment
-#include <sys/types.h>
-//#include <sys/dir.h>
-
-#include <iostream>
-#include <string>
-#include <map>
-
-using std::cin;
-using std::cout;
-using std::endl;
-using std::string;
-
-#ifdef HAVE_ADNS_PTHREAD
-    #include <resolv.h>
-#endif
 
 #ifdef HAVE_ANTIPTRACE
     #include <sys/ptrace.h>
@@ -67,15 +29,6 @@ using std::string;
 #ifdef HAVE_SSL
 	#include <openssl/ssl.h>
 	#include <openssl/err.h>
-#endif
-
-#ifdef HAVE_ADNS_PTHREAD
-	#include <pthread.h>
-#endif
-#include <typeinfo>
-#include <assert.h>
-#ifdef HAVE_MODULES
-    #include <dlfcn.h>
 #endif
 
 #ifdef HAVE_TCL

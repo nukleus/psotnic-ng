@@ -22,34 +22,34 @@
 #include "global-var.h"
 #include "functions.hpp"
 
-comment::entry::entry(const char *k, const char *v)
+Comment::entry::entry(const char *k, const char *v)
 {
 	mem_strcpy(value, v);
 	mem_strcpy(key, k);
 }
 
-comment::entry::~entry()
+Comment::entry::~entry()
 {
 	free(key);
 	free(value);
 }
 
-int comment::entry::operator==(const entry &ent) const
+int Comment::entry::operator==(const entry &ent) const
 {
 	return !strcmp(key, ent.key);
 }
 
-int comment::entry::operator<(const entry &e) const
+int Comment::entry::operator<(const entry &e) const
 {
 	return strcmp(key, e.key) < 0 ? 1 : 0;
 }
 
-comment::comment()
+Comment::Comment()
 {
 	data.removePtrs();
 }
 
-int comment::add(char *key, char *value)
+int Comment::add(char *key, char *value)
 {
 	if(strlen(value) > 50 || !isRealStr(value)) return 0;
 	if(strlen(key) > 10 || !isRealStr(key)) return 0;
@@ -63,14 +63,14 @@ int comment::add(char *key, char *value)
 	return 1;
 }
 
-int comment::del(char *key)
+int Comment::del(char *key)
 {
 	entry e(key, "*");
 
 	return data.remove(e);
 }
 
-char *comment::get(char *key)
+char *Comment::get(char *key)
 {
 	entry e(key, "*");
 	ptrlist<entry>::iterator ret = data.find(e);
