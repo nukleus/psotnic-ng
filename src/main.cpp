@@ -21,6 +21,7 @@
 #include "prots.h"
 #include "module.h"
 #include "functions.hpp"
+#include "Userlist.hpp"
 
 ptrlist<Module> modules;
 

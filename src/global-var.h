@@ -1,6 +1,8 @@
 #ifndef PSOTNIC_GLOBAL_VAR_H
 #define PSOTNIC_GLOBAL_VAR_H 1
 
+#include "Userlist.hpp"
+
 extern time_t NOW;
 extern client ME;
 extern settings set;

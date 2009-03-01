@@ -33,7 +33,7 @@ set( psotnic_SRC
    class-socks5.cpp
    class-tcl.cpp
    class-update.cpp
-   class-userlist.cpp
+   Userlist.cpp
    class-wasop.cpp
    config-create.cpp
    config-load.cpp
@@ -75,6 +75,11 @@ endif( ${CMAKE_COMPILER_IS_GNUCXX} )
 ############################
 # generate make-hiddenseed #
 ############################
+# generate seed file
+add_custom_target( genseed ALL
+   COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/genseed.pl
+   VERBATIM )
+
 add_executable( make-hiddenseed make-hiddenseed.c )
 add_custom_command(
    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hidden-seed-functions.cpp
@@ -82,10 +87,6 @@ add_custom_command(
    DEPENDS make-hiddenseed )
 set( psotnic_SRC ${psotnic_SRC} hidden-seed-functions.cpp )
 
-# generate seed file
-add_custom_target( genseed ALL
-   COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/genseed.pl
-   VERBATIM )
 
 #####################
 # generate config.h #

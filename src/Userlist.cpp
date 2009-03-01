@@ -23,6 +23,7 @@
 #include <fcntl.h> // O_*, S_*
 #include <math.h> // pow
 
+#include "Userlist.hpp"
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
