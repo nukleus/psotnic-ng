@@ -201,4 +201,10 @@ else( HAVE_IRC_BACKTRACE )
    message( "IRC backtrace dump                 Disabled" )
 endif( HAVE_IRC_BACKTRACE )
 
+if( HAVE_ANTIPTRACE )
+   message( "Anti PTrace                        Enabled" )
+else( HAVE_ANTIPTRACE )
+   message( "Anti PTrace                        Disabled" )
+endif( HAVE_ANTIPTRACE )
+
 message( "" )
