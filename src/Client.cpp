@@ -20,6 +20,8 @@
 
 #include <errno.h> // for connectToIRC()
 
+#include "Client.hpp"
+#include "class-ent.h"
 #include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
