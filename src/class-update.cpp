@@ -22,8 +22,9 @@
 #include <fcntl.h> // fcntl, mkdir, for forkAndGo()
 #include <signal.h> // SIGUSR, kill
 
-#include "global-var.h"
 #include "functions.hpp"
+#include "global-var.h"
+#include "match.h"
 
 update::update()
 {

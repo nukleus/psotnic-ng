@@ -25,6 +25,8 @@
 
 #include <cstdlib> // u_char
 
+class chanuser;
+
 extern unsigned char tolowertab[];
 extern unsigned char touppertab[];
 //extern unsigned char char_atribs[];
@@ -35,5 +37,13 @@ int ircd_strcmp (const char *s1, const char *s2);
 int ircd_strncmp (const char *str1, const char *str2, int n);
 int ircd_tolower(const u_char c);
 int ircd_toupper(const u_char c);
+
+/* match */
+int match(const char *mask, const char *str);
+int wildMatch(const char *mask1, const char *mask2);
+int matchIp(const char *bannedIp, const char *ip);
+int matchBan(const char *ban, const char *nick, const char *ident, const char *host, const bool wild=0, const char *ip=NULL, const char *uid=NULL);
+int matchBanMask(const char *ban, const char *mask, const bool wild=0, const char *ip=NULL, const char *uid=NULL);
+int matchBan(const char *ban, const chanuser *u, const bool wild=0, const char *ip=NULL, const char *uid=NULL);
 
 #endif

@@ -110,14 +110,6 @@ void mem_strcpy(char *&dest, const char *src);
 void mem_strcat(char *&dest, const char *src);
 char *nindex(const char *str, int count, char sep);
 
-/* match */
-int match(const char *mask, const char *str);
-int wildMatch(const char *mask1, const char *mask2);
-int matchIp(const char *bannedIp, const char *ip);
-int matchBan(const char *ban, const char *nick, const char *ident, const char *host, const bool wild=0, const char *ip=NULL, const char *uid=NULL);
-int matchBanMask(const char *ban, const char *mask, const bool wild=0, const char *ip=NULL, const char *uid=NULL);
-int matchBan(const char *ban, const chanuser *u, const bool wild=0, const char *ip=NULL, const char *uid=NULL);
-
 /* rest */
 void precache();
 void precache_expand();
