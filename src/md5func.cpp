@@ -1,9 +1,11 @@
 
 #include <fcntl.h> // for MD5HashFile()
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
+#include "md5.h"
+#include "random.hpp"
 
 void MD5Hash(unsigned char digest[16], const char *data, int datalen, const unsigned char *key, int keylen)
 {
@@ -57,12 +59,12 @@ void MD5CreateAuthString(char *str, int len)
 {
 	int i;
 
-	srand();
+	Psotnic::srand();
 	memset(str, 0, len);
 
 	/* len must be even */
 	for(i=0; i<len/2; ++i)
-		sprintf(str, "%s%02x", str, abs(rand() % 255+1));
+		sprintf(str, "%s%02x", str, abs(Psotnic::rand() % 255+1));
 
 	str[len] = '\0';
 }

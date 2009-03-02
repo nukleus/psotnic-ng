@@ -297,7 +297,7 @@
 #define VER_MIRC		8
 
 #ifdef HAVE_DEBUG
-	#define DEBUG(x)	if(debug) x
+	#define DEBUG(x)	if(debug) (x)
 #else
 	#define DEBUG(x)
 #endif
@@ -313,6 +313,10 @@
 #define foreachMatchingChanlist(chLst, mask)					\
 	for(int _i=0; _i<MAX_CHANNELS; ++_i)							\
 		if((chLst = &userlist.chanlist[_i])->name && ::match(mask, chLst->name))
+
+#ifndef HAVE_STATIC
+	#define HAVE_MODULES
+#endif
 
 #ifdef HAVE_MODULES
 #define HOOK(FUNCTION)							\
@@ -335,10 +339,6 @@
 	#define hstrerror(x) "unknown error"
 #endif
 
-#ifndef bzero
-    #define bzero(a, b) memset(a, 0, b)
-#endif
-
 #ifndef MAX
 	#define MAX(A, B) (A) > (B) ? (A) : (B)
 #endif
@@ -346,4 +346,5 @@
 #ifndef MIN
 	#define MIN(a,b) (a) > (b) ? (b) : (a)
 #endif
+
 #endif

@@ -21,7 +21,6 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
 

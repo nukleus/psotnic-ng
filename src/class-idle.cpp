@@ -18,10 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
 #include "away.h"
+#include "random.hpp"
 
 idle::idle()
 {
@@ -57,7 +57,7 @@ void idle::togleStatus()
 	if(set.PUBLIC_AWAY && strlen(ME.nick))
 	{
 		ch = ME.first;
-		int n = rand() % ME.channels;
+		int n = Psotnic::rand() % ME.channels;
 
 		while(n-- && ch)
 			ch = ch->next;
@@ -94,8 +94,8 @@ int idle::spread(int x)
 {
 	if(!config.ctcptype)
 		 return 0;
-	srand();
-	x = (rand() % abs(x * set.RANDOMNESS/100)) * ((rand() % 2 == 1) ? -1 : 1);
+	Psotnic::srand();
+	x = (Psotnic::rand() % abs(x * set.RANDOMNESS/100)) * ((Psotnic::rand() % 2 == 1) ? -1 : 1);
 	return x;
 }
 
@@ -237,22 +237,23 @@ void idle::load()
 const char *idle::getRandAwayMsg()
 {
 	if(!config.ctcptype) return NULL;
-	return awayReasons[rand() % count(awayReasons)];
+	return awayReasons[Psotnic::rand() % count(awayReasons)];
 }
 const char *idle::getRandBackMsg()
 {
 	if(!config.ctcptype) return NULL;
-	return backReasons[rand() % count(backReasons)];
+	return backReasons[Psotnic::rand() % count(backReasons)];
 }
 
 const char *idle::getRandAwayAdd()
 {
 	if(!config.ctcptype) return NULL;
-	return awayAdd[rand() % count(awayAdd)];
+	return awayAdd[Psotnic::rand() % count(awayAdd)];
 }
 
 const char *idle::getRandBackAdd()
 {
 	if(!config.ctcptype) return NULL;
-	return backAdd[rand() % count(backAdd)];
+	return backAdd[Psotnic::rand() % count(backAdd)];
 }
+

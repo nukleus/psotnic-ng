@@ -22,12 +22,17 @@
 #include <errno.h> // entHost, entLoadModules
 #include <fcntl.h> // stat, open, for entLoadModules
 #include <typeinfo> // typeid
+#include <cstring> // memset
+
+using std::memset;
 
 #include "config.h"
-#include "prots.h"
 #include "defines.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
+#include "md5.h"
+#include "module.h"
 
 #ifdef HAVE_MODULES
 	#include <dlfcn.h> // dl*

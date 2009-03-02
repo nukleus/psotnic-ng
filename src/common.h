@@ -1,8 +1,8 @@
 #ifndef PSOTNIC_COMMON_H
 #define PSOTNIC_COMMON_H 1
 
+#include "defines.h"
 #include "pstring.h"
-#include "prots.h"
 
 class CHANLIST;
 class ptime;

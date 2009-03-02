@@ -18,9 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
+#include <cstdarg> // va_*
+
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
 
 fifo::fifo(int size, int delay)
 {

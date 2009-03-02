@@ -22,7 +22,6 @@
 #define PKS_PTRLIST_H 1
 
 #include "iterator.h"
-//#include "hashlist.h"
 
 template <class T> class ptrlist;
 

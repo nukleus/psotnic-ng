@@ -1,6 +1,10 @@
 #ifndef PSOTNIC_GLOBAL_VAR_H
 #define PSOTNIC_GLOBAL_VAR_H 1
 
+#include "classes.h"
+#include "config.h"
+#include "defines.h"
+#include "isaac.h"
 #include "Userlist.hpp"
 
 extern time_t NOW;

@@ -20,9 +20,9 @@
 
 #include <sys/wait.h> // waitpid, for sigChild()
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "module.h"
 
 void sigChild()
 {

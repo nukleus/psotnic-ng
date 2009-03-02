@@ -20,9 +20,9 @@
 
 #include <assert.h>
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
 
 /*
 ** Host clones

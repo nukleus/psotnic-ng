@@ -18,15 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "random.hpp"
 
 void randstr(char *str, int n)
 {
 	int i;
-	srand();
-	for(i=0; i<n; ++i) str[i] = rand() % 100 + 32;
+	Psotnic::srand();
+	for(i=0; i<n; ++i) str[i] = Psotnic::rand() % 100 + 32;
 }
 
 int getRandomItems(chanuser **ret, ptrlist<chanuser>::iterator p, int interval, int num, int ex)
@@ -73,7 +73,7 @@ int getRandomNumbers_safe(int top, int *ret, int num)
 
 	for(i=0; i<top; ++i)
 	{
-		n = rand() % top;
+		n = Psotnic::rand() % top;
 		tmp = array[n];
 		array[n] = array[i];
 		array[i] = tmp;
@@ -95,12 +95,12 @@ int getRandomNumbers(int top, int *ret, int num)
 
 XSRand xsrand;
 
-void srand(int a, int b, int c)
+void Psotnic::srand(int a, int b, int c)
 {
 	xsrand.srand(a ^ b ? a ^ b : nanotime());
 }
 
-int rand()
+int Psotnic::rand()
 {
 
 	return abs(xsrand.rand());

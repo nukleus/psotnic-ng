@@ -20,7 +20,6 @@
 
 #include <sys/time.h> // gettimeofday
 
-#include "prots.h"
 #include "global-var.h"
 
 static char __dupa[256];

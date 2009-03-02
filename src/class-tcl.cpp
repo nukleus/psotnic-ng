@@ -18,10 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
-#include "global-var.h"
+#include "config.h"
 
 #ifdef HAVE_TCL
+
+#include "functions.hpp" // itoa
+#include "global-var.h"
 
 int tcl_timers(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 {

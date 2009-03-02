@@ -18,9 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
 
 masklist_ent::masklist_ent(const char *m, const char *w, time_t t)
 {

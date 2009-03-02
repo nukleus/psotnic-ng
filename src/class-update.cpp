@@ -22,7 +22,6 @@
 #include <fcntl.h> // fcntl, mkdir, for forkAndGo()
 #include <signal.h> // SIGUSR, kill
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
 

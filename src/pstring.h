@@ -21,9 +21,13 @@
 #ifndef PKS_PSTRING_H
 #define PKS_PSTRING_H	1
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+using std::free;
+using std::malloc;
+using std::realloc;
 
 template <unsigned int ALIGN=32, unsigned int TOLERANCE=2>
 class pstring

@@ -15,8 +15,8 @@
  * and avoid compile-time configuration.
  */
 
-#include "prots.h"
 #include "global-var.h"
+#include "md5.h"
 
 /*
  * The basic MD5 functions.

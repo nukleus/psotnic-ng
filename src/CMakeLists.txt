@@ -1,5 +1,4 @@
 
-
 # build the list of files to compile
 set( psotnic_SRC
    botcmd.cpp
@@ -56,7 +55,7 @@ set( psotnic_SRC
    signals.cpp )
 
 # headers
-set( psotnic_HDR away.h blowfish.h class-ent.h classes.h common.h ctcp.h defines.h fastptrlist.h firedns.h firemake.h firestring.h global-var.h grass.h hashlist.h isaac.h iterator.h match.h md5.h module.h numeric_def.h prots.h pstring.h ptrlist.h structs.h tiny_ptrlist.h topics.h blowfish.h2 )
+set( psotnic_HDR away.h blowfish.h class-ent.h classes.h common.h ctcp.h defines.h fastptrlist.h firedns.h firemake.h firestring.h global-var.h grass.h hashlist.h isaac.h iterator.h match.h md5.h module.h numeric_def.h pstring.h ptrlist.h structs.h tiny_ptrlist.h topics.h blowfish.h2 )
 
 set( PSOTNIC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 
@@ -87,6 +86,7 @@ add_custom_command(
    DEPENDS make-hiddenseed )
 set( psotnic_SRC ${psotnic_SRC} hidden-seed-functions.cpp )
 
+add_executable( psotnic ${psotnic_SRC} )
 
 #####################
 # generate config.h #
@@ -109,22 +109,25 @@ if( DEBUG )
    set( HAVE_DEBUG 1 )
 endif( DEBUG )
 
-if( WITH_FIREDNS )
-   set( HAVE_FIREDNS 1 )
-endif( WITH_FIREDNS )
 
 if( WITH_ANTIPTRACE )
    set( HAVE_ANTIPTRACE 1 )
 endif( WITH_ANTIPTRACE )
 
 if( NOT NO_ADNS )
-   set( HAVE_ADNS 1 )
-   if( CMAKE_USE_PTHREADS_INIT )
-      set( HAVE_ADNS_PTHREAD 1 )
-      add_definitions( -DHAVE_ADNS_PTHREAD=1 -DHAVE_ADNS=1 )
-   else( CMAKE_USE_PTHREADS_INIT )
-      message( "Could not find pthreads, disabling multi-threaded functionalities." )
-   endif( CMAKE_USE_PTHREADS_INIT )
+   add_definitions( -DHAVE_ADNS )
+   if( WITH_FIREDNS )
+      set( HAVE_FIREDNS 1 )
+      add_definitions( -DHAVE_ADNS_FIREDNS )
+   else( WITH_FIREDNS )
+      if( CMAKE_USE_PTHREADS_INIT )
+         set( HAVE_ADNS_PTHREAD 1 )
+         add_definitions( -DHAVE_ADNS_PTHREAD )
+         target_link_libraries( psotnic ${CMAKE_THREAD_LIBS_INIT} )
+      else( CMAKE_USE_PTHREADS_INIT )
+         message( "Could not find pthreads, disabling multi-threaded functionalities." )
+      endif( CMAKE_USE_PTHREADS_INIT )
+   endif( WITH_FIREDNS )
 endif( NOT NO_ADNS )
 
 if( NOT NO_IRC_BACKTRACE )
@@ -134,24 +137,30 @@ endif( NOT NO_IRC_BACKTRACE )
 if( WITH_SSL )
    if( OPENSSL_FOUND )
       set( HAVE_SSL 1 )
+      add_definitions( -DHAVE_SSL )
+      target_link_libraries( psotnic ${OPENSSL_LIBRARIES} )
    else( OPENSSL_FOUND )
       MESSAGE( FATAL_ERROR "OpenSSL was not found on this system." )
    endif( OPENSSL_FOUND )
 endif( WITH_SSL )
+
+# not documented elsewhere, no need for people to notice
+# that psotnic theoretically supports tcl!
+if( WITH_TCL )
+   find_package( TCL )
+   if( TCL_FOUND )
+      set( HAVE_TCL 1 )
+      target_link_libraries( psotnic ${TCL_LIBRARY} )
+      include_directories( ${TCL_INCLUDE_PATH} )
+   endif( TCL_FOUND )
+endif( WITH_TCL )
 
 configure_file( config.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
 # This is needed to include seed.h
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
-add_executable( psotnic ${psotnic_SRC} )
-
 target_link_libraries( psotnic dl )
-
-if( HAVE_ADNS_PTHREAD )
-   target_link_libraries( psotnic pthread )
-endif( HAVE_ADNS_PTHREAD )
-
 
 ###########
 # Modules #
@@ -166,45 +175,48 @@ message( "Feature overview\nPsotnic will be compiled with the following features
 message( "-----------------------------------------------------" )
 
 if( HAVE_IPV6 )
-   message( "IPv6 support                       Enabled" )
+   message( "> IPv6 support                     Enabled" )
 else( HAVE_IPV6 )
-   message( "IPv6 support                       Disabled" )
+   message( "> IPv6 support                     Disabled" )
 endif( HAVE_IPV6 )
 
 if( HAVE_SSL )
-   message( "SSL support                        Enabled" )
+   message( "> SSL support                      Enabled" )
 else( HAVE_SSL )
-   message( "SSL support                        Disabled" )
+   message( "> SSL support                      Disabled" )
 endif( HAVE_SSL )
 
 if( NOT NO_ADNS )
-   message( "Asynchronous DNS resolver          Enabled" )
+   message( "> Asynchronous DNS resolver        Enabled" )
+   if( HAVE_ADNS_PTHREAD )
+      message( " > ADNS multithreading             Enabled" )
+      message( " > FireDNS resolver                Disabled" )
+   else( HAVE_ADNS_PTHREAD )
+      message( " > ADNS multithreading             Disabled" )
+      message( " > FireDNS resolver                Enabled" )
+   endif( HAVE_ADNS_PTHREAD )
 else( NOT NO_ADNS )
-   message( "Asynchronous DNS resolver          Disabled" )
+   message( "> Asynchronous DNS resolver          Disabled" )
+   message( " > ADNS multithreading               Disabled" )
+   message( " > FireDNS resolver                  Disabled" )
 endif( NOT NO_ADNS )
 
-if( HAVE_ADNS_PTHREAD )
-   message( "ADNS multithreading                Enabled" )
-else( HAVE_ADNS_PTHREAD )
-   message( "ADNS multithreading                Disabled" )
-endif( HAVE_ADNS_PTHREAD )
-
-if( HAVE_ADNS_FIREDNS )
-   message( "ADNS FireDNS resolver              Enabled" )
-else( HAVE_ADNS_FIREDNS )
-   message( "ADNS FireDNS resolver              Disabled" )
-endif( HAVE_ADNS_FIREDNS )
-
 if( HAVE_IRC_BACKTRACE )
-   message( "IRC backtrace dump                 Enabled" )
+   message( "> IRC backtrace dump               Enabled" )
 else( HAVE_IRC_BACKTRACE )
-   message( "IRC backtrace dump                 Disabled" )
+   message( "> IRC backtrace dump               Disabled" )
 endif( HAVE_IRC_BACKTRACE )
 
 if( HAVE_ANTIPTRACE )
-   message( "Anti PTrace                        Enabled" )
+   message( "> Anti PTrace                      Enabled" )
 else( HAVE_ANTIPTRACE )
-   message( "Anti PTrace                        Disabled" )
+   message( "> Anti PTrace                      Disabled" )
 endif( HAVE_ANTIPTRACE )
+
+if( HAVE_TCL )
+   message( "> TCL support                      Enabled" )
+endif( HAVE_TCL )
+# not documenting that it is disabled, no need for people to notice
+# that psotnic theoretically supports tcl!
 
 message( "" )

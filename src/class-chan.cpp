@@ -18,10 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
+#include "classes.h"
 #include "global-var.h"
+#include "match.h"
 #include "module.h"
 #include "functions.hpp"
+#include "random.hpp"
 
 char _chmodes[MAX_LEN];
 
@@ -320,18 +322,18 @@ int chan::myTurn(int num, int hash)
 	if(num < 1) return 0;
 
 	MultHandle = (chanuser **) malloc(sizeof(chanuser *)*num);
-	srand(hash, hash32(name));
+	Psotnic::srand(hash, hash32(name));
 	j = getRandomItems(MultHandle, opedBots.begin(), opedBots.entries(), num);
 	for(i=0; i<j; ++i)
 	{
 		if(!strcmp(MultHandle[i]->nick, ME.nick))
 		{
 			free(MultHandle);
-			srand();
+			Psotnic::srand();
 			return 1;
 		}
 	}
-	srand();
+	Psotnic::srand();
 	free(MultHandle);
 	return 0;
 }
@@ -1383,7 +1385,7 @@ void chan::checkProtectedChmodes()
 	}
 	else
 	{
-	 	flush_time += (rand() % 16);
+	 	flush_time += (Psotnic::rand() % 16);
 	}
 
 	for(i=0; modes[i] && modes[i] != ' ' ; i++)

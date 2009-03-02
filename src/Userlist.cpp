@@ -24,9 +24,11 @@
 #include <math.h> // pow
 
 #include "Userlist.hpp"
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
+#include "md5.h"
+#include "module.h"
 
 flagTable FT[] = {
 	{ 'x',  HAS_X,  7,  X_FLAGS,    "perms",            "can do everything" },

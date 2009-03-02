@@ -22,7 +22,7 @@
 #include <sys/resource.h>
 #include <sys/utsname.h>
 
-#include "prots.h"
+#include "config.h"
 #include "global-var.h"
 #include "functions.hpp"
 

@@ -23,6 +23,8 @@
 #ifndef IRCD_MATCH_H
 #define IRCD_MATCH_H 1
 
+#include <cstdlib> // u_char
+
 extern unsigned char tolowertab[];
 extern unsigned char touppertab[];
 //extern unsigned char char_atribs[];
@@ -33,4 +35,5 @@ int ircd_strcmp (const char *s1, const char *s2);
 int ircd_strncmp (const char *str1, const char *str2, int n);
 int ircd_tolower(const u_char c);
 int ircd_toupper(const u_char c);
+
 #endif

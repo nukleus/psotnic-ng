@@ -1,6 +1,8 @@
 #ifndef BRUCE_SCHNEIER_BLOWFISH_H2
 #define BRUCE_SCHNEIER_BLOWFISH_H2 1
 
+#include "blowfish.h"
+
 // blowfish.h2  header file containing random number tables
 
 static DWORD bf_P[NPASS + 2] = {

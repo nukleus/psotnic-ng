@@ -18,12 +18,14 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <cstdarg> // va_*
 #include <errno.h> // for CONFIG::save()
 #include <fcntl.h> // O_*, S_*, for save()
 #include <pwd.h> // getpwuid, passwd
 
-#include "prots.h"
 #include "global-var.h"
+#include "match.h"
+#include "random.hpp"
 
 //options::event ent::_event;
 
@@ -470,9 +472,9 @@ void CONFIG::polish()
 	if(!handle.getLen())
 	    handle.setValue("handle", nick);
 
-	srand();
+	Psotnic::srand();
 	if(ctcptype == -1)
-		ctcptype.value = (rand() % 5) + 2;
+		ctcptype.value = (Psotnic::rand() % 5) + 2;
 
 	//lock some options
 	botnetword.setReadOnly(true);

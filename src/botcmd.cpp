@@ -20,8 +20,9 @@
 
 #include <errno.h> // EACCESS
 
-#include "prots.h"
+#include "blowfish.h"
 #include "global-var.h"
+#include "match.h"
 #include "module.h"
 #include "functions.hpp"
 

@@ -20,10 +20,11 @@
 
 #include <errno.h>
 
-#include "prots.h"
 #include "global-var.h"
 #include "ctcp.h"
 #include "functions.hpp"
+#include "match.h"
+#include "module.h"
 
 int querylen(const char *str)
 {

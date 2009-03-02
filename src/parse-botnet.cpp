@@ -18,9 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
 
 int requestShit(const char *channel, const char *mask, const char *from, int delay, const char *reason, const char *bot);
 

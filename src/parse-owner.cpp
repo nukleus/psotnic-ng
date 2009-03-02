@@ -20,11 +20,15 @@
 
 #include <arpa/inet.h> // inet_addr
 #include <errno.h>
+#include <string>
 
-#include "prots.h"
+using std::string;
+
 #include "global-var.h"
 #include "functions.hpp"
-#include <string>
+#include "match.h"
+#include "md5.h"
+#include "module.h"
 
 char *find_alias(const char *cmd);
 

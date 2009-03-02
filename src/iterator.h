@@ -21,6 +21,8 @@
 #ifndef PKS_ITERATOR_H
 #define PKS_ITERATOR_H 1
 
+#include <cstdlib> // NULL
+
 template <typename T>
 class link_type
 {

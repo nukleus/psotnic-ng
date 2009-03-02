@@ -23,14 +23,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "config.h"
+#include "defines.h"
+
 #ifndef _FIREDNS_C
 extern const char firedns_version[];
 extern const int firedns_mx_port[];
 extern const char *firedns_mx_name[];
-#endif
-
-#ifndef bzero
-    #define bzero(a, b) memset(a, 0, b)
 #endif
 
 #ifndef AF_INET6

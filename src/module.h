@@ -22,7 +22,6 @@
 
 #include <string>
 
-#include "prots.h"
 #include "pstring.h"
 #include "defines.h"
 #include "class-ent.h"

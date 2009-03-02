@@ -18,14 +18,17 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <cstdarg> // va_*
 #include <errno.h> // for connectToIRC()
 
 #include "Client.hpp"
 #include "class-ent.h"
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
+#include "module.h"
 #include "topics.h"
+#include "random.hpp"
 
 void client::checkMyHost(const char *to,  bool justConnected)
 {
@@ -199,7 +202,7 @@ entServer *client::getRandomServer()
 
 	DEBUG(printf("[D] got irc servers: %d\n", num));
 	//get random one
-	num = (rand() % num + 1);
+	num = (Psotnic::rand() % num + 1);
 	DEBUG(printf("[D] connecting to: %d\n", num));
 
 	for(i=0; ;++i)
@@ -873,8 +876,8 @@ void client::checkQueue()
 		if(ch->synced() && ch->me->flags & IS_OP &&
 			userlist.chanlist[ch->channum].status & SET_TOPIC)
 		{
-			srand();
-			net.irc.send("TOPIC ", (const char *) ch->name, " :[\002Psotnic\002]: ", topics[rand() % count(topics)], NULL);
+			Psotnic::srand();
+			net.irc.send("TOPIC ", (const char *) ch->name, " :[\002Psotnic\002]: ", topics[Psotnic::rand() % count(topics)], NULL);
 			userlist.chanlist[ch->channum].status &= ~SET_TOPIC;
 			penalty++;
 			return;

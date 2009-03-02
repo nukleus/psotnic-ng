@@ -18,10 +18,13 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "prots.h"
+#include "config.h"
+#include "match.h"
 #include "module.h"
 #include "functions.hpp"
 #include "Userlist.hpp"
+#include "isaac.h"
+#include "random.hpp"
 
 ptrlist<Module> modules;
 
@@ -49,8 +52,8 @@ bool stopParsing = false;
 
 #ifdef HAVE_DEBUG
 int debug;
-
 #endif
+
 #ifdef HAVE_IRC_BACKTRACE
 char irc_buf[IRC_BUFS][MAX_LEN];
 int current_irc_buf = 0;
@@ -122,7 +125,7 @@ int main(int argc, char *argv[])
 
 
 	signalHandling();
-	srand();
+	Psotnic::srand();
 
 	precache();
 	parse_cmdline(argc, argv);
@@ -190,7 +193,7 @@ int main(int argc, char *argv[])
 	tv.tv_sec = 1;
 
 	antiidle.init();
-	if((rand() % 2) == 0) antiidle.togleStatus();
+	if((Psotnic::rand() % 2) == 0) antiidle.togleStatus();
 
 	/* MAIN LOOP */
 	while(!stopPsotnic)

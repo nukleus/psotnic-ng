@@ -10,17 +10,29 @@ class chanuser;
 class ent;
 class CONFIG;
 class client;
+class CBlowFish;
 
 struct HANDLE;
 
-#include <netinet/in.h> // AF_INET
-
-#include "pstring.h"
-#include "class-ent.h"
-#include <string>
 #include <map>
+#include <netinet/in.h> // AF_INET
+#include <string>
+
+#ifdef HAVE_SSL
+	#include <openssl/ssl.h>
+	#include <openssl/err.h>
+#endif
 
 using std::map;
+using std::string;
+
+#include "class-ent.h"
+#include "config.h"
+#include "fastptrlist.h"
+#include "grass.h"
+#include "hashlist.h"
+#include "pstring.h"
+#include "structs.h"
 
 class XSRand
 {
@@ -946,7 +958,7 @@ class Server
 	class Isupport
 	{
 		public:
-		typedef map<std::string, std::string> isupportType;
+		typedef map<string, string> isupportType;
 		isupportType isupport_map;		//!< contains all 005 tokens
 		Server *server;			//!< pointer to upper class
 
@@ -991,6 +1003,7 @@ class ptime
 };
 
 #ifdef HAVE_TCL
+#include <tcl.h>
 class tcl
 {
 	Tcl_Interp *tcl_int;

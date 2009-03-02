@@ -20,9 +20,12 @@
 
 #include <arpa/inet.h> // inet_network
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
+#include "module.h"
+#include "numeric_def.h"
+#include "random.hpp"
 
 static char arg[11][MAX_LEN], *a, buf[MAX_LEN];
 static chan *ch;
@@ -401,7 +404,7 @@ void parse_irc(char *data)
 			net.irc.send("WHOIS ", (const char*)ME.nick, NULL);
 		}
 
-		srand();
+		Psotnic::srand();
 
 		net.propagate(NULL, S_CHNICK, " ", (const char *) ME.nick, " ", net.irc.name, NULL);
 		if(strcmp(ME.nick, config.nick))
@@ -883,7 +886,7 @@ void parse_irc(char *data)
 			//else if(chan::valid(arg[3]))
 			//	net.send(HAS_N, "[!] \002>> Strange server resposne: ", data, " <<\002", NULL);
 
-			srand();
+			Psotnic::srand();
 
 			switch(i)
 			{
@@ -891,14 +894,14 @@ void parse_irc(char *data)
 				case ERR_INVITEONLYCHAN:
 				{
 					if(userlist.findChannel(arg[3]) != -1)
-						net.propagate(NULL, S_INVITE, " ", itoa(rand() % 2048), " ", arg[3], NULL);
+						net.propagate(NULL, S_INVITE, " ", itoa(Psotnic::rand() % 2048), " ", arg[3], NULL);
 					return;
 				}
 				//+b: S_UNBANME <seed> <nick!ident@host> <channel> [ip] [uid]
 				case ERR_BANNEDFROMCHAN:
 				{
 					if(userlist.findChannel(arg[3]) != -1)
-						net.propagate(NULL, S_UNBANME, " ", itoa(rand() % 2048), " ", (const char *) ME.mask,
+						net.propagate(NULL, S_UNBANME, " ", itoa(Psotnic::rand() % 2048), " ", (const char *) ME.mask,
 									  " ", arg[3],  " ", (const char *) ME.ircip, " ", (const char *) ME.uid, NULL);
 						return;
 				}
@@ -906,14 +909,14 @@ void parse_irc(char *data)
 				case ERR_CHANNELISFULL:
 				{
 					if(userlist.findChannel(arg[3]) != -1)
-						net.propagate(NULL, S_BIDLIMIT, " ", itoa(rand() % 2048), " ", arg[3], NULL);
+						net.propagate(NULL, S_BIDLIMIT, " ", itoa(Psotnic::rand() % 2048), " ", arg[3], NULL);
 					return;
 				}
 				//+k: S_KEY <seed> <channel>
 				case ERR_BADCHANNELKEY:
 				{
 					if(userlist.findChannel(arg[3]) != -1)
-						net.propagate(NULL, S_KEY, " ", itoa(rand() % 2048), " ", arg[3], NULL);
+						net.propagate(NULL, S_KEY, " ", itoa(Psotnic::rand() % 2048), " ", arg[3], NULL);
 					return;
 				}
 				//k:lined

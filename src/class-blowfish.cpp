@@ -4,7 +4,6 @@
 // Revised code--3/20/94
 // Converted to C++ class 5/96, Jim Conger
 
-#include "prots.h"
 #include "global-var.h"
 #include "blowfish.h2"
 

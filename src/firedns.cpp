@@ -32,6 +32,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "firestring.h"
 #include "firemake.h"
 #include "firedns.h"
+#include "match.h"
 
 static const char tagstring[] = "$Id: firedns.c,v 1.81 2004/03/10 15:14:35 ian Exp $";
 const char firedns_version[] = "1.9.9";

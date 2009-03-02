@@ -37,5 +37,8 @@
 #	define SVN_REVISION	"UNKNOWN"
 #endif
 
+#ifndef HAVE_TCL
+#cmakedefine HAVE_TCL
+#endif
 
 #endif /* CONFIG_H */

@@ -19,12 +19,16 @@
  ***************************************************************************/
 
 #include <arpa/inet.h> // inet_ntop
+#include <cstdarg> // va_*
 #include <fcntl.h> // open, for inetconn::open(), enableLameCrypt()
 #include <netdb.h> // gethostbyname
 
-#include "prots.h"
+#include "blowfish.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
+#include "md5.h"
+#include "module.h"
 
 char __port[16];
 
@@ -1196,7 +1200,7 @@ void inetconn::SSLHandshake()
 	if(status & STATUS_SSL_HANDSHAKING)
 	{
 		DEBUG(printf("[D] SSL: %s\n", SSL_state_string_long(ssl)));
-		int ret;
+		int ret = 0;
 
 		if(status & STATUS_SSL_WANT_CONNECT)
 			ret = SSL_connect(ssl);

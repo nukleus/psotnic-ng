@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 #include <arpa/inet.h> // inet_pton, inet_ntoa, inet_addr
+#include <cstdarg> // va_*
+#include <cstring> // memset
 #include <dirent.h> // for rmdirext()
 #include <errno.h>
 #include <fcntl.h>
@@ -26,9 +28,18 @@
 #include <sys/time.h> // gettimeofday
 #include <sys/utsname.h> // for sendLogo(), precache_expand()
 
-#include "prots.h"
-#include "global-var.h"
+using std::memset;
+
+#include "config.h"
 #include "functions.hpp"
+#include "global-var.h"
+#include "match.h"
+#include "md5.h" // for parse_cmdline
+#include "random.hpp"
+
+#ifdef HAVE_ANTIPTRACE
+#include <sys/ptrace.h>
+#endif
 
 #define __itoa_num		16
 char __itoa[16][16];
@@ -43,10 +54,10 @@ void doCryptoTests()
 	unsigned int size;
 	unsigned char buf[16], out[16];
 	
-	srand(12345);
+	Psotnic::srand(12345);
 	printf("[D] Testing rand: ");
 	for(i=0; i<8; ++i)
-		printf("%X ", rand());
+		printf("%X ", Psotnic::rand());
 	printf("\n");
 
 	printf("[D] Testing md5: ");
@@ -998,8 +1009,9 @@ const char *getipstr(int fd, int proto, int (*fun)(int s, struct sockaddr *name,
 	if(proto == AF_INET)
 	{
 		struct sockaddr_in peer;
+		int ret;
 		#ifdef _NO_LAME_ERRNO
-		int ret, e = errno;
+		int e = errno;
 		#endif
 		socklen_t peersize = sizeof(struct sockaddr_in);
 		ret = fun(fd, (sockaddr *) &peer, &peersize);
@@ -1014,8 +1026,9 @@ const char *getipstr(int fd, int proto, int (*fun)(int s, struct sockaddr *name,
 	if(proto == AF_INET6)
 	{
 		struct sockaddr_in6 peer;
+		int ret;
 		#ifdef _NO_LAME_ERRNO
-		int ret, e = errno;
+		int e = errno;
 		#endif
 		socklen_t peersize = sizeof(struct sockaddr_in6);
 		ret = fun(fd, (sockaddr *) &peer, &peersize);
@@ -1032,8 +1045,9 @@ const char *getipstr(int fd, int proto, int (*fun)(int s, struct sockaddr *name,
 unsigned int getip4(int fd, int (*fun)(int s, struct sockaddr *name, socklen_t *namelen))
 {
 	struct sockaddr_in peer;
+	int ret;
 	#ifdef _NO_LAME_ERRNO
-	int ret, e = errno;
+	int e = errno;
 	#endif
 	socklen_t peersize = sizeof(struct sockaddr_in);
 	ret = fun(fd, (sockaddr *) &peer, &peersize);
@@ -1047,8 +1061,9 @@ unsigned int getip4(int fd, int (*fun)(int s, struct sockaddr *name, socklen_t *
 int getport(int fd, int (*fun)(int s, struct sockaddr *name, socklen_t *namelen))
 {
 	struct sockaddr_in peer;
+	int ret;
 	#ifdef _NO_LAME_ERRNO
-	int ret, e = errno;
+	int e = errno;
 	#endif
 	socklen_t peersize = sizeof(struct sockaddr_in);
 	ret = fun(fd, (sockaddr *) &peer, &peersize);
@@ -1100,7 +1115,7 @@ int startListening(const char *ip, int port)
 
 void precache()
 {
-	srand();
+	Psotnic::srand();
 	memset(&socks5, 0, sizeof(socks5));
 	//validate();
 

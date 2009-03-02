@@ -3,7 +3,6 @@
 
 #include "pstring.h"
 #include "ptrlist.h"
-#include "prots.h"
 #include "common.h"
 
 class ent;

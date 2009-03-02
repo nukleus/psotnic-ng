@@ -19,7 +19,6 @@
 
 
 /* instead of CustomDataConstructor, use HOOK( chanuserConstructor ) */
-#include "prots.h"
 #include "global-var.h"
 #include "classes.h"
 

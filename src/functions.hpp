@@ -5,6 +5,8 @@
 #include "class-ent.h"
 #include "classes.h"
 
+#define _NO_LAME_ERRNO 1
+
 typedef void (*sighandler_t)(int);
 typedef void (*sig_t)(int);
 
@@ -75,8 +77,6 @@ int inet_pton6(const char *src, unsigned char *dst);
 
 /* random stuff */
 void divide(int *ret, int value, int parts, int part_size);
-int getRandomNumbers(int top, int *ret, int num);
-int getRandomItems(chanuser **ret, ptrlist<chanuser>::iterator start, int interval, int num, int ex=0);
 
 /* string functions */
 void nickCreator(char *nick);

@@ -19,14 +19,16 @@
  ***************************************************************************/
 
 #include <iostream>
+#include <string>
 
-#include "prots.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "match.h"
 
 using std::cin;
 using std::cout;
 using std::endl;
+using std::string;
 
 /*! Reads a string from a terminal and sets a pstrings value to it.
  * \overload

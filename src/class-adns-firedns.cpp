@@ -20,8 +20,8 @@
 
 #ifdef HAVE_ADNS_FIREDNS
 
-#include "prots.h"
 #include "global-var.h"
+#include "firedns.h"
 
 bool adns_firedns::shouldWeCheck()
 {
