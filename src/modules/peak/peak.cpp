@@ -6,25 +6,19 @@
  *                Automatic when new peak in channel     *
  *********************************************************/
 
-#include "prots.h"
-#include "global-var.h"
-#include "module.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <algorithm>
 #include <cctype>
 
-using namespace std;
+#include "functions.hpp"
+#include "global-var.h"
+#include "match.h"
+#include "module.h"
+#include "peak.hpp"
 
-class Peak : public Module
-{
-	public:
-	Peak(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
-	virtual bool onLoad(string &msg);
-	virtual void onJoin(chanuser *u, chan *ch, const char *mask, int netjoin);
-	virtual void onPrivmsg(const char *from, const char *to, const char *msg);
-};
+using namespace std;
 
 Peak::Peak(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
 {

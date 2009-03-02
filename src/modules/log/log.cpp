@@ -11,14 +11,15 @@
  * @desc Logger producing Eggdrop format logs
  */
 
-#include "prots.h"
-#include "global-var.h"
-#include "log.h"
 #include <ctime>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+
+#include "functions.hpp"
+#include "global-var.h"
+#include "log.hpp"
 
 using namespace std;
 

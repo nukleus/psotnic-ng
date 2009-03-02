@@ -1,18 +1,10 @@
 
 
 
-#include "prots.h"
+#include "functions.hpp"
 #include "global-var.h"
 #include "module.h"
-
-class Op : public Module
-{
-	public:
-	Op(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
-
-	virtual bool onLoad(string &msg);
-	virtual void onPrivmsg(const char *from, const char *to, const char *msg);
-};
+#include "op.hpp"
 
 Op::Op(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
 {

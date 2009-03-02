@@ -1,11 +1,3 @@
-
-
-#include "prots.h"
-#include "global-var.h"
-#include "module.h"
-#include <cstring>
-#include <string>
-
 /*
 
   SubOp
@@ -22,14 +14,15 @@
 
 */
 
-class SubOp : public Module
-{
-  public:
-  SubOp(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
+#include <cstring>
+#include <string>
 
-  virtual bool onLoad(string &msg);
-  virtual void onPrivmsg(const char *from, const char *to, const char *msg);
-};
+#include "global-var.h"
+#include "functions.hpp"
+#include "match.h"
+#include "module.h"
+#include "subop.hpp"
+
 
 SubOp::SubOp(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
 {

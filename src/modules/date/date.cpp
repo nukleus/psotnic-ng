@@ -8,8 +8,9 @@
  * Copyright (c) ???? CGod <c@sii.ath.cx>
  */
 
-#include "prots.h"
+#include "date.hpp"
 #include "global-var.h"
+#include "match.h"
 
 namespace Date
 {
@@ -18,24 +19,6 @@ namespace Date
 
   const double YDAYS    = 365.2425;
 
-  class Date : public Module
-  {
-    public:
-    Date(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
-
-    virtual bool onLoad(string &msg);
-    virtual void onPrivmsg(const char *from, const char *to, const char *msg);
-    int getday(int y,int m,int d);
-  };
-
-  enum Cmds
-  {
-    CMD_DATE=0,
-    CMD_GDATE,
-    CMD_DAY,
-
-    N_CMDS
-  };
 
   const char *const CMDS[N_CMDS] =
   {

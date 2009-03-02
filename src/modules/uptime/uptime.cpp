@@ -4,9 +4,10 @@
    supports linux (with proc fs) and *bsd (sysctl).
 */
 
-#include "prots.h"
-#include "global-var.h"
+#include <sys/utsname.h>
 
+#include "global-var.h"
+#include "match.h"
 #include "uptime.h"
 
 Uptime::Uptime( void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir ) : Module( handle, file, md5sum, loadDate, dataDir )

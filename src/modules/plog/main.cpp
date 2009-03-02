@@ -6,9 +6,10 @@
  *       - variable for umask for log files and directories
  */
 
-#include "plog.h"
+#include "functions.hpp"
+#include "match.h"
 #include "module.h"
-
+#include "plog.h"
 
 class PlogMod : public Module
 {

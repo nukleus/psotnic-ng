@@ -1,16 +1,8 @@
 
-#include "prots.h"
+#include "Control.hpp"
+#include "functions.hpp"
 #include "global-var.h"
-#include "module.h"
-
-class Control : public Module
-{
-    public:
-    Control(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir);
-    virtual bool onLoad(string &msg);
-    virtual void onPrivmsg(const char *from, const char *to, const char *msg);
-    virtual void onBotnetcmd(const char *from, const char *cmd);
-};
+#include "match.h"
 
 Control::Control(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
 {
@@ -26,7 +18,7 @@ void Control::onPrivmsg(const char *from, const char *to, const char *msg)
     char arg[10][MAX_LEN];
     char buf[MAX_LEN];
     str2words(arg[0], msg, 10, MAX_LEN, 0);
-    
+
     if(!strcmp("!topic", msg))
     {
 	chan *ch = ME.findChannel(to);

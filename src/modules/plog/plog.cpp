@@ -1,3 +1,11 @@
+
+#include <cstdarg>
+#include <errno.h>
+#include <string>
+#include <sys/stat.h>
+
+#include "functions.hpp"
+#include "match.h"
 #include "plog.h"
 
 Plog::Plog()

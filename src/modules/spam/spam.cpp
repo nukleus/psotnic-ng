@@ -1,11 +1,10 @@
 
-
-#include "prots.h"
-#include "global-var.h"
-#include "classes.h"
-#include "module.h"
 #include <regex.h>
 
+#include "global-var.h"
+#include "classes.h"
+#include "match.h"
+#include "module.h"
 #include "spam.h"
 #include "repeat.h"
 

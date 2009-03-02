@@ -1,6 +1,6 @@
 
-#include "prots.h"
 #include "global-var.h"
+#include "match.h"
 #include "repeat.h"
 
 repeat::repeat() : CustomDataObject(), when(0), creation(NOW)

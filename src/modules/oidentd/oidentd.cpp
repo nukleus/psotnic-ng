@@ -24,34 +24,13 @@
 #error You must define OS_METHOD1 or OS_METHOD2
 #endif
 
-#include "prots.h"
-#include "global-var.h"
-#include "module.h"
-
+#include <pwd.h>
 #include <string>
 
+#include "global-var.h"
+#include "oidentd.hpp"
+
 using std::string;
-
-class oidentd : public Module
-{
-    public:
-    oidentd(void *, const char *, const char *, time_t, const char *);
-    void oidentdSpoofing();
-
-    virtual bool onLoad(string &msg);
-    virtual void onConnecting();
-#ifdef OS_RECONNECT
-    virtual void onConnected();
-#endif
-#ifdef OS_METHOD2
-    onTimer();
-#endif
-
-    private:
-    char oidentd_cfg[MAX_LEN];
-    time_t oidentd_tidy_up_time;
-    string error;
-};
 
 oidentd::oidentd(void *handle, const char *fileName, const char *md5sum, time_t loadDate, const char *dataDir)
 	: Module(handle, fileName, md5sum, loadDate, dataDir)
@@ -72,7 +51,6 @@ oidentd::oidentd(void *handle, const char *fileName, const char *md5sum, time_t 
 #endif
 	oidentd_tidy_up_time = 0;
 }
-
 
 bool oidentd::onLoad(string &msg)
 {
