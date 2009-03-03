@@ -23,6 +23,7 @@
 #include <sys/utsname.h>
 
 #include "config.h"
+#include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "Inet.hpp"

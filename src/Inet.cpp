@@ -3,6 +3,7 @@
 #include <cstdarg>
 #include <netdb.h>
 
+#include "Config.hpp"
 #include "functions.hpp"
 #include "global-var.h"
 #include "Inet.hpp"

@@ -21,6 +21,7 @@
 #include <iostream>
 #include <string>
 
+#include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "match.h"

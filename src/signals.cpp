@@ -20,6 +20,7 @@
 
 #include <sys/wait.h> // waitpid, for sigChild()
 
+#include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "Inet.hpp"

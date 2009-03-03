@@ -13,6 +13,7 @@ set( psotnic_SRC
    Client.cpp
    class-clone.cpp
    class-comment.cpp
+   Config.cpp
    CustomDataStorage.cpp
    class-ent.cpp
    class-fifo.cpp

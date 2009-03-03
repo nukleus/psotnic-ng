@@ -233,6 +233,7 @@ class entMD5Hash : public entWord
 	virtual ~entMD5Hash() { };
 };
 
+class CONFIG;
 /*! Host Port Password Handle storage. This entity is a combination of some others to store more
  * complex information.
  */

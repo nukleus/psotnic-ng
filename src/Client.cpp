@@ -22,6 +22,7 @@
 #include <errno.h> // for connectToIRC()
 
 #include "Chanset.hpp"
+#include "Config.hpp"
 #include "Client.hpp"
 #include "class-ent.h"
 #include "global-var.h"

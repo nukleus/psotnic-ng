@@ -1,6 +1,8 @@
 #ifndef RANDOM_HPP
 #define RANDOM_HPP 
 
+#include "classes.h"
+#include "ptrlist.h"
 namespace Psotnic
 {
 	int rand();

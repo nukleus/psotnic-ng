@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "Chanset.hpp"
+#include "Config.hpp"
 #include "classes.h"
 #include "global-var.h"
 #include "Inet.hpp"

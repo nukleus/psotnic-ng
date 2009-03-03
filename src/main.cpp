@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "config.h"
+#include "Config.hpp"
 #include "match.h"
 #include "module.h"
 #include "functions.hpp"

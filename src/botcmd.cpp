@@ -21,6 +21,7 @@
 #include <errno.h> // EACCESS
 
 #include "blowfish.h"
+#include "Config.hpp"
 #include "global-var.h"
 #include "Inet.hpp"
 #include "match.h"
