@@ -20,6 +20,7 @@
 
 #include <arpa/inet.h> // inet_network
 
+#include "Chanset.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "Inet.hpp"

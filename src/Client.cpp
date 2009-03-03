@@ -21,6 +21,7 @@
 #include <cstdarg> // va_*
 #include <errno.h> // for connectToIRC()
 
+#include "Chanset.hpp"
 #include "Client.hpp"
 #include "class-ent.h"
 #include "global-var.h"

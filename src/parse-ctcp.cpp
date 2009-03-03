@@ -20,6 +20,7 @@
 
 #include <errno.h>
 
+#include "Chanset.hpp"
 #include "global-var.h"
 #include "ctcp.h"
 #include "functions.hpp"

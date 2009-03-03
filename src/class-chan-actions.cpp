@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "Chanset.hpp"
 #include "global-var.h"
 #include "Inet.hpp"
 #include "functions.hpp"
