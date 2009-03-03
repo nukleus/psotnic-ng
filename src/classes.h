@@ -23,6 +23,7 @@ using std::string;
 
 #include "class-ent.h"
 #include "config.h"
+#include "CustomDataStorage.hpp"
 #include "fastptrlist.h"
 #include "grass.h"
 #include "hashlist.h"
@@ -247,34 +248,6 @@ class fifo
 	char *pop();
 	int flush(inetconn *c);
 	char *flush();
-};
-
-/*! Base class for all custom data storages.
- * Inherit from this function if you want your class to be saveable as custom data.
- */
-class CustomDataObject
-{
-	public:
-		CustomDataObject() {};
-		virtual ~CustomDataObject() {};
-};
-
-/*! Storage place for custom data entries.
- * In order to give the ability to let modules store data inside your class, simply inherit from
- * this one.
- */
-class CustomDataStorage
-{
-	public:
-		CustomDataStorage();
-		virtual ~CustomDataStorage();
-
-		CustomDataObject *customData( const char *moduleName );
-		void setCustomData( const char *moduleName, CustomDataObject *data );
-		void delCustomData( const char *moduleName );
-
-	private:
-		map< const char *, CustomDataObject * > m_data;		//! Storage.
 };
 
 class chanuser
