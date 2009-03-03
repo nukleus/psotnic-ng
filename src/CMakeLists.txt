@@ -18,8 +18,8 @@ set( psotnic_SRC
    class-http.cpp
    class-idle.cpp
    class-ignore.cpp
-   class-inet.cpp
    Inet.cpp
+   Inetconn.cpp
    class-listcmd.cpp
    class-masklist.cpp
    class-modeq.cpp
