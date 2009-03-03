@@ -21,6 +21,7 @@
 #include "global-var.h"
 #include "functions.hpp"
 #include "match.h"
+#include "Server.hpp"
 
 Server::Server()
 {

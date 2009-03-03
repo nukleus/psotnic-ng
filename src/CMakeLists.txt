@@ -27,7 +27,7 @@ set( psotnic_SRC
    class-pchar.cpp
    class-penal.cpp
    class-ptime.cpp
-   class-server.cpp
+   Server.cpp
    class-shitlist.cpp
    class-socks5.cpp
    class-tcl.cpp

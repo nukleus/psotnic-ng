@@ -3,6 +3,7 @@
 
 #include "classes.h" // Server
 #include "pstring.h"
+#include "Server.hpp"
 
 class entServer;
 
