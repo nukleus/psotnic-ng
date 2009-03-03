@@ -15,7 +15,7 @@ set( psotnic_SRC
    CustomDataStorage.cpp
    class-ent.cpp
    class-fifo.cpp
-   class-http.cpp
+   Http.cpp
    class-idle.cpp
    class-ignore.cpp
    Inet.cpp

@@ -21,6 +21,7 @@
 #include <fcntl.h> // open, for get()
 
 #include "global-var.h"
+#include "Http.hpp"
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"
