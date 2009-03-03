@@ -24,6 +24,7 @@
 
 #include "functions.hpp"
 #include "global-var.h"
+#include "Inet.hpp"
 #include "match.h"
 
 update::update()

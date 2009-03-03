@@ -23,6 +23,7 @@
 #include "global-var.h"
 #include "ctcp.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
 #include "module.h"
 

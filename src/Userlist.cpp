@@ -26,6 +26,7 @@
 #include "Userlist.hpp"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
 #include "md5.h"
 #include "module.h"

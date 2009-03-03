@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "global-var.h"
+#include "Inet.hpp"
 #include "functions.hpp"
 
 /* STRANGE ACTIONS */

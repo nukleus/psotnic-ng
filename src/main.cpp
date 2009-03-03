@@ -22,9 +22,10 @@
 #include "match.h"
 #include "module.h"
 #include "functions.hpp"
-#include "Userlist.hpp"
+#include "Inet.hpp"
 #include "isaac.h"
 #include "random.hpp"
+#include "Userlist.hpp"
 
 ptrlist<Module> modules;
 

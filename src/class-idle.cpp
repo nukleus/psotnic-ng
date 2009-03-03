@@ -20,6 +20,7 @@
 
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "away.h"
 #include "random.hpp"
 

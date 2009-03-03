@@ -33,6 +33,7 @@ using std::memset;
 #include "config.h"
 #include "functions.hpp"
 #include "global-var.h"
+#include "Inet.hpp"
 #include "match.h"
 #include "md5.h" // for parse_cmdline
 #include "random.hpp"

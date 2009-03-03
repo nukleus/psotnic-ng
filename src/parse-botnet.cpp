@@ -20,6 +20,7 @@
 
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
 
 int requestShit(const char *channel, const char *mask, const char *from, int delay, const char *reason, const char *bot);

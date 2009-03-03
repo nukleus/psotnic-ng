@@ -19,6 +19,7 @@ set( psotnic_SRC
    class-idle.cpp
    class-ignore.cpp
    class-inet.cpp
+   Inet.cpp
    class-listcmd.cpp
    class-masklist.cpp
    class-modeq.cpp

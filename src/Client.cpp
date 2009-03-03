@@ -25,6 +25,7 @@
 #include "class-ent.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
 #include "module.h"
 #include "topics.h"

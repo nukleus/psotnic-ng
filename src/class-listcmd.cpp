@@ -25,6 +25,7 @@
 #include "config.h"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 
 //  return values:
 //  0 - local

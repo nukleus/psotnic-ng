@@ -22,6 +22,7 @@
 
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
 #include "module.h"
 #include "numeric_def.h"

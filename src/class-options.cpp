@@ -25,6 +25,7 @@
 
 #include "global-var.h"
 #include "match.h"
+#include "Inet.hpp"
 #include "random.hpp"
 
 //options::event ent::_event;

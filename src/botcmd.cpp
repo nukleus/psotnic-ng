@@ -22,6 +22,7 @@
 
 #include "blowfish.h"
 #include "global-var.h"
+#include "Inet.hpp"
 #include "match.h"
 #include "module.h"
 #include "functions.hpp"

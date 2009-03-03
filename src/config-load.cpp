@@ -23,6 +23,7 @@
 
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 
 void CONFIG::load(const char *file, bool decrypted)
 {
