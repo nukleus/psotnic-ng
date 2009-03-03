@@ -396,15 +396,6 @@ class masklist
 	masklist();
 };
 
-class prvset : public options
-{
-	public:
-	entInt debug_show_irc_write;
-	entInt debug_show_irc_read;
-
-	prvset();
-};
-
 /*! Global bot configuration.
  */
 class CONFIG : public options

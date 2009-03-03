@@ -24,6 +24,7 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "isaac.h"
+#include "Prvset.hpp"
 #include "random.hpp"
 #include "Settings.hpp"
 #include "Update.hpp"
