@@ -30,6 +30,7 @@ using std::string;
 #include "match.h"
 #include "md5.h"
 #include "module.h"
+#include "Offence.hpp"
 
 char *find_alias(const char *cmd);
 

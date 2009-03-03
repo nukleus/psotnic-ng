@@ -21,6 +21,7 @@
 #include "global-var.h"
 #include "functions.hpp"
 #include "match.h"
+#include "Offence.hpp"
 
 offence::entry::entry(const char *_chan, const char *_mode, time_t _time, unsigned int _count, int _fromFlags, int _toFlags, const bool _global)
 {

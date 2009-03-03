@@ -30,6 +30,7 @@
 #include "match.h"
 #include "md5.h"
 #include "module.h"
+#include "Offence.hpp"
 
 flagTable FT[] = {
 	{ 'x',  HAS_X,  7,  X_FLAGS,    "perms",            "can do everything" },

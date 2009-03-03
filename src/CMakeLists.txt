@@ -23,7 +23,7 @@ set( psotnic_SRC
    class-listcmd.cpp
    class-masklist.cpp
    Modeq.cpp
-   class-offence.cpp
+   Offence.cpp
    class-options.cpp
    class-pchar.cpp
    class-penal.cpp
