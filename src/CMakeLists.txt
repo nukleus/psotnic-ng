@@ -27,7 +27,7 @@ set( psotnic_SRC
    class-options.cpp
    class-pchar.cpp
    class-penal.cpp
-   class-ptime.cpp
+   PTime.cpp
    Server.cpp
    Protmodelist.cpp
    class-socks5.cpp

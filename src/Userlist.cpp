@@ -31,6 +31,7 @@
 #include "md5.h"
 #include "module.h"
 #include "Offence.hpp"
+#include "PTime.hpp"
 
 flagTable FT[] = {
 	{ 'x',  HAS_X,  7,  X_FLAGS,    "perms",            "can do everything" },

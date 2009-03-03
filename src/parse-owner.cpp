@@ -31,6 +31,7 @@ using std::string;
 #include "md5.h"
 #include "module.h"
 #include "Offence.hpp"
+#include "PTime.hpp"
 
 char *find_alias(const char *cmd);
 

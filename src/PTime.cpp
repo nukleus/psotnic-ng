@@ -21,6 +21,7 @@
 #include <sys/time.h> // gettimeofday
 
 #include "global-var.h"
+#include "PTime.hpp"
 
 static char __dupa[256];
 

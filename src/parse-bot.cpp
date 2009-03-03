@@ -23,6 +23,7 @@
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h"
+#include "PTime.hpp"
 
 static char arg[10][MAX_LEN];
 static char *reason;

@@ -707,20 +707,7 @@ class chan
 	void removeFromAllPtrLists(chanuser *handle);
 };
 
-
 #include "Client.hpp"
-
-class ptime
-{
-	public:
-	struct timeval tv;
-	ptime();
-	ptime(const char *s, const char *n);
-	ptime(time_t s, time_t n);
-	char *print();
-	char *ctime();
-	int operator==(ptime &p);
-};
 
 #ifdef HAVE_TCL
 #include <tcl.h>
