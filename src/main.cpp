@@ -25,6 +25,7 @@
 #include "Inet.hpp"
 #include "isaac.h"
 #include "random.hpp"
+#include "Update.hpp"
 #include "Userlist.hpp"
 
 ptrlist<Module> modules;

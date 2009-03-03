@@ -5,6 +5,7 @@
 #include "config.h"
 #include "defines.h"
 #include "isaac.h"
+#include "Update.hpp"
 #include "Userlist.hpp"
 
 extern time_t NOW;

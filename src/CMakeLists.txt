@@ -32,7 +32,7 @@ set( psotnic_SRC
    Protmodelist.cpp
    class-socks5.cpp
    class-tcl.cpp
-   class-update.cpp
+   Update.cpp
    Userlist.cpp
    class-wasop.cpp
    config-create.cpp

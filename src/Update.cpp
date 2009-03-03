@@ -21,12 +21,14 @@
 #include <errno.h>
 #include <fcntl.h> // fcntl, mkdir, for forkAndGo()
 #include <signal.h> // SIGUSR, kill
+#include <unistd.h> // pipe
 
 #include "functions.hpp"
 #include "global-var.h"
 #include "Http.hpp"
 #include "Inet.hpp"
 #include "match.h"
+#include "Update.hpp"
 
 update::update()
 {
