@@ -5,6 +5,7 @@
 #include "config.h"
 #include "defines.h"
 #include "isaac.h"
+#include "Settings.hpp"
 #include "Update.hpp"
 #include "Userlist.hpp"
 

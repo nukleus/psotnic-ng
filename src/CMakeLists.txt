@@ -36,6 +36,7 @@ set( psotnic_SRC
    Update.cpp
    Userlist.cpp
    class-wasop.cpp
+   Settings.cpp
    config-create.cpp
    config-load.cpp
    functions.cpp
