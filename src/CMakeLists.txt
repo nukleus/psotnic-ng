@@ -29,7 +29,7 @@ set( psotnic_SRC
    class-penal.cpp
    class-ptime.cpp
    Server.cpp
-   class-shitlist.cpp
+   Protmodelist.cpp
    class-socks5.cpp
    class-tcl.cpp
    class-update.cpp

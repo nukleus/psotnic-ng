@@ -22,6 +22,9 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"
+#include "Protmodelist.hpp"
+
+/* formerly known as class-shitlist.cpp */
 
 protmodelist::entry::entry()
 {
