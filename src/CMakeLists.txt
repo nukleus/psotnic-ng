@@ -22,7 +22,7 @@ set( psotnic_SRC
    Inetconn.cpp
    class-listcmd.cpp
    class-masklist.cpp
-   class-modeq.cpp
+   Modeq.cpp
    class-offence.cpp
    class-options.cpp
    class-pchar.cpp

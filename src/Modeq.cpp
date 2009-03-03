@@ -22,6 +22,7 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"
+#include "Modeq.hpp"
 
 /*
 ** Mode queue
