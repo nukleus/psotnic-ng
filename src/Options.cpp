@@ -23,9 +23,11 @@
 #include <fcntl.h> // O_*, S_*, for save()
 #include <pwd.h> // getpwuid, passwd
 
+#include "class-ent.h"
 #include "global-var.h"
 #include "match.h"
 #include "Inet.hpp"
+#include "Options.hpp"
 #include "random.hpp"
 
 //options::event ent::_event;
@@ -54,6 +56,7 @@ void options::registerObject(const ent &e)
  */
 
 options::event _event;
+
 options::event *options::setVariable(const char *var, const char *value)
 {
 	ptrlist<ent>::iterator o = list.begin();

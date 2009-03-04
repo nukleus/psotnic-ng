@@ -26,7 +26,7 @@ set( psotnic_SRC
    class-masklist.cpp
    Modeq.cpp
    Offence.cpp
-   class-options.cpp
+   Options.cpp
    class-pchar.cpp
    class-penal.cpp
    PTime.cpp
