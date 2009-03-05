@@ -191,24 +191,6 @@ class asyn_socks5
 	int use();
 };
 
-class fifo
-{
-	public:
-	int maxEnt;
-	static time_t lastFlush;
-	int flushDelay;
-	ptrlist<pstring<8> > data;
-
-	fifo(int size=0, int delay=1);
-	~fifo();
-	int push(const char *lst, ...);
-	int wisePush(const char *lst, ...);
-	int wildWisePush(char *lst, ...);
-	char *pop();
-	int flush(inetconn *c);
-	char *flush();
-};
-
 class clone_host
 {
 	public:

@@ -22,6 +22,7 @@
 #include "Config.hpp"
 #include "match.h"
 #include "module.h"
+#include "Fifo.hpp"
 #include "functions.hpp"
 #include "Idle.hpp"
 #include "Ignore.hpp"

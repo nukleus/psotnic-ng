@@ -21,6 +21,7 @@
 #include "Config.hpp"
 #include "Chanset.hpp"
 #include "Chanuser.hpp"
+#include "Fifo.hpp"
 #include "global-var.h"
 #include "Inet.hpp"
 #include "functions.hpp"

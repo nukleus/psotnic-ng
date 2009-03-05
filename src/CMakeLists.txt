@@ -18,7 +18,7 @@ set( psotnic_SRC
    Config.cpp
    CustomDataStorage.cpp
    class-ent.cpp
-   class-fifo.cpp
+   Fifo.cpp
    Http.cpp
    Idle.cpp
    Ignore.cpp

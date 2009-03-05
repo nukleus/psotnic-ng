@@ -24,6 +24,7 @@
 #include "Config.hpp"
 #include "global-var.h"
 #include "ctcp.h"
+#include "Fifo.hpp"
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"

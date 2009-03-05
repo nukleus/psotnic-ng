@@ -22,6 +22,7 @@
 #include "Chanuser.hpp"
 #include "Config.hpp"
 #include "classes.h"
+#include "Fifo.hpp"
 #include "global-var.h"
 #include "Inet.hpp"
 #include "match.h"

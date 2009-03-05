@@ -20,6 +20,7 @@
 
 #include "Config.hpp"
 #include "global-var.h"
+#include "Fifo.hpp"
 #include "functions.hpp"
 #include "Idle.hpp"
 #include "Inet.hpp"

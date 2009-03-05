@@ -20,8 +20,10 @@
 
 #include <cstdarg> // va_*
 
-#include "global-var.h"
+#include "Fifo.hpp"
 #include "functions.hpp"
+#include "global-var.h"
+#include "Inetconn.hpp"
 #include "match.h"
 
 fifo::fifo(int size, int delay)
