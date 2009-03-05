@@ -24,6 +24,7 @@
 
 using std::string;
 
+#include "Chan.hpp"
 #include "Chanset.hpp"
 #include "Client.hpp"
 #include "Comment.hpp"

@@ -20,6 +20,7 @@
 
 #include <arpa/inet.h> // inet_network
 
+#include "Chan.hpp"
 #include "Chanset.hpp"
 #include "Chanuser.hpp"
 #include "Client.hpp"

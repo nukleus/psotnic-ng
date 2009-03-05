@@ -23,6 +23,7 @@
 #include <fcntl.h> // O_*, S_*
 #include <math.h> // pow
 
+#include "Chan.hpp"
 #include "Chanset.hpp"
 #include "Chanuser.hpp"
 #include "Client.hpp"

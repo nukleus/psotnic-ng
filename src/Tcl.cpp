@@ -22,6 +22,7 @@
 
 #ifdef HAVE_TCL
 
+#include "Chan.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
 #include "functions.hpp" // itoa

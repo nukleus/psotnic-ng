@@ -6,9 +6,9 @@ set( psotnic_SRC
    AdnsFiredns.cpp
    AdnsPthread.cpp
    class-blowfish.cpp
-   class-chan-actions.cpp
-   class-chan.cpp
-   class-chan-gotmode.cpp
+   Chan-actions.cpp
+   Chan.cpp
+   Chan-gotmode.cpp
    Chanlist.cpp
    Chanset.cpp
    Chanuser.cpp

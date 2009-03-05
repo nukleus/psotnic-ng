@@ -20,6 +20,7 @@
 
 #include <errno.h>
 
+#include "Chan.hpp"
 #include "Chanset.hpp"
 #include "Client.hpp"
 #include "Config.hpp"

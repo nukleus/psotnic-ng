@@ -22,6 +22,7 @@
 #include <sys/resource.h>
 #include <sys/utsname.h>
 
+#include "Chan.hpp"
 #include "Chanuser.hpp"
 #include "Client.hpp"
 #include "config.h"
