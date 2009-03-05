@@ -38,7 +38,7 @@ set( psotnic_SRC
    Tcl.cpp
    Update.cpp
    Userlist.cpp
-   class-wasop.cpp
+   Wasop.cpp
    Settings.cpp
    Prvset.cpp
    config-create.cpp

@@ -31,6 +31,7 @@
 #include "module.h"
 #include "functions.hpp"
 #include "random.hpp"
+#include "Wasop.hpp"
 
 char _chmodes[MAX_LEN];
 

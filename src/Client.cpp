@@ -35,6 +35,7 @@
 #include "Pchar.hpp"
 #include "topics.h"
 #include "random.hpp"
+#include "Wasop.hpp"
 
 void client::checkMyHost(const char *to,  bool justConnected)
 {

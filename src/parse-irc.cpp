@@ -32,6 +32,7 @@
 #include "module.h"
 #include "numeric_def.h"
 #include "random.hpp"
+#include "Wasop.hpp"
 
 static char arg[11][MAX_LEN], *a, buf[MAX_LEN];
 static chan *ch;

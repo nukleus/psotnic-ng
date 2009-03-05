@@ -27,6 +27,7 @@
 #include "Inet.hpp"
 #include "module.h"
 #include "random.hpp"
+#include "Wasop.hpp"
 
 static char mode[2][MODES_PER_LINE];
 static char *arg[MODES_PER_LINE];

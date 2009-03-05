@@ -38,6 +38,7 @@
 #include "Offence.hpp"
 #include "Pchar.hpp"
 #include "PTime.hpp"
+#include "Wasop.hpp"
 
 flagTable FT[] = {
 	{ 'x',  HAS_X,  7,  X_FLAGS,    "perms",            "can do everything" },

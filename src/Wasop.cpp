@@ -22,6 +22,7 @@
 #include "global-var.h"
 #include "functions.hpp"
 #include "match.h"
+#include "Wasop.hpp"
 
 /* entry */
 wasoptest::entry::entry(char *n, char *i, char *h)
