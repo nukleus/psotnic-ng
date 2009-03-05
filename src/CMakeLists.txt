@@ -28,7 +28,7 @@ set( psotnic_SRC
    Modeq.cpp
    Offence.cpp
    Options.cpp
-   class-pchar.cpp
+   Pchar.cpp
    Penal.cpp
    PTime.cpp
    Server.cpp

@@ -32,6 +32,7 @@
 #include "match.h"
 #include "md5.h"
 #include "module.h"
+#include "Pchar.hpp"
 
 char __port[16];
 

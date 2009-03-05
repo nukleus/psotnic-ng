@@ -4,6 +4,7 @@
 struct HANDLE;
 class protmodelist;
 class chanset;
+class Pchar;
 
 #include "Chanlist.hpp"
 #include "classes.h"

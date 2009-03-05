@@ -34,6 +34,7 @@
 #include "md5.h"
 #include "module.h"
 #include "Offence.hpp"
+#include "Pchar.hpp"
 #include "PTime.hpp"
 
 flagTable FT[] = {

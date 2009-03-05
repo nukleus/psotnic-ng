@@ -165,23 +165,7 @@ class adns_firedns : public adns
 	void processResultSET(fd_set *set);
 	void closeAllConnections();
 };
-
 #endif
-
-class Pchar
-{
-	public:
-	char *data;
-	int step;
-	int alloced;
-	int len;
-
-	Pchar(int s=4096);
-	char *push(const char *str, int l=-1);
-	char *push(const char c);
-	~Pchar();
-	void clean();
-};
 
 class asyn_socks5
 {

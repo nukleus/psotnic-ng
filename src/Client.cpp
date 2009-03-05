@@ -30,6 +30,7 @@
 #include "Inet.hpp"
 #include "match.h"
 #include "module.h"
+#include "Pchar.hpp"
 #include "topics.h"
 #include "random.hpp"
 

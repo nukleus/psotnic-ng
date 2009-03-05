@@ -24,6 +24,7 @@
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h"
+#include "Pchar.hpp"
 
 void parse_hub(char *data)
 {

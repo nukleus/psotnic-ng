@@ -25,6 +25,7 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"
+#include "Pchar.hpp"
 
 http::url::url(const char *u)
 {

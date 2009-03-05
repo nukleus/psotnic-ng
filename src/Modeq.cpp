@@ -23,6 +23,7 @@
 #include "Inet.hpp"
 #include "match.h"
 #include "Modeq.hpp"
+#include "Pchar.hpp"
 
 /*
 ** Mode queue
