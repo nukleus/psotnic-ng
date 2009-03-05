@@ -23,6 +23,7 @@
 #include "match.h"
 #include "module.h"
 #include "functions.hpp"
+#include "Ignore.hpp"
 #include "Inet.hpp"
 #include "isaac.h"
 #include "Prvset.hpp"

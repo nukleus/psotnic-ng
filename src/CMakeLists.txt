@@ -20,7 +20,7 @@ set( psotnic_SRC
    class-fifo.cpp
    Http.cpp
    class-idle.cpp
-   class-ignore.cpp
+   Ignore.cpp
    Inet.cpp
    Inetconn.cpp
    class-listcmd.cpp

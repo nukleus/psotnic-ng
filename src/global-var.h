@@ -4,6 +4,7 @@
 #include "classes.h"
 #include "config.h"
 #include "defines.h"
+#include "Ignore.hpp"
 #include "isaac.h"
 #include "Prvset.hpp"
 #include "Settings.hpp"
