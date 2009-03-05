@@ -9,8 +9,9 @@ set( psotnic_SRC
    class-chan-actions.cpp
    class-chan.cpp
    class-chan-gotmode.cpp
-   Chanset.cpp
    Chanlist.cpp
+   Chanset.cpp
+   Chanuser.cpp
    Client.cpp
    class-clone.cpp
    Comment.cpp

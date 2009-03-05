@@ -20,6 +20,7 @@
 
 #include <assert.h>
 
+#include "Chanuser.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "match.h"

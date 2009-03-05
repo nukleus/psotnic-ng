@@ -22,6 +22,7 @@
 #include <sys/resource.h>
 #include <sys/utsname.h>
 
+#include "Chanuser.hpp"
 #include "config.h"
 #include "Config.hpp"
 #include "global-var.h"

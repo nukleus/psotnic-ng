@@ -21,6 +21,7 @@
 #include <errno.h> // errno, for gotMode(), connectToIRC()
 
 #include "Chanset.hpp"
+#include "Chanuser.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "Inet.hpp"

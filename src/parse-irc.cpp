@@ -21,6 +21,7 @@
 #include <arpa/inet.h> // inet_network
 
 #include "Chanset.hpp"
+#include "Chanuser.hpp"
 #include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"

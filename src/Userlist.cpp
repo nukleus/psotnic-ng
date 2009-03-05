@@ -24,6 +24,7 @@
 #include <math.h> // pow
 
 #include "Chanset.hpp"
+#include "Chanuser.hpp"
 #include "Comment.hpp"
 #include "Config.hpp"
 #include "Userlist.hpp"
