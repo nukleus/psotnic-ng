@@ -18,6 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "Adns.hpp"
+#include "AdnsPthread.hpp"
 #include "config.h"
 #include "Config.hpp"
 #include "match.h"

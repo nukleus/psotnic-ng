@@ -2,9 +2,9 @@
 # build the list of files to compile
 set( psotnic_SRC
    botcmd.cpp
-   class-adns.cpp
-   class-adns-firedns.cpp
-   class-adns-pthread.cpp
+   Adns.cpp
+   AdnsFiredns.cpp
+   AdnsPthread.cpp
    class-blowfish.cpp
    class-chan-actions.cpp
    class-chan.cpp

@@ -24,6 +24,7 @@
 #include <netdb.h> // hostent, gethostbyname*
 #include <signal.h> // pthread_kill, SIGKILL, for killThreads()
 
+#include "AdnsPthread.hpp"
 #include "config.h"
 #include "global-var.h"
 

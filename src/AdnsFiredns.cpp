@@ -20,6 +20,7 @@
 
 #ifdef HAVE_ADNS_FIREDNS
 
+#include "AdnsFiredns.hpp"
 #include "global-var.h"
 #include "firedns.h"
 
