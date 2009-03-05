@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "global-var.h"
+#include "Penal.hpp"
 
 penal::penal(int n)
 {

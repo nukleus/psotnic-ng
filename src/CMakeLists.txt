@@ -29,7 +29,7 @@ set( psotnic_SRC
    Offence.cpp
    Options.cpp
    class-pchar.cpp
-   class-penal.cpp
+   Penal.cpp
    PTime.cpp
    Server.cpp
    Protmodelist.cpp

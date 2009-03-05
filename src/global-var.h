@@ -7,6 +7,7 @@
 #include "Idle.hpp"
 #include "Ignore.hpp"
 #include "isaac.h"
+#include "Penal.hpp"
 #include "Prvset.hpp"
 #include "Settings.hpp"
 #include "Update.hpp"

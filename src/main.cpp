@@ -27,6 +27,7 @@
 #include "Ignore.hpp"
 #include "Inet.hpp"
 #include "isaac.h"
+#include "Penal.hpp"
 #include "Prvset.hpp"
 #include "random.hpp"
 #include "Settings.hpp"
