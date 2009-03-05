@@ -35,7 +35,7 @@ set( psotnic_SRC
    Server.cpp
    Protmodelist.cpp
    class-socks5.cpp
-   class-tcl.cpp
+   Tcl.cpp
    Update.cpp
    Userlist.cpp
    class-wasop.cpp

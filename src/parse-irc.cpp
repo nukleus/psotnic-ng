@@ -22,6 +22,7 @@
 
 #include "Chanset.hpp"
 #include "Chanuser.hpp"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "global-var.h"
 #include "Fifo.hpp"

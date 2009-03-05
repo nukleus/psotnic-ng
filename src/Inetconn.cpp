@@ -24,6 +24,7 @@
 #include <netdb.h> // gethostbyname
 
 #include "blowfish.h"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"

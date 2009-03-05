@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "Chanset.hpp"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"

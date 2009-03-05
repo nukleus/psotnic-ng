@@ -43,6 +43,7 @@ extern int debug;
 extern int creation;
 
 #ifdef HAVE_TCL
+#include "Tcl.hpp"
 extern tcl tclparser;
 #endif
 

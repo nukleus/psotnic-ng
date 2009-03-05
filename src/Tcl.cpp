@@ -22,8 +22,12 @@
 
 #ifdef HAVE_TCL
 
+#include "Client.hpp"
+#include "Config.hpp"
 #include "functions.hpp" // itoa
 #include "global-var.h"
+#include "Inet.hpp"
+#include "Tcl.hpp"
 
 int tcl_timers(void *foo, Tcl_Interp *interp, int argc, CONST char *argv[])
 {

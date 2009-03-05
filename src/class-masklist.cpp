@@ -18,6 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include "Client.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "match.h"

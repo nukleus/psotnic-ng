@@ -25,6 +25,7 @@
 
 #include "Chanset.hpp"
 #include "Chanuser.hpp"
+#include "Client.hpp"
 #include "Comment.hpp"
 #include "Config.hpp"
 #include "Userlist.hpp"

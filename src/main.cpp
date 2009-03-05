@@ -20,6 +20,7 @@
 
 #include "Adns.hpp"
 #include "AdnsPthread.hpp"
+#include "Client.hpp"
 #include "config.h"
 #include "Config.hpp"
 #include "match.h"
@@ -93,6 +94,7 @@ unit_table ut_perc[] = {
 };
 
 #ifdef HAVE_TCL
+#include "Tcl.hpp"
 tcl tclparser;
 #endif
 

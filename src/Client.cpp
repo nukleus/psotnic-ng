@@ -21,6 +21,7 @@
 #include <cstdarg> // va_*
 #include <errno.h> // for connectToIRC()
 
+#include "Adns.hpp"
 #include "Chanset.hpp"
 #include "Chanuser.hpp"
 #include "Config.hpp"

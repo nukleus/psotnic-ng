@@ -21,6 +21,7 @@
 #include "Adns.hpp"
 #include "Chanset.hpp"
 #include "Chanuser.hpp"
+#include "Client.hpp"
 #include "Config.hpp"
 #include "classes.h"
 #include "Fifo.hpp"

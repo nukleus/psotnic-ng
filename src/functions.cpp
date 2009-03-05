@@ -30,6 +30,7 @@
 
 using std::memset;
 
+#include "Client.hpp"
 #include "config.h"
 #include "Config.hpp"
 #include "functions.hpp"
