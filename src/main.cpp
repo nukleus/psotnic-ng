@@ -35,6 +35,7 @@
 #include "Prvset.hpp"
 #include "random.hpp"
 #include "Settings.hpp"
+#include "Socks5.hpp"
 #include "Update.hpp"
 #include "Userlist.hpp"
 

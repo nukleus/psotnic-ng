@@ -28,6 +28,7 @@
 #include "global-var.h"
 #include "functions.hpp"
 #include "Inet.hpp"
+#include "Socks5.hpp"
 
 char *username = NULL;
 char *password = NULL;
