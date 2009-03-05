@@ -21,6 +21,7 @@
 #include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Idle.hpp"
 #include "Inet.hpp"
 #include "away.h"
 #include "random.hpp"
