@@ -21,6 +21,7 @@
 #include "Client.hpp"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Masklist.hpp"
 #include "match.h"
 
 masklist_ent::masklist_ent(const char *m, const char *w, time_t t)
