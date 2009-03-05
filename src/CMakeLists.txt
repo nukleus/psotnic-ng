@@ -10,6 +10,7 @@ set( psotnic_SRC
    class-chan.cpp
    class-chan-gotmode.cpp
    Chanset.cpp
+   Chanlist.cpp
    Client.cpp
    class-clone.cpp
    class-comment.cpp

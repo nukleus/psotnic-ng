@@ -2199,42 +2199,6 @@ void ul::reset()
 	protlist[REOP]->clear();
 }
 
-
-void CHANLIST::reset()
-{
-	if(chset)
-		delete(chset);
-	if(wasop)
-		delete(wasop);
-	if(protlist[BAN])
-		delete(protlist[BAN]);
-	if(protlist[INVITE])
-		delete(protlist[INVITE]);
-	if(protlist[EXEMPT])
-		delete(protlist[EXEMPT]);
-	if(protlist[REOP])
-		delete(protlist[REOP]);
-	if(allowedOps)
-		 delete(allowedOps);
-
-#ifdef HAVE_MODULES
-	HOOK(onDelCHANLIST(this))
-#endif
-
-	chset = NULL;
-	wasop = NULL;
-	protlist[BAN] = NULL;
-	protlist[INVITE] = NULL;
-	protlist[EXEMPT] = NULL;
-	protlist[REOP] = NULL;
-	allowedOps = NULL;
-
-	pass = "";
-	name = "";
-
-	status = nextjoin = updated = 0;
-}
-
 /* `idiots' code */
 
 int ul::levelFlags(int level) const

@@ -398,31 +398,6 @@ class masklist
 
 class chanset;
 
-class CHANLIST
-#ifdef HAVE_MODULES
-	: public CustomDataStorage
-#endif
-{
-	public:
-	pstring<> name;
-	pstring<> pass;
-	int status;
-	int nextjoin;
-	char updated;
-	chanset *chset;
-	wasoptest *wasop;
-	wasoptest *allowedOps;
-	protmodelist *protlist[4];
-
-	CHANLIST() :
-#ifdef HAVE_MODULES
-		CustomDataStorage(),
-#endif
-		status(0), nextjoin(0), updated(0), chset(0), wasop(0), allowedOps(0) { };
-	void reset();
-
-};
-
 /*! Representation of a channel in IRC. */
 class chan
 #ifdef HAVE_MODULES

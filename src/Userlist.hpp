@@ -5,6 +5,7 @@ struct HANDLE;
 class protmodelist;
 class chanset;
 
+#include "Chanlist.hpp"
 #include "classes.h"
 
 /*! The bots userlist. */
