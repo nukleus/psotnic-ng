@@ -25,6 +25,7 @@
 using std::string;
 
 #include "Chanset.hpp"
+#include "Comment.hpp"
 #include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"
