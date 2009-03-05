@@ -21,6 +21,7 @@
 #include <assert.h>
 
 #include "Chanuser.hpp"
+#include "Clone.hpp"
 #include "global-var.h"
 #include "functions.hpp"
 #include "match.h"

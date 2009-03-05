@@ -13,7 +13,7 @@ set( psotnic_SRC
    Chanset.cpp
    Chanuser.cpp
    Client.cpp
-   class-clone.cpp
+   Clone.cpp
    Comment.cpp
    Config.cpp
    CustomDataStorage.cpp
