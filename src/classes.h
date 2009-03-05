@@ -33,20 +33,6 @@ using std::string;
 #include "pstring.h"
 #include "structs.h"
 
-class XSRand
-{
-	private:
-	unsigned int x;
-	static unsigned int a, b, c;
-
-	public:
-	XSRand() { };
-
-	void srand(unsigned int seed);
-	unsigned int rand();
-
-};
-
 class chanset;
 class wasoptest;
 #include "Clone.hpp"

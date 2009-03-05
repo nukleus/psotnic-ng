@@ -5,6 +5,7 @@
 #include "classes.h"
 #include "global-var.h"
 #include "module.h"
+#include "Wasop.hpp"
 
 CHANLIST::CHANLIST() :
 #ifdef HAVE_MODULES
