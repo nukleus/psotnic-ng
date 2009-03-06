@@ -27,6 +27,9 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"
+#include "Penal.hpp"
+#include "Settings.hpp"
+#include "Userlist.hpp"
 
 int requestShit(const char *channel, const char *mask, const char *from, int delay, const char *reason, const char *bot);
 

@@ -18,10 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <cstdio>
+#include <cstdlib>
 #include <sys/time.h> // gettimeofday
 
 #include "global-var.h"
 #include "PTime.hpp"
+
+using std::strtoul;
+using std::snprintf;
 
 static char __dupa[256];
 

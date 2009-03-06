@@ -296,4 +296,6 @@ template<int ALPHA, class T>
       ctx->randa = a;
    }
 
+extern QTIsaac<8, int> Isaac;
+
 #endif // __ISAAC_HPP

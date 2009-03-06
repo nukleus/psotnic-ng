@@ -8,6 +8,7 @@
 
 #include "Config.hpp"
 #include "class-ent.h"
+#include "Inetconn.hpp"
 #include "random.hpp"
 
 CONFIG::CONFIG()
@@ -153,7 +154,6 @@ options::event *CONFIG::save(bool decrypted)
 	if(conf.open(file, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR) < 1)
 	{
 		// FIXME
-		options::event _event;
 		_event.setError(NULL, "cannot create crypted config '%s': %s\n", (const char *) file, strerror(errno));
 		return &_event;
 	}
@@ -170,7 +170,6 @@ options::event *CONFIG::save(bool decrypted)
 	}
 
 	// FIXME
-	options::event _event;
 	_event.setOk(NULL, "config file has been saved");
 	return &_event;
 }

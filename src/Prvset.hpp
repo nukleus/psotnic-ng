@@ -12,4 +12,6 @@ class prvset : public options
 	prvset();
 };
 
+extern prvset pset;
+
 #endif /* PRVSET_HPP */

@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003-2006 by Grzegorz Rusin                             *
- *   grusin@gmail.com                                                      *
+ *   Copyright (C) 2003-2006 by Grzegorz Rusin <grusin@gmail.com           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -24,14 +23,16 @@
 #include "Chanuser.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
-#include "classes.h"
 #include "Fifo.hpp"
 #include "global-var.h"
 #include "Inet.hpp"
 #include "match.h"
 #include "module.h"
 #include "functions.hpp"
+#include "Penal.hpp"
 #include "random.hpp"
+#include "Settings.hpp"
+#include "Userlist.hpp"
 #include "Wasop.hpp"
 
 char _chmodes[MAX_LEN];

@@ -22,6 +22,7 @@
 #include "functions.hpp"
 #include "Ignore.hpp"
 #include "Inet.hpp"
+#include "Settings.hpp"
 
 ign::entry::entry(unsigned int IP)
 {

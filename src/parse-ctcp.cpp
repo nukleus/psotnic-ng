@@ -31,6 +31,9 @@
 #include "Inet.hpp"
 #include "match.h"
 #include "module.h"
+#include "Penal.hpp"
+#include "Settings.hpp"
+#include "Userlist.hpp"
 
 int querylen(const char *str)
 {

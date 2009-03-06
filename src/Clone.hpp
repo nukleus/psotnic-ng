@@ -1,7 +1,9 @@
 #ifndef CLONE_HPP
 #define CLONE_HPP 
 
-class Chanuser;
+#include <time.h>
+
+class chanuser;
 
 class clone_host
 {

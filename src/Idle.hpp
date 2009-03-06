@@ -33,4 +33,6 @@ class idle
 	const char *getRandBackAdd();
 };
 
+extern idle antiidle;
+
 #endif /* IDLE_HPP */

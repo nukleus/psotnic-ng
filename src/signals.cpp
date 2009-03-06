@@ -25,6 +25,8 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "module.h"
+#include "Update.hpp"
+#include "Userlist.hpp"
 
 void sigChild()
 {

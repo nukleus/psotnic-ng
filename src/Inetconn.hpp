@@ -6,6 +6,8 @@
 	#include <openssl/err.h>
 #endif
 
+#include <netinet/in.h> // AF_INET
+
 #include "structs.h"
 
 class CBlowFish;

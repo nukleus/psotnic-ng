@@ -37,4 +37,6 @@ class ign
 	ign();
 };
 
+extern ign ignore;
+
 #endif /* IGNORE_HPP */

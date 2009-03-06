@@ -5,9 +5,13 @@ struct HANDLE;
 class protmodelist;
 class chanset;
 class Pchar;
+class chan;
 
 #include "Chanlist.hpp"
-#include "classes.h"
+#include "Ignore.hpp"
+#include "Settings.hpp"
+#include "structs.h"
+#include "Userlist.hpp"
 
 /*! The bots userlist. */
 class ul
@@ -123,5 +127,7 @@ class ul
 	void destroy(CHANLIST *p);
 	void destroy(HANDLE *p);
 };
+
+extern ul userlist;
 
 #endif /* USERLIST_HPP */

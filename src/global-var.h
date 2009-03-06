@@ -1,58 +1,21 @@
 #ifndef PSOTNIC_GLOBAL_VAR_H
 #define PSOTNIC_GLOBAL_VAR_H 1
 
-#include "classes.h"
+#include <time.h>
+
 #include "config.h"
 #include "defines.h"
-#include "Idle.hpp"
-#include "Ignore.hpp"
-#include "isaac.h"
-#include "Penal.hpp"
-#include "Prvset.hpp"
-#include "Settings.hpp"
-#include "Socks5.hpp"
-#include "Update.hpp"
-#include "Userlist.hpp"
 
 extern time_t NOW;
-extern client ME;
-extern settings set;
-extern ul userlist;
-extern prvset pset;
-extern CONFIG config;
 extern char *thisfile;
-extern inet net;
-extern penal penalty;
-extern EXPANDINFO expandinfo;
-extern ign ignore;
-extern fifo ctcp;
-extern fifo invite;
-extern QTIsaac<8, int> Isaac;
-extern idle antiidle;
-extern unit_table ut_time[];
-extern unit_table ut_perc[];
-extern asyn_socks5 socks5;
-extern update psotget;
 extern int hostNotify;
 extern int stopPsotnic;
-extern ptrlist<Module> modules;
 extern bool stopParsing;
 
 #ifdef HAVE_DEBUG
 extern int debug;
 #endif
 extern int creation;
-
-#ifdef HAVE_TCL
-#include "Tcl.hpp"
-extern tcl tclparser;
-#endif
-
-//extern int noulimit;
-
-#ifdef HAVE_ADNS
-extern adns *resolver;
-#endif
 
 #ifdef HAVE_IRC_BACKTRACE
 extern char irc_buf[IRC_BUFS][MAX_LEN];

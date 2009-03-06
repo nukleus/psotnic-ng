@@ -21,4 +21,6 @@ class penal
 	penal(int n=0);
 };
 
+extern penal penalty;
+
 #endif /* PENAL_HPP */

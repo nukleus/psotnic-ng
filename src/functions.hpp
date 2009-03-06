@@ -1,11 +1,16 @@
 #ifndef FUNCTIONS_HPP
 #define FUNCTIONS_HPP 
 
+#include <unistd.h> // socklen_t
+
 #include "pstring.h"
 #include "class-ent.h"
-#include "classes.h"
+#include "structs.h"
 
 #define _NO_LAME_ERRNO 1
+
+class chanuser;
+class sockaddr;
 
 typedef void (*sighandler_t)(int);
 typedef void (*sig_t)(int);

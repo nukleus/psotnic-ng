@@ -27,6 +27,8 @@
 #include "match.h"
 #include "module.h"
 #include "functions.hpp"
+#include "Prvset.hpp"
+#include "Userlist.hpp"
 
 void botnetcmd(const char *from, const char *cmd)
 {

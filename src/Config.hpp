@@ -79,4 +79,6 @@ class CONFIG : public options
 	options::event *save(bool decrypted=false);
 };
 
+extern CONFIG config;
+
 #endif /* CONFIG_HPP */

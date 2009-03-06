@@ -1,10 +1,12 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP 
 
-#include "classes.h" // Server
+#include <netinet/in.h> // AF_INET
+
 #include "pstring.h"
 #include "Server.hpp"
 
+class chan;
 class entServer;
 
 class client
@@ -67,5 +69,7 @@ class client
 	~client();
 	void reset();
 };
+
+extern client ME;
 
 #endif /* CLIENT_HPP */

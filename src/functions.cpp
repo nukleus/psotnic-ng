@@ -35,10 +35,16 @@ using std::memset;
 #include "Config.hpp"
 #include "functions.hpp"
 #include "global-var.h"
+#include "Idle.hpp"
+#include "Ignore.hpp"
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h" // for parse_cmdline
+#include "module.h"
 #include "random.hpp"
+#include "Settings.hpp"
+#include "Socks5.hpp"
+#include "Userlist.hpp"
 
 #ifdef HAVE_ANTIPTRACE
 #include <sys/ptrace.h>
@@ -1025,8 +1031,7 @@ const char *getipstr(int fd, int proto, int (*fun)(int s, struct sockaddr *name,
 		else return inet_ntoa(peer.sin_addr);
 	}
 #ifdef HAVE_IPV6
-	else
-	if(proto == AF_INET6)
+	else if(proto == AF_INET6)
 	{
 		struct sockaddr_in6 peer;
 		int ret;

@@ -1,10 +1,11 @@
 #ifndef CHANUSER_HPP
 #define CHANUSER_HPP 
 
-#include "classes.h"
 #include "CustomDataStorage.hpp"
+#include "defines.h"
 
-struct HANDLE;
+class HANDLE;
+class chan;
 
 class chanuser
 #ifdef HAVE_MODULES

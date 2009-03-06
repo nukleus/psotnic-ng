@@ -18,8 +18,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#include <cstdlib>
+
 #include "Pchar.hpp"
 #include "global-var.h"
+
+using std::malloc;
 
 Pchar::Pchar(int s)
 {

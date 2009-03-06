@@ -21,7 +21,6 @@
 #include "CustomDataObject.hpp"
 #include "CustomDataStorage.hpp"
 #include "global-var.h"
-#include "classes.h"
 
 /*! Standard constructor */
 CustomDataStorage::CustomDataStorage()

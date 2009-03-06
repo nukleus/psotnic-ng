@@ -27,6 +27,9 @@
 #include "match.h"
 #include "md5.h"
 #include "Pchar.hpp"
+#include "Settings.hpp"
+#include "Update.hpp"
+#include "Userlist.hpp"
 
 void parse_hub(char *data)
 {

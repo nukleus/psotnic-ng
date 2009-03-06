@@ -25,4 +25,6 @@ class asyn_socks5
 	int use();
 };
 
+extern asyn_socks5 socks5;
+
 #endif /* SOCKS5_HPP */

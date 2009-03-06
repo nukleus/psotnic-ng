@@ -26,6 +26,7 @@
 #include "match.h"
 #include "Modeq.hpp"
 #include "Pchar.hpp"
+#include "Penal.hpp"
 
 /*
 ** Mode queue

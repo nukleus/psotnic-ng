@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003-2005 by Grzegorz Rusin                             *
- *   grusin@gmail.com                                                      *
+ *   Copyright (C) 2003-2005 by Grzegorz Rusin <grusin@gmail.com>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -28,6 +27,8 @@
 #include "Inet.hpp"
 #include "module.h"
 #include "random.hpp"
+#include "Settings.hpp"
+#include "Userlist.hpp"
 #include "Wasop.hpp"
 
 static char mode[2][MODES_PER_LINE];

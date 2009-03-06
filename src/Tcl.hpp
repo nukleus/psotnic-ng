@@ -33,6 +33,9 @@ class tcl
 	~tcl();
 
 };
+
+extern tcl tclparser;
+
 #endif
 
 #endif /* TCL_HPP */

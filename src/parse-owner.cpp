@@ -31,12 +31,16 @@ using std::string;
 #include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Ignore.hpp"
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h"
 #include "module.h"
 #include "Offence.hpp"
 #include "PTime.hpp"
+#include "Settings.hpp"
+#include "Update.hpp"
+#include "Userlist.hpp"
 
 char *find_alias(const char *cmd);
 

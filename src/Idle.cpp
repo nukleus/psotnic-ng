@@ -28,6 +28,7 @@
 #include "Inet.hpp"
 #include "away.h"
 #include "random.hpp"
+#include "Settings.hpp"
 
 idle::idle()
 {

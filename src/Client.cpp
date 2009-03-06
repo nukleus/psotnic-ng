@@ -34,8 +34,12 @@
 #include "match.h"
 #include "module.h"
 #include "Pchar.hpp"
+#include "Penal.hpp"
+#include "Socks5.hpp"
 #include "topics.h"
+#include "Settings.hpp"
 #include "random.hpp"
+#include "Userlist.hpp"
 #include "Wasop.hpp"
 
 void client::checkMyHost(const char *to,  bool justConnected)

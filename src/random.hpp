@@ -1,8 +1,23 @@
 #ifndef RANDOM_HPP
 #define RANDOM_HPP 
 
-#include "classes.h"
+#include "Chanuser.hpp"
 #include "ptrlist.h"
+
+class XSRand
+{
+	private:
+	unsigned int x;
+	static unsigned int a, b, c;
+
+	public:
+	XSRand() { };
+
+	void srand(unsigned int seed);
+	unsigned int rand();
+
+};
+
 namespace Psotnic
 {
 	int rand();

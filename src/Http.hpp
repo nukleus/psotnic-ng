@@ -1,7 +1,7 @@
 #ifndef HTTP_HPP
 #define HTTP_HPP 
 
-class inetconn;
+#include "Inetconn.hpp"
 
 class http
 {

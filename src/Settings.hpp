@@ -52,4 +52,6 @@ class settings : public options
 	settings();
 };
 
+extern settings set;
+
 #endif /* SETTINGS_HPP */

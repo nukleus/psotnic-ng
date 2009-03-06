@@ -34,6 +34,10 @@
 #include "md5.h"
 #include "module.h"
 #include "Pchar.hpp"
+#include "Penal.hpp"
+#include "Prvset.hpp"
+#include "Settings.hpp"
+#include "Userlist.hpp"
 
 char __port[16];
 

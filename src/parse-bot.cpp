@@ -26,6 +26,8 @@
 #include "match.h"
 #include "md5.h"
 #include "PTime.hpp"
+#include "Settings.hpp"
+#include "Userlist.hpp"
 
 static char arg[10][MAX_LEN];
 static char *reason;

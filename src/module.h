@@ -23,6 +23,7 @@
 #include <string>
 
 #include "pstring.h"
+#include "ptrlist.h"
 #include "defines.h"
 #include "class-ent.h"
 
@@ -196,5 +197,7 @@ class Module
 	time_t m_loadDate;		//! Time the module was loaded.
 	void *m_handle;			//! Handle for dl*-commands.
 };
+
+extern ptrlist<Module> modules;
 
 #endif /* MODULE_H */

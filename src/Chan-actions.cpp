@@ -1,6 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2003-2005 by Grzegorz Rusin                             *
- *   grusin@gmail.com                                                      *
+ *   Copyright (C) 2003-2005 by Grzegorz Rusin <grusin@gmail.com>          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -27,6 +26,7 @@
 #include "global-var.h"
 #include "Inet.hpp"
 #include "functions.hpp"
+#include "Penal.hpp"
 
 /* STRANGE ACTIONS */
 void chan::updateLimit()

@@ -6,6 +6,7 @@
 #include "global-var.h"
 #include "match.h"
 #include "module.h"
+#include "Userlist.hpp"
 
 chanuser::chanuser(const char *str)
 #ifdef HAVE_MODULES

@@ -32,6 +32,7 @@
 #include "Inet.hpp"
 #include "isaac.h"
 #include "Penal.hpp"
+#include "Protmodelist.hpp"
 #include "Prvset.hpp"
 #include "random.hpp"
 #include "Settings.hpp"

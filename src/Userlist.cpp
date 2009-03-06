@@ -38,7 +38,9 @@
 #include "module.h"
 #include "Offence.hpp"
 #include "Pchar.hpp"
+#include "Penal.hpp"
 #include "PTime.hpp"
+#include "Settings.hpp"
 #include "Wasop.hpp"
 
 flagTable FT[] = {

@@ -24,4 +24,7 @@ class fifo
 	char *flush();
 };
 
+extern fifo ctcp;
+extern fifo invite;
+
 #endif /* FIFO_HPP */

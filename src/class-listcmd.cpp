@@ -29,7 +29,9 @@
 #include "Config.hpp"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Idle.hpp"
 #include "Inet.hpp"
+#include "Userlist.hpp"
 
 //  return values:
 //  0 - local

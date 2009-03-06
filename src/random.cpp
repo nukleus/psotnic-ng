@@ -23,20 +23,6 @@
 #include "functions.hpp"
 #include "random.hpp"
 
-class XSRand
-{
-	private:
-	unsigned int x;
-	static unsigned int a, b, c;
-
-	public:
-	XSRand() { };
-
-	void srand(unsigned int seed);
-	unsigned int rand();
-
-};
-
 void randstr(char *str, int n)
 {
 	int i;

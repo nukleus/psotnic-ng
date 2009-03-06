@@ -28,11 +28,14 @@
 #include "global-var.h"
 #include "Fifo.hpp"
 #include "functions.hpp"
+#include "Idle.hpp"
 #include "Inet.hpp"
 #include "match.h"
 #include "module.h"
 #include "numeric_def.h"
+#include "Penal.hpp"
 #include "random.hpp"
+#include "Userlist.hpp"
 #include "Wasop.hpp"
 
 static char arg[11][MAX_LEN], *a, buf[MAX_LEN];

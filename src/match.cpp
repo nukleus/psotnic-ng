@@ -37,8 +37,9 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <cctype>
+
 #include "Chanuser.hpp"
-#include "classes.h"
 #include "functions.hpp"
 #include "match.h"
 

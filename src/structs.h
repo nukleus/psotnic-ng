@@ -15,6 +15,9 @@ struct unit_table
 	int  ratio;
 };
 
+extern unit_table ut_time[];
+extern unit_table ut_perc[];
+
 struct IOBUF
 {
 	char *buf;
@@ -38,6 +41,8 @@ struct EXPANDINFO
 	pstring<8> version;
 	pstring<8> realname;
 };
+
+extern EXPANDINFO expandinfo;
 
 struct flagTable
 {

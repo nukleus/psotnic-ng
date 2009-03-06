@@ -1,7 +1,7 @@
 #ifndef INET_HPP
 #define INET_HPP 
 
-#include "classes.h"
+#include "Inetconn.hpp"
 
 class inet
 {
@@ -42,5 +42,7 @@ class inet
 	inet();
 	~inet();
 };
+
+extern inet net;
 
 #endif /* INET_HPP */

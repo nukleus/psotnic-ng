@@ -4,7 +4,6 @@
 #include "defines.h"
 #include "pstring.h"
 
-class CHANLIST;
 class ptime;
 class Comment;
 class offence;

@@ -1,6 +1,8 @@
 #ifndef PSOTNIC_DEFINES_H
 #define PSOTNIC_DEFINES_H 1
 
+#include <string.h>
+
 //channel flags
 #define FLAG_I					0x00000001
 #define FLAG_N					0x00000002

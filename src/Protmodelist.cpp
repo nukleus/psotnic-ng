@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "Chan.hpp"
+#include "Chanlist.hpp"
 #include "Chanset.hpp"
 #include "Client.hpp"
 #include "Config.hpp"
@@ -27,6 +28,7 @@
 #include "Inet.hpp"
 #include "match.h"
 #include "Protmodelist.hpp"
+#include "Userlist.hpp"
 
 /* formerly known as class-shitlist.cpp */
 
