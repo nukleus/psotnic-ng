@@ -1,7 +1,7 @@
 #ifndef CONTROL_HPP
 #define CONTROL_HPP 
 
-#include "module.h"
+#include "Module.hpp"
 
 class Control : public Module
 {

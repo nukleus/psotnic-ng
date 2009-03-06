@@ -1,7 +1,10 @@
 
+#include "Chan.hpp"
+#include "Client.hpp"
 #include "Control.hpp"
 #include "functions.hpp"
 #include "global-var.h"
+#include "Inet.hpp"
 #include "match.h"
 
 Control::Control(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)
