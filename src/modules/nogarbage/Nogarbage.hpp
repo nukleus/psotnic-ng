@@ -1,10 +1,10 @@
 #ifndef NOGARBAGE_HPP
 #define NOGARBAGE_HPP 
 
-#include "module.h"
+#include "Module.hpp"
 
-class chan;
-class chanuser;
+//class chan;
+//class chanuser;
 class ng_options;
 
 class nogarbage : public Module

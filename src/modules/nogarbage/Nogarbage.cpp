@@ -52,10 +52,16 @@
 #include <string>
 #include <regex.h>
 
+#include "Chan.hpp"
+#include "Client.hpp"
+#include "CustomDataObject.hpp"
 #include "functions.hpp"
 #include "global-var.h"
+#include "Inet.hpp"
 #include "match.h"
-#include "nogarbage.hpp"
+#include "Nogarbage.hpp"
+#include "Penal.hpp"
+#include "Userlist.hpp"
 
 using std::string;
 
