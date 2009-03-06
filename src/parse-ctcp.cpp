@@ -35,6 +35,10 @@
 #include "Settings.hpp"
 #include "Userlist.hpp"
 
+#ifdef HAVE_TCL
+	#include "Tcl.hpp"
+#endif
+
 int querylen(const char *str)
 {
 	int len = 0;
