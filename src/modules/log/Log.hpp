@@ -1,7 +1,9 @@
 #ifndef LOG_H
 #define LOG_H 
 
-#include "module.h"
+#include "Module.hpp"
+
+class chan;
 
 // the location of the log files
 const static string LOG_DIR = "/home/psotnics/logs/";

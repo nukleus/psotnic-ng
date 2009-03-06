@@ -17,9 +17,12 @@
 #include <fstream>
 #include <algorithm>
 
+#include "Chan.hpp"
+#include "Chanuser.hpp"
+#include "Client.hpp"
 #include "functions.hpp"
 #include "global-var.h"
-#include "log.hpp"
+#include "Log.hpp"
 
 using namespace std;
 
