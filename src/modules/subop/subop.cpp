@@ -17,10 +17,13 @@
 #include <cstring>
 #include <string>
 
+#include "Chan.hpp"
+#include "Chanuser.hpp"
+#include "Client.hpp"
 #include "global-var.h"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
-#include "module.h"
 #include "subop.hpp"
 
 

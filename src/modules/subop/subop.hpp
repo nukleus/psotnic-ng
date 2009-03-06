@@ -1,6 +1,8 @@
 #ifndef SUBOP_HPP
 #define SUBOP_HPP 
 
+#include "Module.hpp"
+
 class SubOp : public Module
 {
   public:
