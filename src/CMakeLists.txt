@@ -1,68 +1,131 @@
 
 # build the list of files to compile
 set( psotnic_SRC
-   botcmd.cpp
    Adns.cpp
    AdnsFiredns.cpp
    AdnsPthread.cpp
-   class-blowfish.cpp
+   botcmd.cpp
    Chan-actions.cpp
    Chan.cpp
    Chan-gotmode.cpp
    Chanlist.cpp
    Chanset.cpp
    Chanuser.cpp
+   class-blowfish.cpp
+   class-ent.cpp
+   class-listcmd.cpp
    Client.cpp
    Clone.cpp
    Comment.cpp
    Config.cpp
+   config-create.cpp
+   config-load.cpp
    CustomDataStorage.cpp
-   class-ent.cpp
    Fifo.cpp
+   firedns.cpp
+   firestring.cpp
+   functions.cpp
    Http.cpp
    Idle.cpp
    Ignore.cpp
-   Inet.cpp
    Inetconn.cpp
-   class-listcmd.cpp
-   Masklist.cpp
-   Modeq.cpp
-   Offence.cpp
-   Options.cpp
-   Pchar.cpp
-   Penal.cpp
-   PTime.cpp
-   Server.cpp
-   Protmodelist.cpp
-   Socks5.cpp
-   Tcl.cpp
-   Update.cpp
-   Userlist.cpp
-   Wasop.cpp
-   Settings.cpp
-   Prvset.cpp
-   config-create.cpp
-   config-load.cpp
-   functions.cpp
-   firedns.cpp
-   firestring.cpp
+   Inet.cpp
    inet_pton.cpp
    main.cpp
+   Masklist.cpp
    match.cpp
    md5.cpp
    md5func.cpp
+   Modeq.cpp
    module.cpp
+   Offence.cpp
+   Options.cpp
    parse-bot.cpp
    parse-botnet.cpp
    parse-ctcp.cpp
    parse-hub.cpp
    parse-irc.cpp
    parse-owner.cpp
+   Pchar.cpp
+   Penal.cpp
+   Protmodelist.cpp
+   Prvset.cpp
+   PTime.cpp
    random.cpp
-   signals.cpp )
+   Server.cpp
+   Settings.cpp
+   signals.cpp
+   Socks5.cpp
+   Tcl.cpp
+   Update.cpp
+   Userlist.cpp
+   Wasop.cpp )
 
 # headers
-set( psotnic_HDR away.h blowfish.h class-ent.h classes.h common.h ctcp.h defines.h fastptrlist.h firedns.h firemake.h firestring.h global-var.h grass.h hashlist.h isaac.h iterator.h match.h md5.h module.h numeric_def.h pstring.h ptrlist.h structs.h tiny_ptrlist.h topics.h blowfish.h2 )
+set( psotnic_HDR
+   AdnsFiredns.hpp
+   Adns.hpp
+   AdnsPthread.hpp
+   Chan.hpp
+   Chanlist.hpp
+   Chanset.hpp
+   Chanuser.hpp
+   Client.hpp
+   Clone.hpp
+   Comment.hpp
+   Config.hpp
+   CustomDataObject.hpp
+   CustomDataStorage.hpp
+   Fifo.hpp
+   functions.hpp
+   Http.hpp
+   Idle.hpp
+   Ignore.hpp
+   Inetconn.hpp
+   Inet.hpp
+   Masklist.hpp
+   Modeq.hpp
+   Offence.hpp
+   Options.hpp
+   Pchar.hpp
+   Penal.hpp
+   Protmodelist.hpp
+   Prvset.hpp
+   PTime.hpp
+   random.hpp
+   Server.hpp
+   Settings.hpp
+   Socks5.hpp
+   Tcl.hpp
+   Update.hpp
+   Userlist.hpp
+   Wasop.hpp
+   away.h
+   blowfish.h
+   class-ent.h
+   classes.h
+   common.h
+   ctcp.h
+   defines.h
+   fastptrlist.h
+   firedns.h
+   firemake.h
+   firestring.h
+   global-var.h
+   grass.h
+   hashlist.h
+   isaac.h
+   iterator.h
+   match.h
+   md5.h
+   module.h
+   numeric_def.h
+   pstring.h
+   ptrlist.h
+   structs.h
+   tiny_ptrlist.h
+   topics.h
+   blowfish.h2 )
 
 set( PSOTNIC_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 
@@ -227,3 +290,4 @@ endif( HAVE_TCL )
 # that psotnic theoretically supports tcl!
 
 message( "" )
+
