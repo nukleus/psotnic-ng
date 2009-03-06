@@ -4,9 +4,12 @@
 #include <string>
 #include <sys/stat.h>
 
+#include "Config.hpp"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
 #include "plog.h"
+#include "Userlist.hpp"
 
 Plog::Plog()
 {

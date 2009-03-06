@@ -6,9 +6,15 @@
  *       - variable for umask for log files and directories
  */
 
+#include "Chan.hpp"
+#include "Chanlist.hpp"
+#include "Chanuser.hpp"
+#include "Client.hpp"
+#include "Config.hpp"
 #include "functions.hpp"
+#include "Inet.hpp"
 #include "match.h"
-#include "module.h"
+#include "Module.hpp"
 #include "plog.h"
 
 class PlogMod : public Module

@@ -1,4 +1,5 @@
 
+#include "class-ent.h"
 #include "global-var.h"
 
 #define PLOG_CONF "plog.conf"

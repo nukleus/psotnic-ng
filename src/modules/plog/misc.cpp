@@ -1,8 +1,10 @@
 
+#include <cctype>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "Chanuser.hpp"
 #include "match.h"
 #include "plog.h"
 
