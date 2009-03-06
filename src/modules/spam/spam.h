@@ -1,6 +1,8 @@
 #ifndef SPAM_H
 #define SPAM_H
 
+#include "Module.hpp"
+
 class Spam : public Module
 {
     public:

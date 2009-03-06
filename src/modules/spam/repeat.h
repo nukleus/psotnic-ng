@@ -1,6 +1,9 @@
 #ifndef REPEAT_H
 #define REPEAT_H
 
+#include "pstring.h"
+#include "CustomDataObject.hpp"
+
 class repeat : public CustomDataObject
 {
     public:

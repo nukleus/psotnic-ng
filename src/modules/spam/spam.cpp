@@ -1,10 +1,11 @@
 
 #include <regex.h>
 
+#include "Chan.hpp"
+#include "Chanuser.hpp"
+#include "Client.hpp"
 #include "global-var.h"
-#include "classes.h"
 #include "match.h"
-#include "module.h"
 #include "spam.h"
 #include "repeat.h"
 
