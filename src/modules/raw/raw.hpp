@@ -1,7 +1,7 @@
 #ifndef RAW_HPP
 #define RAW_HPP 
 
-#include "module.h"
+#include "Module.hpp"
 
 class Raw : public Module
 {
