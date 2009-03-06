@@ -1,6 +1,8 @@
 #ifndef NOAUTOREJOIN_HPP
 #define NOAUTOREJOIN_HPP 
 
+#include "Module.hpp"
+
 class arj_chk : public Module
 {
 	public:
