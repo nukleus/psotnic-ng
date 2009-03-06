@@ -9,6 +9,8 @@
 #ifndef PEAK_HPP
 #define PEAK_HPP 
 
+#include "Module.hpp"
+
 class Peak : public Module
 {
 	public:

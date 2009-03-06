@@ -12,10 +12,10 @@
 #include <algorithm>
 #include <cctype>
 
+#include "Chan.hpp"
+#include "Client.hpp"
 #include "functions.hpp"
-#include "global-var.h"
 #include "match.h"
-#include "module.h"
 #include "peak.hpp"
 
 using namespace std;
