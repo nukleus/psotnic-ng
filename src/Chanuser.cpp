@@ -5,7 +5,7 @@
 #include "functions.hpp"
 #include "global-var.h"
 #include "match.h"
-#include "module.h"
+#include "Module.hpp"
 #include "Userlist.hpp"
 
 chanuser::chanuser(const char *str)

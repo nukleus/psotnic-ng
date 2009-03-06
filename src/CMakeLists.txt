@@ -37,7 +37,7 @@ set( psotnic_SRC
    md5.cpp
    md5func.cpp
    Modeq.cpp
-   module.cpp
+   Module.cpp
    Offence.cpp
    Options.cpp
    parse-bot.cpp
@@ -118,7 +118,7 @@ set( psotnic_HDR
    iterator.h
    match.h
    md5.h
-   module.h
+   Module.hpp
    numeric_def.h
    pstring.h
    ptrlist.h

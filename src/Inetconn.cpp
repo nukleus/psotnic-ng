@@ -32,7 +32,7 @@
 #include "Inetconn.hpp"
 #include "match.h"
 #include "md5.h"
-#include "module.h"
+#include "Module.hpp"
 #include "Pchar.hpp"
 #include "Penal.hpp"
 #include "Prvset.hpp"

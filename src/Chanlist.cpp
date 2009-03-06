@@ -20,7 +20,7 @@
 #include "Chanlist.hpp"
 #include "Chanset.hpp"
 #include "global-var.h"
-#include "module.h"
+#include "Module.hpp"
 #include "Protmodelist.hpp"
 #include "Wasop.hpp"
 

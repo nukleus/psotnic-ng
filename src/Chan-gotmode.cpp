@@ -25,7 +25,7 @@
 #include "global-var.h"
 #include "functions.hpp"
 #include "Inet.hpp"
-#include "module.h"
+#include "Module.hpp"
 #include "random.hpp"
 #include "Settings.hpp"
 #include "Userlist.hpp"

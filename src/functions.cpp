@@ -40,7 +40,7 @@ using std::memset;
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h" // for parse_cmdline
-#include "module.h"
+#include "Module.hpp"
 #include "random.hpp"
 #include "Settings.hpp"
 #include "Socks5.hpp"

@@ -31,7 +31,7 @@
 #include "Idle.hpp"
 #include "Inet.hpp"
 #include "match.h"
-#include "module.h"
+#include "Module.hpp"
 #include "numeric_def.h"
 #include "Penal.hpp"
 #include "random.hpp"

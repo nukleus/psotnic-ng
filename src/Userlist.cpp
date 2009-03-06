@@ -35,7 +35,7 @@
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h"
-#include "module.h"
+#include "Module.hpp"
 #include "Offence.hpp"
 #include "Pchar.hpp"
 #include "Penal.hpp"

@@ -33,7 +33,7 @@ using std::memset;
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h"
-#include "module.h"
+#include "Module.hpp"
 
 #ifdef HAVE_MODULES
 	#include <dlfcn.h> // dl*

@@ -25,7 +25,7 @@
 #include "global-var.h"
 #include "Inet.hpp"
 #include "match.h"
-#include "module.h"
+#include "Module.hpp"
 #include "functions.hpp"
 #include "Prvset.hpp"
 #include "Userlist.hpp"

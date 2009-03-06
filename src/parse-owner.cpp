@@ -35,7 +35,7 @@ using std::string;
 #include "Inet.hpp"
 #include "match.h"
 #include "md5.h"
-#include "module.h"
+#include "Module.hpp"
 #include "Offence.hpp"
 #include "PTime.hpp"
 #include "Settings.hpp"

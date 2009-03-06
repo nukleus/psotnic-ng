@@ -27,7 +27,7 @@
 #include "global-var.h"
 #include "Inet.hpp"
 #include "match.h"
-#include "module.h"
+#include "Module.hpp"
 #include "functions.hpp"
 #include "Penal.hpp"
 #include "random.hpp"

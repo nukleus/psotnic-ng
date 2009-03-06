@@ -32,7 +32,7 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"
-#include "module.h"
+#include "Module.hpp"
 #include "Pchar.hpp"
 #include "Penal.hpp"
 #include "Socks5.hpp"

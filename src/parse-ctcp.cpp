@@ -30,7 +30,7 @@
 #include "functions.hpp"
 #include "Inet.hpp"
 #include "match.h"
-#include "module.h"
+#include "Module.hpp"
 #include "Penal.hpp"
 #include "Settings.hpp"
 #include "Userlist.hpp"
