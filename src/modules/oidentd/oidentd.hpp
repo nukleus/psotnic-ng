@@ -3,7 +3,7 @@
 #ifndef OIDENTD_HPP
 #define OIDENTD_HPP 
 
-#include "module.h"
+#include "Module.hpp"
 
 class oidentd : public Module
 {

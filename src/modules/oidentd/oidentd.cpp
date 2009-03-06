@@ -27,7 +27,9 @@
 #include <pwd.h>
 #include <string>
 
+#include "Config.hpp"
 #include "global-var.h"
+#include "Inet.hpp"
 #include "oidentd.hpp"
 
 using std::string;
