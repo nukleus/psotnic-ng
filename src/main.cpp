@@ -40,6 +40,12 @@
 #include "Update.hpp"
 #include "Userlist.hpp"
 
+#ifdef HAVE_ADNS_PTHREAD
+	#include "AdnsPthread.hpp"
+#else
+	#include "AdnsFiredns.hpp"
+#endif
+
 ptrlist<Module> modules;
 
 time_t NOW;
