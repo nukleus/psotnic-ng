@@ -1,9 +1,12 @@
 
 
 
+#include "Chan.hpp"
+#include "Chanuser.hpp"
+#include "Client.hpp"
 #include "functions.hpp"
 #include "global-var.h"
-#include "module.h"
+#include "match.h"
 #include "op.hpp"
 
 Op::Op(void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir) : Module(handle, file, md5sum, loadDate, dataDir)

@@ -1,6 +1,8 @@
 #ifndef OP_HPP
 #define OP_HPP 
 
+#include "Module.hpp"
+
 class Op : public Module
 {
 	public:
