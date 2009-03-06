@@ -6,9 +6,13 @@
 
 #include <sys/utsname.h>
 
+#include "Chan.hpp"
+#include "Chanuser.hpp"
+#include "Client.hpp"
 #include "global-var.h"
 #include "match.h"
 #include "uptime.h"
+#include "Userlist.hpp"
 
 Uptime::Uptime( void *handle, const char *file, const char *md5sum, time_t loadDate, const char *dataDir ) : Module( handle, file, md5sum, loadDate, dataDir )
 {

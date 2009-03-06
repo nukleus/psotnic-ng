@@ -1,7 +1,6 @@
 #ifndef UPTIME_H
 #define UPTIME_H 
 
-#include "module.h"
 #include <sys/param.h>
 
 #ifdef linux
@@ -10,6 +9,8 @@
     #define SYSCTL
     #include <sys/sysctl.h>
 #endif
+
+#include "Module.hpp"
 
 class Uptime : public Module
 {
