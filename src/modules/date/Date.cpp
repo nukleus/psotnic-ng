@@ -8,8 +8,12 @@
  * Copyright (c) ???? CGod <c@sii.ath.cx>
  */
 
-#include "date.hpp"
-#include "global-var.h"
+#include <string>
+
+#include "Chan.hpp"
+#include "Chanuser.hpp"
+#include "Client.hpp"
+#include "Date.hpp"
 #include "match.h"
 
 namespace Date
