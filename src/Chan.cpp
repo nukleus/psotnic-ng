@@ -411,20 +411,20 @@ void chan::removeFlags(const char *str)
 	strchr(str, 'q') ? flags &= ~FLAG_Q : 0;
 }
 
-int chan::hasFlag(char f) const
+bool chan::hasFlag(char f) const
 {
-	if(f == 'i' && flags & FLAG_I) return 1;
-	else if(f == 'n' && flags & FLAG_N) return 1;
-	else if(f == 's' && flags & FLAG_S) return 1;
-	else if(f == 'm' && flags & FLAG_M) return 1;
-	else if(f == 't' && flags & FLAG_T) return 1;
-	else if(f == 'r' && flags & FLAG_R) return 1;
-	else if(f == 'p' && flags & FLAG_P) return 1;
-	else if(f == 'q' && flags & FLAG_Q) return 1;
-	else if(f == 'k' && key && *key) return 1;
-	else if(f == 'l' && limit) return 1;
+	if(f == 'i' && flags & FLAG_I)		return true;
+	else if(f == 'n' && flags & FLAG_N)	return true;
+	else if(f == 's' && flags & FLAG_S)	return true;
+	else if(f == 'm' && flags & FLAG_M)	return true;
+	else if(f == 't' && flags & FLAG_T)	return true;
+	else if(f == 'r' && flags & FLAG_R)	return true;
+	else if(f == 'p' && flags & FLAG_P)	return true;
+	else if(f == 'q' && flags & FLAG_Q)	return true;
+	else if(f == 'k' && key && *key)	return true;
+	else if(f == 'l' && limit)		return true;
 
-	return 0;
+	return false;
 }
 
 int chan::synced() const

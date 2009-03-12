@@ -28,7 +28,7 @@ void printSuccess( const char *format, ... );
 
 /*! Read stuff from users.
  * \{
- * */
+ */
 bool readUserInput( const char *prompt, pstring<>  &var,    const char *defaultValue="" );
 void readUserInput( const char *prompt, entBool    &entity, bool force=false);
 void readUserInput( const char *prompt, entInt     &entity, bool force=false);

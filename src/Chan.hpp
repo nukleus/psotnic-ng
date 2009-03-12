@@ -100,7 +100,7 @@ class chan
 	int synced() const;
 	void setFlags(const char *str);
 	void addFlags(const char *str);
-	int hasFlag(char f) const;
+	bool hasFlag(char f) const;
 	void removeFlags(const char *str);
 	void buildAllowedOpsList(const char *offender);
 	char *getModes();
