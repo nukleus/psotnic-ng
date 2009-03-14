@@ -190,7 +190,7 @@ void Module::onChannelSynced( chan *ch)
  * \param from The senders name.
  * \param flags The senders user flags.
  * \param cmd The command send.
- * \param arg All additional arguments in a string.
+ * \param args All additional arguments in a string.
  */
 void Module::onPartylineCmd( const char *from, int flags, const char *cmd, const char *args )
 {
